@@ -1,0 +1,228 @@
+<?php
+
+module_load_include('php', 'scholar', 'IrClass');
+
+function scholar_custom_search($type,$query,$showForm=1,$orderBy=0,& $userArray=null) {
+  module_load_include('php', 'scholar', 'IRSearchClass');
+  $searchClass = new IRSearchClass(); 
+  return $searchClass->quickSearch($type,$query,$showForm,$orderBy,$userArray);
+}
+
+function scholar_edit_refworks($pid) {
+  return drupal_get_form('scholar_edit_refworks_form',$pid);
+}
+
+function scholar_edit_refworks_form($form_state,$pid) {
+
+  $edit_refworks_form = new IrClass();
+  return $edit_refworks_form->buildRefworksEditForm($pid);
+
+}
+
+function scholar_edit_refworks_form_submit($form, &$form_state) {
+  $irClass = new IrClass();
+  $form_state['redirect'] = $irClass->updateRefworksMetaData($form_state['values']);
+}
+
+function scholar_advanced_search() {
+  return drupal_get_form('scholar_advanced_search_form');
+}
+
+function theme_scholar_advanced_search_form($form) {
+  $advanced_search_form = new IrClass();
+  return $advanced_search_form->theme_advanced_search_form($form);
+}
+
+function scholar_advanced_search_form_submit($form, &$form_state) {
+  $advanced_search_form = new IrClass();
+  return $advanced_search_form->process_advanced_search_form($form_state['values']);
+}
+
+function scholar_advanced_search_form() {
+  $advanced_search_form = new IrClass();
+  return $advanced_search_form->advanced_search_form();
+}
+
+function scholar_full_record($pid) {
+  $irClass = new IrClass();
+  $output = $irClass->show_full_record($pid);
+
+  return $output;
+}
+
+function scholar_home() {
+  $ir = new IrClass();
+  return $ir->createHomePage();
+}
+
+function scholar_by_name($type, $query) {
+  $irClass = new IrClass();
+  $user = $irClass->get_user_by_username($query);
+  $output="<h4 align='center'>$user</h4>";
+  $output .= '<center><table class="table-form"><tr>'.drupal_get_form('scholar_browse_by_user_form').'</tr></table></center>';
+  $output .= scholar_custom_search($type,$query,0);
+  return $output;
+}
+
+function scholar_role($type, $query) {
+  $role=$query;//
+  $irClass = new IrClass();
+  //real bad hack to change home economics and ohters to something different (ldap groups are incorrect in ldap server so they say)
+  $department = $query;
+
+  if('Home Economics'==$department) {
+    $department='Family and Nutritional Sciences';
+  }else if('Anatomy Physiology'==$department) {
+      $department ='Biomedical Sciences';
+    }else if('Womens Studies'==$department) {
+        $department = "Women's Studies";
+      }else if('Path Micro'==$department) {
+          $department="Pathology and Microbiology";
+
+        }else if('Soc Anth'==$department) {
+            $department="Sociology and Anthropology";
+          }
+  $output="<h4 align='center'>$department</h4>";
+  $usersArray=array();
+
+  $results=scholar_custom_search($type,$query,0,0,$usersArray);
+  $output.='<center><table class="table-form"><tr>'.drupal_get_form('scholar_browse_by_user_form',$role,$usersArray).'</tr></table></center>';
+
+  return $output.$results;
+}
+
+function scholar_quick_search_form() {
+  $quick_search_form = new IrClass();
+  return $quick_search_form->quick_search_form();
+}
+
+function scholar_add_ir_datastream_form($form_state,$pid) {
+  $datastream_form = new IrClass();
+  return $datastream_form->build_add_datastream_form($pid);
+}
+
+function scholar_add_ir_datastream_form_submit($form, &$form_state) {
+  $ir = new IrClass();
+  $ir->addStreamFormSubmit($form_state['values']['form_id'], $form_state['values']);
+}
+
+function scholar_quick_search_form_submit($form, &$form_state) {
+  $quick_search_form = new IrClass();
+  return $quick_search_form->quick_search_form_submit($form_state['values']);
+}
+
+function scholar_browse_by_user_form(&$form_state, $role=null,$usersArray=null) {
+  $irClass = new IrClass();
+  return $irClass->browse_by_name_form($role,$usersArray);
+}
+
+function scholar_browse_by_user_form_submit($form, &$form_state) {
+  $user_id = $form_state['values']['user_id'];
+  //$user = user_load(array('uid'=>$user_id));
+  //$name=$user->name;
+  drupal_goto("fedorair/ir_by_name/refworks.u1/$user_id");
+
+}
+
+function scholar_create_roles_for_users(){
+    $irClass = new IrClass();
+    $irClass->get_and_create_roles();
+    return 'created roles and associated users.';
+}
+
+/*
+ * defines the list of paths and hooks/callbacks for the scholar module
+ */
+
+function scholar_menu() {
+
+  $items = array();
+
+  
+
+  $items['fedorair/ir'] = array (
+      'title' => 'Institutional Repository',
+      'page callback' => 'scholar_home',
+      'type' => MENU_NORMAL_ITEM,
+      'access callback' => 'user_access',
+      'access arguments' => array('view scholarly research'),
+  );
+
+  $items['fedorair/custom_search'] = array (
+      'title' => 'Institutional Repository',
+      'page callback' => 'scholar_custom_search',
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('view scholarly research'),
+  );
+
+  $items['fedorair/advanced_search'] = array (
+      'title' => 'Institutional Repository Advanced Search',
+      'page callback' => 'scholar_advanced_search',
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('view scholarly research'),
+  );
+
+  $items['fedorair/ir_role'] = array (
+      'title' => 'Institutional Repository By Department',
+      'page callback' => 'scholar_role',
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('view scholarly research'),
+  );
+
+  $items['fedorair/ir_by_name'] = array (
+      'title' => 'Institutional Repository By User Name',
+      'page callback' => 'scholar_by_name',
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('view scholarly research'),
+  );
+
+  $items['fedorair/ir_full_record'] = array (
+      'title' => 'Citation',
+      'page callback' => 'scholar_full_record',
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('view scholarly research'),
+  );
+
+  $items['fedorair/ir_edit_refworks'] = array (
+      'title' => 'Edit Metadata',
+      'page callback' => 'scholar_edit_refworks',
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('add scholarly research'),
+  );
+
+  $items['fedorair/ir_create_roles_for_users'] = array (
+      'title' => 'Edit Metadata',
+      'page callback' => 'scholar_create_roles_for_users',
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK,
+      'access arguments' => array('add scholarly research'),
+  );
+
+  return $items;
+} // end function ir_menu
+
+/**
+ * Valid permissions for this module
+ * @return array An array of valid permissions for the IR module
+ */
+
+function scholar_perm() {
+  return array('view scholarly research', 'add scholarly research');
+} // end function scholar_perm()
+
+function scholar_uninstall() {
+
+  return true; // there isn't really anything to uninstall
+} // end function scholar_uninstall
+
+function fedora_repository_scholar_settings_page() {
+  
+}
+
+?>

@@ -1,0 +1,31 @@
+Abstract;Abstract
+Artwork;Artwork
+Bills/Resolutions;Bills/Resolutions
+Book, Edited;Book, Edited
+Book, Section;Book, Section
+Book, Whole;Book, Whole
+Case/Court Decisions;Case/Court Decisions
+Computer Program;Computer Program
+Conference Proceedings;Conference Proceedings
+Dissertation/Thesis;Dissertation/Thesis
+Dissertation/Thesis, Unpublished;Dissertation/Thesis, Unpublished
+Generic;Generic
+Grant;Grant
+Hearing;Hearing
+Journal Article;Journal Article
+Journal, Electronic;Journal, Electronic
+Laws/Statutes;Laws/Statutes
+Magazine Article;Magazine Article
+Map;Map
+Monograph;Monograph
+Motion Picture;Motion Picture
+Music Score;Music Score
+Newspaper Article;Newspaper Article
+Online Discussion Forum/Blogs;Online Discussion Forum/Blogs
+Patent;Patent
+Personal Communication;Personal Communication
+Report;Report
+Sound Recording;Sound Recording
+Unpublished Material;Unpublished Material
+Video/DVD;Video/DVD
+Web Page;Web Page

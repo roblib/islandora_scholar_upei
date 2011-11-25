@@ -1,0 +1,44 @@
+<?php
+// $Id: comment.install,v 1.2 2006/12/13 22:44:54 unconed Exp $
+
+/**
+ * Implementation of hook_enable().
+ */
+function scholar_enable() {
+  module_load_include('php', 'fedora_repository', 'api/fedora_item');
+  global $base_url;
+
+  $allowed_pids_str = variable_get('fedora_pids_allowed', 'demo: changeme: islandora:');
+  $allowed_pids = explode(' ', $allowed_pids_str);
+
+  if (!in_array('ir:', $allowed_pids)) {
+    variable_set('fedora_pids_allowed', $allowed_pids_str.' ir:');
+    drupal_set_message('Added ir: to the set of allowed pidnamespaces.', 'info');
+  }
+
+  if ( !Fedora_Item::fedora_item_exists('ir:collection')) {
+    $new_collection_foxml = Fedora_Item::create_object_FOXML('ir:collection', 'A', 'Institutional Repository Collection');
+    $collection_item = Fedora_Item::ingest_from_FOXML($new_collection_foxml);
+    if (!empty($collection_item)) {
+      $collection_item->add_datastream_from_url( $base_url.'/'.drupal_get_path('module', 'fedora_repository').'/collection_policies/REFWORKS_COLLECTION_POLICY.xml', 'COLLECTION_POLICY', 'Collection Policy', 'text/xml', 'E');
+      $collection_item->add_datastream_from_url( $base_url.'/'.drupal_get_path('module', 'fedora_repository').'/collection_views/REFWORKS-COLLECTION_VIEW.xml', 'COLLECTION_VIEW', 'Collection View', 'text/xml', 'E');
+      $collection_item->add_relationship('hasModel', 'islandora:collectionCModel', FEDORA_MODEL_URI);
+      $collection_item->add_relationship('isMemberOfCollection', 'islandora:top');
+    } else {
+      drupal_set_message('There was an error creating the Institutional Repository collection object. See watchdog for details', 'Error');
+    }
+
+  }
+  if (!Fedora_Item::fedora_item_exists('islandora:refworksCModel')) {
+    $cmodel_foxml = Fedora_Item::create_object_FOXML('islandora:refworksCModel', 'A', 'Refworks Content Model');
+    $cmodel_item = Fedora_Item::ingest_from_FOXML($cmodel_foxml);
+    if (!empty($cmodel_item)) {
+      $cmodel_item->add_datastream_from_url($base_url.'/'.drupal_get_path('module', 'fedora_repository').'/content_models/REFWORKSCM.xml', 'ISLANDORACM', 'Islandora Content Model', 'text/xml', 'E');
+      $cmodel_item->add_relationship('hasModel', 'info:fedora/fedora-system:ContentModel-3.0');
+    } else {
+      drupal_set_message('There was an error creating the Content Model object. See watchdog for details.', 'Error');
+    }
+  }
+
+}
+?>
