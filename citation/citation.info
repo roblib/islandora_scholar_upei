@@ -1,0 +1,6 @@
+; $Id$
+name = Citation
+description = A collection of modules that allow for processing citations.
+package = Islandora Tools
+version = 6.x-$Format:%h$-dev
+core = 6.x

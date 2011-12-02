@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * @file
+ *
+ * Implements hooks and callbacks for this module.
+ */
+module_load_include('inc', 'citation_exporter', 'Batch');
+
+/**
+ * Constants
+ */
+define('SESSION_CITATION_EXPORTER_INDEX', 'citation_exporter');
+define('MENU_CITATION_EXPORTER_EXPORT', 'citation/export');
+
+/**
+ * Implements hook_menu().
+ */
+function citation_exporter_menu() {
+  $items = array();
+  $items[MENU_CITATION_EXPORTER_EXPORT] = array(
+    'page callback' => 'citation_exporter_export',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Export many citations in a particular format and redirect the user to another page.
+ * 
+ * Menu callback.
+ */
+function citation_exporter_export() {
+  module_load_include('inc', 'citation_exporter', 'CitationExporter');
+  CitationExporter::Export();
+}
+
+/**
+ * Includes a meta tag header that will redirect the users browser to download the exported file.
+ */
+function citation_exporter_include_download_redirect() {
+  module_load_include('inc', 'citation_exporter', 'CitationExporter');
+  if (CitationExporter::ReadyToExport()) {
+    $path = MENU_CITATION_EXPORTER_EXPORT;
+    drupal_set_html_head("<meta http-equiv='refresh' content='0;url=/$path'/>");
+  }
+}

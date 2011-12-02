@@ -1,0 +1,23 @@
+/* 
+    Document   : Record.css
+    Created on : Aug 3, 2011, 1:41:25 PM
+    Author     : nbanks
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#citation {
+  margin: 2em;
+}
+
+#citation .citeproc-bibliography {
+  padding: 0.4em;
+}
+
+.overview-field {
+  margin: 2em;
+}
+
+.overview-field-content {
+  margin: 0.4em;
+}

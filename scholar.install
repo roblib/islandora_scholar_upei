@@ -1,44 +1,160 @@
 <?php
 // $Id: comment.install,v 1.2 2006/12/13 22:44:54 unconed Exp $
 
+define('ISLANDORA_SCHOLAR_JOURNAL_FORM_NAME', 'Islandora Scholar Journal Form');
+define('ISLANDORA_SCHOLAR_THESIS_FORM_NAME', 'Islandora Scholar Thesis Form');
+define('ISLANDORA_SCHOLAR_BOOK_FORM_NAME', 'Islandora Scholar Book Form');
+define('ISLANDORA_SCHOLAR_CHAPTER_FORM_NAME', 'Islandora Scholar Book Chapter Form');
+define('ISLANDORA_SCHOLAR_CONFERENCE_FORM_NAME', 'Islandora Scholar Conference Paper Form');
+
 /**
- * Implementation of hook_enable().
+ * Implementation of hook_install
+ * @global type $base_url 
  */
-function scholar_enable() {
-  module_load_include('php', 'fedora_repository', 'api/fedora_item');
-  global $base_url;
+function scholar_install() {
+  $module_path = drupal_get_path('module', 'scholar');
 
-  $allowed_pids_str = variable_get('fedora_pids_allowed', 'demo: changeme: islandora:');
-  $allowed_pids = explode(' ', $allowed_pids_str);
-
-  if (!in_array('ir:', $allowed_pids)) {
-    variable_set('fedora_pids_allowed', $allowed_pids_str.' ir:');
-    drupal_set_message('Added ir: to the set of allowed pidnamespaces.', 'info');
+  // Put the form in the database
+  module_load_include('inc', 'xml_form_builder', 'XMLFormDatabase');
+  if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_JOURNAL_FORM_NAME)) {
+    $definition = new DOMDocument();
+    $definition->load($module_path . '/forms/journal_article_form.xml');
+    XMLFormDatabase::Create(ISLANDORA_SCHOLAR_JOURNAL_FORM_NAME, $definition);
+  }
+  if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_THESIS_FORM_NAME)) {
+    $definition = new DOMDocument();
+    $definition->load($module_path . '/forms/thesis_form.xml');
+    XMLFormDatabase::Create(ISLANDORA_SCHOLAR_THESIS_FORM_NAME, $definition);
+  }
+  if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_BOOK_FORM_NAME)) {
+    $definition = new DOMDocument();
+    $definition->load($module_path . '/forms/book_form.xml');
+    XMLFormDatabase::Create(ISLANDORA_SCHOLAR_BOOK_FORM_NAME, $definition);
+  }
+  if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_CHAPTER_FORM_NAME)) {
+    $definition = new DOMDocument();
+    $definition->load($module_path . '/forms/book_chapter_form.xml');
+    XMLFormDatabase::Create(ISLANDORA_SCHOLAR_CHAPTER_FORM_NAME, $definition);
+  }
+  if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_CONFERENCE_FORM_NAME)) {
+    $definition = new DOMDocument();
+    $definition->load($module_path . '/forms/conference_paper_form.xml');
+    XMLFormDatabase::Create(ISLANDORA_SCHOLAR_CONFERENCE_FORM_NAME, $definition);
+  }
+  // Associates the form with the content model
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Journal Form'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->content_model = 'ir:citationCModel';
+    $object->form_name = 'Islandora Scholar Journal Form';
+    $object->dsid = 'MODS';
+    $object->title_field = "['titleInfo']['title']";
+    $object->transform = 'mods_to_dc.xsl';
+    $result = drupal_write_record('islandora_content_model_forms', $object);
   }
 
-  if ( !Fedora_Item::fedora_item_exists('ir:collection')) {
-    $new_collection_foxml = Fedora_Item::create_object_FOXML('ir:collection', 'A', 'Institutional Repository Collection');
-    $collection_item = Fedora_Item::ingest_from_FOXML($new_collection_foxml);
-    if (!empty($collection_item)) {
-      $collection_item->add_datastream_from_url( $base_url.'/'.drupal_get_path('module', 'fedora_repository').'/collection_policies/REFWORKS_COLLECTION_POLICY.xml', 'COLLECTION_POLICY', 'Collection Policy', 'text/xml', 'E');
-      $collection_item->add_datastream_from_url( $base_url.'/'.drupal_get_path('module', 'fedora_repository').'/collection_views/REFWORKS-COLLECTION_VIEW.xml', 'COLLECTION_VIEW', 'Collection View', 'text/xml', 'E');
-      $collection_item->add_relationship('hasModel', 'islandora:collectionCModel', FEDORA_MODEL_URI);
-      $collection_item->add_relationship('isMemberOfCollection', 'islandora:top');
-    } else {
-      drupal_set_message('There was an error creating the Institutional Repository collection object. See watchdog for details', 'Error');
-    }
-
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Thesis Form'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->content_model = 'ir:citationCModel';
+    $object->form_name = 'Islandora Scholar Thesis Form';
+    $object->dsid = 'MODS';
+    $object->title_field = "['titleInfo']['title']";
+    $object->transform = 'mods_to_dc.xsl';
+    $result = drupal_write_record('islandora_content_model_forms', $object);
   }
-  if (!Fedora_Item::fedora_item_exists('islandora:refworksCModel')) {
-    $cmodel_foxml = Fedora_Item::create_object_FOXML('islandora:refworksCModel', 'A', 'Refworks Content Model');
-    $cmodel_item = Fedora_Item::ingest_from_FOXML($cmodel_foxml);
-    if (!empty($cmodel_item)) {
-      $cmodel_item->add_datastream_from_url($base_url.'/'.drupal_get_path('module', 'fedora_repository').'/content_models/REFWORKSCM.xml', 'ISLANDORACM', 'Islandora Content Model', 'text/xml', 'E');
-      $cmodel_item->add_relationship('hasModel', 'info:fedora/fedora-system:ContentModel-3.0');
-    } else {
-      drupal_set_message('There was an error creating the Content Model object. See watchdog for details.', 'Error');
-    }
+  
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Book Form'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->content_model = 'ir:citationCModel';
+    $object->form_name = 'Islandora Scholar Book Form';
+    $object->dsid = 'MODS';
+    $object->title_field = "['titleInfo']['title']";
+    $object->transform = 'mods_to_dc.xsl';
+    $result = drupal_write_record('islandora_content_model_forms', $object);
   }
-
+  
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Book Chapter Form'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->content_model = 'ir:citationCModel';
+    $object->form_name = 'Islandora Scholar Book Chapter Form';
+    $object->dsid = 'MODS';
+    $object->title_field = "['titleInfo']['title']";
+    $object->transform = 'mods_to_dc.xsl';
+    $result = drupal_write_record('islandora_content_model_forms', $object);
+  }
+  
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Book Conference Paper Form'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->content_model = 'ir:citationCModel';
+    $object->form_name = 'Islandora Scholar Book Conference Paper Form';
+    $object->dsid = 'MODS';
+    $object->title_field = "['titleInfo']['title']";
+    $object->transform = 'mods_to_dc.xsl';
+    $result = drupal_write_record('islandora_content_model_forms', $object);
+  }
+  
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:authorityCModel', 'Islandora Chem MADS Form'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->content_model = 'ir:authorityCModel';
+    $object->form_name = 'Islandora Chem MADS Form';
+    $object->dsid = 'MADS';
+    $object->title_field = "['titleInfo']['title']";
+    $object->transform = 'mads_to_dc.xsl';
+    $result = drupal_write_record('islandora_content_model_forms', $object);
+  }
 }
-?>
+
+/**
+ * Creates a new fedora object.
+ * 
+ * @param string $pid
+ *   The Fedora Object's PID
+ * @param string $label
+ *   The Fedora Objects label.
+ * @param array $relationships
+
+ * @param array $datastreams
+
+ */
+function scholar_create_fedora_object($pid, $label, array $relationships = array(), array $datastreams = array()) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  if (!Fedora_Item::fedora_item_exists($pid)) {
+    $foxml = Fedora_Item::create_object_FOXML($pid, 'A', $label);
+    $object = Fedora_Item::ingest_from_FOXML($foxml);
+    if ($object->exists()) {
+      foreach ($relationships as $type => $values) {
+        $values = is_array($values) ? $values : array($values);
+        foreach ($values as $value) {
+          $object->add_relationship($type, $value);
+        }
+      }
+      foreach ($datastreams as $datastream) {
+        list($url, $dsid, $label, $mime, $control) = $datastream;
+        $object->add_datastream_from_url($url, $dsid, $label, $mime, $control);
+      }
+      return;
+    }
+    else {
+      drupal_set_message('MORE TIME NEEDED.');
+    }
+    drupal_set_message(t('There was an error creating %pid (%label). See watchdog for details.', array('%pid' => $pid, '%label' => $label)), 'Error');
+  }
+}
+
+
+/**
+ * Adds the required namespaces for the scholar module.
+ */
+function scholar_add_required_namespaces() {
+  $namespaces = variable_get('fedora_pids_allowed', 'demo: changeme: islandora:');
+  if (preg_match('/ir\:/', $namespaces) == 0) {
+    variable_set('fedora_pids_allowed', $namespaces . ' ir:');
+    drupal_set_message('Added \'ir:\' to the set of allowed namespaces.', 'info');
+  }
+}
+

@@ -1,7 +1,10 @@
 ; $Id$
 name = Scholarly Research Data
 dependencies[] = fedora_repository
+dependencies[] = citeproc
+dependencies[] = islandora_bibliography
+dependencies[] = bibutils
 description = Shows a list of items in a fedora collection, specific to scholarly publications
-package = Fedora Repository
-version = 6.1dev
+package = Islandora
+version = 6.x-$Format:%h$-dev
 core = 6.x

@@ -1,5 +1,22 @@
 <?php
 
+/**
+ * @file
+ */
+
+/**
+ * Constants
+ */
+define('ISLANDORA_SCHOLAR_JOURNAL_FORM_NAME', 'Islandora Scholar Journal Form');
+define('ISLANDORA_SCHOLAR_THESIS_FORM_NAME', 'Islandora Scholar Thesis Form');
+define('MENU_SCHOLAR_HOME', 'scholar');
+define('MENU_SCHOLAR_ADVANCED_SEARCH_ADD_FIELD', 'scholar/search/advanced/field/add');
+define('MENU_SCHOLAR_ADVANCED_SEARCH_REMOVE_FIELD', 'scholar/search/advanced/field/remove');
+define('THEME_SCHOLAR_HOME', 'scholar_home');
+define('THEME_SCHOLAR_SEARCH_ITEM', 'scholar_search_item');
+define('THEME_SCHOLAR_SEARCH_TABLE', 'scholar_search_results_table');
+define('THEME_SCHOLAR_OVERVIEW_PANEL_CITATION', 'scholar_overview_panel_citation');
+
 module_load_include('php', 'scholar', 'IrClass');
 
 function scholar_custom_search($type,$query,$showForm=1,$orderBy=0,& $userArray=null) {
@@ -48,11 +65,6 @@ function scholar_full_record($pid) {
   $output = $irClass->show_full_record($pid);
 
   return $output;
-}
-
-function scholar_home() {
-  $ir = new IrClass();
-  return $ir->createHomePage();
 }
 
 function scholar_by_name($type, $query) {
@@ -111,18 +123,18 @@ function scholar_quick_search_form_submit($form, &$form_state) {
   return $quick_search_form->quick_search_form_submit($form_state['values']);
 }
 
-function scholar_browse_by_user_form(&$form_state, $role=null,$usersArray=null) {
-  $irClass = new IrClass();
-  return $irClass->browse_by_name_form($role,$usersArray);
-}
+//function scholar_browse_by_user_form(&$form_state, $role=null,$usersArray=null) {
+//  $irClass = new IrClass();
+//  return $irClass->browse_by_name_form($role,$usersArray);
+//}
 
-function scholar_browse_by_user_form_submit($form, &$form_state) {
-  $user_id = $form_state['values']['user_id'];
-  //$user = user_load(array('uid'=>$user_id));
-  //$name=$user->name;
-  drupal_goto("fedorair/ir_by_name/refworks.u1/$user_id");
-
-}
+//function scholar_browse_by_user_form_submit($form, &$form_state) {
+//  $user_id = $form_state['values']['user_id'];
+//  //$user = user_load(array('uid'=>$user_id));
+//  //$name=$user->name;
+//  drupal_goto("fedorair/ir_by_name/refworks.u1/$user_id");
+//
+//}
 
 function scholar_create_roles_for_users(){
     $irClass = new IrClass();
@@ -138,74 +150,65 @@ function scholar_menu() {
 
   $items = array();
 
+  $items[MENU_SCHOLAR_HOME] = array(
+    'title' => t('Search Publications'),
+    'file' => 'pages/Home.inc',
+    'page callback' => 'scholar_home',
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
   
-
-  $items['fedorair/ir'] = array (
-      'title' => 'Institutional Repository',
-      'page callback' => 'scholar_home',
-      'type' => MENU_NORMAL_ITEM,
-      'access callback' => 'user_access',
-      'access arguments' => array('view scholarly research'),
+  $items[MENU_SCHOLAR_ADVANCED_SEARCH_ADD_FIELD] = array(
+    'file' => 'SearchForm.inc',
+    'page callback' => 'scholar_search_advanced_add_field',
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
   );
-
-  $items['fedorair/custom_search'] = array (
-      'title' => 'Institutional Repository',
-      'page callback' => 'scholar_custom_search',
-      'access callback' => 'user_access',
-      'type' => MENU_CALLBACK,
-      'access arguments' => array('view scholarly research'),
+  
+  $items[MENU_SCHOLAR_ADVANCED_SEARCH_REMOVE_FIELD] = array(
+    'file' => 'SearchForm.inc',
+    'page callback' => 'scholar_search_advanced_remove_field',
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
   );
-
-  $items['fedorair/advanced_search'] = array (
-      'title' => 'Institutional Repository Advanced Search',
-      'page callback' => 'scholar_advanced_search',
-      'access callback' => 'user_access',
-      'type' => MENU_CALLBACK,
-      'access arguments' => array('view scholarly research'),
+  
+  $items['admin/settings/scholar'] = array(
+    'title' => t('Islandora Scholar Settings'),
+    'file' => 'scholar_admin.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_admin_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
   );
-
-  $items['fedorair/ir_role'] = array (
-      'title' => 'Institutional Repository By Department',
-      'page callback' => 'scholar_role',
-      'access callback' => 'user_access',
-      'type' => MENU_CALLBACK,
-      'access arguments' => array('view scholarly research'),
-  );
-
-  $items['fedorair/ir_by_name'] = array (
-      'title' => 'Institutional Repository By User Name',
-      'page callback' => 'scholar_by_name',
-      'access callback' => 'user_access',
-      'type' => MENU_CALLBACK,
-      'access arguments' => array('view scholarly research'),
-  );
-
-  $items['fedorair/ir_full_record'] = array (
-      'title' => 'Citation',
-      'page callback' => 'scholar_full_record',
-      'access callback' => 'user_access',
-      'type' => MENU_CALLBACK,
-      'access arguments' => array('view scholarly research'),
-  );
-
-  $items['fedorair/ir_edit_refworks'] = array (
-      'title' => 'Edit Metadata',
-      'page callback' => 'scholar_edit_refworks',
-      'access callback' => 'user_access',
-      'type' => MENU_CALLBACK,
-      'access arguments' => array('add scholarly research'),
-  );
-
-  $items['fedorair/ir_create_roles_for_users'] = array (
-      'title' => 'Edit Metadata',
-      'page callback' => 'scholar_create_roles_for_users',
-      'access callback' => 'user_access',
-      'type' => MENU_CALLBACK,
-      'access arguments' => array('add scholarly research'),
-  );
-
+  
+  
   return $items;
 } // end function ir_menu
+
+/**
+ * Implements hook_theme().
+ */
+function scholar_theme() {
+  return array(
+    THEME_SCHOLAR_HOME => array(
+      'template' => 'templates/Home',
+      'file' => 'pages/Home.inc',
+    ),
+    THEME_SCHOLAR_SEARCH_ITEM => array(
+      'template' => 'templates/SearchItem',
+      'file' => 'IslandoraSolrResultsCitation.inc',
+      'arguments' => array('pid' => NULL, 'style' => NULL)
+    ),
+    THEME_SCHOLAR_SEARCH_TABLE => array(
+      'file' => 'IslandoraSolrResultsCitation.inc',
+      'arguments' => array('element' => NULL)
+    ),
+  );
+}
 
 /**
  * Valid permissions for this module
@@ -225,4 +228,338 @@ function fedora_repository_scholar_settings_page() {
   
 }
 
-?>
+function scholar_required_fedora_objects() {
+
+  $module_path = drupal_get_path('module', 'scholar');
+
+  // Put the form in the database
+  module_load_include('inc', 'xml_form_builder', 'XMLFormDatabase');
+  if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_JOURNAL_FORM_NAME)) {
+    $definition = new DOMDocument();
+    $definition->load($module_path . '/forms/journal_article_form.xml');
+    XMLFormDatabase::Create(ISLANDORA_SCHOLAR_JOURNAL_FORM_NAME, $definition);
+  }
+  if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_THESIS_FORM_NAME)) {
+    $definition = new DOMDocument();
+    $definition->load($module_path . '/forms/thesis_form.xml');
+    XMLFormDatabase::Create(ISLANDORA_SCHOLAR_THESIS_FORM_NAME, $definition);
+  }
+  // Associates the form with the content model
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Journal Form'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->content_model = 'ir:citationCModel';
+    $object->form_name = 'Islandora Scholar Journal Form';
+    $object->dsid = 'MODS';
+    $object->title_field = "['titleInfo']['title']";
+    $object->transform = 'refworks.xsl';
+    $result = drupal_write_record('islandora_content_model_forms', $object);
+  }
+
+  $result2 = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:authorityCModel', 'Islandora Chem MADS Form'));
+  if (!$result2) {
+    $object2 = new stdClass();
+    $object2->content_model = 'ir:authorityCModel';
+    $object2->form_name = 'Islandora Chem MADS Form';
+    $object2->dsid = 'MADS';
+    $object2->title_field = "['titleInfo']['title']";
+    $object2->transform = 'mads_to_dc.xsl';
+    $result2 = drupal_write_record('islandora_content_model_forms', $object2);
+  }
+
+  return array(
+    'scholar' => array(
+      'module' => 'scholar',
+      'title' => 'Islandora Scholar Module',
+      'objects' => array(
+        array(
+          'pid' => 'ir:top',
+          'label' => 'Institutional Repository',
+          'cmodel' => 'islandora:collectionCModel',
+          'parent' => variable_get('fedora_repository_pid', 'islandora:root'),
+          'datastreams' => array(
+            array(
+              'dsid' => 'TN',
+              'datastream_file' => "$module_path/images/Crystal_Clear_filesystem_folder_grey.png",
+              'mimetype' => 'image/png',
+            ),
+            array(
+              'dsid' => 'COLLECTION_POLICY',
+              'datastream_file' => "$module_path/xml/COLLECTION-COLLECTION POLICY.xml",
+            ),
+          ),
+        ),
+        array(
+          'pid' => 'ir:citationCModel',
+          'label' => 'Islandora Scholar Citation Content Model',
+          'dsid' => 'ISLANDORACM',
+          'datastream_file' => "$module_path/models/citationCModel.xml",
+          'cmodel' => 'fedora-system:ContentModel-3.0',
+        ),
+        array(
+          'pid' => 'ir:authorityCModel',
+          'label' => 'Islandora Scholar Authority Content Model',
+          'dsid' => 'ISLANDORACM',
+          'datastream_file' => "$module_path/models/authorityCModel.xml",
+          'cmodel' => 'fedora-system:ContentModel-3.0',
+        ),
+        array(
+          'pid' => 'ir:citationCollection',
+          'label' => 'Citation Collection',
+          'cmodel' => 'islandora:collectionCModel',
+          'parent' => 'ir:top',
+          'datastreams' => array(
+            array(
+              'dsid' => 'TN',
+              'datastream_file' => "$module_path/images/Crystal_Clear_filesystem_folder_grey.png",
+              'mimetype' => 'image/png',
+            ),
+            array(
+              'dsid' => 'COLLECTION_POLICY',
+              'datastream_file' => "$module_path/xml/CITATION-COLLECTION POLICY.xml",
+            ),
+          ),
+        ),
+        array(
+          'pid' => 'ir:authorityCollection',
+          'label' => 'IR Authority Collection',
+          'cmodel' => 'islandora:collectionCModel',
+          'parent' => 'ir:top',
+          'datastreams' => array(
+            array(
+              'dsid' => 'TN',
+              'datastream_file' => "$module_path/images/Crystal_Clear_filesystem_folder_grey.png",
+              'mimetype' => 'image/png',
+            ),
+            array(
+              'dsid' => 'COLLECTION_POLICY',
+              'datastream_file' => "$module_path/xml/AUTHORITY-COLLECTION POLICY.xml",
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+function scholar_form_fedora_repository_ingest_form_alter(array &$form, array &$form_state) {
+  if ($form_state['storage']['step'] == 1 && isset($form['indicator'])) {
+    $models = array('ir:citationCModel/ISLANDORACM');
+    $show_bulk_ingest = FALSE;
+    foreach ($form['indicator']['models']['#options'] as $model => $label) {
+      if (array_search($model, $models) !== FALSE) {
+        $show_bulk_ingest = TRUE;
+      }
+    }
+    if ($show_bulk_ingest) {
+      $bulk_ingest = scholar_bulk_ingest_form($form_state, $form['collection_pid']['#value']);
+      // Move the next button within the field set to make it clearer.
+      $form['indicator']['submit'] = $form['submit'];
+      unset($form['submit']);
+      array_unshift($form, $bulk_ingest);
+      $form['#attributes'] = array('enctype' => 'multipart/form-data'); // Allow the uploading of files.
+      $form['#validate'] = array('scholar_bulk_ingest_form_validate');
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ * 
+ * Alters the content_model_viewer_edit_metadata_form so that the Citation is Rendered at the top of the page.
+ * 
+ * @param array $form
+ *   The Drupal form.
+ * @param array $form_state 
+ *   The Drupal form state.
+ */
+//function scholar_form_edit_islandora_bibliography_citation_form_alter(array &$form, array &$form_state) {
+//  if ($form_state['storage']['step'] == 2) {
+//    $pid = $form['pid']['#value'];
+//    $item = new Fedora_Item($pid);
+//    if ($item->exists() && isset($item->datastreams['MODS'])) {
+//      $mods = $item->get_datastream_dissemination('MODS');
+//      $mods = trim($mods);
+//      if (!empty($mods)) {
+//        $doc = new DOMDocument();
+//        $doc->loadXML($mods);
+//        module_load_include('inc', 'csl', 'CSL');
+//        $names = CSL::GetNames();
+//        $style = citeproc_style('APA');
+//        $bibliography = citeproc_bibliography_from_mods($style, $doc);
+//      }
+//    }
+//    $title = array(
+//      '#type' => 'markup',
+//      '#prefix' => '<h3>',
+//      '#value' => check_plain($form_state['values']['forms']),
+//      '#suffix' => '</h3>'
+//    );
+//    $citation = array('#value' => $bibliography->render());
+//    array_unshift($form, $citation);
+//    array_unshift($form, $title);
+//    $form['#attributes'] = array('enctype' => 'multipart/form-data'); // Allow the uploading of files.
+//  }
+//}
+
+/**
+ * Performs a bulk ingestion.
+ * 
+ * This is not meant to be called from drupal_get_form, 
+ * this is a sub-form that part of the content_model_viewer_ingest_metadata
+ * 
+ * @param array $form_state
+ *   The Drupal form state.
+ * @param string $collection_pid 
+ *   The pid of the collection we will ingest into.
+ * 
+ * @return array
+ *   The Drupal form.
+ */
+function scholar_bulk_ingest_form(array &$form_state, $collection_pid) {
+  $potential_models = scholar_bulk_ingest_get_potential_models($collection_pid);
+  reset($potential_models);
+  $identifier = key($potential_models);
+  $name = current($potential_models);
+  $selected_model = isset($form_state['values']['models']) ? $form_state['values']['models'] : $identifier;
+  $form = array(
+    'bulk_ingest' => array(
+      '#type' => 'fieldset',
+      '#title' => t('Ingest digital objects generated by RIS/EndNote into collection_pid Step #1', array('collection_pid' => $collection_pid)),
+      'file' => array(
+        '#type' => 'file',
+        '#title' => t('Upload "RIS" or "EndNote XML" Document'),
+        '#description' => t('A RIS or EndNote XML document that will generate multiple digital objects on ingest. One for each record within the RIS or EndNote XML document.'),
+        '#element_validate' => array('scholar_bulk_ingest_file_upload_validate'),
+      ),
+      'content_model_pid' => array(
+        '#type' => 'select',
+        '#title' => t('Content models available'),
+        '#options' => $potential_models,
+        '#default_value' => $selected_model,
+        '#description' => t('Content models define datastream composition, relationships between this and other content models, and the mandatory behaviors associated with each digital object.<br /> Additional information may be found <a href="https://wiki.duraspace.org/display/FEDORACREATE/Content+Models+Overview">here.</a> '),
+      ),
+      'submit' => array(
+        '#type' => 'submit',
+        '#executes_submit_callback' => TRUE,
+        '#submit' => array('scholar_bulk_ingest_form_submit'),
+        '#value' => t('Ingest')
+      ),
+    )
+  );
+  return $form;
+}
+
+/**
+ * Get Potential Models that can be part of the given collection.
+ * 
+ * @param string $collection_pid
+ *   The pid of the collection.
+ * @return array
+ *   Where the key is the Content Model PID and the value is the human readable name for the Content Model.
+ */
+function scholar_bulk_ingest_get_potential_models($collection_pid) {
+  if (($collection_policy = CollectionPolicy::loadFromCollection($collection_pid)) === FALSE) {
+    drupal_set_message(t('Unable to load collection policy \'' . $collection_pid . '\'.'));
+    return FALSE;
+  }
+  if (!($content_models = $collection_policy->getContentModels())) {
+    drupal_set_message(t('No content models associated with this collection: !collection_pid. Please contact your administrator.', array('!collection_pid' => $collection_pid)), 'error');
+    return FALSE;
+  }
+  $potential_models = array();
+  foreach ($content_models as $content_model) {
+    $identifier = $content_model->getIdentifier();
+    $name = $content_model->name;
+    $potential_models["$identifier"] = "$name";
+  }
+  return $potential_models;
+}
+
+/**
+ * Over writes the default 'content_model_viewer_ingest_metadata_form_validate' function.
+ * 
+ * @param array $form
+ *   The Drupal form.
+ * @param array $form_state 
+ *   The Drupal form state.
+ */
+function scholar_bulk_ingest_form_validate(array &$form, array &$form_state) {
+  $bulk_ingest_clicked = $form_state['clicked_button']['#value'] == t('Ingest');
+  if (!$bulk_ingest_clicked) {
+    if ($form_state['storage']['step'] == 1) {
+      $form_state['storage']['step']++;
+      $form_state['rebuild'] = TRUE;
+    }
+    else {
+      module_load_include('inc', 'xml_form_api', 'XMLForm');
+      $xml_form = new XMLForm($form_state);
+      $xml_form->validate($form, $form_state);
+    }
+  }
+}
+
+/**
+ * Makes sure the file was uploaded and is of the right type.
+ * 
+ * @param array $element
+ *   The file upload field
+ * @param array $form_state 
+ *   The Drupal form state.
+ */
+function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_state) {
+  $bulk_ingest_clicked = $form_state['clicked_button']['#value'] == t('Ingest');
+  $file_uploaded = isset($_FILES['files']['error']['file']) && $_FILES['files']['error']['file'] == 0;
+  if ($bulk_ingest_clicked) {
+    if (!$file_uploaded) {
+      form_error($element, t('You must upload a "RIS" or "EndNote XML" document.'));
+    }
+    else { // Only support for one file.
+      $mime_type = $_FILES['files']['type']['file'];
+      $valid_types = array('text/xml', 'text/plain', 'application/x-research-info-systems');
+      if (array_search($mime_type, $valid_types) === FALSE) {
+        form_error($element, t('The upload file is not the correct type. You must upload a "RIS" or "EndNote XML" document.'));
+      }
+    }
+  }
+}
+
+/**
+ * Bulk Ingest object.
+ * 
+ * @param array $form
+ *   The Drupal form.
+ * @param array $form_state 
+ *   The Drupal form state.
+ */
+function scholar_bulk_ingest_form_submit(array &$form, array &$form_state) {
+  $collection_pid = $form_state['values']['collection_pid'];
+  $content_model_pid = ContentModel::getPidFromIdentifier($form_state['values']['content_model_pid']);
+  $mime_type = $_FILES['files']['type']['file'];
+  $file = file_save_upload('file');
+  $filename = $file->filepath;
+  $function = ($mime_type == 'text/xml') ? 'scholar_batch_ingest_endnote_document' : 'scholar_batch_ingest_ris_document';
+  $operations = array(
+    array($function, array($filename, $collection_pid, $content_model_pid))
+  );
+  $batch = array(
+    'title' => t('Ingesting Files'),
+    'operations' => $operations,
+    'file' => drupal_get_path('module', 'scholar') . '/Batch.inc',
+  );
+  batch_set($batch);
+  unset($form_state['storage']); // Return to the viewer.  
+}
+
+function scholar_islandora_solr_primary_display() {
+   return array(
+    'scholar' => array(
+      'name' => t('Scholar'),
+      'module' => 'scholar',
+      'file' => 'SolrResultsScholar.inc',
+      'class' => "ScholarSolrResults",
+      'function' => "displayResultsScholar",
+      'description' => t("Results displayed for Islandscholar."),
+    )
+  );
+}

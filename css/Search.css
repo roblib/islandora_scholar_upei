@@ -1,0 +1,42 @@
+/* 
+    Document   : Search
+    Created on : Aug 3, 2011, 1:41:40 PM
+    Author     : nbanks
+    Description:
+        Purpose of the stylesheet follows.
+*
+div.form-item select { 
+  display: inline-block;
+}*/
+
+
+div.form-item { 
+  display: inline-block;
+}
+
+.progress-disabled, .ahah-progress, .ahah-progress throbber {
+  float:none; 
+}
+.ahah-progress {
+  display: inline-block;
+}
+/*
+.scholar_search_item {
+  margin: 1em;
+}
+
+.scholar-search-results {
+  margin-top: 2em; 
+}
+
+div.scholar-search-terms .form-item {
+  display: inline-block;
+}
+
+div.scholar-search-controls > .form-item {
+  display: inline-block;
+}
+
+div.scholar-export-controls > .form-item {
+  display: inline-block;
+}*/

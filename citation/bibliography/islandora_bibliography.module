@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ *
+ * Implements hooks and callbacks for this module.
+ */
+/**
+ * Constants Permission/Menu/Theme
+ */
+define('MENU_BIBLIOGRAPHY_HOME', 'bibliography');
+define('MENU_BIBLIOGRAPHY_CITATION', 'bibliography/citation');
+define('MENU_BIBLIOGRAPHY_CITATION_SEARCH', 'bibliography/citation/search');
+define('THEME_BIBLIOGRAPHY_FORM_TABLE', 'islandora_bibliography_form_table');
+
+/**
+ * The menu entries for this module.
+ *
+ * @return $menu_entries
+ *   An arrray of the items to be added to the drupal menu
+ */
+function islandora_bibliography_menu() {
+  $items = array();
+  $items[MENU_BIBLIOGRAPHY_HOME] = array(
+    'title' => t('My List'),
+    'description' => 'Here you can remove or export citations from your bibliography.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_bibliography_form'),
+    'access arguments' => array('access content'),
+    'file' => 'BibliographyForm.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items[MENU_BIBLIOGRAPHY_CITATION] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_bibliography_citation_form'),
+    'access arguments' => array('access content'),
+    'file' => 'CitationForm.inc',
+    'type' => MENU_CALLBACK,
+  );
+  $items[MENU_BIBLIOGRAPHY_CITATION_SEARCH] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_bibliography_citation_search_form'),
+    'access arguments' => array('access content'),
+    'file' => 'CitationForm.inc',
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function islandora_bibliography_theme() {
+  return array(
+    THEME_BIBLIOGRAPHY_FORM_TABLE => array(
+      'arguments' => array('element' => NULL),
+      'file' => 'BibliographyForm.inc',
+    )
+  );
+}
