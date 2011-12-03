@@ -188,7 +188,7 @@ function scholar_search_form_build_query(array &$form_state) {
     $field = $term['field'];
     $search = trim($term['search']);
     if (!empty($search)) {
-      $statements[] = "$field:($search)";
+      $statements[] = "$field:$search";
     }
   }
   $query = !empty($statements) ? implode(' AND ', $statements) : '*'; // Empty return all results. 

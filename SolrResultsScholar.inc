@@ -133,6 +133,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
     module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
     module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
     drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
+    drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
     $items = array();
     $type = "ol";
@@ -182,10 +183,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $array = explode(' ', $dc_title);
         $dc_title = implode(' ', array_slice($array, 0, 9));
       }
-      $number = l($row, 'fedora/repository/' . $doc->PID);
-      $bookmark = drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID);
-      $related = l('Related articles', 'islandora/solr/search/' . $dc_title);
-      $rows[][] = $number . $bibliography->render() . $bookmark . $related;
+      $number = '<div class="scholar_search_number">' . l($row, 'fedora/repository/' . $doc->PID) . '</div>';
+      $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div>';
+      $related = '<div class="scholar_search_related">' . l('Related articles', 'islandora/solr/search/' . $dc_title) . '</div>';
+      $rows[][] = $number . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . $bookmark . $related;
       $row++;
       $items[] = theme_table(NULL, $rows, array('class' => 'islandora_solr_search_results_object'));
     }

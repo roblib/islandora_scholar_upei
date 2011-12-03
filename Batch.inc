@@ -177,15 +177,14 @@ function scholar_batch_ingest_endnote_document($filename, $collection_pid, $cont
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['total'] = bibutils_batch_get_number_endnote_records($filename);
   }
-  $rnd = mt_rand('1000', '9999');
   $temp_file_dir = '/var/www/drupal/sites/default/files';
-  $mods_filename = file_create_filename('mods' . $rnd . '.xml', $temp_file_dir);
-  $endnote_filename = file_create_filename('endnote' . $rnd . '.xml', $temp_file_dir);
+  $mods_filename = file_create_filename('mods.xml', $temp_file_dir);
+  $endnote_filename = file_create_filename('endnote.xml', $temp_file_dir);
   $record = bibutils_batch_get_endnote_record($filename); // Get Single EndNote XML Record
   $record->save($endnote_filename);
   if (Bibutils::Convert($endnote_filename, 'EndNoteXML', $mods_filename, 'MODS')) {
     Bibutils::CleanModsFile($mods_filename);
-    $endnote_url = 'sites/default/files/endnote' . $rnd . '.xml';
+    $endnote_url = 'sites/default/files/endnote.xml';
     scholar_batch_ingest_mods($mods_filename, $collection_pid, $content_model_pid, array('ENDNOTE' => $endnote_url));
   }
   unlink($mods_filename);
@@ -214,23 +213,21 @@ function scholar_batch_ingest_ris_document($filename, $collection_pid, $content_
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['total'] = bibutils_batch_get_number_ris_records($filename);
   }
-  $rnd = mt_rand('1000', '9999');
   $temp_file_dir = '/var/www/drupal/sites/default/files';
-  $mods_filename = file_create_filename('mods' . $rnd . '.xml', $temp_file_dir);
-  $ris_filename = file_create_filename('ris' . $rnd . '.txt', $temp_file_dir);
+  $mods_filename = file_create_filename('mods.xml', $temp_file_dir);
+  $ris_filename = file_create_filename('ris.txt', $temp_file_dir);
   $record = bibutils_batch_get_ris_record($filename); // Get Single EndNote XML Record
   $file = fopen($ris_filename, 'w');
   fwrite($file, $record);
   fclose($file);
+  
   if (Bibutils::Convert($ris_filename, 'RIS', $mods_filename, 'MODS')) {
-    drupal_set_message('RIS filename:' . $ris_filename);
-    drupal_set_message('MODS filename:' . $mods_filename);
-    $ris_url = 'sites/default/files/ris' . $rnd . '.xml';
+    $ris_url = 'sites/default/files/ris.txt';
     scholar_batch_ingest_mods($mods_filename, $collection_pid, $content_model_pid, array('RIS' => $ris_url));
   }
   // Remove the files.
-  unlink($ris_filename);
-  unlink($mods_filename);
+//  unlink($ris_filename);
+//  unlink($mods_filename);
   $context['sandbox']['progress']++;
   if ($context['sandbox']['progress'] != $context['sandbox']['total']) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];

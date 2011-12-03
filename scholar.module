@@ -256,11 +256,11 @@ function scholar_required_fedora_objects() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
 
-  $result2 = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:authorityCModel', 'Islandora Chem MADS Form'));
+  $result2 = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:researcherCModel', 'Islandora Scholar MADS Form'));
   if (!$result2) {
     $object2 = new stdClass();
-    $object2->content_model = 'ir:authorityCModel';
-    $object2->form_name = 'Islandora Chem MADS Form';
+    $object2->content_model = 'ir:researcherCModel';
+    $object2->form_name = 'Islandora Scholar MADS Form';
     $object2->dsid = 'MADS';
     $object2->title_field = "['titleInfo']['title']";
     $object2->transform = 'mads_to_dc.xsl';
@@ -297,10 +297,10 @@ function scholar_required_fedora_objects() {
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
-          'pid' => 'ir:authorityCModel',
+          'pid' => 'ir:researcherCModel',
           'label' => 'Islandora Scholar Authority Content Model',
           'dsid' => 'ISLANDORACM',
-          'datastream_file' => "$module_path/models/authorityCModel.xml",
+          'datastream_file' => "$module_path/models/researcherCModel.xml",
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
@@ -516,7 +516,8 @@ function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_s
     }
     else { // Only support for one file.
       $mime_type = $_FILES['files']['type']['file'];
-      $valid_types = array('text/xml', 'text/plain', 'application/x-research-info-systems');
+      drupal_set_message('Mime type: ' . $mime_type);
+      $valid_types = array('text/xml', 'text/plain', 'application/x-research-info-systems', 'application/octet-stream');
       if (array_search($mime_type, $valid_types) === FALSE) {
         form_error($element, t('The upload file is not the correct type. You must upload a "RIS" or "EndNote XML" document.'));
       }

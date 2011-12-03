@@ -1,0 +1,8 @@
+<content_model xmlns="http://www.islandora.ca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Citation Object" xsi:schemaLocation="http://www.islandora.ca http://localhost/islandoracm.xsd">
+  <ingest_rules></ingest_rules>
+  <datastreams>
+    <datastream dsid="TN"></datastream>
+  </datastreams>
+  <ingest_form dsid="MODS" hide_file_chooser="true" page="2">
+  </ingest_form>
+</content_model>
