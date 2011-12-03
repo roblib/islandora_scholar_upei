@@ -128,7 +128,7 @@ function islandora_bibilgraphy_form_table(array $pids) {
     list($title, $authors) = islandora_bibilgraphy_form_get_title_authors($pid);
     $rows[] = array(
       '#pid' => $pid,
-      'title' => array('#value' => check_plain($title)),
+      'title' => array('#value' => l(check_plain($title), 'fedora/repository/' . $pid)),
       'author' => array('#value' => check_plain($authors)),
       'remove' => array(
         '#type' => 'submit',

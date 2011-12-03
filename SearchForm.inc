@@ -1,7 +1,5 @@
 <?php
 
-// $Id$
-
 /**
  * @file
  *
@@ -23,7 +21,7 @@ function scholar_search_form(array &$form_state) {
     $values = $form_state['values'];
     $num_terms = isset($form_state['num_terms']) ? $form_state['num_terms'] : $num_terms;
   }
-  else if (isset($_SESSION['scholar']['search']['values'])) {
+  elseif (isset($_SESSION['scholar']['search']['values'])) {
     /**
      * Handles the changing of URL from the initial search page to the actual search page.
      */
@@ -230,17 +228,17 @@ function scholar_search_advanced_remove_field() {
 
 function browse_by_department() {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
-  $fileName = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
-  $inclusionList = file_get_contents($fileName);
-  $inclusionList = fix_encoding($inclusionList);
-  $inclusionList = explode(",", $inclusionList);
-  $ingnoreRolesLessThen = 0;
+  $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
+  $inclusionlist = file_get_contents($filename);
+  $inclusionlist = fix_encoding($inclusionlist);
+  $inclusionlist = explode(",", $inclusionlist);
+  $ingnore_roles_less_than = 0;
   $result = db_query('SELECT role.rid, role.name FROM {role} where role.rid > %d order by role.name', 0);
   $output .= '<ul>';
   while ($role = db_fetch_object($result)) {
 
-    if ($role->rid > $ignoreRolesLessThen && in_array($role->name, $inclusionList)) {
-      $urlPortion = urlencode($role->name);
+    if ($role->rid > $ingnore_roles_less_than && in_array($role->name, $inclusionlist)) {
+      $urlportion = urlencode($role->name);
       $name = $role->name;
       if ('Home Economics' == $name) {
         $name = "Family and Nutritional Sciences";
@@ -261,7 +259,7 @@ function browse_by_department() {
       if ('Soc Anth' == $name) {
         $name = "Sociology and Anthropology";
       }
-      $output .= "<li><a href=islandora/solr/search/$urlPortion>" . $name . '</a></li>';
+      $output .= "<li><a href=islandora/solr/search/$urlportion>" . $name . '</a></li>';
     }
   }
   $output .= '</ul>';

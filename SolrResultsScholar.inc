@@ -1,6 +1,7 @@
 <?php
 
 /*
+ * @file
  * contains methods to search solr and display results.  depends on Apache_Solr_Php client.
  */
 
@@ -203,7 +204,8 @@ class ScholarSolrResults extends IslandoraSolrResults {
 
       $output .= theme('fieldset', $fieldset_r);
     }
-    $_SESSION['search_url'] = $_SERVER['REQUEST_URI'];
+//    $_SESSION['search_url'] = $_SERVER['REQUEST_URI'];
+    $_SESSION['search_url'] = request_uri();
     return implode('', $items);
   }
 

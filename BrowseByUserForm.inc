@@ -1,7 +1,5 @@
 <?php
 
-// $Id$
-
 /**
  * @file
  *
@@ -43,6 +41,5 @@ function scholar_browse_by_user_form(array &$form_state) {
  * @param array $form_state 
  */
 function scholar_browse_by_user_form_submit(array $form, array &$form_state) {
-  drupal_set_message('User: ' . $form_state['values']['user']);
   drupal_goto('/islandora/solr/search/test');
 }

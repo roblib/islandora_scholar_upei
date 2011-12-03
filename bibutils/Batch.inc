@@ -65,7 +65,7 @@ function bibutils_batch_get_ris_record($filename) {
    */
   $file = fopen($filename, 'r');
   $record = '';
-  while (($line = fgets($file)) !== false) {
+  while (($line = fgets($file)) !== FALSE) {
     $trimed_line = trim($line);
     if (!empty($trimed_line)) { // Ignore blank lines
       $record .= $line; // Store the line in outgoing record
@@ -105,7 +105,7 @@ function bibutils_batch_get_ris_record($filename) {
 function bibutils_batch_get_number_ris_records($filename) {
   $count = 0;
   $file = fopen($filename, 'r');
-  while (($line = fgets($file)) !== false) {
+  while (($line = fgets($file)) !== FALSE) {
     if (trim($line) == 'ER  -') {
       $count++;
     }

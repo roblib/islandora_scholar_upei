@@ -19,17 +19,17 @@ define('THEME_SCHOLAR_OVERVIEW_PANEL_CITATION', 'scholar_overview_panel_citation
 
 module_load_include('php', 'scholar', 'IrClass');
 
-function scholar_custom_search($type,$query,$showForm=1,$orderBy=0,& $userArray=null) {
+function scholar_custom_search($type, $query, $showForm=1, $orderBy=0, &$userArray=NULL) {
   module_load_include('php', 'scholar', 'IRSearchClass');
   $searchClass = new IRSearchClass(); 
-  return $searchClass->quickSearch($type,$query,$showForm,$orderBy,$userArray);
+  return $searchClass->quickSearch($type, $query, $showForm, $orderBy, $userArray);
 }
 
 function scholar_edit_refworks($pid) {
-  return drupal_get_form('scholar_edit_refworks_form',$pid);
+  return drupal_get_form('scholar_edit_refworks_form', $pid);
 }
 
-function scholar_edit_refworks_form($form_state,$pid) {
+function scholar_edit_refworks_form($form_state, $pid) {
 
   $edit_refworks_form = new IrClass();
   return $edit_refworks_form->buildRefworksEditForm($pid);
@@ -71,8 +71,8 @@ function scholar_by_name($type, $query) {
   $irClass = new IrClass();
   $user = $irClass->get_user_by_username($query);
   $output="<h4 align='center'>$user</h4>";
-  $output .= '<center><table class="table-form"><tr>'.drupal_get_form('scholar_browse_by_user_form').'</tr></table></center>';
-  $output .= scholar_custom_search($type,$query,0);
+  $output .= '<center><table class="table-form"><tr>' . drupal_get_form('scholar_browse_by_user_form') . '</tr></table></center>';
+  $output .= scholar_custom_search($type, $query, 0);
   return $output;
 }
 
@@ -82,25 +82,29 @@ function scholar_role($type, $query) {
   //real bad hack to change home economics and ohters to something different (ldap groups are incorrect in ldap server so they say)
   $department = $query;
 
-  if('Home Economics'==$department) {
+  if ('Home Economics' == $department) {
     $department='Family and Nutritional Sciences';
-  }else if('Anatomy Physiology'==$department) {
+  }
+  elseif ('Anatomy Physiology' == $department) {
       $department ='Biomedical Sciences';
-    }else if('Womens Studies'==$department) {
+    }
+    elseif ('Womens Studies' == $department) {
         $department = "Women's Studies";
-      }else if('Path Micro'==$department) {
+      }
+      elseif ('Path Micro' == $department) {
           $department="Pathology and Microbiology";
 
-        }else if('Soc Anth'==$department) {
+        }
+        elseif ('Soc Anth' == $department) {
             $department="Sociology and Anthropology";
           }
-  $output="<h4 align='center'>$department</h4>";
-  $usersArray=array();
+  $output = "<h4 align='center'>$department</h4>";
+  $usersArray = array();
 
-  $results=scholar_custom_search($type,$query,0,0,$usersArray);
-  $output.='<center><table class="table-form"><tr>'.drupal_get_form('scholar_browse_by_user_form',$role,$usersArray).'</tr></table></center>';
+  $results = scholar_custom_search($type, $query, 0, 0, $usersArray);
+  $output .= '<center><table class="table-form"><tr>' . drupal_get_form('scholar_browse_by_user_form', $role, $usersArray) . '</tr></table></center>';
 
-  return $output.$results;
+  return $output . $results;
 }
 
 function scholar_quick_search_form() {
@@ -108,7 +112,7 @@ function scholar_quick_search_form() {
   return $quick_search_form->quick_search_form();
 }
 
-function scholar_add_ir_datastream_form($form_state,$pid) {
+function scholar_add_ir_datastream_form($form_state, $pid) {
   $datastream_form = new IrClass();
   return $datastream_form->build_add_datastream_form($pid);
 }
@@ -136,7 +140,7 @@ function scholar_quick_search_form_submit($form, &$form_state) {
 //
 //}
 
-function scholar_create_roles_for_users(){
+function scholar_create_roles_for_users() {
     $irClass = new IrClass();
     $irClass->get_and_create_roles();
     return 'created roles and associated users.';
@@ -221,7 +225,7 @@ function scholar_perm() {
 
 function scholar_uninstall() {
 
-  return true; // there isn't really anything to uninstall
+  return TRUE; // there isn't really anything to uninstall
 } // end function scholar_uninstall
 
 function fedora_repository_scholar_settings_page() {
@@ -364,45 +368,6 @@ function scholar_form_fedora_repository_ingest_form_alter(array &$form, array &$
 }
 
 /**
- * Implements hook_form_alter().
- * 
- * Alters the content_model_viewer_edit_metadata_form so that the Citation is Rendered at the top of the page.
- * 
- * @param array $form
- *   The Drupal form.
- * @param array $form_state 
- *   The Drupal form state.
- */
-//function scholar_form_edit_islandora_bibliography_citation_form_alter(array &$form, array &$form_state) {
-//  if ($form_state['storage']['step'] == 2) {
-//    $pid = $form['pid']['#value'];
-//    $item = new Fedora_Item($pid);
-//    if ($item->exists() && isset($item->datastreams['MODS'])) {
-//      $mods = $item->get_datastream_dissemination('MODS');
-//      $mods = trim($mods);
-//      if (!empty($mods)) {
-//        $doc = new DOMDocument();
-//        $doc->loadXML($mods);
-//        module_load_include('inc', 'csl', 'CSL');
-//        $names = CSL::GetNames();
-//        $style = citeproc_style('APA');
-//        $bibliography = citeproc_bibliography_from_mods($style, $doc);
-//      }
-//    }
-//    $title = array(
-//      '#type' => 'markup',
-//      '#prefix' => '<h3>',
-//      '#value' => check_plain($form_state['values']['forms']),
-//      '#suffix' => '</h3>'
-//    );
-//    $citation = array('#value' => $bibliography->render());
-//    array_unshift($form, $citation);
-//    array_unshift($form, $title);
-//    $form['#attributes'] = array('enctype' => 'multipart/form-data'); // Allow the uploading of files.
-//  }
-//}
-
-/**
  * Performs a bulk ingestion.
  * 
  * This is not meant to be called from drupal_get_form, 
@@ -521,7 +486,6 @@ function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_s
       $filename = $file->filepath;
       $mime = new MimeClass();
       $mime_type = $mime->get_mimetype($filename);
-      drupal_set_message('Mime type: ' . $mime_type);
       $valid_types = array('text/xml', 'text/plain', 'application/x-research-info-systems');
       if (array_search($mime_type, $valid_types) === FALSE) {
         form_error($element, t('The upload file is not the correct type. You must upload a "RIS" or "EndNote XML" document.'));

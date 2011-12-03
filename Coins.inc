@@ -25,6 +25,7 @@ class Coins {
   /**
    * Create the object properties from the MODS datastream
    * @param type $pid 
+   * The PID of the object that you want to extract the MODS data from
    * @return type 
    */
   function __construct($pid) {
@@ -33,7 +34,7 @@ class Coins {
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($this->pid, "MODS", 0);
 
-    if ($xmlstr == null || strlen($xmlstr) < 5) {
+    if ($xmlstr == NULL || strlen($xmlstr) < 5) {
       drupal_set_message(t('No MODS datastream found!', 'warning'));
       return " ";
     }
