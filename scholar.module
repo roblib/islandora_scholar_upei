@@ -508,6 +508,7 @@ function scholar_bulk_ingest_form_validate(array &$form, array &$form_state) {
  *   The Drupal form state.
  */
 function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'MimeClass');
   $bulk_ingest_clicked = $form_state['clicked_button']['#value'] == t('Ingest');
   $file_uploaded = isset($_FILES['files']['error']['file']) && $_FILES['files']['error']['file'] == 0;
   if ($bulk_ingest_clicked) {
@@ -515,9 +516,13 @@ function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_s
       form_error($element, t('You must upload a "RIS" or "EndNote XML" document.'));
     }
     else { // Only support for one file.
-      $mime_type = $_FILES['files']['type']['file'];
+//      $mime_type = $_FILES['files']['type']['file'];
+      $file = file_save_upload('file');
+      $filename = $file->filepath;
+      $mime = new MimeClass();
+      $mime_type = $mime->get_mimetype($filename);
       drupal_set_message('Mime type: ' . $mime_type);
-      $valid_types = array('text/xml', 'text/plain', 'application/x-research-info-systems', 'application/octet-stream');
+      $valid_types = array('text/xml', 'text/plain', 'application/x-research-info-systems');
       if (array_search($mime_type, $valid_types) === FALSE) {
         form_error($element, t('The upload file is not the correct type. You must upload a "RIS" or "EndNote XML" document.'));
       }
@@ -536,9 +541,11 @@ function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_s
 function scholar_bulk_ingest_form_submit(array &$form, array &$form_state) {
   $collection_pid = $form_state['values']['collection_pid'];
   $content_model_pid = ContentModel::getPidFromIdentifier($form_state['values']['content_model_pid']);
-  $mime_type = $_FILES['files']['type']['file'];
+//  $mime_type = $_FILES['files']['type']['file'];
   $file = file_save_upload('file');
   $filename = $file->filepath;
+  $mime = new MimeClass();
+  $mime_type = $mime->get_mimetype($filename);
   $function = ($mime_type == 'text/xml') ? 'scholar_batch_ingest_endnote_document' : 'scholar_batch_ingest_ris_document';
   $operations = array(
     array($function, array($filename, $collection_pid, $content_model_pid))
