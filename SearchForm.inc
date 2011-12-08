@@ -96,11 +96,17 @@ function scholar_search_form(array &$form_state) {
     $terms[] = $term;
   }
 
-  $users = array();
-  $result = db_query("SELECT uid, name FROM {users} WHERE uid > 1");
-  while ($user = db_fetch_object($result)) {
-    $users[$user->name] = $user->name;
+  $researchers = array();
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.fullname');
+  $xml = new SimpleXMLElement($result);
+  $array = $xml->xpath('//doc/arr/str');
+  $users = array_unique($array);
+  
+  foreach ($users as $user) {
+    $user_str = (string) $user;
+    $researchers[$user_str] = $user_str;
   }
+    
   return array(
     'terms' => $terms,
     'controls' => array(
@@ -135,7 +141,7 @@ function scholar_search_form(array &$form_state) {
     'author' => array(
       '#title' => t('Browse by author'),
       '#type' => 'select',
-      '#options' => $users,
+      '#options' => $researchers,
       '#prefix' => '<div>',
     ),
     'author_submit' => array(
@@ -228,40 +234,52 @@ function scholar_search_advanced_remove_field() {
 
 function browse_by_department() {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
+  module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
   $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
   $inclusionlist = file_get_contents($filename);
   $inclusionlist = fix_encoding($inclusionlist);
   $inclusionlist = explode(",", $inclusionlist);
   $ingnore_roles_less_than = 0;
-  $result = db_query('SELECT role.rid, role.name FROM {role} where role.rid > %d order by role.name', 0);
-  $output .= '<ul>';
-  while ($role = db_fetch_object($result)) {
-
-    if ($role->rid > $ingnore_roles_less_than && in_array($role->name, $inclusionlist)) {
-      $urlportion = urlencode($role->name);
-      $name = $role->name;
-      if ('Home Economics' == $name) {
-        $name = "Family and Nutritional Sciences";
-      }
-      else
-      if ('Anatomy Physiology' == $name) {
-        $name = "Biomedical Sciences";
-      }
-      else
-      if ('Womens Studies' == $name) {
-        $name = "Women's Studies";
-      }
-      else
-      if ('Path Micro' == $name) {
-        $name = "Pathology and Microbiology";
-      }
-      else
-      if ('Soc Anth' == $name) {
-        $name = "Sociology and Anthropology";
-      }
-      $output .= "<li><a href=islandora/solr/search/$urlportion>" . $name . '</a></li>';
-    }
+  
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.topic');
+  
+  $xml = new SimpleXMLElement($result);
+  
+  $depts = array_unique($xml->xpath('//doc/arr/str'));
+  $output = '<ul>';
+  foreach ($depts as $dept) {
+    $output .= "<li><a href=islandora/solr/search/mads.topic:$dept>" . $dept . '</a></li>';
   }
+//  $output = $result;
+//  $result = db_query('SELECT role.rid, role.name FROM {role} where role.rid > %d order by role.name', 0);
+//  $output .= '<ul>';
+//  while ($role = db_fetch_object($result)) {
+//
+//    if ($role->rid > $ingnore_roles_less_than && in_array($role->name, $inclusionlist)) {
+//      $urlportion = urlencode($role->name);
+//      $name = $role->name;
+//      if ('Home Economics' == $name) {
+//        $name = "Family and Nutritional Sciences";
+//      }
+//      else
+//      if ('Anatomy Physiology' == $name) {
+//        $name = "Biomedical Sciences";
+//      }
+//      else
+//      if ('Womens Studies' == $name) {
+//        $name = "Women's Studies";
+//      }
+//      else
+//      if ('Path Micro' == $name) {
+//        $name = "Pathology and Microbiology";
+//      }
+//      else
+//      if ('Soc Anth' == $name) {
+//        $name = "Sociology and Anthropology";
+//      }
+//      $output .= "<li><a href=islandora/solr/search/$urlportion>" . $name . '</a></li>';
+//    }
+//  }
   $output .= '</ul>';
 
   return $output;

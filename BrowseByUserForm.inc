@@ -15,10 +15,21 @@
  */
 function scholar_browse_by_user_form(array &$form_state) {
   $users = array();
-  $result = db_query("SELECT uid, name FROM {users} WHERE uid > 1");
-  while ($user = db_fetch_object($result)) {
-    $users[$user->uid] = $user->name;
+//  $result = db_query("SELECT uid, name FROM {users} WHERE uid > 1");
+//  while ($user = db_fetch_object($result)) {
+//    $users[$user->uid] = $user->name;
+//  }
+  
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.given,mads.family');
+  
+  $xml = new SimpleXMLElement($result);
+  
+  $users = array_unique($xml->xpath('//doc/arr/str'));
+ 
+  foreach ($users as $user) {
+    $output .= "<li><a href=islandora/solr/search/mads.family:$user>" . $user . '</a></li>';
   }
+  
   $form['user'] = array(
       '#type' => 'select',
       '#options' => $users,

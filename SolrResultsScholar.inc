@@ -180,15 +180,39 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $dc_title = $dc_title[0];
       }      
       if (strlen($dc_title) > 60) {
-//        $dc_title = substr($dc_title, 0, 60);
         $array = explode(' ', $dc_title);
         $dc_title = implode(' ', array_slice($array, 0, 9));
       }
+      if ($mods) {
       $number = '<div class="scholar_search_number">' . l($row, 'fedora/repository/' . $doc->PID) . '</div>';
       $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div>';
       $related = '<div class="scholar_search_related">' . l('Related articles', 'islandora/solr/search/' . $dc_title) . '</div>';
       $rows[][] = $number . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . $bookmark . $related;
       $row++;
+      }
+      else {
+        foreach ($doc as $field => $value) {
+
+        if ($limitResults && empty($this->resultFieldArray[$field])) {
+          continue;
+        }
+
+        $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
+        $rows[$row][] = array(
+          'data' => $translated_field_name,
+          'header' => TRUE,
+        );
+
+        if ($field == 'PID') {
+          $l = l($value, 'fedora/repository/' . htmlspecialchars($value, ENT_QUOTES, 'utf-8')) . '</BR>';
+          $rows[$row][] = $l;
+        }
+        else {
+          $rows[$row][] = ucfirst(ltrim($value));
+        }
+        $row++;
+      }
+      }
       $items[] = theme_table(NULL, $rows, array('class' => 'islandora_solr_search_results_object'));
     }
     $output = theme_item_list($items, $title, $type, array('class' => 'stuff', 'start' => ($recordStart + 1)));
