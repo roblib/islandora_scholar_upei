@@ -11,6 +11,14 @@
  */
 function csl_install() {
   drupal_install_schema('csl');
+  
+  $result = db_result(db_query('Select name from {csl} where  name = "%s"', 'default'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->name = 'default';
+    $object->style = file_get_contents(drupal_get_path('module', 'scholar') . '/citation/csl/data/apa.csl');
+    $result = drupal_write_record('csl', $object);
+  }
 }
 
 /**

@@ -193,7 +193,7 @@ function scholar_menu() {
     'title' => t('Islandora Scholar Users'),
     'file' => 'Users.inc',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholar_get_ldap_users_form', 2),
+    'page arguments' => array('scholar_get_ldap_users_form', 1),
     'access callback' => 'user_access',
     'access arguments' => array('add users'),
     'type' => MENU_NORMAL_ITEM,
