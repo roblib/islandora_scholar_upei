@@ -189,24 +189,51 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   
-  $items['scholar/add_users/%'] = array(
+  $items['add_users/%'] = array(
     'title' => t('Islandora Scholar Users'),
     'file' => 'Users.inc',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('get_ldap_users_form', 2),
+    'page arguments' => array('scholar_get_ldap_users_form', 2),
     'access callback' => 'user_access',
-    'access arguments' => array('access content'),
+    'access arguments' => array('add users'),
     'type' => MENU_NORMAL_ITEM,
   );
   
-  $items['scholar/search_users'] = array(
+  $items['search_users'] = array(
     'title' => t('Islandora Search Users'),
     'file' => 'Users.inc',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('ldap_users_search_form'),
+    'page arguments' => array('scholar_ldap_users_search_form'),
     'access callback' => 'user_access',
-    'access arguments' => array('access content'),
+    'access arguments' => array('add users'),
     'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['researcher_given_autocomplete'] = array(
+    'title' => 'Auto Complete List of Researchers.',
+    'description' => 'Lists Researchers.',
+    'file' => 'autocomplete.inc',
+    'page callback' => 'islandora_autocomplete_researchers_given',
+    'access arguments' => array('view fedora collection'), // Use something fedora specific.
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['researcher_family_autocomplete'] = array(
+    'title' => 'Auto Complete List of Researchers.',
+    'description' => 'Lists Researchers.',
+    'file' => 'autocomplete.inc',
+    'page callback' => 'islandora_autocomplete_researchers_family',
+    'access arguments' => array('view fedora collection'), // Use something fedora specific.
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['department_autocomplete'] = array(
+    'title' => 'Auto Complete List of Departments.',
+    'description' => 'Lists Departments.',
+    'file' => 'autocomplete.inc',
+    'page callback' => 'islandora_content_model_forms_autocomplete_departments',
+    'access arguments' => array('view fedora collection'), // Use something fedora specific.
+    'type' => MENU_CALLBACK,
   );
   
   return $items;
@@ -242,6 +269,7 @@ function scholar_perm() {
   return array(
     'view scholarly research',
     'add scholarly research',
+    'add users',
     );
 }
 

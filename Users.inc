@@ -4,7 +4,7 @@
  * @file
  * Functions to help in the creationg of users or researcher authority records
  */
-function ldap_users_search_form() {
+function scholar_ldap_users_search_form() {
 
   $form['search'] = array(
     '#type' => 'textfield',
@@ -19,12 +19,12 @@ function ldap_users_search_form() {
   return $form;
 }
 
-function ldap_users_search_form_submit($form, &$form_state) {
+function scholar_ldap_users_search_form_submit($form, &$form_state) {
   $query = htmlentities($form_state['values']['search']);
-  drupal_goto('scholar/add_users/' . $query);
+  drupal_goto('add_users/' . $query);
 }
 
-function get_ldap_users($query) {
+function scholar_get_ldap_users($query) {
   module_load_include('inc', 'scholar', 'UsersClass');
   $ldap_host = variable_get('scholar_ldap_host', '');
   $ldap_port = variable_get('scholar_ldap_port', '389');
@@ -94,10 +94,10 @@ function get_ldap_users($query) {
   return $table;
 }
 
-function get_ldap_users_form($form, $query) {
+function scholar_get_ldap_users_form($form, $query) {
   $form = array();
 
-  $table = get_ldap_users($query);
+  $table = scholar_get_ldap_users($query);
 
   if ($table != NULL) {
 
@@ -116,7 +116,7 @@ function get_ldap_users_form($form, $query) {
   return $form;
 }
 
-function get_ldap_users_form_submit($form, &$form_state) {
+function scholar_get_ldap_users_form_submit($form, &$form_state) {
   module_load_include('inc', 'islandora_content_model_forms', 'FOXML');
   module_load_include('inc', 'fedora_repository', 'CollectionPolicy');
   module_load_include('inc', 'scholar', 'UsersClass');
@@ -134,7 +134,7 @@ function get_ldap_users_form_submit($form, &$form_state) {
       );
       $batch = array(
         'operations' => $operations,
-        'file' => '/var/www/drupal/sites/all/modules/islandora_scholar_upei/Users.inc',
+        'file' => drupal_get_path('module', 'scholar') . '/Users.inc',
         'finished' => 'scholar_batch_user_add_finished',
         'title' => t('Importing users'),
         'error_message' => t('An error occurred'),
