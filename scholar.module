@@ -236,6 +236,16 @@ function scholar_menu() {
     'type' => MENU_CALLBACK,
   );
   
+  $items['rss/%'] = array(
+    'title' => 'Auto Complete List of Departments.',
+    'description' => 'Lists Departments.',
+    'file' => 'SearchForm.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_rss_feed', 1),
+    'access arguments' => array('view fedora collection'), // Use something fedora specific.
+    'type' => MENU_CALLBACK,
+  );
+  
   return $items;
 } // end function ir_menu
 

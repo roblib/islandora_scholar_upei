@@ -124,27 +124,56 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
 //  $max = count($users);
   $max = 1;
   if ($collection_policy !== FALSE) {
+    
     foreach ($users as $user) {
-      $operations[] = array(
-        'scholar_batch_user_add',
-        array(
-          $user,
-          $max,
-        ),
-      );
-      $batch = array(
-        'operations' => $operations,
-        'file' => drupal_get_path('module', 'scholar') . '/Users.inc',
-        'finished' => 'scholar_batch_user_add_finished',
-        'title' => t('Importing users'),
-        'error_message' => t('An error occurred'),
-      );
-      batch_set($batch);
+//  $result = in_array($user, $context['results']);
+//  if (!$result === TRUE) {
+    $details = new UsersClass($user);
+    $check = $details->check_user();
+    if ($check !== TRUE) {
+    $collection_pid = 'ir:authorityCollection';
+    $content_model_pid = 'ir:researcherCModel';
+    $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
+    $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
+    
+    $xml = $details->ldap_to_mads();
+    $dir = $_SERVER['DOCUMENT_ROOT'] . base_path() . file_directory_path();
+    $filename = $dir . '/mads.xml';
+    $xmlstr = $xml->save($filename);
+
+    $label = $details->cn;
+    $pid = $collection_policy->getNextPid('ISLANDORACM');
+    $dsid = 'MADS';
+    $relationship = $collection_policy->getRelationship();
+    $ingest_file_locations = array();
+    $document = $xml;
+    
+      $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
+      $foxml->ingest();
     }
   }
+    
+//    foreach ($users as $user) {
+//      $operations[] = array(
+//        'scholar_batch_user_add',
+//        array(
+//          $users,
+//          $max,
+//        ),
+//      );
+//      $batch = array(
+//        'operations' => $operations,
+//        'file' => drupal_get_path('module', 'scholar') . '/Users.inc',
+//        'finished' => 'scholar_batch_user_add_finished',
+//        'title' => t('Importing users'),
+//        'error_message' => t('An error occurred'),
+//      );
+//      batch_set($batch);
+    }
+//  }
 }
 
-function scholar_batch_user_add($user, $max, &$context) {
+function scholar_batch_user_add($users, $max, &$context) {
   module_load_include('inc', 'islandora_content_model_forms', 'FOXML');
   module_load_include('inc', 'fedora_repository', 'CollectionPolicy');
   module_load_include('inc', 'scholar', 'UsersClass');
@@ -154,6 +183,7 @@ function scholar_batch_user_add($user, $max, &$context) {
     $context['sandbox']['max'] = $max;
     $context['sandbox']['users'] = array();
   }
+  foreach ($users as $user) {
   $result = in_array($user, $context['results']);
   if (!$result === TRUE) {
     $details = new UsersClass($user);
@@ -189,6 +219,7 @@ function scholar_batch_user_add($user, $max, &$context) {
   }
   else {
     $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
+  }
   }
 }
 

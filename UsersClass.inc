@@ -53,6 +53,10 @@ class UsersClass {
     $family = $dom->createElement("namePart", $this->familyname);
     $family->setAttribute("type", "family");
     $name->appendChild($family);
+    
+    $username = $dom->createElement("namePart", $this->cn);
+    $username->setAttribute("type", "username");
+    $name->appendChild($username);
 
     if (isset($this->groupmembership)) {
       foreach ($this->groupmembership as $group) {
