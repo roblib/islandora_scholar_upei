@@ -292,6 +292,11 @@ function fedora_repository_scholar_settings_page() {
   
 }
 
+/**
+ * Function specifying all of the required objects and database
+ * entries for Fedora/Islandora
+ * @return type 
+ */
 function scholar_required_fedora_objects() {
 
   $module_path = drupal_get_path('module', 'scholar');
@@ -485,11 +490,11 @@ function scholar_bulk_ingest_form(array &$form_state, $collection_pid) {
  */
 function scholar_bulk_ingest_get_potential_models($collection_pid) {
   if (($collection_policy = CollectionPolicy::loadFromCollection($collection_pid)) === FALSE) {
-    drupal_set_message(t('Unable to load collection policy \'' . $collection_pid . '\'.'));
+    drupal_set_message(t("Unable to load collection policy '@collection_pid'", array('@collection_pid' => $collection_pid)));
     return FALSE;
   }
   if (!($content_models = $collection_policy->getContentModels())) {
-    drupal_set_message(t('No content models associated with this collection: !collection_pid. Please contact your administrator.', array('!collection_pid' => $collection_pid)), 'error');
+    drupal_set_message(t('No content models associated with this collection: @collection_pid. Please contact your administrator.', array('@collection_pid' => $collection_pid)), 'error');
     return FALSE;
   }
   $potential_models = array();
@@ -583,6 +588,11 @@ function scholar_bulk_ingest_form_submit(array &$form, array &$form_state) {
   unset($form_state['storage']); // Return to the viewer.  
 }
 
+/**
+ * Implementation of solr_primary_display hook to customise the results
+ * display.
+ * @return type 
+ */
 function scholar_islandora_solr_primary_display() {
    return array(
     'scholar' => array(

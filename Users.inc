@@ -4,6 +4,11 @@
  * @file
  * Functions to help in the creationg of users or researcher authority records
  */
+
+/**
+ * Form to search for specific users in the LDAP directory
+ * @return string 
+ */
 function scholar_ldap_users_search_form() {
 
   $form['search'] = array(
@@ -19,11 +24,27 @@ function scholar_ldap_users_search_form() {
   return $form;
 }
 
+/**
+ * Takes the value from the search form and redirects to
+ * the add_users form with the value as an argument
+ * @param type $form
+ * @param type $form_state 
+ */
 function scholar_ldap_users_search_form_submit($form, &$form_state) {
   $query = htmlentities($form_state['values']['search']);
   drupal_goto('add_users/' . $query);
 }
 
+/**
+ * Function that queries the LDAP server based on the value passed and
+ * displays the results in a table. The results can be selected and objects 
+ * with MADS datastreams will be created in fedora.
+ * 
+ * @param type $query
+ * Value entered in the LDAP search form. Can have wildcards (eg r* will
+ * bring back all the ldap entries beginning with r)
+ * @return array 
+ */
 function scholar_get_ldap_users($query) {
   module_load_include('inc', 'scholar', 'UsersClass');
   $ldap_host = variable_get('scholar_ldap_host', '');
@@ -63,7 +84,6 @@ function scholar_get_ldap_users($query) {
 // Todo: work out a way of checking and displaying if the users have already been added
 // Method using the ITQL query takes a long time, maybe use solr?
   $table = array(
-//    '#header' => array(theme('table_select_header_cell'), t('Full name'), t('Email'), t('Added'), ''),
     '#header' => array(theme('table_select_header_cell'), t('Full name'), t('Email'), ''),
     '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
     '#tree' => TRUE,
@@ -75,25 +95,21 @@ function scholar_get_ldap_users($query) {
   );
   $rows = &$table['rows'];
   foreach ($users as $user) {
-//    $entry = new UsersClass($user['cn']);
-//      $check = $entry->check_user();
-//    $check = FALSE;
-//      if ($check == TRUE) {
-//        $image = '<img src="/misc/watchdog-ok.png"/>';
-//      } 
-//      else {
-//        $image = '';
-//      }
     $rows[] = array(
       '#pid' => $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
       'mail' => array('#value' => check_plain($user['mail'])),
-//      'added' => array('#value' => $image),
     );
   }
   return $table;
 }
 
+/**
+ * Form to display the LDAP users table
+ * @param type $form
+ * @param type $query
+ * @return string 
+ */
 function scholar_get_ldap_users_form($form, $query) {
   $form = array();
 
@@ -116,6 +132,15 @@ function scholar_get_ldap_users_form($form, $query) {
   return $form;
 }
 
+/**
+ * This function builds the MADS file from data in the LDAP entry and
+ * adds it to the researcher object.
+ * @todo Get a batch process working with this. At the moment the process
+ * is fairly quick but could take a while depending on how many users are 
+ * being added
+ * @param type $form
+ * @param type $form_state 
+ */
 function scholar_get_ldap_users_form_submit($form, &$form_state) {
   module_load_include('inc', 'islandora_content_model_forms', 'FOXML');
   module_load_include('inc', 'fedora_repository', 'CollectionPolicy');
@@ -173,6 +198,14 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
 //  }
 }
 
+/**
+ * Function to process the LDAP users as a batch. Took much longer than
+ * doing it without the batch process so I took it out. Obviously needs 
+ * some tuning
+ * @param type $users
+ * @param type $max
+ * @param type $context 
+ */
 function scholar_batch_user_add($users, $max, &$context) {
   module_load_include('inc', 'islandora_content_model_forms', 'FOXML');
   module_load_include('inc', 'fedora_repository', 'CollectionPolicy');

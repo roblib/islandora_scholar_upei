@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+ * This is a collection of functions to handle getting
+ * user info from the LDAP server and turning it into 
+ * a useful form
+ */
+
 class UsersClass {
 
   public $givenname = NULL;
@@ -10,6 +17,11 @@ class UsersClass {
   public $fullname = NULL;
   public $groupmembership = NULL;
 
+  /**
+   * Given a user this populates the object with details
+   * from the LDAP entry
+   * @param type $user 
+   */
   public function __construct($user) {
 
     $ldap_host = variable_get('scholar_ldap_host', '');
@@ -34,6 +46,10 @@ class UsersClass {
     $this->familyname = $list[0]['sn'][0];
   }
 
+  /**
+   * This builds the MADS file from the LDAP data
+   * @return DOMDocument 
+   */
   public function ldap_to_mads() {
     $dom = new DOMDocument();
 
@@ -80,10 +96,14 @@ class UsersClass {
     return $dom;
   }
 
+  /**
+   * Check whether the user already exists as an object in
+   * the repo
+   * @return type 
+   */
   public function check_user() {
     module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
     $user = $this->cn;
-    $pid = 'ir:2829';
     $query_string = 'select $object $title $content from <#ri>
                              where ($object <dc:title>$title
                              and $object <fedora-model:hasModel> $content
@@ -93,15 +113,10 @@ class UsersClass {
                              order by $title';
 
     $query_string = htmlentities(urlencode($query_string));
-
-    $limit = '1000';
-    $offset = '0';
-
     $content = '';
     $url = variable_get('fedora_repository_url', 'http://localhost:8080/fedora/risearch');
     $url .= "?type=tuples&flush=TRUE&format=Sparql&limit=1000&offset=0&lang=itql&stream=on&query=" . $query_string;
     $content .= do_curl($url);
-//    drupal_set_message('Content: ' . $content);
     $result = new DOMDocument();
     $result->loadXML($content);
     $entry = $result->getElementsByTagName('title')->item(0)->nodeValue;

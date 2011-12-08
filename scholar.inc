@@ -70,7 +70,7 @@ class Scholar {
     try {
       $proc = new XsltProcessor();
     } catch (Exception $e) {
-      drupal_set_message(t($e->getMessage()), 'error');
+      drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
       return;
     }
     $xsl = new DOMDocument();
