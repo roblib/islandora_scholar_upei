@@ -65,7 +65,7 @@ class Scholar {
     $citation = $bibliography->render();
 
     //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
-    
+
     $issn_url = file_get_contents($url . $data->issn . $api_key);
     try {
       $proc = new XsltProcessor();
@@ -80,19 +80,19 @@ class Scholar {
     $xsl = $proc->importStylesheet($xsl);
     $newdom = $proc->transformToDoc($input);
     $romeo = $newdom->saveXML();
-        
+
     $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
-    
+
     $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
-    
-    $citation .= '<span>  <br /><span class="Z3988" title="' . $coins_title . '"> </span> <br/><A HREF="' . $coins_url . '"> UPEI Users Only: Check for Full Text </A></span><br />';
-    
+
+    $citation .= '<span>  <br /><span class="Z3988" title="' . $coins_title . '"></span> <br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br />';
+
     $citation .= '<p><b>Abstract</b></p>';
 
     $citation .= $data->abstract;
-    
+
     module_load_include('inc', 'islandora_bibliography', 'Bibliography');
-    
+
     $pid = $this->pid;
 
     $citation .= drupal_get_form('islandora_bibliography_citation_form', $pid);
@@ -103,7 +103,7 @@ class Scholar {
       '#content' => $citation,
       '#weight' => 1,
     );
-    
+
     $tabset['first_tab']['tabs']['romeo'] = array(
       '#type' => 'tabpage',
       '#title' => t('Romeo'),
@@ -111,93 +111,96 @@ class Scholar {
       '#weight' => 2,
     );
 
-    $tabset['first_tab']['tabs']['upload'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Upload'),
-      '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
-      '#weight' => 3,
-    );
-    
+    if (user_access('add scholarly research') == TRUE) {
+
+      $tabset['first_tab']['tabs']['upload'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('Upload'),
+        '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
+        '#weight' => 3,
+      );
+    }
+
     $item = new Fedora_Item($pid);
     $ds_array = $item->get_datastreams_list_as_array();
     if (array_key_exists('PDF', $ds_array)) {
       $tabset['first_tab']['tabs']['pdf'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('PDF'),
-      '#content' => 'PDF',
-      '#weight' => 4,
-    );
+        '#type' => 'tabpage',
+        '#title' => t('PDF'),
+        '#content' => 'PDF',
+        '#weight' => 4,
+      );
     }
-    
+
     return $tabset;
   }
 
 }
 
-  function build_add_datastream_form(&$form_state, $pid) {
-    $form = array();
-    $certifyBox = array(
-      '1' => 'I Certify That I have the right to upload this version.'
-    );
+function build_add_datastream_form(&$form_state, $pid) {
+  $form = array();
+  $certifyBox = array(
+    '1' => 'I Certify That I have the right to upload this version.'
+  );
 
-    $usage = array(
-      'Contact Publisher' => 'Contact Publisher (I do not hold the copyright)',
-      'Contact Author' => 'Contact Author (I hold the copyright and wish to retain all rights)',
-    );
+  $usage = array(
+    'Contact Publisher' => 'Contact Publisher (I do not hold the copyright)',
+    'Contact Author' => 'Contact Author (I hold the copyright and wish to retain all rights)',
+  );
 
-    $versions = array(
-      'PRE-PRINT' => 'PRE-PRINT',
-      'POST-PRINT' => 'POST-PRINT',
-      'PUBLISHED' => 'PUBLISHED PDF',
-      'OTHER' => 'OTHER/UNPUBLISHED',
-    );
+  $versions = array(
+    'PRE-PRINT' => 'PRE-PRINT',
+    'POST-PRINT' => 'POST-PRINT',
+    'PUBLISHED' => 'PUBLISHED PDF',
+    'OTHER' => 'OTHER/UNPUBLISHED',
+  );
 
-    $form['#attributes'] = array('enctype' => "multipart/form-data");
+  $form['#attributes'] = array('enctype' => "multipart/form-data");
 
-    $form['file_uploaded'] = array(
-      '#type' => 'file',
-      '#title' => t('Upload Document'),
-      '#size' => 48,
-      '#weight' => 1,
-      '#description' => t('Full text'),
-    );
+  $form['file_uploaded'] = array(
+    '#type' => 'file',
+    '#title' => t('Upload Document'),
+    '#size' => 48,
+    '#weight' => 1,
+    '#description' => t('Full text'),
+  );
 
-    $form['version'] = array(
-      '#type' => 'radios',
-      '#title' => t('Document Version'), 
-      '#options' => $versions, 
-      '#required' => 'true',
-      '#weight' => 2,
-    );
+  $form['version'] = array(
+    '#type' => 'radios',
+    '#title' => t('Document Version'),
+    '#options' => $versions,
+    '#required' => 'true',
+    '#weight' => 2,
+  );
 
-    $form['usage'] = array(
-      '#type' => 'radios',
-      '#title' => t('Use Permission'),
-      '#options' => $usage,
-      '#required' => 'true',
-      '#default_value' => 1,
-      '#weight' => 3
-    );
+  $form['usage'] = array(
+    '#type' => 'radios',
+    '#title' => t('Use Permission'),
+    '#options' => $usage,
+    '#required' => 'true',
+    '#default_value' => 1,
+    '#weight' => 3
+  );
 
-    $form['certify'] = array(
-      '#type' => 'checkboxes',
-      '#title' => t('I Certify'),
-      '#options' => $certifyBox,
-      '#required' => 'true',
-      '#weight' => 4,
-    );
+  $form['certify'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('I Certify'),
+    '#options' => $certifyBox,
+    '#required' => 'true',
+    '#weight' => 4,
+  );
 
-    $form['pid'] = array(
-      '#type' => 'hidden',
-      '#value' => $pid,
-    );
+  $form['pid'] = array(
+    '#type' => 'hidden',
+    '#value' => $pid,
+  );
 
-    $form['submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('Upload'),
-      '#weight' => 5,
-      '#suffix' => t('Please be patient. Document upload and conversion can take up to a few minutes.'),
-    );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Upload'),
+    '#weight' => 5,
+    '#suffix' => t('Please be patient. Document upload and conversion can take up to a few minutes.'),
+  );
 
-    return $form;
-  }
+  return $form;
+}

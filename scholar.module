@@ -189,6 +189,25 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   
+  $items['scholar/add_users/%'] = array(
+    'title' => t('Islandora Scholar Users'),
+    'file' => 'Users.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('get_ldap_users_form', 2),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['scholar/search_users'] = array(
+    'title' => t('Islandora Search Users'),
+    'file' => 'Users.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ldap_users_search_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
   
   return $items;
 } // end function ir_menu
@@ -220,8 +239,11 @@ function scholar_theme() {
  */
 
 function scholar_perm() {
-  return array('view scholarly research', 'add scholarly research');
-} // end function scholar_perm()
+  return array(
+    'view scholarly research',
+    'add scholarly research',
+    );
+}
 
 function scholar_uninstall() {
 
@@ -256,7 +278,7 @@ function scholar_required_fedora_objects() {
     $object->form_name = 'Islandora Scholar Journal Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
-    $object->transform = 'refworks.xsl';
+    $object->transform = 'mods_to_dc.xsl';
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
 

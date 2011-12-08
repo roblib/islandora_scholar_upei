@@ -177,7 +177,7 @@ function scholar_batch_ingest_endnote_document($filename, $collection_pid, $cont
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['total'] = bibutils_batch_get_number_endnote_records($filename);
   }
-  $temp_file_dir = '/var/www/drupal/sites/default/files';
+  $temp_file_dir = file_directory_path();
   $mods_filename = file_create_filename('mods.xml', $temp_file_dir);
   $endnote_filename = file_create_filename('endnote.xml', $temp_file_dir);
   $record = bibutils_batch_get_endnote_record($filename); // Get Single EndNote XML Record
@@ -213,7 +213,7 @@ function scholar_batch_ingest_ris_document($filename, $collection_pid, $content_
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['total'] = bibutils_batch_get_number_ris_records($filename);
   }
-  $temp_file_dir = '/var/www/drupal/sites/default/files';
+  $temp_file_dir = file_directory_path();
   $mods_filename = file_create_filename('mods.xml', $temp_file_dir);
   $ris_filename = file_create_filename('ris.txt', $temp_file_dir);
   $record = bibutils_batch_get_ris_record($filename); // Get Single EndNote XML Record

@@ -25,6 +25,29 @@ function scholar_admin_settings() {
     '#default_value' => variable_get('scholar_romeo_key', ''),
     '#size' => 20,
    );
+  
+  $form['ldap'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('LDAP settings'),
+  );
+  
+  $form['ldap']['scholar_ldap_host'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Host'),
+    '#default_value' => variable_get('scholar_ldap_host', ''),
+  );
+  
+  $form['ldap']['scholar_ldap_port'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Port'),
+    '#default_value' => variable_get('scholar_ldap_port', '389'),
+  );
+  
+  $form['ldap']['scholar_ldap_basedn'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Base DN'),
+    '#default_value' => variable_get('scholar_ldap_basedn', ''),
+  );
 
   return system_settings_form($form);
 }
