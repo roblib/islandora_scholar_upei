@@ -241,14 +241,16 @@ function browse_by_department() {
   $inclusionlist = explode(",", $inclusionlist);
   $ingnore_roles_less_than = 0;
   
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.topic&rows=5000');
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.topic&rows=500');
   
   $xml = new SimpleXMLElement($result);
   
   $depts = array_unique($xml->xpath('//doc/arr/str'));
   $output = '<ul>';
   foreach ($depts as $dept) {
+    if (array_search($dept, $inclusionlist)) {
     $output .= "<li><a href=islandora/solr/search/mads.topic:$dept>" . $dept . '</a></li>';
+    }
   }
 //  $output = $result;
 //  $result = db_query('SELECT role.rid, role.name FROM {role} where role.rid > %d order by role.name', 0);
