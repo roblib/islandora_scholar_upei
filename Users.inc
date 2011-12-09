@@ -81,6 +81,7 @@ function scholar_get_ldap_users($query) {
     array('data' => t('cn')),
     array('data' => t('Mail')),
   );
+
 // Todo: work out a way of checking and displaying if the users have already been added
 // Method using the ITQL query takes a long time, maybe use solr?
   $table = array(
