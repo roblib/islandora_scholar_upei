@@ -60,6 +60,7 @@ class UsersClass {
     $mads->appendChild($authority);
 
     $name = $dom->createElement("name");
+    $name->setAttribute("type", "personal");
     $authority->appendChild($name);
 
     $given = $dom->createElement("namePart", $this->givenname);
@@ -70,9 +71,12 @@ class UsersClass {
     $family->setAttribute("type", "family");
     $name->appendChild($family);
     
-    $username = $dom->createElement("namePart", $this->cn);
-    $username->setAttribute("type", "username");
-    $name->appendChild($username);
+    $username = $dom->createElement("name");
+    $username->setAttribute("type", "corporate");
+    $authority->appendChild($name);
+    
+    $user = $dom->createElement("namePart", $this->cn);
+    $username->appendChild($username);
 
     if (isset($this->groupmembership)) {
       foreach ($this->groupmembership as $group) {
