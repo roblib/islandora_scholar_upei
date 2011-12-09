@@ -97,16 +97,17 @@ function scholar_search_form(array &$form_state) {
   }
 
   $researchers = array();
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.fullname&rows=10000');
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.family,mads.given&rows=10000');
   $xml = new SimpleXMLElement($result);
-  $array = $xml->xpath('//doc/arr/str');
-  $users = array_unique($array);
+  $array = $xml->xpath('//doc');
+  foreach ($array as $arr) {
+    $family = $arr->xpath('./arr[@name="mads.family"]/str');
+    $given = $arr->xpath('./arr[@name="mads.given"]/str');
+    $researchers[(string) $given[0] . ' ' . (string) $family[0]] = (string) $family[0] . ', ' . (string) $given[0];
+    }
+
+  asort($researchers);
   
-  foreach ($users as $user) {
-    $user_str = (string) $user;
-    $researchers[$user_str] = $user_str;
-  }
-    
   return array(
     'terms' => $terms,
     'controls' => array(
