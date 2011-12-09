@@ -235,6 +235,8 @@ function islandora_bibliography_form_export(array $form, array &$form_state) {
   module_load_include('inc', 'citation_exporter', 'Batch');
   $selections = array_filter($form_state['values']['table']['selections']);
 //  if (isset($selections[0])) {
+  drupal_set_message('Selections: ' . implode(', ', $selections));
+  if ($selections == NULL) {    drupal_set_message('NULL'); }
   $pids = array_keys($selections);
   citation_exporter_batch_export($pids, $form_state['values']['style'], $form_state['values']['format']);
   batch_process();
