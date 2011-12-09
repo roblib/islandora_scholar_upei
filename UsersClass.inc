@@ -76,11 +76,8 @@ class UsersClass {
 
     if (isset($this->groupmembership)) {
       foreach ($this->groupmembership as $group) {
-        drupal_set_message('Groups: ' . $group);
         $dept = strtok($group, ',');
-        drupal_set_message('Dept tok: ' . $dept);
         $dept = ltrim($dept, 'cn=');
-        drupal_set_message('Dept: ' . $dept);
         if ($dept != '' && strlen($dept) > 1) {
           $topic = $dom->createElement("topic", $dept);
           $topic->setAttribute("authority", "department");
