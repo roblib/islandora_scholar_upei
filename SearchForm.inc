@@ -97,7 +97,7 @@ function scholar_search_form(array &$form_state) {
   }
 
   $researchers = array();
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.fullname');
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.fullname&terms.limit=-1');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc/arr/str');
   $users = array_unique($array);
