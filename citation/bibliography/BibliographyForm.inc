@@ -234,14 +234,14 @@ function islandora_bibliography_form_remove(array $form, array &$form_state) {
 function islandora_bibliography_form_export(array $form, array &$form_state) {
   module_load_include('inc', 'citation_exporter', 'Batch');
   $selections = array_filter($form_state['values']['table']['selections']);
-  if (isset($selections[0])) {
+//  if (isset($selections[0])) {
   $pids = array_keys($selections);
   citation_exporter_batch_export($pids, $form_state['values']['style'], $form_state['values']['format']);
   batch_process();
-  }
-  else {
-    drupal_set_message(t('No citations were selected!'), 'warning');
-  }
+//  }
+//  else {
+//    drupal_set_message(t('No citations were selected!'), 'warning');
+//  }
 }
 
 /**
