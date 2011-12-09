@@ -133,6 +133,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
     module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
     module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
     module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
+    module_load_include('inc', 'fedora_repository', '/api/fedora_item');
     drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
     drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
@@ -184,10 +185,20 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $dc_title = implode(' ', array_slice($array, 0, 9));
       }
       if ($mods) {
+        $object = new Fedora_Item($doc->PID);
+        $ds_array = $object->get_datastreams_list_as_array();
+        $pdf_check = array_key_exists('PDF', $ds_array);
+        if ($pdf_check) {
+          $pdf = $object->get_datastream('PDF');
+          $pdf_result = '<div class="scholar_search_related">' . l(t('View PDF'), 'fedora/repository/' . $doc->PID . '/PDF/PDF') . '</div>';
+        }
+        else {
+          $pdf_result = '';
+        }
       $number = '<div class="scholar_search_number">' . l($row, 'fedora/repository/' . $doc->PID) . '</div>';
       $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div>';
       $related = '<div class="scholar_search_related">' . l('Related articles', 'islandora/solr/search/' . $dc_title) . '</div>';
-      $rows[][] = $number . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . $bookmark . $related;
+      $rows[][] = $number . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . $bookmark . $related . $pdf_result;
       $row++;
       }
       else {
