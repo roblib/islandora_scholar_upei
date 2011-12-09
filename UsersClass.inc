@@ -73,10 +73,10 @@ class UsersClass {
     
     $username = $dom->createElement("name");
     $username->setAttribute("type", "corporate");
-    $authority->appendChild($name);
+    $authority->appendChild($username);
     
     $user = $dom->createElement("namePart", $this->cn);
-    $username->appendChild($username);
+    $username->appendChild($user);
 
     if (isset($this->groupmembership)) {
       foreach ($this->groupmembership as $group) {
