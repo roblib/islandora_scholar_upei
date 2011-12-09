@@ -241,7 +241,7 @@ function browse_by_department() {
   $inclusionlist = explode(",", $inclusionlist);
   $ingnore_roles_less_than = 0;
   
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.topic');
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.topic&rows=5000');
   
   $xml = new SimpleXMLElement($result);
   
