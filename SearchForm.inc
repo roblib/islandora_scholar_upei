@@ -100,10 +100,12 @@ function scholar_search_form(array &$form_state) {
   $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.family,mads.given&rows=10000');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
+  var_dump($array);
   foreach ($array as $arr) {
     $family = $arr->xpath('./arr[@name="mads.family"]/str');
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
     $researchers[(string) $given[0] . ' ' . (string) $family[0]] = (string) $family[0] . ', ' . (string) $given[0];
+    var_dump($researchers);
     }
 
   asort($researchers);
