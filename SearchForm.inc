@@ -104,7 +104,6 @@ function scholar_search_form(array &$form_state) {
     $family = $arr->xpath('./arr[@name="mads.family"]/str');
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
     $researchers[(string) $given[0] . ' ' . (string) $family[0]] = (string) $family[0] . ', ' . (string) $given[0];
-    var_dump($researchers);
     }
 
   asort($researchers);
