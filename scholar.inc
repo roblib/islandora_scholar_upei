@@ -160,7 +160,12 @@ class Scholar {
 
     $names = $xml->authority->name->namePart;
     $fullName = $names[0] . ' ' . $names[1];
-    $dept = $xml->authority->topic;
+    
+    foreach ($xml->authority->topic as $dept) {
+      $depts[] = str_replace('_', ' ', (string) $dept);
+    }
+    
+    $dept = implode(', ', array_unique($depts));
     $username = $xml->authority->name[1]->namePart;
     $email = $xml->affiliation->email;
     

@@ -87,7 +87,7 @@ class UsersClass {
       foreach ($this->groupmembership as $group) {
         $dept = strtok($group, ',');
         $dept = ltrim($dept, 'cn=');
-        if ($dept != '' && strlen($dept) > 1 && array_search($dept, $inclusionlist)) {
+        if ($dept != '' && strlen($dept) > 1) {
           $topic = $dom->createElement("topic", $dept);
           $topic->setAttribute("authority", "department");
           $authority->appendChild($topic);
