@@ -139,24 +139,6 @@ function scholar_search_form(array &$form_state) {
         '#button' => 'search',
       )
     ),
-    'author' => array(
-      '#title' => t('Browse by author'),
-      '#type' => 'select',
-      '#options' => $researchers,
-      '#prefix' => '<div>',
-    ),
-    'author_submit' => array(
-      '#type' => 'submit',
-      '#value' => t('Browse'),
-      '#button' => 'browse',
-      '#suffix' => '</div>',
-    ),
-//    'author' => array(
-//      '#value' => '<b>Browse by author</b>' . drupal_get_form('scholar_browse_by_user_form', ''),
-//    ),
-    'department' => array(
-      '#value' => '<b>Browse by department</b>' . browse_by_department(),
-    )
   );
 }
 

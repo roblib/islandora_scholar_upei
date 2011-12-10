@@ -155,7 +155,7 @@ function scholar_menu() {
   $items = array();
 
   $items[MENU_SCHOLAR_HOME] = array(
-    'title' => t('Search Publications'),
+    'title' => t('Advanced Search'),
     'file' => 'pages/Home.inc',
     'page callback' => 'scholar_home',
     'access callback' => 'user_access',
@@ -190,7 +190,7 @@ function scholar_menu() {
   );
   
   $items['add_users/%'] = array(
-    'title' => t('Islandora Scholar Users'),
+    'title' => t('Add Users'),
     'file' => 'Users.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholar_get_ldap_users_form', 1),
@@ -200,12 +200,32 @@ function scholar_menu() {
   );
   
   $items['search_users'] = array(
-    'title' => t('Islandora Search Users'),
+    'title' => t('Import Users'),
     'file' => 'Users.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholar_ldap_users_search_form'),
     'access callback' => 'user_access',
     'access arguments' => array('add users'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['browse_users'] = array(
+    'title' => t('Browse Users'),
+    'file' => 'BrowseByUserForm.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_browse_by_user_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+    $items['browse_dept'] = array(
+    'title' => t('Browse Departments'),
+    'file' => 'BrowseByDeptForm.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_browse_by_dept_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
   );
   

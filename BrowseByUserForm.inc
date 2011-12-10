@@ -14,33 +14,29 @@
  * @return array
  */
 function scholar_browse_by_user_form(array &$form_state) {
-  $users = array();
-//  $result = db_query("SELECT uid, name FROM {users} WHERE uid > 1");
-//  while ($user = db_fetch_object($result)) {
-//    $users[$user->uid] = $user->name;
-//  }
-  
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.given,mads.family');
-  
+  $researchers = array();
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.family,mads.given&rows=10000');
   $xml = new SimpleXMLElement($result);
+  $array = $xml->xpath('//doc');
+  foreach ($array as $arr) {
+    $family = $arr->xpath('./arr[@name="mads.family"]/str');
+    $given = $arr->xpath('./arr[@name="mads.given"]/str');
+    $researchers[(string) $given[0] . ' ' . (string) $family[0]] = (string) $family[0] . ', ' . (string) $given[0];
+    }
+
+  asort($researchers);
   
-  $users = array_unique($xml->xpath('//doc/arr/str'));
- 
-  foreach ($users as $user) {
-    $output .= "<li><a href=islandora/solr/search/mads.family:$user>" . $user . '</a></li>';
-  }
-  
-  $form['user'] = array(
+  $form['author'] = array(
+      '#title' => t('Browse by author'),
       '#type' => 'select',
-      '#options' => $users,
+      '#options' => $researchers,
     );
   
-  $form['submit'] = array(
+    $form['author_submit'] = array(
       '#type' => 'submit',
-      '#value' => 'Browse',
+      '#value' => t('Browse'),
+      '#button' => 'browse',
     );
-  
-    var_dump($form);
   
   return $form;
 }
@@ -52,5 +48,7 @@ function scholar_browse_by_user_form(array &$form_state) {
  * @param array $form_state 
  */
 function scholar_browse_by_user_form_submit(array $form, array &$form_state) {
-  drupal_goto('/islandora/solr/search/test');
+  $user = $form_state['values']['author'];
+  drupal_set_message('User: ' . $user);
+  drupal_goto('islandora/solr/search/mods.author:' . $user);
 }
