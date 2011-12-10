@@ -130,7 +130,7 @@ function scholar_install() {
     $object->form_name = 'Islandora Scholar MADS Dept Form';
     $object->dsid = 'MADS';
     $object->title_field = "['titleInfo']['title']";
-    $object->transform = 'mads_to_dc.xsl';
+    $object->transform = 'dept_mads_to_dc.xsl';
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
 }

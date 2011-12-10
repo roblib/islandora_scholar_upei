@@ -205,6 +205,30 @@ class Scholar {
       '#value' => '<img src="/sites/default/files/gnome_stock_person.png"/>',
     );
     
+    $collectionHelper = new CollectionClass();
+    $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
+    $xml = new SimpleXMLElement($xmlstr);
+    
+    $names = $xml->authority->name->namePart;
+    $date = $xml->authority->name->namePart[1];
+    $faculty = $xml->related->name->namePart;
+    $note = $xml->note;
+    $url = $xml->url;
+    
+    $header = array();
+    
+    $rows = array(
+            array('Name', $names), 
+            array('Date', $date),
+            array('Parent school/faculty', $faculty),
+            array('Historical note', $note),
+            array('URL', $url),
+      );
+    
+    $tabset['first_tab']['tabs']['table'] = array(
+      '#value' => theme('table', $header, $rows),
+    );
+    
     return $tabset;
   }
 
