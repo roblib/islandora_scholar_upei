@@ -154,8 +154,53 @@ class Scholar {
       '#value' => '<img src="/sites/default/files/gnome_stock_person.png"/>',
     );
     
+    $collectionHelper = new CollectionClass();
+    $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
+    $xml = new SimpleXMLElement($xmlstr);
+
+    $names = $xml->authority->name->namePart;
+    $fullName = $names[0] . ' ' . $names[1];
+    $dept = $xml->authority->topic;
+    $username = $xml->authority->name[1]->namePart;
+    $email = $xml->affiliation->email;
+    
+    $header = array();
+    
+    $rows = array(
+            array('Name', $fullName), 
+            array('User name', $username),
+            array('Email', $email),
+            array('Interests', $dept),
+      );
+    
+    $tabset['first_tab']['tabs']['table'] = array(
+      '#value' => theme('table', $header, $rows),
+    );
+    
     return $tabset;
     
+  }
+  
+  function show_department() {
+    global $base_url;
+    global $base_path;
+    global $user;
+    module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+    
+    $tabset['first_tab'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Description'),
+    );
+
+    $tabset['first_tab']['tabs'] = array(
+      '#type' => 'tabset',
+    );
+    
+    $tabset['first_tab']['tabs']['tn'] = array(
+      '#value' => '<img src="/sites/default/files/gnome_stock_person.png"/>',
+    );
+    
+    return $tabset;
   }
 
 }

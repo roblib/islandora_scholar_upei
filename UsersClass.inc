@@ -78,11 +78,16 @@ class UsersClass {
     $user = $dom->createElement("namePart", $this->cn);
     $username->appendChild($user);
 
+    $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
+  $inclusionlist = file_get_contents($filename);
+  $inclusionlist = fix_encoding($inclusionlist);
+  $inclusionlist = explode(",", $inclusionlist);
+    
     if (isset($this->groupmembership)) {
       foreach ($this->groupmembership as $group) {
         $dept = strtok($group, ',');
         $dept = ltrim($dept, 'cn=');
-        if ($dept != '' && strlen($dept) > 1) {
+        if ($dept != '' && strlen($dept) > 1 && array_search($dept, $inclusionlist)) {
           $topic = $dom->createElement("topic", $dept);
           $topic->setAttribute("authority", "department");
           $authority->appendChild($topic);
