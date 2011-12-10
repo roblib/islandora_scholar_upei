@@ -16,20 +16,30 @@ root {
 }
 
 .scholar_search_number {
-   
+
 }
 
 .scholar_search_citation {
-   
+
 }
 
 .scholar_search_bookmark {
     float: left;
-    margin-right: 20px;
+    margin-right: 8px;
+}
+
+.scholar_search_bookmark_text {
+    float: left;
+    margin-top: 5px;
+    margin-right: 10px;
 }
 
 .scholar_search_related {
     float: left;
-    margin-top: 8px;
     margin-right: 20px;
+}
+
+.scholar_pdf {
+    float: left;
+    margin-right: 15px;
 }

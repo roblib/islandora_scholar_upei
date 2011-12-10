@@ -134,6 +134,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
     module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
     module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
     module_load_include('inc', 'fedora_repository', '/api/fedora_item');
+    module_load_include('inc', 'scholar', 'Coins');
     drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
     drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
@@ -190,15 +191,19 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $pdf_check = array_key_exists('PDF', $ds_array);
         if ($pdf_check) {
           $pdf = $object->get_datastream('PDF');
-          $pdf_result = '<div class="scholar_search_related">' . l(t('View PDF'), 'fedora/repository/' . $doc->PID . '/PDF/PDF') . '</div>';
+          $download_img = $base_url . '/sites/default/files/download.png';
+          $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
         }
         else {
-          $pdf_result = '';
+          $data = new Coins($doc->PID);
+          $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
+          $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
         }
       $number = '<div class="scholar_search_number">' . l($row, 'fedora/repository/' . $doc->PID) . '</div>';
-      $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div>';
-      $related = '<div class="scholar_search_related">' . l('Related articles', 'islandora/solr/search/' . $dc_title) . '</div>';
-      $rows[][] = $number . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . $bookmark . $related . $pdf_result;
+      $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . 'Add Reference to List' . '</div>';
+      $related_img = $base_url . '/sites/default/files/reload.png';
+      $related = '<div class="scholar_search_related">' . l('<img src="' . $related_img . '"/> Related articles', 'islandora/solr/search', array('html' => TRUE)) . '</div>';
+      $rows[][] = $number . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . $pdf_result . $bookmark . $related;
       $row++;
       }
       else {

@@ -166,7 +166,7 @@ class Scholar {
     }
     
     $dept = implode(', ', array_unique($depts));
-    $username = $xml->authority->name[1]->namePart;
+    $username = $xml->authority['ID'];
     $email = $xml->affiliation->email;
     
     $header = array();

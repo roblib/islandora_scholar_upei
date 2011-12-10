@@ -6,7 +6,6 @@
  * user info from the LDAP server and turning it into 
  * a useful form
  */
-
 class UsersClass {
 
   public $givenname = NULL;
@@ -57,6 +56,7 @@ class UsersClass {
     $dom->appendChild($mads);
 
     $authority = $dom->createElement("authority");
+    $authority->setAttribute("ID", $this->cn);
     $mads->appendChild($authority);
 
     $name = $dom->createElement("name");
@@ -70,19 +70,12 @@ class UsersClass {
     $family = $dom->createElement("namePart", $this->familyname);
     $family->setAttribute("type", "family");
     $name->appendChild($family);
-    
-    $username = $dom->createElement("name");
-    $username->setAttribute("type", "corporate");
-    $authority->appendChild($username);
-    
-    $user = $dom->createElement("namePart", $this->cn);
-    $username->appendChild($user);
 
     $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
-  $inclusionlist = file_get_contents($filename);
-  $inclusionlist = fix_encoding($inclusionlist);
-  $inclusionlist = explode(",", $inclusionlist);
-    
+    $inclusionlist = file_get_contents($filename);
+    $inclusionlist = fix_encoding($inclusionlist);
+    $inclusionlist = explode(",", $inclusionlist);
+
     if (isset($this->groupmembership)) {
       foreach ($this->groupmembership as $group) {
         $dept = strtok($group, ',');
