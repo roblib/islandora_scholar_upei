@@ -15,12 +15,12 @@ root {
     display: block;
 }
 
-.scholar_search_number {
-
+.scholar_search_title {
+    font-size:large;
 }
 
 .scholar_search_citation {
-
+    margin-bottom: 10px;
 }
 
 .scholar_search_bookmark {

@@ -165,7 +165,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
     foreach ($results->response->docs as $doc) {
       $rows = array();
 
-      $csl = 'APA';
+      $csl = 'default';
 
       $style = citeproc_style($csl);
       $bibliography = new CiteProcJSBibliography($style);
@@ -180,7 +180,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
       $dc_title = str_replace(array('/', ':'), array(' ', ' '), $dc_title);
       if (is_array($dc_title)) {
         $dc_title = $dc_title[0];
-      }      
+      }
       if (strlen($dc_title) > 60) {
         $array = explode(' ', $dc_title);
         $dc_title = implode(' ', array_slice($array, 0, 9));
@@ -189,45 +189,53 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $object = new Fedora_Item($doc->PID);
         $ds_array = $object->get_datastreams_list_as_array();
         $pdf_check = array_key_exists('PDF', $ds_array);
+        $data = new Coins($doc->PID);
         if ($pdf_check) {
           $pdf = $object->get_datastream('PDF');
           $download_img = $base_url . '/sites/default/files/download.png';
           $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
         }
         else {
-          $data = new Coins($doc->PID);
           $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
           $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
         }
-      $number = '<div class="scholar_search_number">' . l($row, 'fedora/repository/' . $doc->PID) . '</div>';
-      $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . 'Add Reference to List' . '</div>';
-      $related_img = $base_url . '/sites/default/files/reload.png';
-      $related = '<div class="scholar_search_related">' . l('<img src="' . $related_img . '"/> Related articles', 'islandora/solr/search', array('html' => TRUE)) . '</div>';
-      $rows[][] = $number . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . $pdf_result . $bookmark . $related;
-      $row++;
+        if (strlen($data->abstract) > 300) {
+          $abstract = substr($data->abstract, 0, 600);
+          $abstract .= '...';
+        }
+        else {
+          $abstract = $data->abstract;
+        }
+        $citation = $bibliography->render();
+        $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID) . '</div>';
+        $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . 'Add Reference to List' . '</div>';
+        $related_img = $base_url . '/sites/default/files/reload.png';
+        $related = '<div class="scholar_search_related">' . l('<img src="' . $related_img . '"/> Related articles', 'islandora/solr/search', array('html' => TRUE)) . '</div>';
+        $rows[][] = $object_title . '<div class="scholar_search_citation">' . $citation . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $related;
+        $row++;
       }
       else {
         foreach ($doc as $field => $value) {
 
-        if ($limitResults && empty($this->resultFieldArray[$field])) {
-          continue;
-        }
+          if ($limitResults && empty($this->resultFieldArray[$field])) {
+            continue;
+          }
 
-        $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
-        $rows[$row][] = array(
-          'data' => $translated_field_name,
-          'header' => TRUE,
-        );
+          $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
+          $rows[$row][] = array(
+            'data' => $translated_field_name,
+            'header' => TRUE,
+          );
 
-        if ($field == 'PID') {
-          $l = l($value, 'fedora/repository/' . htmlspecialchars($value, ENT_QUOTES, 'utf-8')) . '</BR>';
-          $rows[$row][] = $l;
+          if ($field == 'PID') {
+            $l = l($value, 'fedora/repository/' . htmlspecialchars($value, ENT_QUOTES, 'utf-8')) . '</BR>';
+            $rows[$row][] = $l;
+          }
+          else {
+            $rows[$row][] = ucfirst(ltrim($value));
+          }
+          $row++;
         }
-        else {
-          $rows[$row][] = ucfirst(ltrim($value));
-        }
-        $row++;
-      }
       }
       $items[] = theme_table(NULL, $rows, array('class' => 'islandora_solr_search_results_object'));
     }
