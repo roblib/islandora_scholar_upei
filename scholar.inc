@@ -134,6 +134,29 @@ class Scholar {
 
     return $tabset;
   }
+  
+  function show_researcher() {
+    global $base_url;
+    global $base_path;
+    global $user;
+    module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+    
+    $tabset['first_tab'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Description'),
+    );
+
+    $tabset['first_tab']['tabs'] = array(
+      '#type' => 'tabset',
+    );
+    
+    $tabset['first_tab']['tabs']['tn'] = array(
+      '#value' => '<img src="/sites/default/files/gnome_stock_person.png"/>',
+    );
+    
+    return $tabset;
+    
+  }
 
 }
 

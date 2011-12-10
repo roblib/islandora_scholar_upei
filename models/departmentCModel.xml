@@ -4,7 +4,7 @@
     <datastream dsid="TN"></datastream>
     <datastream dsid="MADS">
             <display_method class="Scholar" 
-      file="scholar.inc" method="show_researcher" 
+      file="scholar.inc" method="show_department" 
       module="scholar"/>
         </datastream>
   </datastreams>

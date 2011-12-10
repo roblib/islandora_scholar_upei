@@ -373,6 +373,13 @@ function scholar_required_fedora_objects() {
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
+          'pid' => 'ir:departmentCModel',
+          'label' => 'Islandora Scholar Department Content Model',
+          'dsid' => 'ISLANDORACM',
+          'datastream_file' => "$module_path/models/departmentCModel.xml",
+          'cmodel' => 'fedora-system:ContentModel-3.0',
+        ),
+        array(
           'pid' => 'ir:citationCollection',
           'label' => 'Citation Collection',
           'cmodel' => 'islandora:collectionCModel',
