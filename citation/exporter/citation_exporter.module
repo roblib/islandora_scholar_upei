@@ -42,7 +42,9 @@ function citation_exporter_export() {
 function citation_exporter_include_download_redirect() {
   module_load_include('inc', 'citation_exporter', 'CitationExporter');
   if (CitationExporter::ReadyToExport()) {
-    $path = MENU_CITATION_EXPORTER_EXPORT;
-    drupal_set_html_head("<meta http-equiv='refresh' content='0;url=/$path'/>");
+    $path = url(MENU_CITATION_EXPORTER_EXPORT, array(
+      'absolute' => TRUE
+        ));
+    drupal_set_html_head("<meta http-equiv='refresh' content='0;url=$path'/>");
   }
 }
