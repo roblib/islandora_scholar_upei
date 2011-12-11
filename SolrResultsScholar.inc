@@ -178,7 +178,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
       $dc_attribute = 'dc.title';
       $dc_title = $doc->$dc_attribute;
       $dc_title = preg_replace('/\s+/', ' ', $dc_title);
-      $dc_title = str_replace(array('/', ':', ' and ', ' or ', ' of ', ' in ', ' on ', ' to ', ' for ', ' with ', ' the ', 'The '), ' ', $dc_title);
+      $dc_title = str_replace(array('/', ':', '-', ' and ', ' or ', ' of ', ' in ', ' on ', ' to ', ' for ', ' with ', ' the ', 'The ', ' but ', ' not '), ' ', $dc_title);
       if (is_array($dc_title)) {
         $dc_title = $dc_title[0];
       }
@@ -212,7 +212,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID) . '</div>';
         $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
         $related_img = $base_url . '/sites/default/files/reload.png';
-        $related = '<div class="scholar_search_related">' . l('<img src="' . $related_img . '"/> Related articles', 'islandora/solr/search/' . $dc_title, array('html' => TRUE)) . '</div>';
+        $related = '<div class="scholar_search_related">' . l('<img src="' . $related_img . '"/> Related articles', 'islandora/solr/search/' . str_replace(' ', ' OR ', $dc_title), array('html' => TRUE)) . '</div>';
         $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $related;
         $row++;
       }
