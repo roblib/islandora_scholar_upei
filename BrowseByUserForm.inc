@@ -67,7 +67,9 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
   $inclusionlist = file_get_contents($filename);
   $inclusionlist = fix_encoding($inclusionlist);
   $inclusionlist = explode(",", $inclusionlist);
-  
+  $inclusionlist = array_filter($inclusionlist);
+  asort($inclusionlist);
+
   $list = '';
   
   foreach ($inclusionlist as $entry) {
