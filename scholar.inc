@@ -161,12 +161,18 @@ class Scholar {
     $names = $xml->authority->name->namePart;
     $fullName = $names[0] . ' ' . $names[1];
     
-    foreach ($xml->authority->topic as $dept) {
+    foreach ($xml->related->topic as $dept) {
       $depts[] = str_replace('_', ' ', (string) $dept);
     }
     
+    if (is_array($depts)) {
     $dept = implode(', ', array_unique($depts));
-    $username = $xml->authority['ID'];
+    }
+    else {
+      $dept = $depts;
+    }
+    
+    $username = $xml->identifier;
     $email = $xml->affiliation->email;
     
     $header = array();
@@ -175,7 +181,7 @@ class Scholar {
             array('Name', $fullName), 
             array('User name', $username),
             array('Email', $email),
-            array('Interests', $dept),
+            array('Department(s)', $dept),
       );
     
     $tabset['first_tab']['tabs']['table'] = array(

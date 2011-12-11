@@ -54,9 +54,12 @@ class UsersClass {
 
     $mads = $dom->createElementNS("http://www.loc.gov/mads/v2", 'mads');
     $dom->appendChild($mads);
+    $mads->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+    $mads->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    $mads->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:mads', 'http://www.loc.gov/mads/v2');
+    $mads->setAttribute('xsi:schemaLocation', 'http://www.loc.gov/mads/v2 http://www.loc.gov/standards/mads/mads.xsd');
 
     $authority = $dom->createElement("authority");
-    $authority->setAttribute("ID", $this->cn);
     $mads->appendChild($authority);
 
     $name = $dom->createElement("name");
@@ -76,6 +79,10 @@ class UsersClass {
     $inclusionlist = fix_encoding($inclusionlist);
     $inclusionlist = explode(",", $inclusionlist);
 
+    $related = $dom->createElement("related");
+    $related->setAttribute("type", "other");
+    $mads->appendChild($related);
+    
     if (isset($this->groupmembership)) {
       foreach ($this->groupmembership as $group) {
         $dept = strtok($group, ',');
@@ -83,11 +90,15 @@ class UsersClass {
         if ($dept != '' && strlen($dept) > 1) {
           $topic = $dom->createElement("topic", $dept);
           $topic->setAttribute("authority", "department");
-          $authority->appendChild($topic);
+          $related->appendChild($topic);
         }
       }
     }
 
+    $u1 = $dom->createElement("identifier", $this->cn);
+    $u1->setAttribute("type", "u1");
+    $mads->appendChild($u1);
+    
     $affiliation = $dom->createElement("affiliation");
     $mads->appendChild($affiliation);
 
