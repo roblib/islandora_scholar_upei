@@ -178,7 +178,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
       $dc_attribute = 'dc.title';
       $dc_title = $doc->$dc_attribute;
       $dc_title = preg_replace('/\s+/', ' ', $dc_title);
-      $dc_title = str_replace(array('/', ':'), array(' ', ' '), $dc_title);
+      $dc_title = str_replace(array('/', ':', ' and ', ' or ', ' of ', ' in ', ' on ', ' to ', ' for ', ' with ', ' the ', 'The '), ' ', $dc_title);
       if (is_array($dc_title)) {
         $dc_title = $dc_title[0];
       }
@@ -186,7 +186,6 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $array = explode(' ', $dc_title);
         $dc_title = implode(' ', array_slice($array, 0, 9));
       }
-      var_dump($dc_title);
       if ($mods) {
         $object = new Fedora_Item($doc->PID);
         $ds_array = $object->get_datastreams_list_as_array();
