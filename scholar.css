@@ -43,3 +43,7 @@ root {
     float: left;
     margin-right: 15px;
 }
+
+.scholar_user_letters {
+    font-size: large;
+}

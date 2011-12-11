@@ -229,7 +229,7 @@ function scholar_batch_ingest_ris_document($filename, $collection_pid, $content_
 //  unlink($ris_filename);
 //  unlink($mods_filename);
   $context['sandbox']['progress']++;
-  if ($context['sandbox']['progress'] != $context['sandbox']['total']) {
+  if ($context['sandbox']['progress'] != $context['sandbox']['total'] && $context['sandbox']['total'] != 0) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];
   }
 }

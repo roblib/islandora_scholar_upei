@@ -209,14 +209,24 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   
-  $items['browse_users'] = array(
+  $items['browse_users/%'] = array(
     'title' => t('Browse Users'),
     'file' => 'BrowseByUserForm.inc',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholar_browse_by_user_form'),
+    'page arguments' => array('scholar_browse_by_user_form', 1),
     'access callback' => 'user_access',
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['browse_users_dept/%'] = array(
+    'title' => t('Browse Users by Dept'),
+    'file' => 'BrowseByUserForm.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_browse_by_user_dept_form', 1),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
   );
   
     $items['browse_dept'] = array(
