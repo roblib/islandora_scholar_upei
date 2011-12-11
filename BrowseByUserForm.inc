@@ -34,7 +34,7 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   $form['list'] = array(
     '#value' => $list,
   );
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=mads.family:' . lcfirst($initial) . '*&fl=mads.family,mads.given&rows=10000&sort=mads.family_sort+asc');
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=mads.family:' . strtolower($initial) . '*&fl=mads.family,mads.given&rows=10000&sort=mads.family_sort+asc');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $output = '<ul>';
