@@ -200,20 +200,20 @@ class ScholarSolrResults extends IslandoraSolrResults {
           $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
           $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
         }
-        if (strlen($data->abstract) > 300) {
-          $abstract = substr($data->abstract, 0, 600);
+        $abstract_snippet = 600;
+        if (strlen($data->abstract) > $abstract_snippet) {
+          $abstract = substr($data->abstract, 0, $abstract_snippet);
           $abstract .= '...';
         }
         else {
           $abstract = $data->abstract;
         }
         $bibliography_text = Bibliography::Exists($doc->PID) ? 'Remove Reference from List' : 'Add Reference to List';
-        $citation = $bibliography->render();
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID) . '</div>';
         $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
         $related_img = $base_url . '/sites/default/files/reload.png';
         $related = '<div class="scholar_search_related">' . l('<img src="' . $related_img . '"/> Related articles', 'islandora/solr/search', array('html' => TRUE)) . '</div>';
-        $rows[][] = $object_title . '<div class="scholar_search_citation">' . $citation . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $related;
+        $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $related;
         $row++;
       }
       else {
