@@ -1,0 +1,47 @@
+<content_model xmlns="http://www.islandora.ca"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Thesis Content Model"
+          xsi:schemaLocation="http://www.islandora.ca http://localhost/islandoracm.xsd">
+    <mimetypes>
+        <type>application/msaccess</type>
+        <type>application/msexcel</type>
+        <type>application/mspowerpoint</type>
+        <type>application/msword</type>
+        <type>application/octet-stream</type>
+        <type>application/pdf</type>
+        <type>application/rtf</type>
+        <type>application/vnd.ms-excel.sheet.macroEnabled.12</type>
+        <type>application/vnd.ms-excel</type>
+        <type>application/vnd.ms-powerpoint.presentation.macroEnabled.12</type>
+        <type>application/vnd.ms-powerpoint.slideshow.macroEnabled.12</type>
+        <type>application/vnd.ms-powerpoint</type>
+        <type>application/vnd.ms-project</type>
+        <type>application/vnd.ms-word.document.macroEnabled.12</type>
+        <type>application/vnd.openxmlformats-officedocument.wordprocessingml.document</type>
+        <type>application/vnd.openxmlformats-officedocument.presentationml.presentation</type>
+        <type>application/vnd.openxmlformats-officedocument.presentationml.slideshow</type>
+        <type>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</type>
+        <type>image/jpg</type>
+        <type>text/xml</type>
+    </mimetypes>
+    <ingest_rules/>
+    <datastreams>
+        <datastream dsid="TN"/>
+        <datastream dsid="MODS">
+            <display_method class="Scholar" file="scholar.inc" method="showThesis"
+                module="scholar"/>
+        </datastream>
+            <!-- OBJ ds will hold the original binary uploaded by the user -->
+        <datastream dsid="OBJ"/>
+            <!-- PDF ds is the normalized (PDF/a) version of the file ... a process will need to be created that will take Office like document formats and convert them to PDF/a -->
+        <datastream dsid="PDF"/>
+            <!-- SIGNATURE is the signature page from the thesis. -->
+        <datastream dsid="SIGNATURE"/>
+            <!-- POLICY is an XACML datastream that will: 1) for the SIGNATURE datastream, only allow only users with the role of administrator the permission to view, 2) at the object level provide the ability to enable an embargo (viewing allowed after a specific date)  -->
+        <datastream dsid="POLICY"/>
+        <datastream dsid="DC"/>
+    </datastreams>
+    <ingest_form dsid="" hide_file_chooser="" page=""/>
+    <forms>
+        <form class="" dsid="" file="" module="" name=""/>
+    </forms>
+</content_model>

@@ -386,6 +386,13 @@ function scholar_required_fedora_objects() {
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
+          'pid' => 'ir:thesisCModel',
+          'label' => 'Islandora Scholar Citation Content Model',
+          'dsid' => 'ISLANDORACM',
+          'datastream_file' => "$module_path/models/thesisCModel.xml",
+          'cmodel' => 'fedora-system:ContentModel-3.0',
+        ),
+        array(
           'pid' => 'ir:researcherCModel',
           'label' => 'Islandora Scholar Authority Content Model',
           'dsid' => 'ISLANDORACM',
@@ -413,6 +420,23 @@ function scholar_required_fedora_objects() {
             array(
               'dsid' => 'COLLECTION_POLICY',
               'datastream_file' => "$module_path/xml/CITATION-COLLECTION POLICY.xml",
+            ),
+          ),
+        ),
+        array(
+          'pid' => 'ir:thesisCollection',
+          'label' => 'Thesis Collection',
+          'cmodel' => 'islandora:collectionCModel',
+          'parent' => 'ir:top',
+          'datastreams' => array(
+            array(
+              'dsid' => 'TN',
+              'datastream_file' => "$module_path/images/Crystal_Clear_filesystem_folder_grey.png",
+              'mimetype' => 'image/png',
+            ),
+            array(
+              'dsid' => 'COLLECTION_POLICY',
+              'datastream_file' => "$module_path/xml/THESIS-COLLECTION POLICY.xml",
             ),
           ),
         ),

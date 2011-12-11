@@ -68,10 +68,10 @@ function scholar_install() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
 
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Thesis Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:thesisCModel', 'Islandora Scholar Thesis Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:citationCModel';
+    $object->content_model = 'ir:thesisCModel';
     $object->form_name = 'Islandora Scholar Thesis Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
