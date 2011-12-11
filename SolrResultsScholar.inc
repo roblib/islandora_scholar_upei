@@ -233,6 +233,9 @@ class ScholarSolrResults extends IslandoraSolrResults {
             $l = l($value, 'fedora/repository/' . htmlspecialchars($value, ENT_QUOTES, 'utf-8')) . '</BR>';
             $rows[$row][] = $l;
           }
+          elseif ($field == 'Title' && is_array($value)) {
+            $rows[$row][] = ucfirst(ltrim($value[0]));
+          }
           else {
             $rows[$row][] = ucfirst(ltrim($value));
           }
