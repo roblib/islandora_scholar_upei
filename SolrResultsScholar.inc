@@ -186,6 +186,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $array = explode(' ', $dc_title);
         $dc_title = implode(' ', array_slice($array, 0, 9));
       }
+      var_dump($dc_title);
       if ($mods) {
         $object = new Fedora_Item($doc->PID);
         $ds_array = $object->get_datastreams_list_as_array();
@@ -212,7 +213,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID) . '</div>';
         $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
         $related_img = $base_url . '/sites/default/files/reload.png';
-        $related = '<div class="scholar_search_related">' . l('<img src="' . $related_img . '"/> Related articles', 'islandora/solr/search/' . $data->title, array('html' => TRUE)) . '</div>';
+        $related = '<div class="scholar_search_related">' . l('<img src="' . $related_img . '"/> Related articles', 'islandora/solr/search/' . $dc_title, array('html' => TRUE)) . '</div>';
         $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $related;
         $row++;
       }
