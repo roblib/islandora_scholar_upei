@@ -53,7 +53,7 @@ class Scholar {
     $data = new Coins($this->pid);
 //    Get MODS datastream and pull the ISSN from there.
 
-    $csl = 'APA';
+    $csl = 'default';
 
     $style = citeproc_style($csl);
     $bibliography = new CiteProcJSBibliography($style);

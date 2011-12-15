@@ -352,7 +352,6 @@
 		  </group>
 		</group>
 		<text macro="locators"/>
-		<group delimiter=", " prefix=". ">
 		  <text macro="event"/>
 		  <text macro="publisher"/>
 		</group>
