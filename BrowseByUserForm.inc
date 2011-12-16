@@ -63,12 +63,11 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
 function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Library') {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
 
-  $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
-  $inclusionlist = file_get_contents($filename);
-  $inclusionlist = fix_encoding($inclusionlist);
-  $inclusionlist = explode(",", $inclusionlist);
-  $inclusionlist = array_filter($inclusionlist);
-  asort($inclusionlist);
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier&rows=500&sort=mads.identifier_sort+asc');
+    
+  $xml = new SimpleXMLElement($result);
+  
+  $inclusionlist = array_unique($xml->xpath('//doc/arr/str'));
 
   $list = '';
   
@@ -84,7 +83,7 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
     '#value' => $list,
   );
   $dept = str_replace(' ', '%20', $dept);
-  $query = 'http://localhost:8080/solr/select/?q=mads.topic:' . $dept . '&fl=mads.family,mads.given&rows=10000&sort=mads.family_sort+asc';
+  $query = 'http://localhost:8080/solr/select/?q=mads.topic:' . $dept . '&fl=mads.family,mads.given,mads.fullname&rows=10000&sort=mads.family_sort+asc';
   $result = file_get_contents($query);
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
@@ -94,8 +93,9 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
   foreach ($array as $arr) {
     $family = $arr->xpath('./arr[@name="mads.family"]/str');
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
+    $fullname = $arr->xpath('./arr[@name="mads.fullname"]/str');
     $users[] = $family[0] . ', ' . $given[0];
-    $link[] = '<li><a href=/islandora/solr/search/"' . $given[0] . '%20' . $family[0] . '">';
+    $link[] = '<li><a href=/islandora/solr/search/"' . $fullname[0] . '">';
   }
   asort($users);
   foreach ($users as $key => $user) {

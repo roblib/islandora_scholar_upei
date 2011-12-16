@@ -8,18 +8,12 @@
 function scholar_browse_by_dept_form() {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
   module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
-  $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
-  $inclusionlist = file_get_contents($filename);
-  $inclusionlist = fix_encoding($inclusionlist);
-  $inclusionlist = explode(",", $inclusionlist);
-  $ignore_roles_less_than = 0;
   
   $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier&rows=500&sort=mads.identifier_sort+asc');
     
   $xml = new SimpleXMLElement($result);
   
   $depts = array_unique($xml->xpath('//doc/arr/str'));
-//  var_dump($depts);
   $output = '<ul>';
   foreach ($depts as $dept) {
     $dept_link = str_replace(' ', '%20', $dept);

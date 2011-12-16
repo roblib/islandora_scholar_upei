@@ -276,6 +276,15 @@ function scholar_menu() {
     'type' => MENU_CALLBACK,
   );
   
+  $items['refworks_migrate'] = array(
+    'title' => 'Refworks migrate',
+    'description' => 'Migrate content from refworks',
+    'file' => 'scholar_migrate.inc',
+    'page callback' => 'scholar_migrate_refworks_form',
+    'access arguments' => array('migrate content'), // Use something fedora specific.
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
   return $items;
 } // end function ir_menu
 
@@ -310,6 +319,7 @@ function scholar_perm() {
     'view scholarly research',
     'add scholarly research',
     'add users',
+    'migrate content',
     );
 }
 
