@@ -20,6 +20,7 @@ function scholar_migrate_refworks_form() {
     $results = $query->results->result;
     foreach ($results as $result) {
       $pid = explode('/', $result);
+      var_dump($pid);
       $list .= l($pid[0], 'fedora/repository/' . $pid[0]) . '</br>';
     }
     
