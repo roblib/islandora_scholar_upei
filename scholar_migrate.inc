@@ -11,17 +11,17 @@ function scholar_migrate_refworks_form() {
     $query_string = htmlentities(urlencode($query_string));
     $content = '';
     $url = variable_get('fedora_repository_url', 'http://localhost:8080/fedora/risearch');
-    $url .= "?type=tuples&flush=TRUE&format=Sparql&limit=10&offset=0&lang=itql&stream=on&query=" . $query_string;
+    $url .= "?type=tuples&flush=TRUE&format=Sparql&limit=100&offset=0&lang=itql&stream=on&query=" . $query_string;
     $content .= do_curl($url);
     $query = new SimpleXMLElement($content);
   
     $list = '';
-//    var_dump($query->results->result);
+//    var_dump($query->results->result->object['uri']);
     $results = $query->results->result;
     foreach ($results as $result) {
-      $pid = explode('/', $result);
-      var_dump($pid);
-      $list .= l($pid[0], 'fedora/repository/' . $pid[0]) . '</br>';
+      $pid = explode('/', $result->object['uri']);
+//      var_dump($pid);
+      $list .= l($pid[1], 'fedora/repository/' . $pid[1]) . '</br>';
     }
     
     $form['list'] = array(
