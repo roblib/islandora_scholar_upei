@@ -15,14 +15,16 @@ function scholar_migrate_refworks_form() {
     $content .= do_curl($url);
     $query = new SimpleXMLElement($content);
   
+    $list = '';
 //    var_dump($query->results->result);
     $results = $query->results->result;
     foreach ($results as $result) {
-      var_dump($result);
+      $pid = explode('/', $result);
+      $list .= l($pid[0], 'fedora/repository/' . $pid[0]) . '</br>';
     }
     
     $form['list'] = array(
-      '#value' => t('Test'),
+      '#value' => $list,
     );
     
   return $form;
