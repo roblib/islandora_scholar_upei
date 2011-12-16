@@ -280,7 +280,9 @@ function scholar_menu() {
     'title' => 'Refworks migrate',
     'description' => 'Migrate content from refworks',
     'file' => 'scholar_migrate.inc',
-    'page callback' => 'scholar_migrate_refworks_form',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_migrate_refworks_form'),
+    'access callback' => 'user_access',
     'access arguments' => array('migrate content'), // Use something fedora specific.
     'type' => MENU_NORMAL_ITEM,
   );

@@ -4,10 +4,8 @@
  * @file
  * 
  */
-function scholar_migrate_refworks_form() {
+function scholar_migrate_refworks_form($form) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
-
-  $form = array();
 
   $query_string = 'select $object from <#ri> where ($object <fedora-model:hasModel> <info:fedora/islandora:refworksCModel> and $object <fedora-model:state> <info:fedora/fedora-system:def/model#Active>)';
     $query_string = htmlentities(urlencode($query_string));
@@ -19,5 +17,9 @@ function scholar_migrate_refworks_form() {
   
     var_dump($result);
 
+    $form['list'] = array(
+      '#value' => t('Test'),
+    );
+    
   return $form;
 }
