@@ -15,7 +15,7 @@ function scholar_migrate_refworks_form() {
     $content .= do_curl($url);
     $result = new SimpleXMLElement($content);
   
-    var_dump($result);
+    var_dump($result->results->result);
 
     $form['list'] = array(
       '#value' => t('Test'),
