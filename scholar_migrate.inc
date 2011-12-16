@@ -13,10 +13,14 @@ function scholar_migrate_refworks_form() {
     $url = variable_get('fedora_repository_url', 'http://localhost:8080/fedora/risearch');
     $url .= "?type=tuples&flush=TRUE&format=Sparql&limit=10&offset=0&lang=itql&stream=on&query=" . $query_string;
     $content .= do_curl($url);
-    $result = new SimpleXMLElement($content);
+    $query = new SimpleXMLElement($content);
   
-    var_dump($result->results->result);
-
+//    var_dump($query->results->result);
+    $results = $query->results->result;
+    foreach ($results as $result) {
+      var_dump($result);
+    }
+    
     $form['list'] = array(
       '#value' => t('Test'),
     );
