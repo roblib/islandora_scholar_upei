@@ -666,3 +666,21 @@ function scholar_islandora_solr_primary_display() {
     )
   );
 }
+
+function scholar_block($op = 'list', $delta = 0, $edit = array()) {
+  module_load_include('inc', 'scholar', 'scholar_recent');
+  switch ($op) {
+
+    case 'list':
+      $blocks[0]['info'] = t('Recently added items');
+      $blocks[0]['cache'] = BLOCK_NO_CACHE;
+      return $blocks;
+
+    case 'view':
+      $block['subject'] = t('Recently added items');
+
+      $block['content'] = drupal_get_form('scholar_recent_items');
+
+      return $block;
+  }
+}
