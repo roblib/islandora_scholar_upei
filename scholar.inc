@@ -80,7 +80,8 @@ class Scholar {
     $xsl = $proc->importStylesheet($xsl);
     $newdom = $proc->transformToDoc($input);
     $romeo = $newdom->saveXML();
-    $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//137.149.200.19/refworks_entry/' . urlencode($this->pid) . '" target="RefWorksMain">Export to RefWorks</A>';
+    $server_ip = $_SERVER['SERVER_ADDR'];
+    $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($this->pid) . '" target="RefWorksMain">Export to RefWorks</A>';
 
     $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
 
