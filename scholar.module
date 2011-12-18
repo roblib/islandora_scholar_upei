@@ -294,7 +294,7 @@ function scholar_menu() {
     'page callback' => 'scholar_refworks_add_form',
     'page arguments' => array(1),
     'access callback' => 'user_access',
-    'access arguments' => array('view fedora collection'), // Use something fedora specific.
+    'access arguments' => array('refworks entry'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
   
@@ -333,6 +333,7 @@ function scholar_perm() {
     'add scholarly research',
     'add users',
     'migrate content',
+    'refworks entry',
     );
 }
 

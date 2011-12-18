@@ -19,7 +19,7 @@ function scholar_refworks_add_form($pid = NULL) {
     Bibutils::Convert($mods_filename, 'MODS', $ris_filename, 'RIS');
     $ris = file_get_contents($ris_filename);
     $ris2 = <<<RIS
-    RT Journal
+RT Journal
 ID 11579
 A1 Mazzone,P. J.
 A1 Arroliga,A. C.
