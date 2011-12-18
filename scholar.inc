@@ -32,6 +32,7 @@ class Scholar {
     module_load_include('php', 'scholar', 'IrClass');
     module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
     drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
+    drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
     $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
 
@@ -64,6 +65,23 @@ class Scholar {
     }
     $citation = $bibliography->render();
 
+    if ($data->abstract != NULL) {
+      $citation .= '<p><b>Abstract</b></p>';
+      $citation .= $data->abstract . '</br>';
+    }
+    
+    module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+
+    $pid = $this->pid;
+
+    $server_ip = $_SERVER['SERVER_ADDR'];
+    
+    $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($this->pid) . '" target="RefWorksMain">Export to RefWorks</A>';
+    
+    $citation .= '<div class="scholar_bibliography_add_form">' . drupal_get_form('islandora_bibliography_citation_form', $pid) . '</div>';
+
+    $citation .= '<div class="scholar_refworks_link">' . $refworks_link . '</div>';
+
     //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
 
     $issn_url = file_get_contents($url . $data->issn . $api_key);
@@ -80,26 +98,12 @@ class Scholar {
     $xsl = $proc->importStylesheet($xsl);
     $newdom = $proc->transformToDoc($input);
     $romeo = $newdom->saveXML();
-    $server_ip = $_SERVER['SERVER_ADDR'];
-    $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($this->pid) . '" target="RefWorksMain">Export to RefWorks</A>';
-
+  
     $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
 
     $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
 
-    $citation .= '<span>  <br /><span class="Z3988" title="' . $coins_title . '"></span> <br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br />';
-
-    $citation .= '<p><b>Abstract</b></p>';
-
-    $citation .= $data->abstract;
-
-    module_load_include('inc', 'islandora_bibliography', 'Bibliography');
-
-    $pid = $this->pid;
-
-    $citation .= drupal_get_form('islandora_bibliography_citation_form', $pid);
-    
-    $citation .= $refworks_link;
+    $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br /></div>';
 
     $tabset['first_tab']['tabs']['summary'] = array(
       '#type' => 'tabpage',
@@ -189,7 +193,7 @@ class Scholar {
     $data = new Coins($this->pid);
 //    Get MODS datastream and pull the ISSN from there.
 
-    $csl = 'APA';
+    $csl = 'default';
 
     $style = citeproc_style($csl);
     $bibliography = new CiteProcJSBibliography($style);

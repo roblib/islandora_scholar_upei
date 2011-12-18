@@ -47,3 +47,27 @@ root {
 .scholar_user_letters {
     font-size: large;
 }
+
+.scholar_refworks_link {
+    float: left;
+    margin-right: 15px;
+    margin-top: 23px;
+}
+
+.scholar_bibliography_add_form {
+    float: left;
+    margin-right: 15px;
+    margin-top: 20px;
+}
+
+.scholar_coins_title {
+    float: left;
+    margin-right: 15px;
+    margin-top: 5px;
+}
+
+.scholar_coins_url {
+    float: left;
+    margin-right: 15px;
+    margin-top: 5px;
+}
