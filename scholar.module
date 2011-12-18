@@ -287,6 +287,17 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   
+  $items['refworks_entry/%'] = array(
+    'title' => 'Refworks entry',
+    'description' => 'Page to display refworks entry for a given pid',
+    'file' => 'refworks.inc',
+    'page callback' => 'scholar_refworks_add_form',
+    'page arguments' => array(1),
+    'access callback' => 'user_access',
+    'access arguments' => array('view fedora collection'), // Use something fedora specific.
+    'type' => MENU_CALLBACK,
+  );
+  
   return $items;
 } // end function ir_menu
 

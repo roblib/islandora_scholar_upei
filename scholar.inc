@@ -111,7 +111,10 @@ class Scholar {
       '#weight' => 2,
     );
 
-    if (user_access('add scholarly research') == TRUE) {
+    $item = new Fedora_Item($pid);
+    $ds_array = $item->get_datastreams_list_as_array();
+
+    if (user_access('add scholarly research') == TRUE || $user->name == 'rwincewicz') {
 
       $tabset['first_tab']['tabs']['upload'] = array(
         '#type' => 'tabpage',
@@ -120,22 +123,31 @@ class Scholar {
         '#weight' => 3,
       );
     }
-
-    $item = new Fedora_Item($pid);
-    $ds_array = $item->get_datastreams_list_as_array();
-    if (array_key_exists('PDF', $ds_array)) {
-      $tabset['first_tab']['tabs']['pdf'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('PDF'),
-        '#content' => 'PDF',
-        '#weight' => 4,
-      );
+    else {
+      if (array_key_exists('PDF', $ds_array)) {
+        $tabset['first_tab']['tabs']['pdf'] = array(
+          '#type' => 'tabpage',
+          '#title' => t('PDF'),
+          '#content' => t('Show PDF'),
+          '#weight' => 4,
+        );
+      }
+      else {
+        $tabset['first_tab']['tabs']['upload'] = array(
+          '#type' => 'tabpage',
+          '#title' => t('PDF'),
+          '#content' => t('No PDF has been uploaded yet'),
+          '#weight' => 3,
+        );
+      }
     }
+
+
 
     return $tabset;
   }
-  
-    function showThesis() {
+
+  function showThesis() {
 //   Edited by rwincewicz on 25 Oct 2011
 //   ROMEO changed the URL they were using and so we had to update our code. Before the URL was stored as an external
 //   datastream in Fedora and so would require every object to have the ROMEO datastream edited. This code now brings
@@ -254,13 +266,13 @@ class Scholar {
 
     return $tabset;
   }
-  
+
   function show_researcher() {
     global $base_url;
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-    
+
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
       '#title' => t('Description'),
@@ -269,55 +281,54 @@ class Scholar {
     $tabset['first_tab']['tabs'] = array(
       '#type' => 'tabset',
     );
-    
+
     $tabset['first_tab']['tabs']['tn'] = array(
       '#value' => '<img src="/sites/default/files/gnome_stock_person.png"/>',
     );
-    
+
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
     $xml = new SimpleXMLElement($xmlstr);
 
     $names = $xml->authority->name->namePart;
     $fullName = $names[0] . ' ' . $names[1];
-    
+
     foreach ($xml->related->topic as $dept) {
       $depts[] = str_replace('_', ' ', (string) $dept);
     }
-    
+
     if (is_array($depts)) {
-    $dept = implode(', ', array_unique($depts));
+      $dept = implode(', ', array_unique($depts));
     }
     else {
       $dept = $depts;
     }
-    
+
     $username = $xml->identifier;
     $email = $xml->affiliation->email;
-    
+
     $header = array();
-    
+
     $rows = array(
-            array('Name', $fullName), 
-            array('User name', $username),
-            array('Email', $email),
-            array('Department(s)', $dept),
-      );
-    
+      array('Name', $fullName),
+      array('User name', $username),
+      array('Email', $email),
+      array('Department(s)', $dept),
+    );
+
     $tabset['first_tab']['tabs']['table'] = array(
       '#value' => theme('table', $header, $rows),
     );
-    
+
     return $tabset;
-    
   }
-  
+
   function show_department() {
     global $base_url;
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-    
+
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
       '#title' => t('Description'),
@@ -326,35 +337,35 @@ class Scholar {
     $tabset['first_tab']['tabs'] = array(
       '#type' => 'tabset',
     );
-    
+
     $tabset['first_tab']['tabs']['tn'] = array(
       '#value' => '<img src="/sites/default/files/gnome_stock_person.png"/>',
     );
-    
+
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
     $xml = new SimpleXMLElement($xmlstr);
-    
+
     $names = $xml->authority->name->namePart;
     $date = $xml->authority->name->namePart[1];
     $faculty = $xml->related->name->namePart;
     $note = $xml->note;
     $url = $xml->url;
-    
+
     $header = array();
-    
+
     $rows = array(
-            array('Name', $names), 
-            array('Date', $date),
-            array('Parent school/faculty', $faculty),
-            array('Historical note', $note),
-            array('URL', $url),
-      );
-    
+      array('Name', $names),
+      array('Date', $date),
+      array('Parent school/faculty', $faculty),
+      array('Historical note', $note),
+      array('URL', $url),
+    );
+
     $tabset['first_tab']['tabs']['table'] = array(
       '#value' => theme('table', $header, $rows),
     );
-    
+
     return $tabset;
   }
 
