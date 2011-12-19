@@ -168,7 +168,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
     $xmlstr = $xml->save($filename);
 
     $label = $details->cn;
-    $pid = $collection_policy->getNextPid('ISLANDORACM');
+    $pid = 'ir:' . strtolower($label);
     $dsid = 'MADS';
     $relationship = $collection_policy->getRelationship();
     $ingest_file_locations = array();
