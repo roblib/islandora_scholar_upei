@@ -64,8 +64,8 @@ class Scholar {
       $bibliography->addCitation($ref);
     }
     $citation = $bibliography->render();
-
-    if ($data->abstract != NULL) {
+    $abstract = (string) $data->abstract;
+    if ($abstract != NULL || $abstract != '') {
       $citation .= '<p><b>Abstract</b></p>';
       $citation .= $data->abstract . '</br>';
     }

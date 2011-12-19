@@ -34,7 +34,7 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   $form['list'] = array(
     '#value' => $list,
   );
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=mads.family:' . strtolower($initial) . '*&fl=mads.family,mads.given&rows=10000&sort=mads.family_sort+asc');
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=mads.family:' . strtolower($initial) . '*&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family_sort+asc');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $output = '<ul>';
@@ -43,12 +43,19 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   foreach ($array as $arr) {
     $family = $arr->xpath('./arr[@name="mads.family"]/str');
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
+    $username = $arr->xpath('./arr[@name="mads.username"]/str');
+    if ($username[0] != '') {
+      $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0])))));
+      $username_xml = new SimpleXMLElement($username_query);
+      $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
+        $citations[] = " (" . (string) $number_of_citations[0] . ")";
+    }
     $users[] = $family[0] . ', ' . $given[0];
-    $link[] = '<li><a href=/islandora/solr/search/"' . $given[0] . '%20' . $family[0] . '">';
+    $link[] = '<li><a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
   }
   asort($users);
   foreach ($users as $key => $user) {
-    $output .= $link[$key] . $user . '</a></li>';
+    $output .= $link[$key] . $user . '</a><i>' . $citations[$key] . '</i></li>';
   }
 
   $output .= '</ul>';
@@ -64,21 +71,21 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
 
   $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier&rows=500&sort=mads.identifier_sort+asc');
-    
+
   $xml = new SimpleXMLElement($result);
-  
+
   $inclusionlist = array_unique($xml->xpath('//doc/arr/str'));
 
   $list = '';
-  
+
   foreach ($inclusionlist as $entry) {
     $list .= l($entry, 'browse_users_dept/' . $entry) . ' | ';
   }
-  
+
   $form['choice'] = array(
     '#value' => l('By name', 'browse_users/A') . ' | ' . l('By department', 'browse_users_dept/Robertson%20Library') . "</br></br>",
   );
-  
+
   $form['list'] = array(
     '#value' => $list,
   );
@@ -107,6 +114,6 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
   $form['author'] = array(
     '#value' => $output,
   );
-  
+
   return $form;
 }

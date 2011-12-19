@@ -84,8 +84,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
 //  var_dump($output);
   $xml = (string)$output->saveXML();
 //  $xml = 'This is a test';
-  $object->add_datastream_from_string($xml, 'MODS', 'MODS datastream');
+  $object->add_datastream_from_string($xml, 'MODS', 'MODS datastream', 'text/xml', 'X');
 //  drupal_set_message('Output: ' . $xml);
   }
-  
 }

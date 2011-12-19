@@ -410,7 +410,7 @@ function convert_mods_to_citeproc_json_name_corporate(SimpleXMLElement $name) {
  *   Gets the role of the given name.
  */
 function convert_mods_to_citeproc_json_name_role(SimpleXMLElement $name, array $valid_roles, $default_role) {
-  module_load_include('inc', 'ir_citation', 'mods_to_citeproc_json/marcrelator_conversion');
+  module_load_include('inc', 'scholar', 'citation/citeproc/generators/marcrelator_conversion');
   if (isset($name->role)) {
     $role = strtolower((string) $name->role->roleTerm);
     if (isset($name->role->roleTerm)) {
