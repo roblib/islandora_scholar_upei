@@ -45,19 +45,19 @@ function scholar_migrate_refworks_table() {
       'title' => array('#value' => $object),
     );
   }
-  
+
   return $table;
 }
 
 function scholar_migrate_refworks_form() {
- 
+
   $table = scholar_migrate_refworks_table();
-  
+
   $form['table'] = array(
     'table' => $table,
   );
-  
-   $form['submit'] = array(
+
+  $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
@@ -69,22 +69,28 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
   $pids = array_filter($form_state['values']['table']['selections']);
   drupal_set_message(implode(', ', $pids));
   foreach ($pids as $pid) {
-  $object = new Fedora_Item($pid);
+    $object = new Fedora_Item($pid);
 //  var_dump($object);
-  $refworks = $object->get_datastream_dissemination('refworks');
+    $datastreams = $object->get_datastreams_list_as_array();
+    if (!array_key_exists('MODS', $datastreams)) {
+      $refworks = $object->get_datastream_dissemination('refworks');
 //  drupal_set_message('Input: ' . $refworks);
-  $input = new DOMDocument();
-  $input->loadXML($refworks);
-  $xslt = new XSLTProcessor();
-  $xsl = new DOMDocument();
-  $xslt_file = drupal_get_path('module', 'scholar') . '/xsl/refworks_to_mods.xsl';
-  $xsl->load($xslt_file);
-  $xslt->importStylesheet($xsl);
-  $output = $xslt->transformToDoc($input);
+      $input = new DOMDocument();
+      $input->loadXML($refworks);
+      $xslt = new XSLTProcessor();
+      $xsl = new DOMDocument();
+      $xslt_file = drupal_get_path('module', 'scholar') . '/xsl/refworks_to_mods.xsl';
+      $xsl->load($xslt_file);
+      $xslt->importStylesheet($xsl);
+      $output = $xslt->transformToDoc($input);
 //  var_dump($output);
-  $xml = (string)$output->saveXML();
+      $xml = (string) $output->saveXML();
 //  $xml = 'This is a test';
-  $object->add_datastream_from_string($xml, 'MODS', 'MODS datastream', 'text/xml', 'X');
+      $object->add_datastream_from_string($xml, 'MODS', 'MODS datastream', 'text/xml', 'X');
 //  drupal_set_message('Output: ' . $xml);
+    }
+    else {
+      drupal_set_message(t('MODS datastream already exists for @pid', array('@pid' => $pid)), 'warning');
+    }
   }
 }
