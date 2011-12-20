@@ -77,7 +77,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
   $input->loadXML($refworks);
   $xslt = new XSLTProcessor();
   $xsl = new DOMDocument();
-  $xslt_file = '/var/www/drupal/sites/all/modules/islandora_scholar_upei/xsl/refworks_to_mods.xsl';
+  $xslt_file = 'xsl/refworks_to_mods.xsl';
   $xsl->load($xslt_file);
   $xslt->importStylesheet($xsl);
   $output = $xslt->transformToDoc($input);
