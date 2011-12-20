@@ -209,14 +209,23 @@ function scholar_batch_ingest_endnote_document($filename, $collection_pid, $cont
 function scholar_batch_ingest_ris_document($filename, $collection_pid, $content_model_pid, array &$context) {
   module_load_include('inc', 'bibutils', 'Batch');
   module_load_include('inc', 'bibutils', 'Bibutils');
+  // This code removes ^M characters that are present in exported Refworks files
+  // which don't show up as new lines in linux.
+  $initial_ris = file_get_contents($filename);
+  $cleaned_ris = str_replace("\x0D", "\n", trim($initial_ris));
+  $initial_file = fopen($filename, 'w');
+  fwrite($initial_file, $cleaned_ris);
+  fclose($initial_file);
+  
   if (empty($context['sandbox'])) {
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['total'] = bibutils_batch_get_number_ris_records($filename);
   }
+  
   $temp_file_dir = file_directory_path(); // Changed the temp dir so that the files can be accessed
   $mods_filename = file_create_filename('mods.xml', $temp_file_dir);
   $ris_filename = file_create_filename('ris.txt', $temp_file_dir);
-  $record = bibutils_batch_get_ris_record($filename); // Get Single EndNote XML Record
+  $record = bibutils_batch_get_ris_record($filename); // Get Single RIS Record
   $file = fopen($ris_filename, 'w');
   fwrite($file, $record);
   fclose($file);

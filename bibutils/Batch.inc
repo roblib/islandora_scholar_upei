@@ -90,6 +90,9 @@ function bibutils_batch_get_ris_record($filename) {
    */
   unlink($filename);
   rename($temp_filename, $filename);
+//  drupal_set_message('Old record: ' . $record);
+//  $record = str_replace("\x0D", "\n", $record);
+//  drupal_set_message('Record: ' . $record);
   return (trim($record) == '') ? FALSE : $record;
 }
 
