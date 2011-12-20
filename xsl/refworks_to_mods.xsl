@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.loc.gov/mods/v3"
-    version="1.0">
-
-    <xsl:template match="/">
-        <mods>
+    version="2.0">
+    
+            <xsl:template match="/">
+                <mods>
             <titleInfo>
                 <title>
                     <xsl:value-of select="//reference/t1"/>
@@ -30,22 +30,18 @@
                     </role>
                 </name>
             </xsl:for-each>
-            <name>
-                <xsl:attribute name="type">corporate</xsl:attribute>
-                <xsl:for-each select="//reference/u1">
-                    <namePart>
-                        <xsl:value-of select="normalize-space(text())"/>
-                    </namePart>
-                </xsl:for-each>
-            </name>
-            <subject>
-                <xsl:attribute name="authority">local</xsl:attribute>
+            
+            <xsl:for-each select="//reference/u1">
+                    <xsl:call-template name="links">
+                        <xsl:with-param name="str" select="."/>
+                    </xsl:call-template>
+            </xsl:for-each>           
                 <xsl:for-each select="//reference/u2">
-                    <topic>
+                    <identifier type="u2">
                         <xsl:value-of select="normalize-space(text())"/>
-                    </topic>
+                        </identifier>
                 </xsl:for-each>
-            </subject>
+           
             <originInfo>
                 <dateIssued>
                     <xsl:value-of select="//reference/yr"/>
@@ -109,9 +105,14 @@
                 </note>
             </xsl:if>
             <note>Source type: <xsl:value-of select="//reference/sr"/></note>
+            <xsl:if test="//reference/lk/text() [normalize-space(.) ]">
+                <note>
+                    <xsl:value-of select="//reference/lk"/>
+                </note>
+            </xsl:if>
             <location>
                 <url>
-                    <xsl:value-of select="concat(//reference/ul, '; ', //reference/lk)"/>
+                    <xsl:value-of select="//reference/ul"/>
                 </url>
             </location>
             <part>
@@ -149,8 +150,40 @@
                     </languageTerm>
                 </language>
             </xsl:if>
+            <xsl:if test="//reference/usage/text() [normalize-space(.) ]">
+                
+                <accessCondition type="use and reproduction">
+                        <xsl:value-of select="//reference/usage"/>
+                  </accessCondition>
+                
+            </xsl:if>
+            <xsl:if test="//reference/status/text() [normalize-space(.) ]">
+                
+                <relatedItem type="otherFormat">
+                    <xsl:value-of select="//reference/status"/>
+                </relatedItem>
+                
+            </xsl:if>
         </mods>
-
-    </xsl:template>
+            </xsl:template>
+            
+            <xsl:template name="links">
+                <xsl:param name="str"/>
+                <xsl:choose>
+                    <xsl:when test="contains($str,';')">
+                        <identifier type="u1">
+                        <xsl:value-of select="normalize-space(substring-before($str,';'))"/>
+                        </identifier>
+                        <xsl:call-template name="links">
+                            <xsl:with-param name="str" select="normalize-space(substring-after($str,';'))"/>
+                        </xsl:call-template>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <identifier type="u1">
+                        <xsl:value-of select="$str"/>
+                        </identifier>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:template>
 
 </xsl:stylesheet>
