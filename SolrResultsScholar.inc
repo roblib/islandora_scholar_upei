@@ -117,7 +117,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
      * Also, perhaps there's no difference between primary and secondary profiles?
      */
 
-    $output .= $this->printResultsChem($solrQueryProcessor->solrResult);
+    $output .= $this->printResultsScholar($solrQueryProcessor->solrResult);
 
     // Render Drupal pager (bottom of search results)
     $output .= theme('pager', NULL, $solrQueryProcessor->solrLimit, 0, NULL, 5);
@@ -127,7 +127,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
     return $output;
   }
 
-  function printResultsChem($results) {
+  function printResultsScholar($results) {
 
     module_load_include('inc', 'fedora_repository', 'CollectionClass');
     module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');

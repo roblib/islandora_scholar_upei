@@ -14,15 +14,17 @@ function scholar_recent_items($form_state) {
 //    var_dump($result);
   $entries = $result->results->result;
   
-  $list = '';
+  $list = '<ul>';
   
   foreach ($entries as $entry) {
     $pid = explode('/', $entry->object['uri']);
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($pid[1], "MODS");
     $xml = new SimpleXMLElement($xmlstr);
-    $list .= l($xml->titleInfo->title, 'fedora/repository/' . $pid[1]) .'</br>';
+    $list .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid[1]) .'</li>';
   }
+  
+  $list .= '</ul>';
   $form = array();
   
 //  var_dump($content);
