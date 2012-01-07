@@ -279,19 +279,7 @@ class IrClass {
       return false;
     }
     file_move($fileObject->filepath, 0, 'FILE_EXISTS_RENAME');
-//    $objectHelper = new ObjectHelper();
-//    $test = null;
-//    if ("application/pdf" == $fileObject->filemime) { //do not convert to pdf
-//      $test = $objectHelper->addStream($form_values['pid'], 'OBJ', $fileObject, true);
-//      if ($test) {
-//        $this->updateRefworksStream($form_values['pid'], $form_values['version'], $form_values['usage']);
-//        drupal_set_message(t('Successfully added PDF file to record.'));
-//        return true;
-//      }
-//    }
-//    else {
-//      $test = $objectHelper->addStream($form_values['pid'], $form_values['version'], $fileObject, true);
-//    }
+    $objectHelper = new ObjectHelper();
     $pid = $form_values['pid'];
     $fedora_item = new Fedora_Item($pid);
     $test = NULL;
@@ -304,8 +292,20 @@ class IrClass {
       }
     }
     else {
-      $test = $objectHelper->addStream($form_values['pid'], $form_values['version'], $fileObject, true);
+      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
     }
+//    $test = NULL;
+//    if ("application/pdf" == $fileObject->filemime) { //do not convert to pdf
+//      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
+//      if ($test) {
+////        $this->updateRefworksStream($form_values['pid'], $form_values['version'], $form_values['usage']);
+//        drupal_set_message(t('Successfully added PDF file to record.'));
+//        return true;
+//      }
+//    }
+//    else {
+//      $test = $objectHelper->addStream($form_values['pid'], $form_values['version'], $fileObject, true);
+//    }
     
     if ($test) { //in ingest successfull convert to pdf and add datastream
       $xmlString = 'requestXML=<?xml version="1.0"?><submission><repository><username>' . $user->name .
@@ -315,7 +315,9 @@ class IrClass {
       //may want to promote this to the db at some point
       $urlFile = drupal_get_path('module', 'scholar') . '/ruleengine_url.txt';
       $url = file_get_contents($urlFile);
+      drupal_set_message('URL file: ' . $url);
       //$url = '137.149.66.158:8080/RuleEngineServlet/RuleEngine';
+      drupal_set_message('XML: ' . $xmlString);
       $returnValue = do_curl($url, 1, 1, $xmlString); //$objectHelper->doCurl($url, 1, 1, $xmlString);
       $test = $this->parseReturnValue($returnValue); //did add datastream succeed.
       if ($test) {
@@ -1142,7 +1144,7 @@ class IrClass {
 
   //after the ruleengine framework adds the converted datastream we modify the refworks xml datastream
   //so we know that about the pdf
-  function updateRefworksStream($pid, $version = null, $usage = null, $xmlString=null) {
+  function updateRefworksStream($pid, $version = NULL, $usage = NULL, $xmlString = NULL) {
     module_load_include('php', 'Fedora_Repository', 'ObjectHelper');
     $object = new ObjectHelper();
     if (!isset($xmlString)) {
@@ -1191,11 +1193,11 @@ class IrClass {
       "MIMEType" => "text/xml",
       "formatURI" => "URL",
       "dsContent" => $doc->saveXML(), "checksumType" => "DISABLED", "checksum" => "none", "logMessage" => "refworks_datastream_modified", "force" => "true");
-    $object->modifyDatastreamByValue($params);
+//    $object->modifyDatastreamByValue($params);
   }
 
   //parses the return from the ruleengine framework
-  function parseReturnValue(& $input) {
+  function parseReturnValue($input) {
     $doc = new DOMDocument();
     $doc->loadXML($input);
     $nodeList = $doc->getElementsByTagName('message');

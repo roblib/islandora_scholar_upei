@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+ * @param type $form_state
+ * @return string 
+ */
+
 function scholar_recent_items($form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
     module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
@@ -18,8 +24,8 @@ function scholar_recent_items($form_state) {
   
   foreach ($entries as $entry) {
     $pid = explode('/', $entry->object['uri']);
-    $collectionHelper = new CollectionClass();
-    $xmlstr = $collectionHelper->getStream($pid[1], "MODS");
+    $collection_helper = new CollectionClass();
+    $xmlstr = $collection_helper->getStream($pid[1], "MODS");
     $xml = new SimpleXMLElement($xmlstr);
     $list .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid[1]) .'</li>';
   }

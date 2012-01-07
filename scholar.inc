@@ -16,142 +16,9 @@ class Scholar {
   }
 
   function showCitation() {
-//   Edited by rwincewicz on 25 Oct 2011
-//   ROMEO changed the URL they were using and so we had to update our code. Before the URL was stored as an external
-//   datastream in Fedora and so would require every object to have the ROMEO datastream edited. This code now brings
-//   the xml from the ROMEO API using a URL that is created dynamically from the code below. Redmine #5615
-//   URL and API key for the ROMEO REST client. TODO: Add this to the admin panel so that users can change it easily.
-
-    global $base_url;
-    global $base_path;
-    global $user;
-    module_load_include('inc', 'fedora_repository', 'ObjectHelper');
-    module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-    module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
-    module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
-    module_load_include('php', 'scholar', 'IrClass');
-    module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
-    drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
-    drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
-
-    $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
-
-    $tabset['first_tab'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Description'),
-    );
-
-    $tabset['first_tab']['tabs'] = array(
-      '#type' => 'tabset',
-    );
-
-    $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
-    $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
-
-    $path = drupal_get_path('module', 'Fedora_Repository');
-    module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
-    module_load_include('inc', 'scholar', 'Coins');
-    $data = new Coins($this->pid);
-//    Get MODS datastream and pull the ISSN from there.
-
-    $csl = 'default';
-
-    $style = citeproc_style($csl);
-    $bibliography = new CiteProcJSBibliography($style);
-    $mods = islandora_bibilgraphy_form_get_mods($this->pid);
-    if ($mods) {
-      $ref = citeproc_citation_from_mods($mods);
-      $bibliography->addCitation($ref);
-    }
-    $citation = $bibliography->render();
-    $abstract = (string) $data->abstract;
-    if ($abstract != NULL || $abstract != '') {
-      $citation .= '<p><b>Abstract</b></p>';
-      $citation .= $data->abstract . '</br>';
-    }
-    
-    module_load_include('inc', 'islandora_bibliography', 'Bibliography');
 
     $pid = $this->pid;
-
-    $server_ip = $_SERVER['SERVER_ADDR'];
-    
-    $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($this->pid) . '" target="RefWorksMain">Export to RefWorks</A>';
-    
-    $citation .= '<div class="scholar_bibliography_add_form">' . drupal_get_form('islandora_bibliography_citation_form', $pid) . '</div>';
-
-    $citation .= '<div class="scholar_refworks_link">' . $refworks_link . '</div>';
-
-    //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
-
-    $issn_url = file_get_contents($url . $data->issn . $api_key);
-    try {
-      $proc = new XsltProcessor();
-    } catch (Exception $e) {
-      drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
-      return;
-    }
-    $xsl = new DOMDocument();
-    $xsl->load($path . '/xsl/romeo.xsl');
-    $input = new DOMDocument();
-    $input->loadXML(trim($issn_url));
-    $xsl = $proc->importStylesheet($xsl);
-    $newdom = $proc->transformToDoc($input);
-    $romeo = $newdom->saveXML();
-  
-    $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
-
-    $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
-
-    $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br /></div>';
-
-    $tabset['first_tab']['tabs']['summary'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Citation'),
-      '#content' => $citation,
-      '#weight' => 1,
-    );
-
-    $tabset['first_tab']['tabs']['romeo'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Romeo'),
-      '#content' => $romeo,
-      '#weight' => 2,
-    );
-
-    $item = new Fedora_Item($pid);
-    $ds_array = $item->get_datastreams_list_as_array();
-
-    if (user_access('add scholarly research') == TRUE || $user->name == 'rwincewicz') {
-
-      $tabset['first_tab']['tabs']['upload'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('Upload'),
-        '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
-        '#weight' => 3,
-      );
-    }
-    else {
-      if (array_key_exists('PDF', $ds_array)) {
-        $tabset['first_tab']['tabs']['pdf'] = array(
-          '#type' => 'tabpage',
-          '#title' => t('PDF'),
-          '#content' => t('Show PDF'),
-          '#weight' => 4,
-        );
-      }
-      else {
-        $tabset['first_tab']['tabs']['upload'] = array(
-          '#type' => 'tabpage',
-          '#title' => t('PDF'),
-          '#content' => t('No PDF has been uploaded yet'),
-          '#weight' => 3,
-        );
-      }
-    }
-
-
-
+    $tabset = islandora_scholar_build_citation($pid);
     return $tabset;
   }
 
@@ -161,113 +28,197 @@ class Scholar {
 //   datastream in Fedora and so would require every object to have the ROMEO datastream edited. This code now brings
 //   the xml from the ROMEO API using a URL that is created dynamically from the code below. Redmine #5615
 //   URL and API key for the ROMEO REST client. TODO: Add this to the admin panel so that users can change it easily.
-
-    global $base_url;
-    global $base_path;
-    global $user;
-    module_load_include('inc', 'fedora_repository', 'ObjectHelper');
-    module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-    module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
-    module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
-    module_load_include('php', 'scholar', 'IrClass');
-    module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
-    drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
-
-    $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
-
-    $tabset['first_tab'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Description'),
-    );
-
-    $tabset['first_tab']['tabs'] = array(
-      '#type' => 'tabset',
-    );
-
-    $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
-    $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
-
-    $path = drupal_get_path('module', 'Fedora_Repository');
-    module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
-    module_load_include('inc', 'scholar', 'Coins');
-    $data = new Coins($this->pid);
-//    Get MODS datastream and pull the ISSN from there.
-
-    $csl = 'default';
-
-    $style = citeproc_style($csl);
-    $bibliography = new CiteProcJSBibliography($style);
-    $mods = islandora_bibilgraphy_form_get_mods($this->pid);
-    if ($mods) {
-      $ref = citeproc_citation_from_mods($mods);
-      $bibliography->addCitation($ref);
-    }
-    $citation = $bibliography->render();
-
-    //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
-
-    $issn_url = file_get_contents($url . $data->issn . $api_key);
-    try {
-      $proc = new XsltProcessor();
-    } catch (Exception $e) {
-      drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
-      return;
-    }
-    $xsl = new DOMDocument();
-    $xsl->load($path . '/xsl/romeo.xsl');
-    $input = new DOMDocument();
-    $input->loadXML(trim($issn_url));
-    $xsl = $proc->importStylesheet($xsl);
-    $newdom = $proc->transformToDoc($input);
-    $romeo = $newdom->saveXML();
-
-    $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
-
-    $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
-
-    $citation .= '<span>  <br /><span class="Z3988" title="' . $coins_title . '"></span> <br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br />';
-
-    $citation .= '<p><b>Abstract</b></p>';
-
-    $citation .= $data->abstract;
-
-    module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+//
+//    global $base_url;
+//    global $base_path;
+//    global $user;
+//    module_load_include('inc', 'fedora_repository', 'ObjectHelper');
+//    module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+//    module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
+//    module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
+//    module_load_include('php', 'scholar', 'IrClass');
+//    module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
+//    drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
+//    drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
+//
+//    $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
+//
+//    $pid = $this->pid;
+//
+//    $server_ip = $_SERVER['SERVER_ADDR'];
+//    
+//    $tabset['first_tab'] = array(
+//      '#type' => 'tabpage',
+//      '#title' => t('Description'),
+//    );
+//
+//    $tabset['first_tab']['tabs'] = array(
+//      '#type' => 'tabset',
+//    );
+//
+//    $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
+//    $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
+//
+//    $path = drupal_get_path('module', 'Fedora_Repository');
+//    module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
+//    module_load_include('inc', 'scholar', 'Coins');
+//    $data = new Coins($this->pid);
+////    Get MODS datastream and pull the ISSN from there.
+//
+//    $csl = 'default'; // This needs to be changed to a value stored in the db
+//
+//    $style = citeproc_style($csl);
+//    $bibliography = new CiteProcJSBibliography($style);
+//    $mods = islandora_bibilgraphy_form_get_mods($this->pid);
+//    if ($mods) {
+//      $ref = citeproc_citation_from_mods($mods);
+//      $bibliography->addCitation($ref);
+//    }
+//    $citation = $bibliography->render();
+//    $abstract = (string) $data->abstract;
+//    if ($abstract != NULL || $abstract != '') {
+//      $citation .= '<p><b>Abstract</b></p>';
+//      $citation .= $data->abstract . '</br>';
+//    }
+//    
+//    $item = new Fedora_Item($pid);
+//    $ds_array = $item->get_datastreams_list_as_array();
+//    
+//    if (array_key_exists('ZIP', $ds_array)) {
+//      $citation .= '</br><b>Supplementary information</b></br>';
+//      $description = $ds_array['ZIP']['label'];
+//      $citation .= '<p>' . l($description, 'fedora/repository/' . $pid . '/ZIP/ZIP') . '</p>';
+//    }
+//    
+//    module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+//    
+//    $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($this->pid) . '" target="RefWorksMain">Export to RefWorks</A>';
+//    
+//    $citation .= '<div class="scholar_bibliography_add_form">' . drupal_get_form('islandora_bibliography_citation_form', $pid) . '</div>';
+//
+//    $citation .= '<div class="scholar_refworks_link">' . $refworks_link . '</div>';
+//
+//    //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
+//
+//    $issn_url = file_get_contents($url . $data->issn . $api_key);
+//    try {
+//      $proc = new XsltProcessor();
+//    } catch (Exception $e) {
+//      drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
+//      return;
+//    }
+//    $xsl = new DOMDocument();
+//    $xsl->load($path . '/xsl/romeo.xsl');
+//    $input = new DOMDocument();
+//    $input->loadXML(trim($issn_url));
+//    $xsl = $proc->importStylesheet($xsl);
+//    $newdom = $proc->transformToDoc($input);
+//    $romeo = $newdom->saveXML();
+//  
+//    $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
+//
+//    $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
+//
+//    $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br /></div>';
+//
+//    $tabset['first_tab']['tabs']['summary'] = array(
+//      '#type' => 'tabpage',
+//      '#title' => t('Citation'),
+//      '#content' => $citation,
+//      '#weight' => 1,
+//    );
+//
+//    $tabset['first_tab']['tabs']['romeo'] = array(
+//      '#type' => 'tabpage',
+//      '#title' => t('Romeo'),
+//      '#content' => $romeo,
+//      '#weight' => 2,
+//    );
+//
+//    if (user_access('add scholarly research') == TRUE && array_key_exists('PDF', $ds_array) == FALSE) {
+//
+//      $tabset['first_tab']['tabs']['upload'] = array(
+//        '#type' => 'tabpage',
+//        '#title' => t('Upload'),
+//        '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
+//        '#weight' => 3,
+//      );
+//    }
+//    else {
+//      if (array_key_exists('PDF', $ds_array)) {
+//        $tabset['first_tab']['tabs']['pdf'] = array(
+//          '#type' => 'tabpage',
+//          '#title' => t('PDF'),
+//          '#content' => l(t('View PDF'), 'fedora/repository/' . $pid . '/PDF/PDF'),
+//          '#weight' => 3,
+//        );
+//        if (array_key_exists('SIGNATURE', $ds_array) && array_key_exists('PDF', $ds_array)) {
+//          $tabset['first_tab']['tabs']['signature'] = array(
+//          '#type' => 'tabpage',
+//          '#title' => t('Signature'),
+//          '#content' => l(t('Signature file'), 'fedora/repository/' . $pid . '/SIGNATURE/SIGNATURE'),
+//          '#weight' => 4,
+//        );
+//        }
+//        else {
+//        $tabset['first_tab']['tabs']['signature'] = array(
+//          '#type' => 'tabpage',
+//          '#title' => t('Signature'),
+//          '#content' => drupal_get_form('islandora_scholar_signature_form', $pid),
+//          '#weight' => 4,
+//        );
+//        }
+//      }
+//      else {
+//        $tabset['first_tab']['tabs']['upload'] = array(
+//          '#type' => 'tabpage',
+//          '#title' => t('PDF'),
+//          '#content' => t('No PDF has been uploaded yet'),
+//          '#weight' => 3,
+//        );
+//      }
+//    }
+//
+//    if (array_key_exists('ZIP', $ds_array)) {
+//    
+//    $tabset['first_tab']['tabs']['supplementary'] = array(
+//        '#type' => 'tabpage',
+//        '#title' => t('Supplementary information'),
+//        '#content' => t('Supplementary information'),
+//        '#weight' => 5,
+//      );
+//    }
+//    else {
+//      if (user_access('add scholarly research')) {
+//        $tabset['first_tab']['tabs']['supplementary'] = array(
+//        '#type' => 'tabpage',
+//        '#title' => t('Supplementary information'),
+//        '#content' => drupal_get_form('islandora_scholar_supp_info_form', $pid),
+//        '#weight' => 5,
+//      );
+//      }
+//    }
+//    
+//    return $tabset;
 
     $pid = $this->pid;
-
-    $citation .= drupal_get_form('islandora_bibliography_citation_form', $pid);
-
-    $tabset['first_tab']['tabs']['summary'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Citation'),
-      '#content' => $citation,
-      '#weight' => 1,
-    );
-
-    $tabset['first_tab']['tabs']['romeo'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Romeo'),
-      '#content' => $romeo,
-      '#weight' => 2,
-    );
-
-    if (user_access('add scholarly research') == TRUE) {
-
-      $tabset['first_tab']['tabs']['upload'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('Upload'),
-        '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
-        '#weight' => 3,
-      );
-    }
-
     $item = new Fedora_Item($pid);
     $ds_array = $item->get_datastreams_list_as_array();
-    if (array_key_exists('PDF', $ds_array)) {
-      $tabset['first_tab']['tabs']['pdf'] = array(
+    $tabset = islandora_scholar_build_citation($pid);
+
+    if (array_key_exists('SIGNATURE', $ds_array) && array_key_exists('PDF', $ds_array)) {
+      $tabset['first_tab']['tabs']['signature'] = array(
         '#type' => 'tabpage',
-        '#title' => t('PDF'),
-        '#content' => 'PDF',
+        '#title' => t('Signature'),
+        '#content' => l(t('Signature file'), 'fedora/repository/' . $pid . '/SIGNATURE/SIGNATURE'),
+        '#weight' => 4,
+      );
+    }
+    else {
+      $tabset['first_tab']['tabs']['signature'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('Signature'),
+        '#content' => drupal_get_form('islandora_scholar_signature_form', $pid),
         '#weight' => 4,
       );
     }
@@ -445,4 +396,276 @@ function build_add_datastream_form(&$form_state, $pid) {
   );
 
   return $form;
+}
+
+function islandora_scholar_supp_info_form(&$form_state, $pid) {
+  $form = array();
+
+  $form['#attributes'] = array('enctype' => "multipart/form-data");
+
+  $form['upload'] = array(
+    '#type' => 'file',
+    '#title' => t('Attach supplementary information'),
+  );
+
+//  $form['description'] = array(
+//    '#type' => 'textarea',
+//    '#title' => t('Description'),
+//    '#size' => 100,
+//  );
+
+  $form['supp_submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+
+  $form['pid'] = array(
+    '#type' => 'value',
+    '#value' => $pid,
+  );
+
+  return $form;
+}
+
+function islandora_scholar_supp_info_form_validate($form, &$form_state) {
+
+  $fieldName = 'upload';
+
+  if (isset($_FILES['files']) && is_uploaded_file($_FILES['files']['tmp_name'][$fieldName])) {
+
+    $file = file_save_upload($fieldName);
+
+    if (!$file) {
+      form_set_error($fieldName, 'Error uploading file.');
+      return;
+    }
+
+    $form_state['values']['file'] = $file;
+  }
+  else {
+    form_set_error($fieldName, 'Error uploading file.');
+    return;
+  }
+}
+
+function islandora_scholar_supp_info_form_submit($form, &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+//  drupal_set_message('Pid: ' . $form_state['values']['pid']);
+  $pid = $form_state['values']['pid'];
+  $file = $form_state['values']['file'];
+  $name = str_replace(' ', '_', $file->filename);
+  $object = new Fedora_Item($pid);
+//  drupal_set_message('File: ' . $file->filepath);
+  $object->add_datastream_from_file($file->filepath, 'ZIP', $name);
+}
+
+function islandora_scholar_signature_form(&$form_state, $pid) {
+  $form = array();
+
+  $form['#attributes'] = array('enctype' => "multipart/form-data");
+
+  $form['upload'] = array(
+    '#type' => 'file',
+    '#title' => t('Attach signature page'),
+  );
+
+  $form['supp_submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+
+  $form['pid'] = array(
+    '#type' => 'value',
+    '#value' => $pid,
+  );
+
+  return $form;
+}
+
+function islandora_scholar_signature_form_validate($form, &$form_state) {
+
+  $fieldName = 'upload';
+
+  if (isset($_FILES['files']) && is_uploaded_file($_FILES['files']['tmp_name'][$fieldName])) {
+
+    $file = file_save_upload($fieldName);
+
+    if (!$file) {
+      form_set_error($fieldName, 'Error uploading file.');
+      return;
+    }
+
+    $form_state['values']['file'] = $file;
+  }
+  else {
+    form_set_error($fieldName, 'Error uploading file.');
+    return;
+  }
+}
+
+function islandora_scholar_signature_form_submit($form, &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  drupal_set_message('Pid: ' . $form_state['values']['pid']);
+  $pid = $form_state['values']['pid'];
+  $file = $form_state['values']['file'];
+  $object = new Fedora_Item($pid);
+  drupal_set_message('File: ' . $file->filepath);
+  $object->add_datastream_from_file($file->filepath, 'SIGNATURE', 'SIGNATURE');
+}
+
+function islandora_scholar_build_citation($pid) {
+
+  global $base_url;
+  global $base_path;
+  global $user;
+  module_load_include('inc', 'fedora_repository', 'ObjectHelper');
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
+  module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
+  module_load_include('php', 'scholar', 'IrClass');
+  module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
+  drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
+  drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
+
+  $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
+
+  $server_ip = $_SERVER['SERVER_ADDR'];
+
+  $tabset['first_tab'] = array(
+    '#type' => 'tabpage',
+    '#title' => t('Description'),
+  );
+
+  $tabset['first_tab']['tabs'] = array(
+    '#type' => 'tabset',
+  );
+
+  $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
+  $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
+
+  $path = drupal_get_path('module', 'Fedora_Repository');
+  module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
+  module_load_include('inc', 'scholar', 'Coins');
+  $data = new Coins($pid);
+//    Get MODS datastream and pull the ISSN from there.
+
+  $csl = 'default'; // This needs to be changed to a value stored in the db
+
+  $style = citeproc_style($csl);
+  $bibliography = new CiteProcJSBibliography($style);
+  $mods = islandora_bibilgraphy_form_get_mods($pid);
+  if ($mods) {
+    $ref = citeproc_citation_from_mods($mods);
+    $bibliography->addCitation($ref);
+  }
+  $citation = $bibliography->render();
+  $abstract = (string) $data->abstract;
+  if ($abstract != NULL || $abstract != '') {
+    $citation .= '<p><b>Abstract</b></p>';
+    $citation .= $data->abstract . '</br>';
+  }
+
+  $item = new Fedora_Item($pid);
+  $ds_array = $item->get_datastreams_list_as_array();
+
+  if (array_key_exists('ZIP', $ds_array)) {
+    $citation .= '</br><b>Supplementary information</b></br>';
+    $description = $ds_array['ZIP']['label'];
+    $citation .= '<p>' . l($description, 'fedora/repository/' . $pid . '/ZIP/ZIP') . '</p>';
+  }
+
+  module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+
+  $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
+
+  $citation .= '<div class="scholar_bibliography_add_form">' . drupal_get_form('islandora_bibliography_citation_form', $pid) . '</div>';
+
+  $citation .= '<div class="scholar_refworks_link">' . $refworks_link . '</div>';
+
+  //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
+
+  $issn_url = file_get_contents($url . $data->issn . $api_key);
+  try {
+    $proc = new XsltProcessor();
+  } catch (Exception $e) {
+    drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
+    return;
+  }
+  $xsl = new DOMDocument();
+  $xsl->load($path . '/xsl/romeo.xsl');
+  $input = new DOMDocument();
+  $input->loadXML(trim($issn_url));
+  $xsl = $proc->importStylesheet($xsl);
+  $newdom = $proc->transformToDoc($input);
+  $romeo = $newdom->saveXML();
+
+  $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
+
+  $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
+
+  $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br /></div>';
+
+  $tabset['first_tab']['tabs']['summary'] = array(
+    '#type' => 'tabpage',
+    '#title' => t('Citation'),
+    '#content' => $citation,
+    '#weight' => 1,
+  );
+
+  $tabset['first_tab']['tabs']['romeo'] = array(
+    '#type' => 'tabpage',
+    '#title' => t('Romeo'),
+    '#content' => $romeo,
+    '#weight' => 2,
+  );
+
+  if (user_access('add scholarly research') == TRUE && array_key_exists('PDF', $ds_array) == FALSE) {
+
+    $tabset['first_tab']['tabs']['upload'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Upload'),
+      '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
+      '#weight' => 3,
+    );
+  }
+  else {
+    if (array_key_exists('PDF', $ds_array)) {
+      $tabset['first_tab']['tabs']['pdf'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('PDF'),
+        '#content' => l(t('View PDF'), 'fedora/repository/' . $pid . '/PDF/PDF'),
+        '#weight' => 3,
+      );
+    }
+    else {
+      $tabset['first_tab']['tabs']['upload'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('PDF'),
+        '#content' => t('No PDF has been uploaded yet'),
+        '#weight' => 3,
+      );
+    }
+  }
+
+  if (array_key_exists('ZIP', $ds_array)) {
+
+    $tabset['first_tab']['tabs']['supplementary'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Supplementary information'),
+      '#content' => t('Supplementary information'),
+      '#weight' => 6,
+    );
+  }
+  else {
+    if (user_access('add scholarly research')) {
+      $tabset['first_tab']['tabs']['supplementary'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('Supplementary information'),
+        '#content' => drupal_get_form('islandora_scholar_supp_info_form', $pid),
+        '#weight' => 6,
+      );
+    }
+  }
+
+  return $tabset;
 }

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.loc.gov/mods/v3" version="1.0">
-    
-            <xsl:template match="/">
-                <mods>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.loc.gov/mods/v3"
+    version="1.0">
+
+    <xsl:template match="/">
+        <mods>
             <titleInfo>
                 <title>
                     <xsl:value-of select="//reference/t1"/>
@@ -29,18 +30,18 @@
                     </role>
                 </name>
             </xsl:for-each>
-            
+
             <xsl:for-each select="//reference/u1">
-                    <xsl:call-template name="links">
-                        <xsl:with-param name="str" select="."/>
-                    </xsl:call-template>
-            </xsl:for-each>           
-                <xsl:for-each select="//reference/u2">
-                    <identifier type="u2">
-                        <xsl:value-of select="normalize-space(text())"/>
-                        </identifier>
-                </xsl:for-each>
-           
+                <xsl:call-template name="links">
+                    <xsl:with-param name="str" select="."/>
+                </xsl:call-template>
+            </xsl:for-each>
+            <xsl:for-each select="//reference/u2">
+                <identifier type="u2">
+                    <xsl:value-of select="normalize-space(text())"/>
+                </identifier>
+            </xsl:for-each>
+
             <originInfo>
                 <dateIssued>
                     <xsl:value-of select="//reference/yr"/>
@@ -150,39 +151,40 @@
                 </language>
             </xsl:if>
             <xsl:if test="//reference/usage/text() [normalize-space(.) ]">
-                
+
                 <accessCondition type="use and reproduction">
-                        <xsl:value-of select="//reference/usage"/>
-                  </accessCondition>
-                
+                    <xsl:value-of select="//reference/usage"/>
+                </accessCondition>
+
             </xsl:if>
             <xsl:if test="//reference/status/text() [normalize-space(.) ]">
-                
-                <relatedItem type="otherFormat">
-                    <xsl:value-of select="//reference/status"/>
-                </relatedItem>
-                
+
+                <physicalDescription>
+                    <form authority="local">
+                        <xsl:value-of select="//reference/status"/>
+                    </form>
+                </physicalDescription>
             </xsl:if>
         </mods>
-            </xsl:template>
-            
-            <xsl:template name="links">
-                <xsl:param name="str"/>
-                <xsl:choose>
-                    <xsl:when test="contains($str,';')">
-                        <identifier type="u1">
-                        <xsl:value-of select="normalize-space(substring-before($str,';'))"/>
-                        </identifier>
-                        <xsl:call-template name="links">
-                            <xsl:with-param name="str" select="normalize-space(substring-after($str,';'))"/>
-                        </xsl:call-template>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <identifier type="u1">
-                        <xsl:value-of select="$str"/>
-                        </identifier>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:template>
+    </xsl:template>
+
+    <xsl:template name="links">
+        <xsl:param name="str"/>
+        <xsl:choose>
+            <xsl:when test="contains($str,';')">
+                <identifier type="u1">
+                    <xsl:value-of select="normalize-space(substring-before($str,';'))"/>
+                </identifier>
+                <xsl:call-template name="links">
+                    <xsl:with-param name="str" select="normalize-space(substring-after($str,';'))"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <identifier type="u1">
+                    <xsl:value-of select="$str"/>
+                </identifier>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
 </xsl:stylesheet>
