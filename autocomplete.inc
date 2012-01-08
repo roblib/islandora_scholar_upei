@@ -28,7 +28,9 @@ function islandora_autocomplete_researchers_given($string = '') {
 //  var_dump($string);
   $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.given');
   var_dump($content_models);
-  $output = implode(', ', strtolower($content_models));
+  foreach ($content_models as $content_model) {
+    $output[$content_model] = $content_model;
+  }
   // @todo find an alternative solution to array filter because of earlier versions 5.2
 //  $output = array_filter($content_models, new AutoCompleteFilterScholar($string));
 //  $output[$string] = $string;
