@@ -28,9 +28,10 @@ function islandora_autocomplete_researchers_given($string = '') {
 //  var_dump($string);
   $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.given');
   var_dump($content_models);
+  $output = strtolower($content_models);
   // @todo find an alternative solution to array filter because of earlier versions 5.2
-  $output = array_filter($content_models, islandora_scholar_autocomplete_array_filter($string));
-  $output[$string] = $string;
+//  $output = array_filter($content_models, new AutoCompleteFilterScholar($string));
+//  $output[$string] = $string;
 //  var_dump($output);
 //  drupal_set_message('Output:' . implode('; ', $output));
   return drupal_json($output);
@@ -93,12 +94,4 @@ function islandora_scholar_get_values($query, $results) {
   }
 //  var_dump($list);
   return $list;
-}
-
-function islandora_scholar_autocomplete_array_filter($values) {
-  
-  foreach($values as $value) {
-    $array[] = strtolower($value);
-  }
-  return $array;
 }
