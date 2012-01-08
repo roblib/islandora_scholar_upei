@@ -752,9 +752,9 @@ function islandora_scholar_zip_mods_to_array($mods) {
   $supp_array = explode(',', $supp_note);
   $supp_no = count($supp_array);
   $filtered_array = array();
-  $info_array = explode('                     ', trim($supp_array[($supp_no - 1)]));
+  $info_array = explode('  ', trim($supp_array[($supp_no - 1)]));
   $filtered_array['size'] = $info_array[0];
-  $filtered_array['files'] = $info_array[1];
+  $filtered_array['files'] = trim($info_array[(count($info_array) - 1)]);
   $line_array = array();
   $j = 0;
   for ($i = 3; $i < ($supp_no - 2); $i++) {
