@@ -31,7 +31,7 @@ function islandora_bibliography_form(array &$form_state) {
     return array(
       'fieldset' => array(
         '#type' => 'fieldset',
-        '#title' => t('My Citations'),
+        '#title' => t('Citations'),
         '#description' => t('<p>Here you can remove or export citations from your bibliography.</p>'),
         'table' => islandora_bibilgraphy_form_table($pids),
         'preview_title' => array(

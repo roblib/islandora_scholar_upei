@@ -22,7 +22,7 @@ define('THEME_BIBLIOGRAPHY_FORM_TABLE', 'islandora_bibliography_form_table');
 function islandora_bibliography_menu() {
   $items = array();
   $items[MENU_BIBLIOGRAPHY_HOME] = array(
-    'title' => t('My List'),
+    'title' => t('Bibliography'),
     'description' => 'Here you can remove or export citations from your bibliography.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('islandora_bibliography_form'),
