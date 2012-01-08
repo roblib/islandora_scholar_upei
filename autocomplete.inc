@@ -25,7 +25,7 @@ class AutoCompleteFilterScholar {
  * @return string List of results in JSON format
  */
 function islandora_autocomplete_researchers_given($string = '') {
-  var_dump($string);
+//  var_dump($string);
   $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.given');
   // @todo find an alternative solution to array filter because of earlier versions 5.2
   $output = array_filter($content_models, new AutoCompleteFilterScholar($string));
@@ -90,6 +90,6 @@ function islandora_scholar_get_values($query, $results) {
     $value = (string)$researcher->arr[0]->str;
     $list[$value] = $value;
   }
-  var_dump($list);
+//  var_dump($list);
   return $list;
 }

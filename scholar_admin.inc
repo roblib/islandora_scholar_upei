@@ -48,6 +48,17 @@ function scholar_admin_settings() {
     '#title' => t('Base DN'),
     '#default_value' => variable_get('scholar_ldap_basedn', ''),
   );
+  
+  $form['jodconverter'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('JODConverter settings'),
+  );
+  
+  $form['jodconverter']['scholar_jod_path'] = array(
+    '#type' => 'textfield',
+    '#title' => t('JODConverter path'),
+    '#default_value' => variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine'),
+  );
 
   return system_settings_form($form);
 }

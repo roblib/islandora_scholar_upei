@@ -112,3 +112,15 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
     }
   }
 }
+
+//function islandora_scholar_check_relationship($pid, $relationship) {
+//    module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+//  $object = new Fedora_Item($pid);
+//  $test = $object->get_relationships($relationship);
+//  if ($test == NULL) {
+//    return FALSE;
+//  }
+//  else {
+//    return TRUE;
+//  }
+//}

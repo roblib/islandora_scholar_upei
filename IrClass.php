@@ -313,8 +313,8 @@ class IrClass {
           '</host></repository><pids><pid>' . $form_values['pid'] . '</pid></pids><dsid>' . $form_values['version'] . '</dsid><collection>/opt/ruleengine/pdfconverter/</collection></submission>';
       //path to ruleengine framework
       //may want to promote this to the db at some point
-      $urlFile = drupal_get_path('module', 'scholar') . '/ruleengine_url.txt';
-      $url = file_get_contents($urlFile);
+//      $urlFile = drupal_get_path('module', 'scholar') . '/ruleengine_url.txt';
+      $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
       drupal_set_message('URL file: ' . $url);
       //$url = '137.149.66.158:8080/RuleEngineServlet/RuleEngine';
       drupal_set_message('XML: ' . $xmlString);
