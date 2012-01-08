@@ -27,7 +27,7 @@ class AutoCompleteFilterScholar {
 function islandora_autocomplete_researchers_given($string = '') {
 //  var_dump($string);
   $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.given');
-  var_dump($content_models);
+  array_filter($content_models);
   foreach ($content_models as $content_model) {
     $output[$content_model] = $content_model;
   }
@@ -42,8 +42,10 @@ function islandora_autocomplete_researchers_given($string = '') {
 function islandora_autocomplete_researchers_family($string = '') {
   $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.family');
   // @todo find an alternative solution to array filter because of earlier versions 5.2
-  $output = array_filter($content_models, new AutoCompleteFilterScholar($string));
-  $output[$string] = $string;
+  array_filter($content_models);
+  foreach ($content_models as $content_model) {
+    $output[$content_model] = $content_model;
+  }
 //  var_dump($output);
   return drupal_json($output);
 }
@@ -62,8 +64,10 @@ function islandora_autocomplete_departments($string = '') {
     break;
   }
   else {
-  $output = array_filter($content_models, new AutoCompleteFilterScholar($string));
-  $output[$string] = $string;
+  array_filter($content_models);
+  foreach ($content_models as $content_model) {
+    $output[$content_model] = $content_model;
+  }
   return drupal_json($output);
   }
 }
