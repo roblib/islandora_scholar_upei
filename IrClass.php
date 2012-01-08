@@ -284,7 +284,7 @@ class IrClass {
     $fedora_item = new Fedora_Item($pid);
     $test = NULL;
     if ("application/pdf" == $fileObject->filemime) { //do not convert to pdf
-      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
+      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'PDF');
       if ($test) {
 //        $this->updateRefworksStream($form_values['pid'], $form_values['version'], $form_values['usage']);
         drupal_set_message(t('Successfully added PDF file to record.'));
