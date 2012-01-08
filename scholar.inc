@@ -231,7 +231,7 @@ class Scholar {
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-    
+
     $path = drupal_get_path('module', 'scholar');
 
     $tabset['first_tab'] = array(
@@ -289,7 +289,7 @@ class Scholar {
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-    
+
     $path = drupal_get_path('module', 'scholar');
 
     $tabset['first_tab'] = array(
@@ -450,6 +450,10 @@ function islandora_scholar_supp_info_form_validate($form, &$form_state) {
     form_set_error($fieldName, 'Error uploading file.');
     return;
   }
+  if (file_get_mimetype($file->filepath) !== 'application/zip') {
+    form_set_error($fieldName, 'This file is not a zip!');
+    return;
+  }
 }
 
 function islandora_scholar_supp_info_form_submit($form, &$form_state) {
@@ -461,6 +465,32 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
   $object = new Fedora_Item($pid);
 //  drupal_set_message('File: ' . $file->filepath);
   $object->add_datastream_from_file($file->filepath, 'ZIP', $name);
+  $list = islandora_scholar_zip_list($file->filepath);
+//  drupal_set_message('Files: ' . implode(', ', $list));
+  $collectionHelper = new CollectionClass();
+  $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
+
+  $mods_xml = new DOMDocument();
+  $mods_xml->loadXML($xmlstr);
+  $xpath = new DOMXPath($mods_xml);
+  $test = $xpath->query("//*[@type='supplement']")->item(0)->nodeValue;
+//  drupal_set_message('Test: ' . $test);
+  if ($test !== '') {
+    $note = $mods_xml->createElement('note', implode(', ', $list));
+    $note->setAttribute('type', 'supplement');
+    $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
+    $mods_element->appendChild($note);
+//  drupal_set_message('DS: ' . $mods_xml->saveXML());
+    $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+  }
+  else {
+    drupal_set_message(t('Entry for supplementary information already exists!'), 'warning');
+  }
+}
+
+function islandora_scholar_zip_list($zip_file) {
+  exec('unzip -l ' . $zip_file, $info);
+  return $info;
 }
 
 function islandora_scholar_signature_form(&$form_state, $pid) {
@@ -573,9 +603,45 @@ function islandora_scholar_build_citation($pid) {
   $ds_array = $item->get_datastreams_list_as_array();
 
   if (array_key_exists('ZIP', $ds_array)) {
+    $ds_info = $item->get_datastream_info('ZIP');
     $citation .= '</br><b>Supplementary information</b></br>';
     $description = $ds_array['ZIP']['label'];
-    $citation .= '<p>' . l($description, 'fedora/repository/' . $pid . '/ZIP/ZIP') . '</p>';
+    $citation .= '<p>' . 'Name: ' . l($description, 'fedora/repository/' . $pid . '/ZIP/ZIP') . '</br>';
+    $citation .= t('Size: @size bytes', array('@size' => $ds_info->datastream->size)) . '</br>';
+
+    $supp_array = islandora_scholar_zip_mods_to_array($mods);
+
+    if ($supp_array) {
+
+      $citation .= t('Total: @files', array('@files' => $supp_array['files']));
+
+      $header = array('Filename', 'Date', 'Size (bytes)');
+      $rows = array();
+      for ($i = 0; $i < count($supp_array); $i++) {
+        $rows[] = $supp_array[$i];
+      }
+
+      $supp_table = theme('table', $header, $rows);
+
+      $supp_content = $supp_table;
+
+      $supp_fieldset['fieldset'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Details'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      );
+      $supp_fieldset['fieldset']['content'] = array(
+        '#value' => $supp_content,
+      );
+
+      $citation .= drupal_render($supp_fieldset);
+    }
+    else {
+      drupal_set_message(t('A supplementary information file is present but there is not record of its details, maybe something went wrong during upload'), 'warning');
+    }
+
+//    var_dump($supp_array);
   }
 
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
@@ -653,6 +719,8 @@ function islandora_scholar_build_citation($pid) {
 
   if (array_key_exists('ZIP', $ds_array)) {
 
+    $supplementary_content = '';
+
     $tabset['first_tab']['tabs']['supplementary'] = array(
       '#type' => 'tabpage',
       '#title' => t('Supplementary information'),
@@ -670,6 +738,31 @@ function islandora_scholar_build_citation($pid) {
       );
     }
   }
-
   return $tabset;
+}
+
+function islandora_scholar_zip_mods_to_array($mods) {
+
+  $xpath = new DOMXPath($mods);
+  $supp_note = $xpath->query("//*[@type='supplement']")->item(0)->nodeValue;
+  if ($supp_note == NULL) {
+    return FALSE;
+  }
+  $citation .= '<pre>' . str_replace(',', "</br>", $supp_note) . '</pre></br>';
+  $supp_array = explode(',', $supp_note);
+  $supp_no = count($supp_array);
+  $filtered_array = array();
+  $info_array = explode('                     ', trim($supp_array[($supp_no - 1)]));
+  $filtered_array['size'] = $info_array[0];
+  $filtered_array['files'] = $info_array[1];
+  $line_array = array();
+  $j = 0;
+  for ($i = 3; $i < ($supp_no - 2); $i++) {
+    $line_array[$j] = explode('  ', trim($supp_array[$i]));
+    $filtered_array[$j]['name'] = $line_array[$j][2];
+    $filtered_array[$j]['date'] = $line_array[$j][1];
+    $filtered_array[$j]['size'] = $line_array[$j][0];
+    $j++;
+  }
+  return $filtered_array;
 }
