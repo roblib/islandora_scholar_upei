@@ -26,7 +26,12 @@ class AutoCompleteFilterScholar {
  */
 function islandora_autocomplete_researchers_given($string = '') {
 //  var_dump($string);
-  $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.given');
+  if ($string == '') {
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.given');
+  }
+  else {
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.given:' . $string . '*', 'mads.given');
+  }
   array_filter($content_models);
   foreach ($content_models as $content_model) {
     $output[$content_model] = $content_model;
@@ -40,7 +45,12 @@ function islandora_autocomplete_researchers_given($string = '') {
 }
 
 function islandora_autocomplete_researchers_family($string = '') {
-  $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.family');
+  if ($string == '') {
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.family');
+  }
+  else {
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.family:' . $string . '*', 'mads.family');
+  }
   // @todo find an alternative solution to array filter because of earlier versions 5.2
   array_filter($content_models);
   foreach ($content_models as $content_model) {
@@ -57,18 +67,24 @@ function islandora_autocomplete_researchers_family($string = '') {
  * @return string List of results in JSON format
  */
 function islandora_autocomplete_departments($string = '') {
-  $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.topic');
+  if ($string == '') {
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.topic');
+  }
+  else {
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.topic:' . $string . '*', 'mads.topic');
+  }
+  
   // @todo find an alternative solution to array filter because of earlier versions 5.2
   if ($content_models == NULL) {
     drupal_set_message('Solr is not responding!', 'error');
     break;
   }
   else {
-  array_filter($content_models);
-  foreach ($content_models as $content_model) {
-    $output[$content_model] = $content_model;
-  }
-  return drupal_json($output);
+    array_filter($content_models);
+    foreach ($content_models as $content_model) {
+      $output[$content_model] = $content_model;
+    }
+    return drupal_json($output);
   }
 }
 
@@ -79,23 +95,23 @@ function islandora_autocomplete_departments($string = '') {
  * @return type An array of results with the key and element being the same 
  */
 function islandora_scholar_get_values($query, $results) {
-  
+
   $solr_url = variable_get('fedora_solr_search_url', 'http://localhost:8080/solr');
-  
+
   if (is_array($results)) {
     $result_string = implode(',', $results);
     $query = file_get_contents($solr_url . '/select?q=' . $query . '&fl=' . $result_string);
   }
   else {
-  $query = file_get_contents($solr_url . '/select?q=' . $query . '&fl=' . $results);
+    $query = file_get_contents($solr_url . '/select?q=' . $query . '&fl=' . $results);
   }
   $result = new SimpleXMLElement($query);
   $researchers = $result->result;
 //  var_dump($researchers);
   $list = array();
-  
+
   foreach ($researchers->children() as $researcher) {
-    $value = (string)$researcher->arr[0]->str;
+    $value = (string) $researcher->arr[0]->str;
     $list[$value] = $value;
   }
 //  var_dump($list);
