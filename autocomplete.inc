@@ -113,7 +113,8 @@ function islandora_scholar_get_values($query, $results) {
   foreach ($researchers->children() as $researcher) {
     $values = $researcher->arr[0]->str;
     foreach ($values as $value) {
-      $list[$value] = $value;
+      var_dump($value);
+//      $list[$value] = $value;
     }
     
   }
