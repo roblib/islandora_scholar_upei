@@ -261,7 +261,7 @@ function scholar_menu() {
     'title' => 'Auto Complete List of Departments.',
     'description' => 'Lists Departments.',
     'file' => 'autocomplete.inc',
-    'page callback' => 'islandora_content_model_forms_autocomplete_departments',
+    'page callback' => 'islandora_autocomplete_departments',
     'access arguments' => array('view fedora collection'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
