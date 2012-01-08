@@ -231,6 +231,8 @@ class Scholar {
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+    
+    $path = drupal_get_path('module', 'scholar');
 
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
@@ -242,7 +244,7 @@ class Scholar {
     );
 
     $tabset['first_tab']['tabs']['tn'] = array(
-      '#value' => '<img src="/sites/default/files/gnome_stock_person.png"/>',
+      '#value' => '<img src="' . $base_url . '/' . $path . '/images/gnome_stock_person.png"/>',
     );
 
     $collectionHelper = new CollectionClass();
@@ -287,6 +289,8 @@ class Scholar {
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+    
+    $path = drupal_get_path('module', 'scholar');
 
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
@@ -298,7 +302,7 @@ class Scholar {
     );
 
     $tabset['first_tab']['tabs']['tn'] = array(
-      '#value' => '<img src="/sites/default/files/gnome_stock_person.png"/>',
+      '#value' => '<img src="' . $base_url . '/' . $path . '/images/gnome_stock_person.png"/>',
     );
 
     $collectionHelper = new CollectionClass();

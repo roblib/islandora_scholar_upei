@@ -73,6 +73,8 @@ function islandora_bibliography_citation_form_submit(array $form, array &$form_s
  */
 function islandora_bibliography_citation_search_form(array &$form_state, $pid = NULL) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+  global $base_url;
+  $path = drupal_get_path('module', 'scholar');
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
   $redirect = ($_SESSION['search_url']);
@@ -89,7 +91,7 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
     ),
     'action' => array(
       '#type' => 'image_button',
-      '#src' => $stored ? 'sites/default/files/bookmarks_list_remove2.png' : 'sites/default/files/bookmarks_list_add.png',
+      '#src' => $stored ? $path . '/images/bookmarks_list_remove2.png' : $path . '/images/bookmarks_list_add.png',
       '#value' => $stored ? t('Remove from Bibliography') : t('Add to Bibliography'),
       '#action' => $stored ? 'remove' : 'add',
       '#pid' => $pid,

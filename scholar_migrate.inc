@@ -83,11 +83,29 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       $xsl->load($xslt_file);
       $xslt->importStylesheet($xsl);
       $output = $xslt->transformToDoc($input);
-//  var_dump($output);
       $xml = (string) $output->saveXML();
-//  $xml = 'This is a test';
+      $u1 = str_replace(' ', '_', $input->getElementsByTagName('u1')->item(0)->nodeValue);
+      $u2 = str_replace(' ', '_', $input->getElementsByTagName('u2')->item(0)->nodeValue);
       $object->add_datastream_from_string($xml, 'MODS', 'MODS datastream', 'text/xml', 'X');
-//  drupal_set_message('Output: ' . $xml);
+//  drupal_set_message('u1: ' . $u1);
+//  drupal_set_message('u2: ' . $u2);
+      // Check if the relationships for u1 and u2 exist
+      // If they don't they create them in the RELS-EXT
+      // TODO: create exist_relationship function to use elsewhere
+      $rel1 = $object->get_relationships('hasResearcher');
+      if ($rel1 == NULL) {
+        $object->add_relationship('hasResearcher', $u1);
+      }
+      else {
+        drupal_set_message(t('Relationship hasResearcher already exists!'), 'warning');
+      }
+      $rel2 = $object->get_relationships('hasDepartment');
+      if ($rel2 == NULL) {
+        $object->add_relationship('hasDepartment', $u2);
+      }
+      else {
+        drupal_set_message(t('Relationship hasDepartment already exists!'), 'warning');
+      }
     }
     else {
       drupal_set_message(t('MODS datastream already exists for @pid', array('@pid' => $pid)), 'warning');

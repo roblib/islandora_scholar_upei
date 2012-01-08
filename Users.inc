@@ -176,6 +176,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
     
       $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
       $foxml->ingest();
+      // TODO: add thumbnail external reference
     }
   }
     
