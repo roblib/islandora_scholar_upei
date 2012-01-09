@@ -91,7 +91,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
 //      $rel0 = $object->get_relationships('hasModel');
 //      if ($rel0['object'] == 'islandora:refworksCModel') {
         $object->purge_relationship('hasModel', 'islandora:refworksCModel');
-        $object->add_relationship('fedora-model:hasModel', 'ir:citationCModel');
+        $object->add_relationship('hasModel', 'ir:citationCModel');
         $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
         $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
         drupal_set_message(t('Content model updated'));
