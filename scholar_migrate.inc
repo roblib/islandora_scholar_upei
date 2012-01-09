@@ -115,11 +115,14 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       drupal_set_message(t('MODS datastream already exists for @pid', array('@pid' => $pid)), 'warning');
     }
     $model_test = $object->get_relationships('hasModel');
-    drupal_set_message('Model: ' . implode(',', $model_test[0]));
+    drupal_set_message('Model: ' . implode(',', $model_test));
     $object->purge_relationship('hasModel', 'islandora:refworksCModel');
     $object->add_relationship('hasModel', 'ir:citationCModel', FEDORA_MODEL_URI);
     $collection_test = $object->get_relationships('fedora:isMemberOfCollection');
     drupal_set_message('Collection: ' . implode(',', $collection_test[0]));
+    if ($collection_test[0]['object'] == 'ir:collection') {
+      drupal_set_message('Old collection');
+    }
     $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
     $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
     drupal_set_message(t('Content model updated'));
