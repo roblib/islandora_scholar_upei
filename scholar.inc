@@ -488,8 +488,57 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
   }
 }
 
+function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
+  $form = array();
+
+  $form['supp_delete'] = array(
+    '#type' => 'submit',
+    '#value' => t('Delete supplemental information'),
+  );
+
+  $form['pid'] = array(
+    '#type' => 'value',
+    '#value' => $pid,
+  );
+
+  return $form;
+}
+
+function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  $pid = $form_state['values']['pid'];
+  $object = new Fedora_Item($pid);
+  $object->purge_datastream('ZIP');
+  $collectionHelper = new CollectionClass();
+  $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
+
+  $mods_xml = new DOMDocument();
+  $mods_xml->loadXML($xmlstr);
+  $list = $mods_xml->getElementsByTagName('note');
+  var_dump($list);
+  $remove_nodes = array();
+  foreach ($list as $element) {
+    $attribute = $element->getAttribute('type');
+    var_dump($attribute);
+    var_dump($element);
+    if ($attribute == 'supplement') {
+      $remove_nodes[] = $element;
+    }
+  }
+  var_dump($remove_nodes);
+  if (!empty($remove_nodes)) {
+    foreach ($remove_nodes as $remove_node) {
+      $remove_node->parentNode->removeChild($remove_node);
+    }
+    $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+  }
+  else {
+    drupal_set_message(t('No MODS element found to remove!'));
+  }
+}
+
 function islandora_scholar_zip_list($zip_file) {
-  exec('unzip -l ' . $zip_file, $info);
+  exec('unzip -l "' . $zip_file . '"', $info);
   return $info;
 }
 
@@ -638,7 +687,7 @@ function islandora_scholar_build_citation($pid) {
       $citation .= drupal_render($supp_fieldset);
     }
     else {
-      drupal_set_message(t('A supplementary information file is present but there is not record of its details, maybe something went wrong during upload'), 'warning');
+      drupal_set_message(t('A supplementary information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
     }
 
 //    var_dump($supp_array);
@@ -717,6 +766,8 @@ function islandora_scholar_build_citation($pid) {
     }
   }
 
+  if (user_access('administer scholarly research')) {
+  
   if (array_key_exists('ZIP', $ds_array)) {
 
     $supplementary_content = '';
@@ -724,19 +775,18 @@ function islandora_scholar_build_citation($pid) {
     $tabset['first_tab']['tabs']['supplementary'] = array(
       '#type' => 'tabpage',
       '#title' => t('Supplementary information'),
-      '#content' => t('Supplementary information'),
+      '#content' => drupal_get_form('islandora_scholar_supp_info_delete_form', $pid),
       '#weight' => 6,
     );
   }
   else {
-    if (user_access('add scholarly research')) {
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
         '#title' => t('Supplementary information'),
         '#content' => drupal_get_form('islandora_scholar_supp_info_form', $pid),
         '#weight' => 6,
-      );
-    }
+      ); 
+  }
   }
   return $tabset;
 }

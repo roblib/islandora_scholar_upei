@@ -330,7 +330,7 @@ function scholar_theme() {
 function scholar_perm() {
   return array(
     'view scholarly research',
-    'add scholarly research',
+    'administer scholarly research',
     'add users',
     'migrate content',
     'refworks entry',
