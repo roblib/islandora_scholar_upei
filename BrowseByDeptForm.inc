@@ -21,7 +21,7 @@ function scholar_browse_by_dept_form() {
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
     $citations = " (" . (string) $number_of_citations[0] . ")";
     $dept_link = str_replace(' ', '%20', $dept);
-    $output .= '<li><a href=islandora/solr/search/mads.topic:"' . $dept_link . '">' . $dept . '</a>' . $citations . '</li>';
+    $output .= '<li><a href=islandora/solr/search/department:"' . $dept_link . '">' . $dept . '</a>' . $citations . '</li>';
   }
 //  $output = $result;
 //  $result = db_query('SELECT role.rid, role.name FROM {role} where role.rid > %d order by role.name', 0);
