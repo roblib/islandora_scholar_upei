@@ -17,7 +17,7 @@ function scholar_browse_by_dept_form() {
   $output = '<ul>';
   foreach ($depts as $dept) {
     $dept_result = file_get_contents('http://localhost:8080/solr/select/?q=department:' . (str_replace(' ', '%20', (strtolower($dept[0])))));
-    $dept_xml = SimpleXMLElement($dept_result);
+    $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
     $citations = " (" . (string) $number_of_citations[0] . ")";
     $dept_link = str_replace(' ', '%20', $dept);
