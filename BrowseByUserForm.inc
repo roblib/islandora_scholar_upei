@@ -90,7 +90,7 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
     '#value' => $list,
   );
   $dept = str_replace(' ', '%20', $dept);
-  $query = 'http://localhost:8080/solr/select/?q=mads.topic:' . $dept . '&fl=mads.family,mads.given,mads.fullname&rows=10000&sort=mads.family_sort+asc';
+  $query = 'http://localhost:8080/solr/select/?q=mads.topic:' . $dept . '&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
   $result = file_get_contents($query);
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
