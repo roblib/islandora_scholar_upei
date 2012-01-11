@@ -102,7 +102,7 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
     $fullname = $arr->xpath('./arr[@name="mads.fullname"]/str');
     $users[] = $family[0] . ', ' . $given[0];
-    $link[] = '<li><a href=/islandora/solr/search/"' . $fullname[0] . '">';
+    $link[] = '<li><a href=/islandora/solr/search/"' . str_replace(' ', '%20', $fullname[0]) . '">';
   }
   asort($users);
   foreach ($users as $key => $user) {
