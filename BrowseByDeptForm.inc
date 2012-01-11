@@ -16,6 +16,9 @@ function scholar_browse_by_dept_form() {
   $depts = array_unique($xml->xpath('//doc/arr/str'));
   $output = '<ul>';
   foreach ($depts as $dept) {
+    if ($dept == 'Pathology and Microbiology') {
+      $dept = 'Path Micro';
+    }
     $dept_result = file_get_contents('http://localhost:8080/solr/select/?q=mods.department:' . (str_replace(' ', '%20', ($dept[0]))));
     $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');

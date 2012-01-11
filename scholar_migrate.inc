@@ -87,12 +87,6 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       $u1 = str_replace(' ', '_', $input->getElementsByTagName('u1')->item(0)->nodeValue);
       $u2 = str_replace(' ', '_', $input->getElementsByTagName('u2')->item(0)->nodeValue);
       $object->add_datastream_from_string($xml, 'MODS', 'MODS datastream', 'text/xml', 'X');
-
-//      $rel0 = $object->get_relationships('hasModel');
-//      if ($rel0['object'] == 'islandora:refworksCModel') {
-//      }
-//  drupal_set_message('u1: ' . $u1);
-//  drupal_set_message('u2: ' . $u2);
       // Check if the relationships for u1 and u2 exist
       // If they don't they create them in the RELS-EXT
       // TODO: create exist_relationship function to use elsewhere
@@ -114,6 +108,8 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
     else {
       drupal_set_message(t('MODS datastream already exists for @pid', array('@pid' => $pid)), 'warning');
     }
+    // Ensure that the previous edit has completed before starting
+    // the next to prevent errors due to the object being locked
     $model_edit_test = '';
     $model_test = $object->get_models();
     if ($model_test[0]['object'] == 'islandora:refworksCModel') {
