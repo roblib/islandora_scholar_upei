@@ -30,7 +30,7 @@ function islandora_autocomplete_researchers_given($string = '') {
     $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.given');
   }
   else {
-    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.given:' . $string . '*', 'mads.given');
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.given:' . strtolower($string) . '*', 'mads.given');
   }
   array_filter($content_models);
   foreach ($content_models as $content_model) {
@@ -49,7 +49,7 @@ function islandora_autocomplete_researchers_family($string = '') {
     $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.family');
   }
   else {
-    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.family:' . $string . '*', 'mads.family');
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.family:' . strtolower($string) . '*', 'mads.family');
   }
   // @todo find an alternative solution to array filter because of earlier versions 5.2
   array_filter($content_models);
@@ -71,7 +71,7 @@ function islandora_autocomplete_departments($string = '') {
     $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.topic');
   }
   else {
-    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.topic:' . $string . '*', 'mads.topic');
+    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.topic:' . strtolower($string) . '*', 'mads.topic');
   }
   
   // @todo find an alternative solution to array filter because of earlier versions 5.2
