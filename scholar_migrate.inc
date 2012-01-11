@@ -114,18 +114,21 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
     else {
       drupal_set_message(t('MODS datastream already exists for @pid', array('@pid' => $pid)), 'warning');
     }
+    $model_edit_test = '';
     $model_test = $object->get_models();
     if ($model_test[0]['object'] == 'islandora:refworksCModel') {
       $model_result = $object->purge_relationship('hasModel', 'islandora:refworksCModel');
       if ($model_result) {
-        $object->add_relationship('hasModel', 'ir:citationCModel', FEDORA_MODEL_URI);
+        $model_edit_test = $object->add_relationship('hasModel', 'ir:citationCModel', FEDORA_MODEL_URI);
       }
     }
-    $collection_test = $object->get_relationships('fedora:isMemberOfCollection');
-    if ($collection_test[0]['object'] == 'ir:collection') {
-      $collection_result = $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
-      if ($collection_result) {
-        $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
+    if ($model_edit_test) {
+      $collection_test = $object->get_relationships('fedora:isMemberOfCollection');
+      if ($collection_test[0]['object'] == 'ir:collection') {
+        $collection_result = $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
+        if ($collection_result) {
+          $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
+        }
       }
     }
   }
