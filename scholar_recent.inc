@@ -15,6 +15,10 @@ function scholar_recent_items($form_state) {
     $url = variable_get('fedora_repository_url', 'http://localhost:8080/fedora/risearch');
     $url .= "?type=tuples&flush=TRUE&format=Sparql&limit=10&offset=0&lang=itql&stream=on&query=" . $query_string;
     $content .= do_curl($url);
+    if ($content == '') {
+      drupal_set_message(t('The fedora server is not responding!'));
+      return FALSE;
+    }
     $result = new SimpleXMLElement($content);
   
 //    var_dump($result);

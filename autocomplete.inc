@@ -26,15 +26,23 @@ class AutoCompleteFilterScholar {
  */
 function islandora_autocomplete_researchers_given($string = '') {
 //  var_dump($string);
+  $string = str_replace('*', '', $string);
   if ($string == '') {
     $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.given');
   }
   else {
     $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.given:' . strtolower($string) . '*', 'mads.given');
   }
+//  var_dump($content_models);
+  if ($content_models == 'None') {
+    $output[''] = '';
+    return drupal_json($output);
+  }
+  else {
   array_filter($content_models);
   foreach ($content_models as $content_model) {
     $output[$content_model] = $content_model;
+  }
   }
   // @todo find an alternative solution to array filter because of earlier versions 5.2
 //  $output = array_filter($content_models, new AutoCompleteFilterScholar($string));
@@ -45,13 +53,17 @@ function islandora_autocomplete_researchers_given($string = '') {
 }
 
 function islandora_autocomplete_researchers_family($string = '') {
+  $string = str_replace('*', '', $string);
   if ($string == '') {
     $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.family');
   }
   else {
     $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.family:' . strtolower($string) . '*', 'mads.family');
   }
-  // @todo find an alternative solution to array filter because of earlier versions 5.2
+  if ($content_models == 'None') {
+    $output[''] = '';
+    return drupal_json($output);
+  }
   array_filter($content_models);
   foreach ($content_models as $content_model) {
     $output[$content_model] = $content_model;
@@ -67,25 +79,29 @@ function islandora_autocomplete_researchers_family($string = '') {
  * @return string List of results in JSON format
  */
 function islandora_autocomplete_departments($string = '') {
+  $string = str_replace('*', '', $string);
   if ($string == '') {
     $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel', 'mads.topic');
   }
   else {
-    $content_models = islandora_scholar_get_values('rels.hasModel:researcherCModel%20AND%20mads.topic:' . strtolower($string) . '*', 'mads.topic');
+    $content_models = islandora_scholar_get_values('rels.hasModel:departmentCModel%20AND%20mads.identifier_sort:' . strtoupper($string) . '*', 'mads.identifier');
   }
-  
+//  var_dump($content_models);
   // @todo find an alternative solution to array filter because of earlier versions 5.2
   if ($content_models == NULL) {
     drupal_set_message('Solr is not responding!', 'error');
-    break;
+    $output[''] = '';
+    return drupal_json($output);
   }
-  else {
+  if ($content_models == 'None') {
+    $output[''] = '';
+    return drupal_json($output);
+  }
     array_filter($content_models);
     foreach ($content_models as $content_model) {
       $output[$content_model] = $content_model;
     }
     return drupal_json($output);
-  }
 }
 
 /**
@@ -106,10 +122,15 @@ function islandora_scholar_get_values($query, $results) {
     $query = file_get_contents($solr_url . '/select?q=' . $query . '&fl=' . $results);
   }
   $result = new SimpleXMLElement($query);
+  $number = $result->xpath('./result[@name="response"]/@numFound');
+//  var_dump($number[0]['numFound']);
+  if ((int) $number[0]['numFound'] < 1) {
+    return 'None';
+  }
   $researchers = $result->result;
 //  var_dump($researchers);
   $list = array();
-
+//  var_dump($researchers);
   foreach ($researchers->children() as $researcher) {
     $values = $researcher->arr[0]->str;
     foreach ($values as $value) {
