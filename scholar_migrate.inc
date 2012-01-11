@@ -116,13 +116,17 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
     }
     $model_test = $object->get_models();
     if ($model_test[0]['object'] == 'islandora:refworksCModel') {
-      $object->purge_relationship('hasModel', 'islandora:refworksCModel');
-      $object->add_relationship('hasModel', 'ir:citationCModel', FEDORA_MODEL_URI);
+      $model_result = $object->purge_relationship('hasModel', 'islandora:refworksCModel');
+      if ($model_result) {
+        $object->add_relationship('hasModel', 'ir:citationCModel', FEDORA_MODEL_URI);
+      }
     }
     $collection_test = $object->get_relationships('fedora:isMemberOfCollection');
     if ($collection_test[0]['object'] == 'ir:collection') {
-      $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
-      $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
+      $collection_result = $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
+      if ($collection_result) {
+        $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
+      }
     }
   }
 }
