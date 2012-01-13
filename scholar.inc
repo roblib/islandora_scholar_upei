@@ -296,7 +296,17 @@ class Scholar {
 //    var_dump($username_query);
     $xml = new SimpleXMLElement($username_query);
     $array = $xml->xpath('//doc');
-    var_dump($array);
+//    var_dump($array);
+    
+    $array = array_filter($array);
+    foreach ($array as $arr) {
+    $pid = $arr->str;
+    var_dump($pid);
+    
+    
+    $users[] = $family[0] . ', ' . $given[0];
+    $link[] = '<li><a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
+  }
     
 //    $tracking = new islandora_scholar_tracking($pid);
 //    
