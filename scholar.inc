@@ -300,7 +300,7 @@ class Scholar {
     
     $array = array_filter($array);
     foreach ($array as $arr) {
-    $pid = $arr->str;
+    $pid = (string) $arr->str;
     var_dump($pid);
     
     
