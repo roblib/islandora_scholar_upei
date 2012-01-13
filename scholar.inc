@@ -733,9 +733,7 @@ function islandora_scholar_build_citation($pid) {
   $track = new islandora_scholar_tracking($pid);
   $track->add_page_count();
   $read = $track->read_page_count();
-  var_dump($read);
   $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
-//    var_dump($read);
   $citation .= '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
 
   $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
