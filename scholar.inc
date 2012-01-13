@@ -255,7 +255,7 @@ class Scholar {
     );
 
     $tabset['first_tab']['tabs']['details'] = array(
-      '#type' => 'tabset',
+      '#type' => 'tabpage',
       '#title' => t('Details'),
       );
     
@@ -321,7 +321,7 @@ class Scholar {
 //    $citations = 
 
     $tabset['first_tab']['tabs']['citations'] = array(
-      '#type' => 'tabset',
+      '#type' => 'tabpage',
       '#title' => t('Citations'),
       );
     
