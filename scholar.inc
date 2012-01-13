@@ -305,7 +305,7 @@ class Scholar {
     $object = new CollectionClass();
     $pid_xml_str = $object->getStream($pid, "MODS");
     $pid_xml = new SimpleXMLElement($pid_xml_str);
-    $title = $pid_xml->xpath('//mods:title');
+    $title = $pid_xml->xpath('//title');
     var_dump($title);
     
   }
@@ -733,6 +733,7 @@ function islandora_scholar_build_citation($pid) {
   $track = new islandora_scholar_tracking($pid);
   $track->add_page_count();
   $read = $track->read_page_count();
+  var_dump($read);
   $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
 //    var_dump($read);
   $citation .= '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
