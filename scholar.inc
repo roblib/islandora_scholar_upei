@@ -305,8 +305,8 @@ class Scholar {
     $object = new CollectionClass();
     $pid_xml_str = $object->getStream($pid, "MODS");
     $pid_xml = new SimpleXMLElement($pid_xml_str);
-    $title = $pid_xml->xpath('./arr[@name="mods.title"]/str');
-    var_dump($pid_xml_str);
+    $title = $pid_xml->xpath('//title');
+    var_dump($title);
     
   }
     
