@@ -302,10 +302,12 @@ class Scholar {
     foreach ($array as $arr) {
     $pid = (string) $arr->str;
     var_dump($pid);
+    $object = new CollectionClass();
+    $pid_xml_str = $object->getStream($pid, "MODS");
+    $pid_xml = new SimpleXMLElement($pid_xml_str);
+    $title = $pid_xml->xpath('//mods:title');
+    var_dump($title);
     
-    
-    $users[] = $family[0] . ', ' . $given[0];
-    $link[] = '<li><a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
   }
     
 //    $tracking = new islandora_scholar_tracking($pid);
