@@ -306,7 +306,7 @@ class Scholar {
       $pid_xml_str = $object->getStream($pid, "MODS");
       $pid_xml = new SimpleXMLElement($pid_xml_str);
       $title = $pid_xml->mods->titleInfo->title;
-      var_dump($title);
+      var_dump($pid_xml);
     }
 
 //    $tracking = new islandora_scholar_tracking($pid);
