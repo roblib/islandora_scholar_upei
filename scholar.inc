@@ -302,7 +302,7 @@ class Scholar {
       '#title' => t('Citations'),
     );
 
-    $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID');
+    $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
 //    var_dump($username_query);
     $xml = new SimpleXMLElement($username_query);
     $array = $xml->xpath('//doc');
