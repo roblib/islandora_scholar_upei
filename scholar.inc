@@ -315,7 +315,7 @@ class Scholar {
       $title = $pid_xml->titleInfo->title;
       $track = new islandora_scholar_tracking($pid);
       $read = $track->read_page_count();
-      $rows[] = array(l($title, 'fedora/repository/' . $pid), t('(@read)', array('@read' => $read['count'])));
+      $rows[] = array(l($title, 'fedora/repository/' . $pid), t('@read', array('@read' => $read['count'])));
     }
 
 //    $tracking = new islandora_scholar_tracking($pid);
