@@ -257,8 +257,8 @@ class Scholar {
     $tabset['first_tab']['tabs']['details'] = array(
       '#type' => 'tabpage',
       '#title' => t('Details'),
-      );
-    
+    );
+
     $tabset['first_tab']['tabs']['details']['tn'] = array(
       '#value' => '<img src="' . $base_url . '/' . $path . '/images/gnome_stock_person.png"/>',
     );
@@ -297,6 +297,11 @@ class Scholar {
       '#value' => theme('table', $header, $rows),
     );
 
+    $tabset['first_tab']['tabs']['citations'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Citations'),
+    );
+
     $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID');
 //    var_dump($username_query);
     $xml = new SimpleXMLElement($username_query);
@@ -304,28 +309,28 @@ class Scholar {
 //    var_dump($array);
 
     $array = array_filter($array);
-    var_dump($array);
     $rows = array();
-    $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
-    foreach ($array as $arr) {
-      $pid = (string) $arr->str;
-      $object = new CollectionClass();
-      $pid_xml_str = $object->getStream($pid, "MODS");
-      $pid_xml = new SimpleXMLElement($pid_xml_str);
-      $title = $pid_xml->titleInfo->title;
-      $track = new islandora_scholar_tracking($pid);
-      $read = $track->read_page_count();
-      $rows[] = array(l($title, 'fedora/repository/' . $pid), t('@read', array('@read' => $read['count'])), $read[($read['count'] - 1)]['time']);
-    }
-
-    $tabset['first_tab']['tabs']['citations'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Citations'),
+    if (!empty($array)) {
+      $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+      foreach ($array as $arr) {
+        $pid = (string) $arr->str;
+        $object = new CollectionClass();
+        $pid_xml_str = $object->getStream($pid, "MODS");
+        $pid_xml = new SimpleXMLElement($pid_xml_str);
+        $title = $pid_xml->titleInfo->title;
+        $track = new islandora_scholar_tracking($pid);
+        $read = $track->read_page_count();
+        $rows[] = array(l($title, 'fedora/repository/' . $pid), t('@read', array('@read' => $read['count'])), $read[($read['count'] - 1)]['time']);
+      }
+      $tabset['first_tab']['tabs']['citations']['table'] = array(
+        '#value' => theme('table', $header, $rows),
       );
-    
-    $tabset['first_tab']['tabs']['citations']['table'] = array(
-      '#value' => theme('table', $header, $rows),
-    );
+    }
+    else {
+      $tabset['first_tab']['tabs']['citations']['table'] = array(
+        '#value' => t('No citations found!'),
+      );
+    }
 
     return $tabset;
   }
