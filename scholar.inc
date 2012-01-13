@@ -303,7 +303,7 @@ class Scholar {
     $header = array(t('Title'));
     foreach ($array as $arr) {
       $pid = (string) $arr->str;
-      var_dump($pid);
+//      var_dump($pid);
       $object = new CollectionClass();
       $pid_xml_str = $object->getStream($pid, "MODS");
       $pid_xml = new SimpleXMLElement($pid_xml_str);
@@ -316,6 +316,11 @@ class Scholar {
 //    $citations = 
 
     $tabset['first_tab']['tabs']['citations'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Citations'),
+      );
+    
+    $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => theme('table', $header, $rows),
     );
 
