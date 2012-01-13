@@ -299,6 +299,8 @@ class Scholar {
 //    var_dump($array);
 
     $array = array_filter($array);
+    $rows = array();
+    $header = array(t('Title'));
     foreach ($array as $arr) {
       $pid = (string) $arr->str;
       var_dump($pid);
@@ -306,7 +308,7 @@ class Scholar {
       $pid_xml_str = $object->getStream($pid, "MODS");
       $pid_xml = new SimpleXMLElement($pid_xml_str);
       $title = $pid_xml->titleInfo->title;
-      var_dump($title);
+      $rows[] = array($title);
     }
 
 //    $tracking = new islandora_scholar_tracking($pid);
@@ -314,7 +316,7 @@ class Scholar {
 //    $citations = 
 
     $tabset['first_tab']['tabs']['citations'] = array(
-      '#value' => $citations,
+      '#value' => theme('table', $header, $rows),
     );
 
     return $tabset;
