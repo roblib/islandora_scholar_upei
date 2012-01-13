@@ -291,9 +291,12 @@ class Scholar {
     $tabset['first_tab']['tabs']['table'] = array(
       '#value' => theme('table', $header, $rows),
     );
-
+    
     $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID');
-    var_dump($username_query);
+//    var_dump($username_query);
+    $xml = new SimpleXMLElement($username_query);
+    $array = $xml->xpath('//doc');
+    var_dump($array);
     
 //    $tracking = new islandora_scholar_tracking($pid);
 //    
