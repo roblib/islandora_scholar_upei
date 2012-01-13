@@ -32,12 +32,17 @@ function islandora_bibliography_form(array &$form_state) {
       'fieldset' => array(
         '#type' => 'fieldset',
         '#title' => t('Citations'),
-        '#description' => t('<p>Here you can remove or export citations from your bibliography.</p>'),
+//        '#description' => t('<p>Here you can remove or export citations from your bibliography.</p>'),
+        'step_1' => array(
+          '#value' => t('Step 1: Select your citations'),
+          '#prefix' => '<h3>',
+          '#suffix' => '</h3>'
+        ),
         'table' => islandora_bibilgraphy_form_table($pids),
-        'preview_title' => array(
-          '#value' => t('Preview Citations'),
-          '#prefix' => '<h4>',
-          '#suffix' => '</h4>'
+        'step_2' => array(
+          '#value' => t('Step 2: Preview the formatted citations'),
+          '#prefix' => '<h3>',
+          '#suffix' => '</h3>'
         ),
         'preview_style' => array(
           '#title' => t('Style'),
@@ -54,10 +59,10 @@ function islandora_bibliography_form(array &$form_state) {
           '#value' => t('Remove Selected'),
           '#submit' => array('islandora_bibliography_form_remove')
         ),
-        'export_title' => array(
-          '#value' => t('Export To File'),
-          '#prefix' => '<h4>',
-          '#suffix' => '</h4>'
+        'step_3' => array(
+          '#value' => t('Step 3: Save the formatted citations'),
+          '#prefix' => '<h3>',
+          '#suffix' => '</h3>'
         ),
         'format' => array(
           '#title' => t('Format'),
