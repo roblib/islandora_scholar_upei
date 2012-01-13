@@ -16,9 +16,19 @@ class Scholar {
   }
 
   function showCitation() {
-
+//    module_load_include('inc', 'scholar', 'scholar_tracking');
     $pid = $this->pid;
+//    $track = new islandora_scholar_tracking($pid);
+//    $track->add_page_count();
+//    $read = $track->read_page_count();
     $tabset = islandora_scholar_build_citation($pid);
+//    $tabset['views'] = array(
+//      '#value' => '<div>Times viewed: ' . $read['count'] . '</div>',
+//    );
+////    var_dump($read);
+//    $tabset['last_viewed'] = array(
+//      '#value' => '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div>',
+//    );
     return $tabset;
   }
 
@@ -231,6 +241,7 @@ class Scholar {
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+    module_load_include('inc', 'scholar', 'scholar_tracking');
 
     $path = drupal_get_path('module', 'scholar');
 
@@ -281,6 +292,17 @@ class Scholar {
       '#value' => theme('table', $header, $rows),
     );
 
+    $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))));
+    var_dump($username_query);
+    
+//    $tracking = new islandora_scholar_tracking($pid);
+//    
+//    $citations = 
+    
+    $tabset['first_tab']['tabs']['citations'] = array(
+      '#value' => $citations,
+    );
+    
     return $tabset;
   }
 
@@ -607,6 +629,10 @@ function islandora_scholar_build_citation($pid) {
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('php', 'scholar', 'IrClass');
   module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
+  module_load_include('inc', 'scholar', 'scholar_tracking');
+  module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
+  module_load_include('inc', 'scholar', 'Coins');
+  module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
   drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
@@ -627,8 +653,6 @@ function islandora_scholar_build_citation($pid) {
   $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
 
   $path = drupal_get_path('module', 'Fedora_Repository');
-  module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
-  module_load_include('inc', 'scholar', 'Coins');
   $data = new Coins($pid);
 //    Get MODS datastream and pull the ISSN from there.
 
@@ -689,11 +713,14 @@ function islandora_scholar_build_citation($pid) {
     else {
       drupal_set_message(t('A supplementary information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
     }
-
-//    var_dump($supp_array);
   }
 
-  module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+  $track = new islandora_scholar_tracking($pid);
+  $track->add_page_count();
+  $read = $track->read_page_count();
+  $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
+//    var_dump($read);
+  $citation .= '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
 
   $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
 
@@ -767,26 +794,26 @@ function islandora_scholar_build_citation($pid) {
   }
 
   if (user_access('administer scholarly research')) {
-  
-  if (array_key_exists('ZIP', $ds_array)) {
 
-    $supplementary_content = '';
+    if (array_key_exists('ZIP', $ds_array)) {
 
-    $tabset['first_tab']['tabs']['supplementary'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Supplementary information'),
-      '#content' => drupal_get_form('islandora_scholar_supp_info_delete_form', $pid),
-      '#weight' => 6,
-    );
-  }
-  else {
+      $supplementary_content = '';
+
+      $tabset['first_tab']['tabs']['supplementary'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('Supplementary information'),
+        '#content' => drupal_get_form('islandora_scholar_supp_info_delete_form', $pid),
+        '#weight' => 6,
+      );
+    }
+    else {
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
         '#title' => t('Supplementary information'),
         '#content' => drupal_get_form('islandora_scholar_supp_info_form', $pid),
         '#weight' => 6,
-      ); 
-  }
+      );
+    }
   }
   return $tabset;
 }

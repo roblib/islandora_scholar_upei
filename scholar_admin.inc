@@ -59,7 +59,28 @@ function scholar_admin_settings() {
     '#title' => t('JODConverter path'),
     '#default_value' => variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine'),
   );
+  
+  $form['tracking'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Tracking'),
+  );
+  
+  $form['tracking']['clear_page_by_pid'] = array(
+    
+  );
+  
+  $form['tracking']['clear_page_all'] = array(
+    
+  );
 
+  $form['tracking']['clear_ds_by_pid'] = array(
+    
+  );
+  
+  $form['tracking']['clear_ds_all'] = array(
+    
+  );
+  
   return system_settings_form($form);
 }
 
