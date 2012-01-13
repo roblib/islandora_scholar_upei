@@ -313,7 +313,7 @@ class Scholar {
       $pid_xml_str = $object->getStream($pid, "MODS");
       $pid_xml = new SimpleXMLElement($pid_xml_str);
       $title = $pid_xml->titleInfo->title;
-      $rows[] = array($title);
+      $rows[] = array(l($title, 'fedora/repository/' . $pid));
     }
 
 //    $tracking = new islandora_scholar_tracking($pid);
