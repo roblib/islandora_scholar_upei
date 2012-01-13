@@ -254,7 +254,12 @@ class Scholar {
       '#type' => 'tabset',
     );
 
-    $tabset['first_tab']['tabs']['tn'] = array(
+    $tabset['first_tab']['tabs']['details'] = array(
+      '#type' => 'tabset',
+      '#title' => t('Details'),
+      );
+    
+    $tabset['first_tab']['tabs']['details']['tn'] = array(
       '#value' => '<img src="' . $base_url . '/' . $path . '/images/gnome_stock_person.png"/>',
     );
 
@@ -288,7 +293,7 @@ class Scholar {
       array('Department(s)', $dept),
     );
 
-    $tabset['first_tab']['tabs']['table'] = array(
+    $tabset['first_tab']['tabs']['details']['table'] = array(
       '#value' => theme('table', $header, $rows),
     );
 
@@ -316,7 +321,7 @@ class Scholar {
 //    $citations = 
 
     $tabset['first_tab']['tabs']['citations'] = array(
-      '#type' => 'fieldset',
+      '#type' => 'tabset',
       '#title' => t('Citations'),
       );
     
