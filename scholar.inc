@@ -305,7 +305,7 @@ class Scholar {
 
     $array = array_filter($array);
     $rows = array();
-    $header = array(t('Title'), t('Times viewed'));
+    $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
     foreach ($array as $arr) {
       $pid = (string) $arr->str;
 //      var_dump($pid);
@@ -315,7 +315,7 @@ class Scholar {
       $title = $pid_xml->titleInfo->title;
       $track = new islandora_scholar_tracking($pid);
       $read = $track->read_page_count();
-      $rows[] = array(l($title, 'fedora/repository/' . $pid), t('@read', array('@read' => $read['count'])));
+      $rows[] = array(l($title, 'fedora/repository/' . $pid), t('@read', array('@read' => $read['count'])), $read[($read['count'] - 1)]['time']);
     }
 
 //    $tracking = new islandora_scholar_tracking($pid);
