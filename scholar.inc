@@ -16,19 +16,8 @@ class Scholar {
   }
 
   function showCitation() {
-//    module_load_include('inc', 'scholar', 'scholar_tracking');
     $pid = $this->pid;
-//    $track = new islandora_scholar_tracking($pid);
-//    $track->add_page_count();
-//    $read = $track->read_page_count();
     $tabset = islandora_scholar_build_citation($pid);
-//    $tabset['views'] = array(
-//      '#value' => '<div>Times viewed: ' . $read['count'] . '</div>',
-//    );
-////    var_dump($read);
-//    $tabset['last_viewed'] = array(
-//      '#value' => '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div>',
-//    );
     return $tabset;
   }
 
@@ -220,7 +209,7 @@ class Scholar {
       $tabset['first_tab']['tabs']['signature'] = array(
         '#type' => 'tabpage',
         '#title' => t('Signature'),
-        '#content' => l(t('Signature file'), 'fedora/repository/' . $pid . '/SIGNATURE/SIGNATURE'),
+        '#content' => l(t('Signature file'), 'download_ds/' . $pid . '/SIGNATURE'),
         '#weight' => 4,
       );
     }
@@ -708,7 +697,7 @@ function islandora_scholar_build_citation($pid) {
     $ds_info = $item->get_datastream_info('ZIP');
     $citation .= '</br><b>Supplementary information</b></br>';
     $description = $ds_array['ZIP']['label'];
-    $citation .= '<p>' . 'Name: ' . l($description, 'fedora/repository/' . $pid . '/ZIP/ZIP') . '</br>';
+    $citation .= '<p>' . 'Name: ' . l($description, 'download_ds/' . $pid . '/ZIP') . '</br>';
     $citation .= t('Size: @size bytes', array('@size' => $ds_info->datastream->size)) . '</br>';
 
     $supp_array = islandora_scholar_zip_mods_to_array($mods);
@@ -745,6 +734,8 @@ function islandora_scholar_build_citation($pid) {
   }
 
   $track = new islandora_scholar_tracking($pid);
+  
+    
   $track->add_page_count();
   $read = $track->read_page_count();
   $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
@@ -804,10 +795,16 @@ function islandora_scholar_build_citation($pid) {
   }
   else {
     if (array_key_exists('PDF', $ds_array)) {
+      
+      $ds_count = $track->read_ds_count('PDF');
+      
+      $content = l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
+      $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
+      
       $tabset['first_tab']['tabs']['pdf'] = array(
         '#type' => 'tabpage',
         '#title' => t('PDF'),
-        '#content' => l(t('View PDF'), 'fedora/repository/' . $pid . '/PDF/PDF'),
+        '#content' => $content,
         '#weight' => 3,
       );
     }
@@ -825,12 +822,15 @@ function islandora_scholar_build_citation($pid) {
 
     if (array_key_exists('ZIP', $ds_array)) {
 
-      $supplementary_content = '';
+      $ds_count = $track->read_ds_count('ZIP');
+      
+      $content = drupal_get_form('islandora_scholar_supp_info_delete_form', $pid);
+      $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
 
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
         '#title' => t('Supplementary information'),
-        '#content' => drupal_get_form('islandora_scholar_supp_info_delete_form', $pid),
+        '#content' => $content,
         '#weight' => 6,
       );
     }
@@ -870,4 +870,59 @@ function islandora_scholar_zip_mods_to_array($mods) {
     $j++;
   }
   return $filtered_array;
+}
+
+function islandora_scholar_download_ds_form(array &$form_state, $pid, $dsid) {
+  global $base_url;
+  module_load_include('inc', 'scholar', 'scholar_tracking');
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  $track = new islandora_scholar_tracking($pid);
+  $result = $track->add_ds_count($dsid);
+  $url = $base_url . '/fedora/repository/' . $pid . '/' . $dsid . '/content';
+  $object = new Fedora_Item($pid);
+  $info = $object->get_datastream_info($dsid);
+  $mime_type = $info->datastream->MIMEType;
+  $extension = system_mime_type_extension($mime_type);
+  $file = $object->get_datastream_dissemination($dsid);
+  $ds_name = $info->datastream->ID;
+  if ($file != NULL) {
+  drupal_set_header("Content-type: application/x-unknown; utf-8");
+  drupal_set_header("Content-Disposition: attachment; filename=" . $pid . '-' . $ds_name . '.' . $extension);
+  echo $file;
+  exit;
+  }
+  else {
+    drupal_set_message(t('Specified file does not exist!'));
+  }
+}
+
+function system_mime_type_extensions() {
+    # Returns the system MIME type mapping of MIME types to extensions, as defined in /etc/mime.types (considering the first
+    # extension listed to be canonical).
+    $out = array();
+    $file = fopen('/etc/mime.types', 'r');
+    while(($line = fgets($file)) !== false) {
+        $line = trim(preg_replace('/#.*/', '', $line));
+        if(!$line)
+            continue;
+        $parts = preg_split('/\s+/', $line);
+        if(count($parts) == 1)
+            continue;
+        $type = array_shift($parts);
+        if(!isset($out[$type]))
+            $out[$type] = array_shift($parts);
+    }
+    fclose($file);
+    return $out;
+}
+
+function system_mime_type_extension($type) {
+    # Returns the canonical file extension for the MIME type specified, as defined in /etc/mime.types (considering the first
+    # extension listed to be canonical).
+    #
+    # $type - the MIME type
+    static $exts;
+    if(!isset($exts))
+        $exts = system_mime_type_extensions();
+    return isset($exts[$type]) ? $exts[$type] : null;
 }

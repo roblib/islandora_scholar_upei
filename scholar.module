@@ -124,18 +124,6 @@ function scholar_quick_search_form_submit($form, &$form_state) {
   return $quick_search_form->quick_search_form_submit($form_state['values']);
 }
 
-//function scholar_browse_by_user_form(&$form_state, $role=null,$usersArray=null) {
-//  $irClass = new IrClass();
-//  return $irClass->browse_by_name_form($role,$usersArray);
-//}
-//function scholar_browse_by_user_form_submit($form, &$form_state) {
-//  $user_id = $form_state['values']['user_id'];
-//  //$user = user_load(array('uid'=>$user_id));
-//  //$name=$user->name;
-//  drupal_goto("fedorair/ir_by_name/refworks.u1/$user_id");
-//
-//}
-
 function scholar_create_roles_for_users() {
   $irClass = new IrClass();
   $irClass->get_and_create_roles();
@@ -303,6 +291,16 @@ function scholar_menu() {
     'access callback' => 'user_access',
     'access arguments' => array('manage tracking'), // Use something fedora specific.
     'type' => MENU_NORMAL_ITEM,
+  );
+  
+    $items['download_ds/%/%'] = array(
+    'title' => t('Download datastream'),
+    'file' => 'scholar.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_scholar_download_ds_form', 1, 2),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
   );
 
   return $items;

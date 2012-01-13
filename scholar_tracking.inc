@@ -12,7 +12,11 @@ class islandora_scholar_tracking {
 
   function add_page_count() {
     global $user;
-    $result2 = db_query("INSERT INTO {islandora_scholar_page_tracking} (pid,user) VALUES ('%s', '%s')", $this->pid, $user->name);
+    $ip_list = explode(' ', variable_get('scholar_tracking_ip_list', 'localhost 127.0.0.1'));
+    $ip = $_SERVER['REMOTE_ADDR'];
+    if (!in_array($ip, $ip_list)) {
+      $result = db_query("INSERT INTO {islandora_scholar_page_tracking} (pid,user) VALUES ('%s', '%s')", $this->pid, $user->name);
+    }
     return $result;
   }
 
@@ -27,18 +31,23 @@ class islandora_scholar_tracking {
 
   function add_ds_count($dsid) {
     global $user;
-    $result = db_query("INSERT INTO {islandora_scholar_ds_tracking} (pid,dsid,user) VALUES ('%s', '%s', '%s')", $this->pid, $dsid, $user->name);
+    $ip_list = explode(' ', variable_get('scholar_tracking_ip_list', 'localhost 127.0.0.1'));
+    $ip = $_SERVER['REMOTE_ADDR'];
+    if (!in_array($ip, $ip_list)) {
+      $result = db_query("INSERT INTO {islandora_scholar_ds_tracking} (pid,dsid,user) VALUES ('%s', '%s', '%s')", $this->pid, $dsid, $user->name);
+    }
     return $result;
   }
 
   function read_ds_count($dsid) {
-    $query = db_query("SELECT * FROM {islandora_scholar_page_tracking} WHERE pid = '%s' AND dsid = '%s'", $this->pid, $dsid);
+    $query = db_query("SELECT * FROM {islandora_scholar_ds_tracking} WHERE pid = '%s' AND dsid = '%s'", $this->pid, $dsid);
     while ($result = db_fetch_array($query)) {
       $array[] = $result;
     }
     $array['count'] = count($array);
     return $array;
   }
+
 }
 
 function islandora_scholar_tracking_admin_form($form_state) {
