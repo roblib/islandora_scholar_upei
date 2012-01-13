@@ -291,33 +291,32 @@ class Scholar {
     $tabset['first_tab']['tabs']['table'] = array(
       '#value' => theme('table', $header, $rows),
     );
-    
+
     $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID');
 //    var_dump($username_query);
     $xml = new SimpleXMLElement($username_query);
     $array = $xml->xpath('//doc');
 //    var_dump($array);
-    
+
     $array = array_filter($array);
     foreach ($array as $arr) {
-    $pid = (string) $arr->str;
-    var_dump($pid);
-    $object = new CollectionClass();
-    $pid_xml_str = $object->getStream($pid, "MODS");
-    $pid_xml = new SimpleXMLElement($pid_xml_str);
-    $title = $pid_xml->xpath('//title');
-    var_dump($title);
-    
-  }
-    
+      $pid = (string) $arr->str;
+      var_dump($pid);
+      $object = new CollectionClass();
+      $pid_xml_str = $object->getStream($pid, "MODS");
+      $pid_xml = new SimpleXMLElement($pid_xml_str);
+      $title = $pid_xml->mods->titleInfo->title;
+      var_dump($title);
+    }
+
 //    $tracking = new islandora_scholar_tracking($pid);
 //    
 //    $citations = 
-    
+
     $tabset['first_tab']['tabs']['citations'] = array(
       '#value' => $citations,
     );
-    
+
     return $tabset;
   }
 
