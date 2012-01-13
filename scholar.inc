@@ -292,7 +292,7 @@ class Scholar {
       '#value' => theme('table', $header, $rows),
     );
 
-    $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))));
+    $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID');
     var_dump($username_query);
     
 //    $tracking = new islandora_scholar_tracking($pid);
