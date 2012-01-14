@@ -22,83 +22,22 @@ class Scholar {
   }
 
   function showThesis() {
-//
-//    if (user_access('add scholarly research') == TRUE && array_key_exists('PDF', $ds_array) == FALSE) {
-//
-//      $tabset['first_tab']['tabs']['upload'] = array(
-//        '#type' => 'tabpage',
-//        '#title' => t('Upload'),
-//        '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
-//        '#weight' => 3,
-//      );
-//    }
-//    else {
-//      if (array_key_exists('PDF', $ds_array)) {
-//        $tabset['first_tab']['tabs']['pdf'] = array(
-//          '#type' => 'tabpage',
-//          '#title' => t('PDF'),
-//          '#content' => l(t('View PDF'), 'fedora/repository/' . $pid . '/PDF/PDF'),
-//          '#weight' => 3,
-//        );
-//        if (array_key_exists('SIGNATURE', $ds_array) && array_key_exists('PDF', $ds_array)) {
-//          $tabset['first_tab']['tabs']['signature'] = array(
-//          '#type' => 'tabpage',
-//          '#title' => t('Signature'),
-//          '#content' => l(t('Signature file'), 'fedora/repository/' . $pid . '/SIGNATURE/SIGNATURE'),
-//          '#weight' => 4,
-//        );
-//        }
-//        else {
-//        $tabset['first_tab']['tabs']['signature'] = array(
-//          '#type' => 'tabpage',
-//          '#title' => t('Signature'),
-//          '#content' => drupal_get_form('islandora_scholar_signature_form', $pid),
-//          '#weight' => 4,
-//        );
-//        }
-//      }
-//      else {
-//        $tabset['first_tab']['tabs']['upload'] = array(
-//          '#type' => 'tabpage',
-//          '#title' => t('PDF'),
-//          '#content' => t('No PDF has been uploaded yet'),
-//          '#weight' => 3,
-//        );
-//      }
-//    }
-//
-//    if (array_key_exists('ZIP', $ds_array)) {
-//    
-//    $tabset['first_tab']['tabs']['supplementary'] = array(
-//        '#type' => 'tabpage',
-//        '#title' => t('Supplementary information'),
-//        '#content' => t('Supplementary information'),
-//        '#weight' => 5,
-//      );
-//    }
-//    else {
-//      if (user_access('add scholarly research')) {
-//        $tabset['first_tab']['tabs']['supplementary'] = array(
-//        '#type' => 'tabpage',
-//        '#title' => t('Supplementary information'),
-//        '#content' => drupal_get_form('islandora_scholar_supp_info_form', $pid),
-//        '#weight' => 5,
-//      );
-//      }
-//    }
-//    
-//    return $tabset;
-
     $pid = $this->pid;
     $item = new Fedora_Item($pid);
     $ds_array = $item->get_datastreams_list_as_array();
     $tabset = islandora_scholar_build_citation($pid);
 
-    if (array_key_exists('SIGNATURE', $ds_array) && array_key_exists('PDF', $ds_array)) {
+    if (array_key_exists('SIGNATURE', $ds_array)) {
+      module_load_include('inc', 'scholar', 'scholar_tracking');
+      $track = new islandora_scholar_tracking($pid);
+      $read = $track->read_ds_count('SIGNATURE');
+      $content = l(t('Signature file'), 'download_ds/' . $pid . '/SIGNATURE');
+      $content .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
+      $content .= '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
       $tabset['first_tab']['tabs']['signature'] = array(
         '#type' => 'tabpage',
         '#title' => t('Signature'),
-        '#content' => l(t('Signature file'), 'download_ds/' . $pid . '/SIGNATURE'),
+        '#content' => $content,
         '#weight' => 4,
       );
     }
@@ -517,11 +456,10 @@ function islandora_scholar_signature_form_validate($form, &$form_state) {
 
 function islandora_scholar_signature_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-  drupal_set_message('Pid: ' . $form_state['values']['pid']);
   $pid = $form_state['values']['pid'];
   $file = $form_state['values']['file'];
   $object = new Fedora_Item($pid);
-  drupal_set_message('File: ' . $file->filepath);
+  drupal_set_message(t("File '@file' added", array('@file' => $file->filepath)));
   $object->add_datastream_from_file($file->filepath, 'SIGNATURE', 'SIGNATURE');
 }
 
@@ -623,14 +561,12 @@ function islandora_scholar_build_citation($pid) {
   }
 
   $track = new islandora_scholar_tracking($pid);
-
-
   $track->add_page_count();
   $read = $track->read_page_count();
   $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
   $citation .= '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
 
-  $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
+  $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?$track = new islandora_scholar_tracking($pid);vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
 
   $citation .= '<div class="scholar_bibliography_add_form">' . drupal_get_form('islandora_bibliography_citation_form', $pid) . '</div>';
 
@@ -792,11 +728,11 @@ function islandora_scholar_download_ds_form(array &$form_state, $pid, $dsid) {
 }
 
 function system_mime_type_extensions() {
-  # Returns the system MIME type mapping of MIME types to extensions, as defined in /etc/mime.types (considering the first
-  # extension listed to be canonical).
+  // Returns the system MIME type mapping of MIME types to extensions, as defined in /etc/mime.types (considering the first
+  // extension listed to be canonical).
   $out = array();
   $file = fopen('/etc/mime.types', 'r');
-  while (($line = fgets($file)) !== false) {
+  while (($line = fgets($file)) !== FALSE) {
     $line = trim(preg_replace('/#.*/', '', $line));
     if (!$line)
       continue;
@@ -812,12 +748,12 @@ function system_mime_type_extensions() {
 }
 
 function system_mime_type_extension($type) {
-  # Returns the canonical file extension for the MIME type specified, as defined in /etc/mime.types (considering the first
-  # extension listed to be canonical).
-  #
-    # $type - the MIME type
+  // Returns the canonical file extension for the MIME type specified, as defined in /etc/mime.types (considering the first
+  // extension listed to be canonical).
+  //
+    // $type - the MIME type
   static $exts;
   if (!isset($exts))
     $exts = system_mime_type_extensions();
-  return isset($exts[$type]) ? $exts[$type] : null;
+  return isset($exts[$type]) ? $exts[$type] : NULL;
 }

@@ -68,15 +68,12 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pids = array_filter($form_state['values']['table']['selections']);
   $pid_list = implode(', ', $pids);
-//  drupal_set_message('PIDS: ' . $pid_list);
   drupal_set_message(t("PIDS converted: @pid_list", array("@pid_list" => $pid_list)));
   foreach ($pids as $pid) {
     $object = new Fedora_Item($pid);
-//  var_dump($object);
     $datastreams = $object->get_datastreams_list_as_array();
     if (!array_key_exists('MODS', $datastreams)) {
       $refworks = $object->get_datastream_dissemination('refworks');
-//  drupal_set_message('Input: ' . $refworks);
       $input = new DOMDocument();
       $input->loadXML($refworks);
       $xslt = new XSLTProcessor();
