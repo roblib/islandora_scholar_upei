@@ -139,6 +139,8 @@ class ScholarSolrResults extends IslandoraSolrResults {
     drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
     drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
+    static $path;
+    
     $path = drupal_get_path('module', 'scholar');
     $items = array();
     $type = "ol";

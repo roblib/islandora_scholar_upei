@@ -21,7 +21,7 @@ class islandora_scholar_tracking {
   }
 
   function read_page_count() {
-    $query = db_query("SELECT * FROM {islandora_scholar_page_tracking} WHERE pid = '%s'", $this->pid);
+    $query = db_query("SELECT time FROM {islandora_scholar_page_tracking} WHERE pid = '%s'", $this->pid);
     while ($result = db_fetch_array($query)) {
       $array[] = $result;
     }

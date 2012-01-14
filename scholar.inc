@@ -734,8 +734,8 @@ function islandora_scholar_build_citation($pid) {
   }
 
   $track = new islandora_scholar_tracking($pid);
-  
-    
+
+
   $track->add_page_count();
   $read = $track->read_page_count();
   $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
@@ -749,20 +749,26 @@ function islandora_scholar_build_citation($pid) {
 
   //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
 
-  $issn_url = file_get_contents($url . $data->issn . $api_key);
-  try {
-    $proc = new XsltProcessor();
-  } catch (Exception $e) {
-    drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
-    return;
+  if ($romeo_cache = cache_get('islandora_scholar_romeo_cache_' . $data->issn)) {
+    $romeo = unserialize($romeo_cache->data);
   }
-  $xsl = new DOMDocument();
-  $xsl->load($path . '/xsl/romeo.xsl');
-  $input = new DOMDocument();
-  $input->loadXML(trim($issn_url));
-  $xsl = $proc->importStylesheet($xsl);
-  $newdom = $proc->transformToDoc($input);
-  $romeo = $newdom->saveXML();
+  else {
+    $issn_url = file_get_contents($url . $data->issn . $api_key);
+    try {
+      $proc = new XsltProcessor();
+    } catch (Exception $e) {
+      drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
+      return;
+    }
+    $xsl = new DOMDocument();
+    $xsl->load($path . '/xsl/romeo.xsl');
+    $input = new DOMDocument();
+    $input->loadXML(trim($issn_url));
+    $xsl = $proc->importStylesheet($xsl);
+    $newdom = $proc->transformToDoc($input);
+    $romeo = $newdom->saveXML();
+    cache_set('islandora_scholar_romeo_cache_' . $data->issn, serialize($romeo), 'cache', time() + 8640);
+  }
 
   $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
 
@@ -795,12 +801,12 @@ function islandora_scholar_build_citation($pid) {
   }
   else {
     if (array_key_exists('PDF', $ds_array)) {
-      
+
       $ds_count = $track->read_ds_count('PDF');
-      
+
       $content = l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
       $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
-      
+
       $tabset['first_tab']['tabs']['pdf'] = array(
         '#type' => 'tabpage',
         '#title' => t('PDF'),
@@ -823,7 +829,7 @@ function islandora_scholar_build_citation($pid) {
     if (array_key_exists('ZIP', $ds_array)) {
 
       $ds_count = $track->read_ds_count('ZIP');
-      
+
       $content = drupal_get_form('islandora_scholar_supp_info_delete_form', $pid);
       $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
 
@@ -886,10 +892,10 @@ function islandora_scholar_download_ds_form(array &$form_state, $pid, $dsid) {
   $file = $object->get_datastream_dissemination($dsid);
   $ds_name = $info->datastream->ID;
   if ($file != NULL) {
-  drupal_set_header("Content-type: application/x-unknown; utf-8");
-  drupal_set_header("Content-Disposition: attachment; filename=" . $pid . '-' . $ds_name . '.' . $extension);
-  echo $file;
-  exit;
+    drupal_set_header("Content-type: application/x-unknown; utf-8");
+    drupal_set_header("Content-Disposition: attachment; filename=" . $pid . '-' . $ds_name . '.' . $extension);
+    echo $file;
+    exit;
   }
   else {
     drupal_set_message(t('Specified file does not exist!'));
@@ -897,32 +903,32 @@ function islandora_scholar_download_ds_form(array &$form_state, $pid, $dsid) {
 }
 
 function system_mime_type_extensions() {
-    # Returns the system MIME type mapping of MIME types to extensions, as defined in /etc/mime.types (considering the first
-    # extension listed to be canonical).
-    $out = array();
-    $file = fopen('/etc/mime.types', 'r');
-    while(($line = fgets($file)) !== false) {
-        $line = trim(preg_replace('/#.*/', '', $line));
-        if(!$line)
-            continue;
-        $parts = preg_split('/\s+/', $line);
-        if(count($parts) == 1)
-            continue;
-        $type = array_shift($parts);
-        if(!isset($out[$type]))
-            $out[$type] = array_shift($parts);
-    }
-    fclose($file);
-    return $out;
+  # Returns the system MIME type mapping of MIME types to extensions, as defined in /etc/mime.types (considering the first
+  # extension listed to be canonical).
+  $out = array();
+  $file = fopen('/etc/mime.types', 'r');
+  while (($line = fgets($file)) !== false) {
+    $line = trim(preg_replace('/#.*/', '', $line));
+    if (!$line)
+      continue;
+    $parts = preg_split('/\s+/', $line);
+    if (count($parts) == 1)
+      continue;
+    $type = array_shift($parts);
+    if (!isset($out[$type]))
+      $out[$type] = array_shift($parts);
+  }
+  fclose($file);
+  return $out;
 }
 
 function system_mime_type_extension($type) {
-    # Returns the canonical file extension for the MIME type specified, as defined in /etc/mime.types (considering the first
-    # extension listed to be canonical).
-    #
+  # Returns the canonical file extension for the MIME type specified, as defined in /etc/mime.types (considering the first
+  # extension listed to be canonical).
+  #
     # $type - the MIME type
-    static $exts;
-    if(!isset($exts))
-        $exts = system_mime_type_extensions();
-    return isset($exts[$type]) ? $exts[$type] : null;
+  static $exts;
+  if (!isset($exts))
+    $exts = system_mime_type_extensions();
+  return isset($exts[$type]) ? $exts[$type] : null;
 }
