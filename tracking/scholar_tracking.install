@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * @file
+ */
+
+function scholar_tracking_install() {
+  drupal_install_schema('scholar_tracking');
+}
+
+function scholar_tracking_uninstall() {
+  drupal_uninstall_schema('scholar_tracking');
+}
+
+function scholar_tracking_schema() {
+  $result = @db_result(db_query("SELECT pid FROM {islandora_scholar_page_tracking}"));
+  if (!$result) {
+    $schema['islandora_scholar_page_tracking'] = array(
+      'description' => t('This table is used to store the tracking information for fedora objects'),
+      'fields' => array(
+        'id' => array(
+          'type' => 'serial',
+          'not null' => TRUE,
+        ),
+        'pid' => array(
+          'description' => t('PID of the object'),
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+        ),
+        'time' => array(
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        'user' => array(
+          'description' => t('Drupal user that accessed the object'),
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+        ),
+      ),
+      'primary key' => array('id'),
+      'indexes' => array(
+        'pid' => array('pid'),
+      ),
+    );
+  }
+
+  $result2 = @db_result(db_query("SELECT pid FROM {islandora_scholar_ds_tracking}"));
+  if (!$result2) {
+    $schema['islandora_scholar_ds_tracking'] = array(
+      'description' => t('This table is used to store the tracking information for fedora datastreams'),
+      'fields' => array(
+        'id' => array(
+          'type' => 'serial',
+          'not null' => TRUE,
+        ),
+        'pid' => array(
+          'description' => t('PID of the object'),
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+        ),
+        'dsid' => array(
+          'description' => t('Datastream ID'),
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+        ),
+        'time' => array(
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        'user' => array(
+          'description' => t('Drupal user that accessed the object'),
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+        ),
+      ),
+      'primary key' => array('id'),
+      'indexes' => array(
+        'pid' => array('pid'),
+        'dsid' => array('dsid'),
+      ),
+    );
+  }
+  return $schema;
+}

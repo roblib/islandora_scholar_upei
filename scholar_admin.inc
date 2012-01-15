@@ -58,19 +58,6 @@ function scholar_admin_settings() {
     '#title' => t('JODConverter path'),
     '#default_value' => variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine'),
   );
-
-  $form['tracking'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Tracking'),
-  );
-
-  $form['tracking']['scholar_tracking_ip_list'] = array(
-    '#type' => 'textarea',
-    '#description' => t('Add IPs separated by spaces'),
-    '#default_value' => variable_get('scholar_tracking_ip_list', 'localhost 127.0.0.1'),
-  );
-
-  return system_settings_form($form);
 }
 
 function scholar_admin_settings_validate($form, $form_state) {

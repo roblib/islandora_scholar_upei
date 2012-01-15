@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * @file
+ */
+function scholar_tracking_menu() {
+
+  $items = array();
+
+  $items['scholar_tracking'] = array(
+    'title' => 'Page view tracking',
+    'description' => 'Tracking page views and downloads',
+    'file' => 'scholar_tracking.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_scholar_tracking_admin_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('manage tracking'), // Use something fedora specific.
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['download_ds/%/%'] = array(
+    'title' => t('Download datastream'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_scholar_download_ds_form', 1, 2),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/settings/scholar_tracking'] = array(
+    'title' => t('Islandora Scholar Tracking Settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('scholar_tracking_admin_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('manage tracking'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function scholar_tracking_perm() {
+  return array(
+    'manage tracking',
+  );
+}
+
+function islandora_scholar_download_ds_form(array &$form_state, $pid, $dsid) {
+  global $base_url;
+  module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  $track = new islandora_scholar_tracking($pid);
+  $result = $track->add_ds_count($dsid);
+  $url = $base_url . '/fedora/repository/' . $pid . '/' . $dsid . '/content';
+  $object = new Fedora_Item($pid);
+  $info = $object->get_datastream_info($dsid);
+  $mime_type = $info->datastream->MIMEType;
+  $extension = system_mime_type_extension($mime_type);
+  $file = $object->get_datastream_dissemination($dsid);
+  $ds_name = $info->datastream->ID;
+  if ($file != NULL) {
+    drupal_set_header("Content-type: application/x-unknown; utf-8");
+    drupal_set_header("Content-Disposition: attachment; filename=" . $pid . '-' . $ds_name . '.' . $extension);
+    echo $file;
+    exit;
+  }
+  else {
+    drupal_set_message(t('Specified file does not exist!'));
+  }
+}
+
+function system_mime_type_extensions() {
+  // Returns the system MIME type mapping of MIME types to extensions, as defined in /etc/mime.types (considering the first
+  // extension listed to be canonical).
+  $out = array();
+  $file = fopen('/etc/mime.types', 'r');
+  while (($line = fgets($file)) !== FALSE) {
+    $line = trim(preg_replace('/#.*/', '', $line));
+    if (!$line)
+      continue;
+    $parts = preg_split('/\s+/', $line);
+    if (count($parts) == 1)
+      continue;
+    $type = array_shift($parts);
+    if (!isset($out[$type]))
+      $out[$type] = array_shift($parts);
+  }
+  fclose($file);
+  return $out;
+}
+
+function system_mime_type_extension($type) {
+  // Returns the canonical file extension for the MIME type specified, as defined in /etc/mime.types (considering the first
+  // extension listed to be canonical).
+  //
+    // $type - the MIME type
+  static $exts;
+  if (!isset($exts))
+    $exts = system_mime_type_extensions();
+  return isset($exts[$type]) ? $exts[$type] : NULL;
+}
+
+function scholar_tracking_admin_settings() {
+  $form = array();
+
+  $form['tracking'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Tracking'),
+  );
+
+  $form['tracking']['scholar_tracking_ip_list'] = array(
+    '#type' => 'textarea',
+    '#description' => t('Add IPs separated by spaces'),
+    '#default_value' => variable_get('scholar_tracking_ip_list', 'localhost 127.0.0.1'),
+  );
+
+  return system_settings_form($form);
+}

@@ -28,12 +28,12 @@ class Scholar {
     $tabset = islandora_scholar_build_citation($pid);
 
     if (array_key_exists('SIGNATURE', $ds_array)) {
-      module_load_include('inc', 'scholar', 'scholar_tracking');
+      module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
       $track = new islandora_scholar_tracking($pid);
       $read = $track->read_ds_count('SIGNATURE');
       $content = l(t('Signature file'), 'download_ds/' . $pid . '/SIGNATURE');
       $content .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
-      $content .= '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
+      $content .= '<div>Last downloaded: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
       $tabset['first_tab']['tabs']['signature'] = array(
         '#type' => 'tabpage',
         '#title' => t('Signature'),
@@ -58,7 +58,7 @@ class Scholar {
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-    module_load_include('inc', 'scholar', 'scholar_tracking');
+    module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
 
     $path = drupal_get_path('module', 'scholar');
 
@@ -474,7 +474,7 @@ function islandora_scholar_build_citation($pid) {
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('php', 'scholar', 'IrClass');
   module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
-  module_load_include('inc', 'scholar', 'scholar_tracking');
+  module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
   module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
   module_load_include('inc', 'scholar', 'Coins');
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
@@ -564,9 +564,9 @@ function islandora_scholar_build_citation($pid) {
   $track->add_page_count();
   $read = $track->read_page_count();
   $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
-  $citation .= '<div>Last viewed: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
+  $citation .= '<div>Last viewed: ' . $read[($read['count'] - 1)] . '</div></br>';
 
-  $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?$track = new islandora_scholar_tracking($pid);vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
+  $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
 
   $citation .= '<div class="scholar_bibliography_add_form">' . drupal_get_form('islandora_bibliography_citation_form', $pid) . '</div>';
 
@@ -631,6 +631,7 @@ function islandora_scholar_build_citation($pid) {
 
       $content = l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
       $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
+      $content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
 
       $tabset['first_tab']['tabs']['pdf'] = array(
         '#type' => 'tabpage',
@@ -657,6 +658,7 @@ function islandora_scholar_build_citation($pid) {
 
       $content = drupal_get_form('islandora_scholar_supp_info_delete_form', $pid);
       $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
+      $content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
 
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
@@ -701,59 +703,4 @@ function islandora_scholar_zip_mods_to_array($mods) {
     $j++;
   }
   return $filtered_array;
-}
-
-function islandora_scholar_download_ds_form(array &$form_state, $pid, $dsid) {
-  global $base_url;
-  module_load_include('inc', 'scholar', 'scholar_tracking');
-  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-  $track = new islandora_scholar_tracking($pid);
-  $result = $track->add_ds_count($dsid);
-  $url = $base_url . '/fedora/repository/' . $pid . '/' . $dsid . '/content';
-  $object = new Fedora_Item($pid);
-  $info = $object->get_datastream_info($dsid);
-  $mime_type = $info->datastream->MIMEType;
-  $extension = system_mime_type_extension($mime_type);
-  $file = $object->get_datastream_dissemination($dsid);
-  $ds_name = $info->datastream->ID;
-  if ($file != NULL) {
-    drupal_set_header("Content-type: application/x-unknown; utf-8");
-    drupal_set_header("Content-Disposition: attachment; filename=" . $pid . '-' . $ds_name . '.' . $extension);
-    echo $file;
-    exit;
-  }
-  else {
-    drupal_set_message(t('Specified file does not exist!'));
-  }
-}
-
-function system_mime_type_extensions() {
-  // Returns the system MIME type mapping of MIME types to extensions, as defined in /etc/mime.types (considering the first
-  // extension listed to be canonical).
-  $out = array();
-  $file = fopen('/etc/mime.types', 'r');
-  while (($line = fgets($file)) !== FALSE) {
-    $line = trim(preg_replace('/#.*/', '', $line));
-    if (!$line)
-      continue;
-    $parts = preg_split('/\s+/', $line);
-    if (count($parts) == 1)
-      continue;
-    $type = array_shift($parts);
-    if (!isset($out[$type]))
-      $out[$type] = array_shift($parts);
-  }
-  fclose($file);
-  return $out;
-}
-
-function system_mime_type_extension($type) {
-  // Returns the canonical file extension for the MIME type specified, as defined in /etc/mime.types (considering the first
-  // extension listed to be canonical).
-  //
-    // $type - the MIME type
-  static $exts;
-  if (!isset($exts))
-    $exts = system_mime_type_extensions();
-  return isset($exts[$type]) ? $exts[$type] : NULL;
 }

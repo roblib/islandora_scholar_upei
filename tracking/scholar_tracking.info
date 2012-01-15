@@ -1,0 +1,5 @@
+name = Scholar tracking
+description = A module that allows the collection of traffic data on certain objects and datastreams
+package = Islandora Tools
+version = 6.1dev
+core = 6.x

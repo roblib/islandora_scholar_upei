@@ -282,27 +282,6 @@ function scholar_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items['scholar_tracking'] = array(
-    'title' => 'Page view tracking',
-    'description' => 'Tracking page views and downloads',
-    'file' => 'scholar_tracking.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_scholar_tracking_admin_form'),
-    'access callback' => 'user_access',
-    'access arguments' => array('manage tracking'), // Use something fedora specific.
-    'type' => MENU_NORMAL_ITEM,
-  );
-  
-    $items['download_ds/%/%'] = array(
-    'title' => t('Download datastream'),
-    'file' => 'scholar.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_scholar_download_ds_form', 1, 2),
-    'access callback' => 'user_access',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
-
   return $items;
 }
 
