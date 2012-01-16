@@ -87,8 +87,8 @@ function convert_mods_to_citeproc_json_title(SimpleXMLElement $mods) {
       $title = (string) html_entity_decode($node);
       $subtitle = convert_mods_to_citeproc_json_query($node, '../mods:subTitle');
       $nonSort = convert_mods_to_citeproc_json_query($node, '../mods:nonSort');
-      $title = !empty($subtitle) ? '$title: $subtitle' : $title;
-      $title = !empty($nonSort) ? '$nonSort $title' : $title;
+      $title = !empty($subtitle) ? "$title: $subtitle" : $title;
+      $title = !empty($nonSort) ? "$nonSort $title" : $title;
       $output = strlen($title) > strlen($output) ? $title : $output; // Choose the longest title.
     }
   }
