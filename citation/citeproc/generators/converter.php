@@ -86,8 +86,8 @@ function convert_mods_to_citeproc_json_title(SimpleXMLElement $mods) {
       $node->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
       $find = array('<', '>');
       $replace = array('&lt;', '&gt;');
-      $node = str_replace($find, $replace, $node);
       $title = (string) html_entity_decode($node);
+      $title = str_replace($find, $replace, $title);
       $subtitle = convert_mods_to_citeproc_json_query($node, '../mods:subTitle');
       $nonSort = convert_mods_to_citeproc_json_query($node, '../mods:nonSort');
       $title = !empty($subtitle) ? "$title: $subtitle" : $title;
