@@ -27,25 +27,34 @@ function scholar_migrate_refworks_table() {
     '#value' => $list,
   );
 
-  $table = array(
-    '#header' => array(theme('table_select_header_cell'), t('PID'), t('Title'), ''),
-    '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
-    '#tree' => TRUE,
-    'rows' => array(),
-    'selections' => array(
-      '#type' => 'checkboxes',
-      '#options' => array_fill_keys($keys, ''),
-    ),
-  );
-  $rows = &$table['rows'];
-  foreach ($objects as $key => $object) {
-    $rows[] = array(
-      '#pid' => $key,
-      'pid' => array('#value' => l($key, 'fedora/repository/' . $key)),
-      'title' => array('#value' => $object),
-    );
-  }
+  if ($keys != NULL) {
 
+    $table = array(
+      '#header' => array(theme('table_select_header_cell'), t('PID'), t('Title'), ''),
+      '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
+      '#tree' => TRUE,
+      'rows' => array(),
+      'selections' => array(
+        '#type' => 'checkboxes',
+        '#options' => array_fill_keys($keys, ''),
+      ),
+    );
+    $rows = &$table['rows'];
+    foreach ($objects as $key => $object) {
+      $rows[] = array(
+        '#pid' => $key,
+        'pid' => array('#value' => l($key, 'fedora/repository/' . $key)),
+        'title' => array('#value' => $object),
+      );
+    }
+    $table['result'] = TRUE;
+  }
+  else {
+    $table = array(
+      '#value' => t('No refworks objects found!'),
+    );
+    $table['result'] = FALSE;
+  }
   return $table;
 }
 
@@ -57,10 +66,13 @@ function scholar_migrate_refworks_form() {
     'table' => $table,
   );
 
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Submit'),
-  );
+  if ($table['result']) {
+
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+    );
+  }
   return $form;
 }
 

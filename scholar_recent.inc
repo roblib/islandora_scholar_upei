@@ -30,9 +30,15 @@ function scholar_recent_items($form_state) {
     $pid = explode('/', $entry->object['uri']);
     $collection_helper = new CollectionClass();
     $xmlstr = $collection_helper->getStream($pid[1], "MODS");
+    if ($xmlstr) {
     $xml = new SimpleXMLElement($xmlstr);
     $list .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid[1]) .'</li>';
+    }
+    else {
+      $list .= '<li>' . l(t('Title not found'), 'fedora/repository/' . $pid[1]) .'</li>';
+    }
   }
+ 
   
   $list .= '</ul>';
   $form = array();
