@@ -39,6 +39,11 @@ function islandora_bibliography_form(array &$form_state) {
           '#suffix' => '</h3>'
         ),
         'table' => islandora_bibilgraphy_form_table($pids),
+        'remove_citations' => array(
+          '#type' => 'submit',
+          '#value' => t('Remove citations'),
+          '#submit' => array('islandora_bibliography_form_remove_citation_submit'),
+        ),
         'step_2' => array(
           '#value' => t('Step 2: Preview the formatted citations'),
           '#prefix' => '<h3>',
@@ -135,12 +140,12 @@ function islandora_bibilgraphy_form_table(array $pids) {
       '#pid' => $pid,
       'title' => array('#value' => l(check_plain($title), 'fedora/repository/' . $pid)),
       'author' => array('#value' => check_plain($authors)),
-      'remove' => array(
-        '#type' => 'submit',
-        '#value' => t('Remove'),
-        '#pid' => $pid,
-        '#submit' => array('islandora_bibliography_form_remove_citation_submit')
-      )
+//      'remove' => array(
+//        '#type' => 'submit',
+//        '#value' => t('Remove'),
+//        '#pid' => $pid,
+//        '#submit' => array('islandora_bibliography_form_remove_citation_submit')
+//      )
     );
   }
   return $table;
@@ -162,7 +167,7 @@ function islandora_bibilgraphy_form_get_title_authors($pid) {
     $mods = simplexml_import_dom($mods);
     $mods->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
     $title = implode(' ', $mods->xpath('/mods:mods/mods:titleInfo/mods:title'));
-    $authors = implode(' ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "author"]/../mods:namePart[@type="family"]'));
+    $authors = implode(', ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "author"]/../mods:namePart[@type="family"]'));
   }
   return array($title, $authors);
 }
@@ -177,9 +182,11 @@ function islandora_bibilgraphy_form_get_title_authors($pid) {
  */
 function islandora_bibliography_form_remove_citation_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
-  $pid = $form_state['clicked_button']['#pid'];
+  $selections = $form_state['values']['table']['selections'];
+  foreach (array_filter($selections) as $pid) {
   Bibliography::RemoveCitation($pid);
-  drupal_set_message(t('Removed Citation'));
+  }
+  drupal_set_message(t('Removed Citation(s)'));
 }
 
 /**
