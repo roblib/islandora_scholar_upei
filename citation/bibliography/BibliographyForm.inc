@@ -167,7 +167,7 @@ function islandora_bibilgraphy_form_get_title_authors($pid) {
     $mods = simplexml_import_dom($mods);
     $mods->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
     $title = implode(' ', $mods->xpath('/mods:mods/mods:titleInfo/mods:title'));
-    $authors = implode(', ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "author"]/../mods:namePart[@type="family"]'));
+    $authors = implode(' ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "author"]/../mods:namePart[@type="family"]'));
   }
   return array($title, $authors);
 }
@@ -183,7 +183,7 @@ function islandora_bibilgraphy_form_get_title_authors($pid) {
 function islandora_bibliography_form_remove_citation_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   $selections = $form_state['values']['table']['selections'];
-  foreach (array_filter($selections) as $pid) {
+  foreach ($selections as $pid) {
   Bibliography::RemoveCitation($pid);
   }
   drupal_set_message(t('Removed Citation(s)'));
