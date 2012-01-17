@@ -32,7 +32,6 @@ function islandora_bibliography_form(array &$form_state) {
       'fieldset' => array(
         '#type' => 'fieldset',
         '#title' => t('Citations'),
-//        '#description' => t('<p>Here you can remove or export citations from your bibliography.</p>'),
         'step_1' => array(
           '#value' => t('Step 1: Select your citations'),
           '#prefix' => '<h3>',
@@ -44,11 +43,7 @@ function islandora_bibliography_form(array &$form_state) {
           '#value' => t('Remove Selected'),
           '#submit' => array('islandora_bibliography_form_remove')
         ),
-//        'remove_citations' => array(
-//          '#type' => 'submit',
-//          '#value' => t('Remove citations'),
-//          '#submit' => array('islandora_bibliography_form_remove_citation_submit'),
-//        ),
+
         'step_2' => array(
           '#value' => t('Step 2: Preview the formatted citations'),
           '#prefix' => '<h3>',
@@ -140,12 +135,6 @@ function islandora_bibilgraphy_form_table(array $pids) {
       '#pid' => $pid,
       'title' => array('#value' => l($title, 'fedora/repository/' . $pid, array('html' => TRUE))),
       'author' => array('#value' => check_plain($authors)),
-//      'remove' => array(
-//        '#type' => 'submit',
-//        '#value' => t('Remove'),
-//        '#pid' => $pid,
-//        '#submit' => array('islandora_bibliography_form_remove_citation_submit')
-//      )
     );
   }
   return $table;
