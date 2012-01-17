@@ -26,7 +26,7 @@
                     <role>
                         <roleTerm>
                             <xsl:attribute name="authority">marcrelator</xsl:attribute>
-                            <xsl:attribute name="type">code</xsl:attribute>aut</roleTerm>
+                            <xsl:attribute name="type">code</xsl:attribute>author</roleTerm>
                     </role>
                 </name>
             </xsl:for-each>
