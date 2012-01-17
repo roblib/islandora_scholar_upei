@@ -184,7 +184,7 @@ function scholar_batch_ingest_endnote_document($filename, $collection_pid, $cont
   $record->save($endnote_filename);
   if (Bibutils::Convert($endnote_filename, 'EndNoteXML', $mods_filename, 'MODS')) {
     Bibutils::CleanModsFile($mods_filename);
-    $endnote_url = 'sites/default/files/endnote.xml';
+    $endnote_url = file_directory_path() . '/endnote.xml';
     scholar_batch_ingest_mods($mods_filename, $collection_pid, $content_model_pid, array('ENDNOTE' => $endnote_url));
   }
   unlink($mods_filename);
@@ -231,7 +231,7 @@ function scholar_batch_ingest_ris_document($filename, $collection_pid, $content_
   fclose($file);
   
   if (Bibutils::Convert($ris_filename, 'RIS', $mods_filename, 'MODS')) {
-    $ris_url = 'sites/default/files/ris.txt';
+    $ris_url = file_directory_path() . '/ris.txt';
     scholar_batch_ingest_mods($mods_filename, $collection_pid, $content_model_pid, array('RIS' => $ris_url));
   }
   // Remove the files.
