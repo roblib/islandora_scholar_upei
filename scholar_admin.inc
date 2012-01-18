@@ -24,15 +24,15 @@ function scholar_admin_settings() {
     '#default_value' => variable_get('scholar_romeo_key', ''),
     '#size' => 20,
   );
-
+  
   $form['romeo']['scholar_romeo_cache_time'] = array(
     '#type' => 'textfield',
-    '#title' => 'RoMEO Cache Time',
-    '#description' => t('Length of time, in days, to cache the ROMEO results'),
+    '#title' => 'RoMEO Content Cache Time',
+    '#description' => t('Time, in days, to store cached RoMEO data'),
     '#default_value' => variable_get('scholar_romeo_cache_time', '2'),
-    '#size' => 20,
+    '#size' => 3,
   );
-  
+
   $form['ldap'] = array(
     '#type' => 'fieldset',
     '#title' => t('LDAP settings'),
@@ -66,6 +66,8 @@ function scholar_admin_settings() {
     '#title' => t('JODConverter path'),
     '#default_value' => variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine'),
   );
+  
+  return system_settings_form($form);
 }
 
 function scholar_admin_settings_validate($form, $form_state) {
