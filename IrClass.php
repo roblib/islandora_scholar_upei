@@ -257,7 +257,7 @@ class IrClass {
     module_load_include('php', 'Fedora_Repository', 'ObjectHelper');
 
     $types = array(
-      //'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'application/vnd.oasis.opendocument.text',
       //'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       'text/rtf',

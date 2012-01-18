@@ -62,9 +62,60 @@ function scholar_browse_by_dept_form() {
 //  }
   $output .= '</ul>';
 
+//  $form['list_ahah_wrapper'] = array(
+//    '#prefix' => '<div id="dept-list">',
+//    '#suffix' => '</div>',
+//  );
+//  
+//  $form['list_ahah_wrapper']['islandora_book_do_ocr'] = array(
+//    '#type' => 'checkbox',
+//    '#title' => t('Perform OCR on incoming TIFF images?'),
+//    '#description' => t('Do not check this box if OCR is performed on an exernal server, such as ABBYY'),
+//    '#default_value' => TRUE,
+//    '#ahah' => array(
+//      'path' => 'islandora/dept_list',
+//      'wrapper' => 'dept-list',
+//      'effect' => 'fade',
+//      'event' => 'change'),
+//  );
+  
   $form['list'] = array(
     '#value' => $output,
   );
   
+  return $form;
+}
+
+/**
+ * update ocr div ??
+ */
+function update_dept_list_div() {
+
+  $form = dept_list_callback_prep();
+  $changed_elements = $form['dept_list_ahah_wrapper'];
+  unset($changed_elements['#prefix'], $changed_elements['#suffix']);
+  $output = theme('status_messages') . drupal_render($changed_elements);
+  drupal_json(array(
+    'status' => TRUE,
+    'data' => $output,
+  ));
+}
+
+/**
+ * book callback prep??
+ * @return type 
+ */
+function dept_list_callback_prep() {
+  $form_state = array('storage' => NULL, 'submitted' => FALSE);
+  $form_build_id = $_POST['form_build_id'];
+  $form = form_get_cache($form_build_id, $form_state);
+  $args = $form['#parameters'];
+  $form_id = array_shift($args);
+  $form_state['post'] = $form['#post'] = $_POST;
+  // Enable the submit/validate handlers to determine whether AHAH-submittted.
+  $form_state['ahah_submission'] = TRUE;
+  $form['#programmed'] = $form['#redirect'] = FALSE;
+  drupal_process_form($form_id, $form, $form_state);
+  $form = drupal_rebuild_form($form_id, $form_state, $args, $form_build_id);
   return $form;
 }
