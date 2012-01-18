@@ -45,7 +45,7 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   $output = '<ul>';
   $users = array();
   $array = array_filter($array);
-  var_dump($array);
+  var_dump($result);
     $family = $array->xpath('./arr[@name="mads.family"]/str');
     $given = $array->xpath('./arr[@name="mads.given"]/str');
     $username = $array->xpath('./arr[@name="mads.username"]/str');
