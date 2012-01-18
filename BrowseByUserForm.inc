@@ -34,21 +34,16 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   $form['list'] = array(
     '#value' => $list,
   );
-  $result1 = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . strtolower($initial) . '*&fl=mods.username&rows=10000');
-  $xml1 = new SimpleXMLElement($result1);
-  $array1 = array_unique(array_filter($xml1->xpath('//doc//str')));
-  var_dump($array1);
-  foreach ($array1 as $arr1) {
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=mads.username:' . strtolower($arr1) . '&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family_sort+asc');
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=mads.family:' . strtolower($initial) . '*&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family_sort+asc');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $output = '<ul>';
   $users = array();
   $array = array_filter($array);
-  var_dump($result);
-    $family = $array->xpath('./arr[@name="mads.family"]/str');
-    $given = $array->xpath('./arr[@name="mads.given"]/str');
-    $username = $array->xpath('./arr[@name="mads.username"]/str');
+  foreach ($array as $arr) {
+    $family = $arr->xpath('./arr[@name="mads.family"]/str');
+    $given = $arr->xpath('./arr[@name="mads.given"]/str');
+    $username = $arr->xpath('./arr[@name="mads.username"]/str');
     if ($username[0] != '') {
       $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0])))));
       $username_xml = new SimpleXMLElement($username_query);
