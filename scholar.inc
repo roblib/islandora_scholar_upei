@@ -573,26 +573,39 @@ function islandora_scholar_build_citation($pid) {
   $citation .= '<div class="scholar_refworks_link">' . $refworks_link . '</div>';
 
   //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
+  //    Only get the ROMEO data if an ISSN exists and the user is authenticated.
+  //    Store 
 
-  if ($romeo_cache = cache_get('islandora_scholar_romeo_cache_' . $data->issn)) {
-    $romeo = unserialize($romeo_cache->data);
-  }
-  else {
-    $issn_url = file_get_contents($url . $data->issn . $api_key);
-    try {
-      $proc = new XsltProcessor();
-    } catch (Exception $e) {
-      drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
-      return;
+  if (user_is_logged_in() && $data->issn != NULL) {
+
+    if ($romeo_cache = cache_get('islandora_scholar_romeo_cache_' . $data->issn)) {
+      $romeo = unserialize($romeo_cache->data);
     }
-    $xsl = new DOMDocument();
-    $xsl->load($path . '/xsl/romeo.xsl');
-    $input = new DOMDocument();
-    $input->loadXML(trim($issn_url));
-    $xsl = $proc->importStylesheet($xsl);
-    $newdom = $proc->transformToDoc($input);
-    $romeo = $newdom->saveXML();
-    cache_set('islandora_scholar_romeo_cache_' . $data->issn, serialize($romeo), 'cache', time() + 8640);
+    else {
+      $issn_url = file_get_contents($url . $data->issn . $api_key);
+      try {
+        $proc = new XsltProcessor();
+      } catch (Exception $e) {
+        drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
+        return;
+      }
+      $xsl = new DOMDocument();
+      $xsl->load($path . '/xsl/romeo.xsl');
+      $input = new DOMDocument();
+      $input->loadXML(trim($issn_url));
+      $xsl = $proc->importStylesheet($xsl);
+      $newdom = $proc->transformToDoc($input);
+      $romeo = $newdom->saveXML();
+      $cache_time = variable_get('scholar_romeo_cache_time', '2');
+      cache_set('islandora_scholar_romeo_cache_' . $data->issn, serialize($romeo), 'cache', time() + ($cache_time * 86400));
+    }
+
+    $tabset['first_tab']['tabs']['romeo'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Romeo'),
+      '#content' => $romeo,
+      '#weight' => 2,
+    );
   }
 
   $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
@@ -602,19 +615,12 @@ function islandora_scholar_build_citation($pid) {
 //  $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br /></div>';
   $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '">UPEI Users Only: Check for Full Text</A></span><br /></div>';
 
-  
+
   $tabset['first_tab']['tabs']['summary'] = array(
     '#type' => 'tabpage',
     '#title' => t('Citation'),
     '#content' => $citation,
     '#weight' => 1,
-  );
-
-  $tabset['first_tab']['tabs']['romeo'] = array(
-    '#type' => 'tabpage',
-    '#title' => t('Romeo'),
-    '#content' => $romeo,
-    '#weight' => 2,
   );
 
   if (user_access('add scholarly research') == TRUE && array_key_exists('PDF', $ds_array) == FALSE) {

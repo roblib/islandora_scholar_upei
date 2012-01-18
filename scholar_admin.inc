@@ -25,6 +25,14 @@ function scholar_admin_settings() {
     '#size' => 20,
   );
 
+  $form['romeo']['scholar_romeo_cache_time'] = array(
+    '#type' => 'textfield',
+    '#title' => 'RoMEO Cache Time',
+    '#description' => t('Length of time, in days, to cache the ROMEO results'),
+    '#default_value' => variable_get('scholar_romeo_cache_time', '2'),
+    '#size' => 20,
+  );
+  
   $form['ldap'] = array(
     '#type' => 'fieldset',
     '#title' => t('LDAP settings'),
