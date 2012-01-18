@@ -602,7 +602,7 @@ function islandora_scholar_build_citation($pid) {
 
     $tabset['first_tab']['tabs']['romeo'] = array(
       '#type' => 'tabpage',
-      '#title' => t('Romeo'),
+      '#title' => t('RoMEO'),
       '#content' => $romeo,
       '#weight' => 2,
     );
