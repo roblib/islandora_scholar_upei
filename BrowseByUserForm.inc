@@ -38,13 +38,13 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   $xml1 = new SimpleXMLElement($result1);
   $array1 = array_unique(array_filter($xml1->xpath('//doc//str')));
   var_dump($array1);
+  $result = file_get_contents('http://localhost:8080/solr/select/?q=mads.family:' . strtolower($initial) . '*&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family_sort+asc');
+  $xml = new SimpleXMLElement($result);
+  $array = $xml->xpath('//doc');
   $output = '<ul>';
-  foreach ($array1 as $arr1) {
-    $result = file_get_contents('http://localhost:8080/solr/select/?q=mads.username:' . strtolower($arr1) . '&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family_sort+asc');
-    $xml = new SimpleXMLElement($result);
-    $array = $xml->xpath('//doc');
-    $users = array();
-    $array = array_filter($array);
+  $users = array();
+  $array = array_filter($array);
+  foreach ($array as $arr) {
     $family = $arr->xpath('./arr[@name="mads.family"]/str');
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
     $username = $arr->xpath('./arr[@name="mads.username"]/str');
