@@ -193,8 +193,8 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['browse_users/%'] = array(
-    'title' => t('Browse Users'),
+  $items['browse_authors/%'] = array(
+    'title' => t('Browse Authors'),
     'file' => 'BrowseByUserForm.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholar_browse_by_user_form', 1),

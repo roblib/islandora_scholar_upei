@@ -20,15 +20,15 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   $list = '';
   foreach ($letters as $letter) {
     if ($letter == 'Z') {
-      $list .= l($letter, 'browse_users/' . $letter);
+      $list .= l($letter, 'browse_authors/' . $letter);
     }
     else {
-      $list .= l($letter, 'browse_users/' . $letter) . ', ';
+      $list .= l($letter, 'browse_authors/' . $letter) . ', ';
     }
   }
 
   $form['choice'] = array(
-    '#value' => l('By name', 'browse_users/A') . ' | ' . l('By department', 'browse_users_dept/Robertson%20Library') . "</br></br>",
+    '#value' => l('By name', 'browse_authors/A') . ' | ' . l('By department', 'browse_users_dept/Robertson%20Library') . "</br></br>",
   );
 
   $form['list'] = array(
@@ -83,7 +83,7 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
   }
 
   $form['choice'] = array(
-    '#value' => l('By name', 'browse_users/A') . ' | ' . l('By department', 'browse_users_dept/Robertson%20Library') . "</br></br>",
+    '#value' => l('By name', 'browse_authors/A') . ' | ' . l('By department', 'browse_users_dept/Robertson%20Library') . "</br></br>",
   );
 
   $form['list'] = array(
