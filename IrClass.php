@@ -297,7 +297,7 @@ class IrClass {
     if ($test) { //in ingest successfull convert to pdf and add datastream
       $xmlString = 'requestXML=<?xml version="1.0"?><submission><repository><username>' . $user->name .
           '</username><password>' . $user->pass . '</password><host>' . variable_get('fedora_base_url', 'http://localhost:8080/fedora') .
-          '</host></repository><pids><pid>' . $form_values['pid'] . '</pid></pids><dsid>' . $form_values['version'] . '</dsid><collection>/opt/ruleengine/pdfconverter/</collection></submission>';
+          '</host></repository><pids><pid>' . $form_values['pid'] . '</pid></pids><dsid>PDF</dsid><collection>/opt/ruleengine/pdfconverter/</collection></submission>';
       //path to ruleengine framework
       drupal_set_message('DSID: ' . $form_values['version']);
       $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
