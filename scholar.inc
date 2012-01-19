@@ -383,17 +383,13 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   $mods_xml = new DOMDocument();
   $mods_xml->loadXML($xmlstr);
   $list = $mods_xml->getElementsByTagName('note');
-  var_dump($list);
   $remove_nodes = array();
   foreach ($list as $element) {
     $attribute = $element->getAttribute('type');
-    var_dump($attribute);
-    var_dump($element);
     if ($attribute == 'supplement') {
       $remove_nodes[] = $element;
     }
   }
-  var_dump($remove_nodes);
   if (!empty($remove_nodes)) {
     foreach ($remove_nodes as $remove_node) {
       $remove_node->parentNode->removeChild($remove_node);
@@ -402,6 +398,125 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   }
   else {
     drupal_set_message(t('No MODS element found to remove!'));
+  }
+}
+
+function islandora_scholar_document_delete_form(&$form_state, $pid) {
+
+  module_load_include('inc', 'fedora_repository', 'fedora_item');
+  module_load_include('inc', 'scholar', 'tracking/scholar_tracking');
+
+  $form = array();
+
+  $object = new Fedora_Item($pid);
+  $ds_array = $object->get_datastreams_list_as_array();
+  $track = new islandora_scholar_tracking($pid);
+
+  if (array_key_exists('OBJ', $ds_array)) {
+
+    $ds_count_doc = $track->read_ds_count('OBJ');
+
+    $obj_content = l(t('Download document'), 'download_ds/' . $pid . '/OBJ') . '</br>';
+    $obj_content .= 'File has been downloaded ' . $ds_count_doc['count'] . ' times';
+    $obj_content .= '<div>Last downloaded: ' . $ds_count_doc[($ds_count_doc['count'] - 1)] . '</div></br>';
+
+    $form['obj_info'] = array(
+      '#value' => $obj_content,
+    );
+
+    $form['obj_delete'] = array(
+      '#type' => 'submit',
+      '#name' => 'obj_delete',
+      '#suffix' => '</br></br>',
+      '#value' => t('Delete document'),
+    );
+  }
+
+  if (array_key_exists('PDF', $ds_array)) {
+
+    $ds_count_pdf = $track->read_ds_count('PDF');
+
+    $pdf_content = l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
+    $pdf_content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
+    $pdf_content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
+
+    $form['pdf_info'] = array(
+      '#value' => $pdf_content,
+    );
+
+    $form['pdf_delete'] = array(
+      '#type' => 'submit',
+      '#name' => 'pdf_delete',
+      '#value' => t('Delete PDF'),
+    );
+  }
+  else {
+    $form['no_doc'] = array(
+      '#type' => 'value',
+      '#content' => t('No document has been uploaded yet'),
+    );
+  }
+  $form['pid'] = array(
+    '#type' => 'value',
+    '#value' => $pid,
+  );
+
+  return $form;
+}
+
+function islandora_scholar_document_delete_form_submit($form, &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  $pid = $form_state['values']['pid'];
+
+  switch ($form_state['clicked_button']['#name']) {
+    case 'obj_delete':
+      $dsid = 'OBJ';
+      break;
+    case 'pdf_delete':
+      $dsid = 'PDF';
+      break;
+  }
+  $object = new Fedora_Item($pid);
+  $result = $object->purge_datastream($dsid);
+  if ($result != NULL) {
+    drupal_set_message(t("Datastream '@dsid' removed!", array('@dsid' => $dsid)));
+  }
+  else {
+    drupal_set_message(t("An error occurred while trying to remove datastream '@dsid'", array('@dsid' => $dsid)), 'error');
+  }
+  $collectionHelper = new CollectionClass();
+  $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
+
+  $ds_array = $object->get_datastreams_list_as_array();
+
+  if (!array_key_exists('PDF', $ds_array) && !array_key_exists('OBJ', $ds_array)) {
+
+    $mods_xml = new DOMDocument();
+    $mods_xml->loadXML($xmlstr);
+    $list = $mods_xml->getElementsByTagName('accessCondition');
+    $remove_nodes = array();
+    foreach ($list as $element) {
+      $attribute = $element->getAttribute('type');
+      if ($attribute == 'use and reproduction') {
+        $remove_nodes[] = $element;
+      }
+    }
+    $list2 = $mods_xml->getElementsByTagName('physicalDescription');
+    foreach ($list2 as $element2) {
+      // This is crude as it removes everything in a 'physicalDescription
+      // tag. If this becomes an issue this remove can be more specific.
+      $remove_nodes[] = $element2;
+    }
+    if (!empty($remove_nodes)) {
+      foreach ($remove_nodes as $remove_node) {
+        $remove_node->parentNode->removeChild($remove_node);
+      }
+      $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+      drupal_set_message(t('MODS data relevant to this document has been removed'));
+    }
+    else {
+      drupal_set_message(t('No MODS element found to remove!'));
+    }
   }
 }
 
@@ -623,7 +738,7 @@ function islandora_scholar_build_citation($pid) {
     '#weight' => 1,
   );
 
-  if (user_access('add scholarly research') == TRUE && array_key_exists('PDF', $ds_array) == FALSE) {
+  if (user_access('add scholarly research') == TRUE && array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
 
     $tabset['first_tab']['tabs']['upload'] = array(
       '#type' => 'tabpage',
@@ -633,29 +748,12 @@ function islandora_scholar_build_citation($pid) {
     );
   }
   else {
-    if (array_key_exists('PDF', $ds_array)) {
-
-      $ds_count = $track->read_ds_count('PDF');
-
-      $content = l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
-      $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
-      $content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
-
-      $tabset['first_tab']['tabs']['pdf'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('PDF'),
-        '#content' => $content,
-        '#weight' => 3,
-      );
-    }
-    else {
-      $tabset['first_tab']['tabs']['upload'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('PDF'),
-        '#content' => t('No PDF has been uploaded yet'),
-        '#weight' => 3,
-      );
-    }
+    $tabset['first_tab']['tabs']['pdf'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Document'),
+      '#content' => drupal_get_form('islandora_scholar_document_delete_form', $pid),
+      '#weight' => 3,
+    );
   }
 
   if (user_access('administer scholarly research')) {

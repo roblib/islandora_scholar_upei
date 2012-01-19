@@ -315,15 +315,15 @@ class IrClass {
       //may want to promote this to the db at some point
 //      $urlFile = drupal_get_path('module', 'scholar') . '/ruleengine_url.txt';
       $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
-      drupal_set_message('URL file: ' . $url);
+//      drupal_set_message('URL file: ' . $url);
       //$url = '137.149.66.158:8080/RuleEngineServlet/RuleEngine';
-      drupal_set_message('XML: ' . $xmlString);
+//      drupal_set_message('XML: ' . $xmlString);
       $returnValue = do_curl($url, 1, 1, $xmlString); //$objectHelper->doCurl($url, 1, 1, $xmlString);
       $test = $this->parseReturnValue($returnValue); //did add datastream succeed.
       if ($test) {
-        $this->updateRefworksStream($form_values['pid'], $form_values['version'], $form_values['usage']);
+        $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
       }
-      drupal_set_message(t($returnValue));
+      drupal_set_message('' . $returnValue);
     }
     else {
       drupal_set_message(t("Error adding file to IR record!  You may not have permission to modify this record."), 'error');
@@ -1142,60 +1142,46 @@ class IrClass {
     return $object->modifyDatastreamByValue($params);
   }
 
-  //after the ruleengine framework adds the converted datastream we modify the refworks xml datastream
-  //so we know that about the pdf
-  function updateRefworksStream($pid, $version = NULL, $usage = NULL, $xmlString = NULL) {
-    module_load_include('php', 'Fedora_Repository', 'ObjectHelper');
-    $object = new ObjectHelper();
+  function updateMODSStream($pid, $version = NULL, $usage = NULL, $xmlString = NULL) {
+    module_load_include('inc', 'fedora_repository', 'fedora_item');
+    $object = new Fedora_Item($pid);
     if (!isset($xmlString)) {
-      $refworks = $object->getStream($pid, 'refworks', 0);
+      $mods = $object->get_datastream_dissemination('MODS');
     }
     else {
-      $refworks = $xmlString;
+      $mods = $xmlString;
     }
     $doc = new DOMDocument('1.0', 'UTF-8');
     $doc->substituteEntities = FALSE;
     try {
-      $doc->loadXML($refworks);
+      $doc->loadXML($mods);
     } catch (exception $e) {
-      drupal_set_message(t('Error loading Refworks info! ') . $e->getMessage());
+      drupal_set_message(t('Error loading MODS record! ') . $e->getMessage());
       return ' ';
     }
     if (isset($usage)) {
-      $usageNode = $doc->createElement('usage', $usage);
-      $nodeList = $doc->getElementsByTagName('reference');
+      $usageNode = $doc->createElement('accessCondition', $usage);
+      $usageNode->setAttribute('type', 'use and reproduction');
+      $nodeList = $doc->getElementsByTagName('mods');
       foreach ($nodeList as $reference) {
         $reference->appendChild($usageNode);
       }
     }
     if (isset($version)) {
-      $nodeList = $doc->getElementsByTagName('status');
-      if ($nodeList->length > 0) {
-        foreach ($nodeList as $node) {
-          $node->nodeValue = $version; //should only be one
-        }
-      }
-      else {
         //create the useage element as it does not exist
-        $statusNode = $doc->createElement('status', $version);
+        $statusNode = $doc->createElement('physicalDescription');
+        $form_node = $doc->createElement('form', $version);
+        $form_node->setAttribute('authority', 'local');
+        $statusNode->appendChild($form_node);
         //add it to the reference node
-        $reference_node_list = $doc->getElementsByTagName('reference');
+        $reference_node_list = $doc->getElementsByTagName('mods');
         foreach ($reference_node_list as $reference) {
           $reference->appendChild($statusNode);
         }
-      }
     }
-    $params = array(
-      "pid" => $pid,
-      "dsID" => 'refworks',
-      "altIDs" => "",
-      "dsLabel" => "refworks record",
-      "MIMEType" => "text/xml",
-      "formatURI" => "URL",
-      "dsContent" => $doc->saveXML(), "checksumType" => "DISABLED", "checksum" => "none", "logMessage" => "refworks_datastream_modified", "force" => "true");
-//    $object->modifyDatastreamByValue($params);
+        $result = $object->modify_datastream_by_value($doc->saveXML(), 'MODS', 'MODS record', 'text/xml', TRUE, 'MODS datastream modified');
   }
-
+  
   //parses the return from the ruleengine framework
   function parseReturnValue($input) {
     $doc = new DOMDocument();
