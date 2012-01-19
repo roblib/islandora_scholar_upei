@@ -267,7 +267,6 @@ class IrClass {
       'application/pdf'
     );
     global $user;
-    $dsid = 'DOC';
     /* TODO Modify the validators array to suit your needs.
       This array is used in the revised file_save_upload */
 
@@ -286,7 +285,7 @@ class IrClass {
     if ("application/pdf" == $fileObject->filemime) { //do not convert to pdf
       $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'PDF');
       if ($test) {
-//        $this->updateRefworksStream($form_values['pid'], $form_values['version'], $form_values['usage']);
+        $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
         drupal_set_message(t('Successfully added PDF file to record.'));
         return true;
       }
@@ -294,18 +293,6 @@ class IrClass {
     else {
       $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
     }
-//    $test = NULL;
-//    if ("application/pdf" == $fileObject->filemime) { //do not convert to pdf
-//      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
-//      if ($test) {
-////        $this->updateRefworksStream($form_values['pid'], $form_values['version'], $form_values['usage']);
-//        drupal_set_message(t('Successfully added PDF file to record.'));
-//        return true;
-//      }
-//    }
-//    else {
-//      $test = $objectHelper->addStream($form_values['pid'], $form_values['version'], $fileObject, true);
-//    }
     
     if ($test) { //in ingest successfull convert to pdf and add datastream
       $xmlString = 'requestXML=<?xml version="1.0"?><submission><repository><username>' . $user->name .
@@ -315,9 +302,6 @@ class IrClass {
       //may want to promote this to the db at some point
 //      $urlFile = drupal_get_path('module', 'scholar') . '/ruleengine_url.txt';
       $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
-//      drupal_set_message('URL file: ' . $url);
-      //$url = '137.149.66.158:8080/RuleEngineServlet/RuleEngine';
-//      drupal_set_message('XML: ' . $xmlString);
       $returnValue = do_curl($url, 1, 1, $xmlString); //$objectHelper->doCurl($url, 1, 1, $xmlString);
       $test = $this->parseReturnValue($returnValue); //did add datastream succeed.
       if ($test) {

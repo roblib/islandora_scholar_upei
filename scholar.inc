@@ -423,13 +423,14 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
     $form['obj_info'] = array(
       '#value' => $obj_content,
     );
-
-    $form['obj_delete'] = array(
-      '#type' => 'submit',
-      '#name' => 'obj_delete',
-      '#suffix' => '</br></br>',
-      '#value' => t('Delete document'),
-    );
+    if (user_access('administer scholarly research')) {
+      $form['obj_delete'] = array(
+        '#type' => 'submit',
+        '#name' => 'obj_delete',
+        '#suffix' => '</br></br>',
+        '#value' => t('Delete document'),
+      );
+    }
   }
 
   if (array_key_exists('PDF', $ds_array)) {
@@ -444,11 +445,13 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       '#value' => $pdf_content,
     );
 
-    $form['pdf_delete'] = array(
-      '#type' => 'submit',
-      '#name' => 'pdf_delete',
-      '#value' => t('Delete PDF'),
-    );
+    if (user_access('administer scholarly research')) {
+      $form['pdf_delete'] = array(
+        '#type' => 'submit',
+        '#name' => 'pdf_delete',
+        '#value' => t('Delete PDF'),
+      );
+    }
   }
   else {
     $form['no_doc'] = array(
