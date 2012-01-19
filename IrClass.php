@@ -299,8 +299,7 @@ class IrClass {
           '</username><password>' . $user->pass . '</password><host>' . variable_get('fedora_base_url', 'http://localhost:8080/fedora') .
           '</host></repository><pids><pid>' . $form_values['pid'] . '</pid></pids><dsid>' . $form_values['version'] . '</dsid><collection>/opt/ruleengine/pdfconverter/</collection></submission>';
       //path to ruleengine framework
-      //may want to promote this to the db at some point
-//      $urlFile = drupal_get_path('module', 'scholar') . '/ruleengine_url.txt';
+      drupal_set_message('DSID: ' . $form_values['version']);
       $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
       $returnValue = do_curl($url, 1, 1, $xmlString); //$objectHelper->doCurl($url, 1, 1, $xmlString);
       $test = $this->parseReturnValue($returnValue); //did add datastream succeed.
