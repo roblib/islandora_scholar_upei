@@ -87,9 +87,7 @@ class UsersClass {
       foreach ($this->groupmembership as $group) {
         $dept = strtok($group, ',');
         $dept = ltrim($dept, 'cn=');
-        drupal_set_message('Before: ' . $dept);
         $dept = islandora_scholar_convert_dept($dept);
-        drupal_set_message('After: ' . $dept);
         if ($dept != '' && strlen($dept) > 1 && $dept != NULL) {
           $topic = $dom->createElement("topic", $dept);
           $topic->setAttribute("authority", "department");
