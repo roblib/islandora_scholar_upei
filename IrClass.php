@@ -258,6 +258,8 @@ class IrClass {
 
     $types = array(
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.wordperfect',
+      'application/wordperfect',
       'application/vnd.oasis.opendocument.text',
       //'application/vnd.openxmlformats-officedocument.presentationml.presentation',
       'text/rtf',
@@ -301,11 +303,11 @@ class IrClass {
       $xmlString = 'requestXML=<?xml version="1.0"?><submission><repository><username>' . $user->name .
           '</username><password>' . $user->pass . '</password><host>' . variable_get('fedora_base_url', 'http://localhost:8080/fedora') .
           '</host></repository><pids><pid>' . $form_values['pid'] . '</pid></pids><dsid>' . $form_values['version'] . '</dsid><collection>/opt/ruleengine/pdfconverter/</collection></submission>';
-      //path to ruleengine framework
-      $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
-      $returnValue = do_curl($url, 1, 1, $xmlString); //$objectHelper->doCurl($url, 1, 1, $xmlString);
-      $test = $this->parseReturnValue($returnValue); //did add datastream succeed.
-      drupal_set_message('' . $returnValue);
+//      //path to ruleengine framework
+//      $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
+//      $returnValue = do_curl($url, 1, 1, $xmlString); //$objectHelper->doCurl($url, 1, 1, $xmlString);
+//      $test = $this->parseReturnValue($returnValue); //did add datastream succeed.
+//      drupal_set_message('' . $returnValue);
     }
     else {
       drupal_set_message(t("Error adding file to IR record!  You may not have permission to modify this record."), 'error');
