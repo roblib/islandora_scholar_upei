@@ -143,7 +143,6 @@ class Scholar {
         }
 //        var_dump($title);
         $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
-        var_dump($rows);
       }
       $tabset['first_tab']['tabs']['citations']['table'] = array(
         '#value' => theme('table', $header, $rows),
