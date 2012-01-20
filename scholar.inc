@@ -137,7 +137,7 @@ class Scholar {
         $title = $pid_xml->titleInfo->title;
         $track = new islandora_scholar_tracking($pid);
         $read = $track->read_page_count();
-        $time_last_viewed = $read[($read['count'] - 1)]['time'];
+        $time_last_viewed = $read[($read['count'] - 1)];
         if ($time_last_viewed == NULL) {
           $time_last_viewed = 'Never';
         }

@@ -24,7 +24,7 @@ class islandora_scholar_tracking {
     $query = db_query("SELECT time FROM {islandora_scholar_page_tracking} WHERE pid = '%s'", $this->pid);
     while ($result = db_fetch_array($query)) {
       if ($result['time'] == '') {
-        $array[] = NULL;
+        $array[] = 'Never';
       }
       else {
         $array[] = date('H:i:s Y-m-d', $result['time']);
@@ -48,7 +48,7 @@ class islandora_scholar_tracking {
     $query = db_query("SELECT time FROM {islandora_scholar_ds_tracking} WHERE pid = '%s' AND dsid = '%s'", $this->pid, $dsid);
     while ($result = db_fetch_array($query)) {
       if ($result['time'] == '') {
-        $array[] = NULL;
+        $array[] = 'Never';
       }
       else {
         $array[] = date('H:i:s Y-m-d', $result['time']);
