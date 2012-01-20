@@ -82,12 +82,13 @@ class UsersClass {
     $related = $dom->createElement("related");
     $related->setAttribute("type", "other");
     $mads->appendChild($related);
-    
+
     if (isset($this->groupmembership)) {
       foreach ($this->groupmembership as $group) {
         $dept = strtok($group, ',');
         $dept = ltrim($dept, 'cn=');
-        if ($dept != '' && strlen($dept) > 1 && in_array($dept, $inclusionlist)) {
+        $dept = islandora_scholar_convert_dept($dept);
+        if ($dept != '' && strlen($dept) > 1 && $dept != NULL) {
           $topic = $dom->createElement("topic", $dept);
           $topic->setAttribute("authority", "department");
           $related->appendChild($topic);
@@ -98,7 +99,7 @@ class UsersClass {
     $u1 = $dom->createElement("identifier", $this->cn);
     $u1->setAttribute("type", "u1");
     $mads->appendChild($u1);
-    
+
     $affiliation = $dom->createElement("affiliation");
     $mads->appendChild($affiliation);
 
@@ -143,4 +144,77 @@ class UsersClass {
     }
   }
 
+}
+
+function islandora_scholar_convert_dept($dept) {
+
+  $find = array('Robertson Library',
+    'Anatomy Physiology',
+    'Biology',
+    'Business',
+    'Chemistry',
+    'Classics',
+    'Companion Animals',
+    'Computer Science and Info Technology',
+    'Economics',
+    'Education',
+    'Engineering',
+    'English',
+    'Health Management',
+    'History',
+    'Home Economics',
+    'Island Studies',
+    'Mathematics and Statistics',
+    'Modern Languages',
+    'Music',
+    'Nursing',
+    'Path Micro',
+    'Philosophy',
+    'Physics',
+    'Political Studies',
+    'Psychology',
+    'Religious Studies',
+    'Soc Anth',
+    'Womens Studies',
+    'Blood',
+  );
+  $replace = array('Robertson Library',
+    'Anatomy Physiology',
+    'Biology',
+    'School of Business',//Is this correct?
+    'Chemistry',
+    'Classics',
+    'Companion Animals',
+    'Computer Science and Information Technology',
+    'Economics',
+    'Education',
+    'Engineering',
+    'English',
+    'Health Management',
+    'History',
+    'Home Economics',//Change
+    'Island Studies',
+    'Mathematics and Statistics',
+    'Modern Languages',
+    'Music',
+    'Nursing',
+    'Pathology and Microbiology',
+    'Philosophy',
+    'Physics',
+    'Political Science',
+    'Psychology',
+    'Religious Studies',
+    'Sociology and Anthropology',
+    'Women\'s Studies',
+    'Blood',);//Not sure about this one
+  
+  $new_dept = str_replace($find, $replace, $dept);
+  if (in_array($dept, $replace)) {
+    $new_dept = $dept;
+  }
+  else {
+    $new_dept = NULL;
+  }
+
+  return $new_dept;
 }
