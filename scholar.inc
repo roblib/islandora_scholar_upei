@@ -137,7 +137,11 @@ class Scholar {
         $title = $pid_xml->titleInfo->title;
         $track = new islandora_scholar_tracking($pid);
         $read = $track->read_page_count();
-        $rows[] = array(l($title, 'fedora/repository/' . $pid), t('@read', array('@read' => $read['count'])), $read[($read['count'] - 1)]['time']);
+        $time_last_viewed = $read[($read['count'] - 1)]['time'];
+        if ($time_last_viewed == NULL) {
+          $time_last_viewed = 'Never';
+        }
+        $rows[] = array(l($title, 'fedora/repository/' . $pid), t('@read', array('@read' => $read['count'])), $time_last_viewed);
       }
       $tabset['first_tab']['tabs']['citations']['table'] = array(
         '#value' => theme('table', $header, $rows),
@@ -682,7 +686,11 @@ function islandora_scholar_build_citation($pid) {
   $track->add_page_count();
   $read = $track->read_page_count();
   $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
-  $citation .= '<div>Last viewed: ' . $read[($read['count'] - 1)] . '</div></br>';
+  $time_last_viewed = $read[($read['count'] - 1)];
+  if ($time_last_viewed == NULL) {
+    $time_last_viewed = 'Never';
+  }
+  $citation .= '<div>Last viewed: ' . $time_last_viewed . '</div></br>';
 
   $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
 
