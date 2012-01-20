@@ -141,7 +141,7 @@ class Scholar {
         if ($time_last_viewed == NULL) {
           $time_last_viewed = 'Never';
         }
-        $rows[] = array(l($title, 'fedora/repository/' . $pid), t('@read', array('@read' => $read['count'])), $time_last_viewed);
+        $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
       }
       $tabset['first_tab']['tabs']['citations']['table'] = array(
         '#value' => theme('table', $header, $rows),
