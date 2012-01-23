@@ -77,9 +77,10 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
   $path = drupal_get_path('module', 'scholar');
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
-  var_dump($_SESSION['search_url']);
   $redirect = ($_SESSION['search_url']);
-  $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20'), array(':', '', '', '', ' '), $redirect);
+  if (!strpos($redirect, '%253A') || !strpos($redirect, '%2529') || !strpos($redirect, '%2528') || !strpos($redirect, '%252F') || !strpos($redirect, '%20')) {
+    $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20'), array(':', '', '', '', ' '), $redirect);
+  }
   return array(
     '#action' => '/bibliography/citation/search',
     'pid' => array(
