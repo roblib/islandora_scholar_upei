@@ -17,6 +17,7 @@ function scholar_browse_by_dept_form() {
   foreach ($depts as $dept) {
     $output = '';
     $dept_copy = (string) $dept;
+    $dept_title = $dept_copy;
     if ($dept_copy == 'Pathology and Microbiology') {
       $dept_copy = 'Path Micro';
     }
@@ -31,9 +32,9 @@ function scholar_browse_by_dept_form() {
 
 //    $output .= '<li><a href=islandora/solr/search/mods.department:"' . $dept_link . '">' . $dept . '</a><i>' . $citations . '</i></li>';
 
-    $form[(string) $dept] = array(
+    $form[$dept_title] = array(
       '#type' => 'fieldset',
-      '#title' => $dept_copy . " " . $citations,
+      '#title' => $dept_title . " " . $citations,
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
@@ -67,7 +68,7 @@ function scholar_browse_by_dept_form() {
     }
     $output .= '</ul>';
 
-    $form[(string) $dept]['authors'] = array(
+    $form[$dept_title]['authors'] = array(
       '#value' => $output,
       '#prefix' => '<div>',
       '#suffix' => '</div>',
