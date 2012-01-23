@@ -301,13 +301,6 @@ function scholar_menu() {
     'access arguments' => array('refworks entry'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
-
-  $items['islandora/dept_list'] = array(
-    'page callback' => 'update_dept_list_div',
-    'access arguments' => array('view fedora collection'),
-    'file' => 'BrowseByDeptForm.inc',
-    'type' => MENU_CALLBACK,
-  );
   
   return $items;
 }
