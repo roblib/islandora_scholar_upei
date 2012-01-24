@@ -49,7 +49,7 @@ function scholar_browse_by_dept_form() {
     $users = array();
     $array = array_filter($array);
     foreach ($array as $arr) {
-      var_dump($arr);
+//      var_dump($arr);
       $family = $arr->xpath('./arr[@name="mads.family"]/str');
       $given = $arr->xpath('./arr[@name="mads.given"]/str');
       $fullname = $arr->xpath('./arr[@name="mads.fullname"]/str');
@@ -61,11 +61,13 @@ function scholar_browse_by_dept_form() {
         $author_citations[] = " (" . (string) $number_of_citations[0] . ")";
       }
       $users[] = $family[0] . ', ' . $given[0];
-      var_dump($username[0]);
+//      var_dump($username[0]);
       $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
     }
     asort($users);
     foreach ($users as $key => $user) {
+      var_dump($link[$key]);
+      var_dump($user);
       $output .= '<li>' . $link[$key] . $user . '</a><i>' . $author_citations[$key] . '</i></li>';
     }
     $output .= '</ul>';
