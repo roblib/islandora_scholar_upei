@@ -61,6 +61,7 @@ function scholar_browse_by_dept_form() {
         $author_citations[] = " (" . (string) $number_of_citations[0] . ")";
       }
       $users[] = $family[0] . ', ' . $given[0];
+      var_dump($username[0]);
       $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
     }
     asort($users);
