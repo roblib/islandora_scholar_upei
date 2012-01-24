@@ -47,6 +47,7 @@ function scholar_browse_by_dept_form() {
     $array = $xml->xpath('//doc');
     $output = '<ul>';
     $users = array();
+    $user = '';
     $key = '';
     $array = array_filter($array);
     foreach ($array as $arr) {
