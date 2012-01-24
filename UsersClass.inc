@@ -179,7 +179,7 @@ function islandora_scholar_convert_dept($dept) {
     'Blood',
   );
   $replace = array('Robertson Library',
-    'Anatomy Physiology',
+    'Biomedical Sciences',
     'Biology',
     'School of Business',//Is this correct?
     'Chemistry',
@@ -192,7 +192,7 @@ function islandora_scholar_convert_dept($dept) {
     'English',
     'Health Management',
     'History',
-    'Home Economics',//Change
+    'Applied Human Sciences',//Change
     'Island Studies',
     'Mathematics and Statistics',
     'Modern Languages',
