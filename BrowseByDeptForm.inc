@@ -50,6 +50,7 @@ function scholar_browse_by_dept_form() {
     $user = '';
     $key = '';
     $link = array();
+    $author_citations = array();
     $array = array_filter($array);
     foreach ($array as $arr) {
 //      var_dump($arr);
