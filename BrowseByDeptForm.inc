@@ -46,10 +46,10 @@ function scholar_browse_by_dept_form() {
     $xml = new SimpleXMLElement($result);
     $array = $xml->xpath('//doc');
     $output = '<ul>';
-    
+    $users = array();
+    $key = '';
     $array = array_filter($array);
     foreach ($array as $arr) {
-      $users = array();
 //      var_dump($arr);
       $family = $arr->xpath('./arr[@name="mads.family"]/str');
       $given = $arr->xpath('./arr[@name="mads.given"]/str');
