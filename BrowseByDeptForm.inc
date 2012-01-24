@@ -69,8 +69,6 @@ function scholar_browse_by_dept_form() {
     }
     asort($users);
     foreach ($users as $key => $user) {
-      var_dump($link[$key]);
-      var_dump($user);
       $output .= '<li>' . $link[$key] . $user . '</a><i>' . $author_citations[$key] . '</i></li>';
     }
     $output .= '</ul>';
