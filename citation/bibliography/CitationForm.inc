@@ -78,9 +78,7 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
   $redirect = ($_SESSION['search_url']);
-  if (!strpos($redirect, '%253A') || !strpos($redirect, '%2529') || !strpos($redirect, '%2528') || !strpos($redirect, '%252F') || !strpos($redirect, '%20') || !strpos($redirect, '%2522') || !strpos($redirect, '%3A')) {
-    $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20'), array(':', '', '', '', ' '), $redirect);
-  }
+    $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20', '%2522', '%3A'), array(':', '', '', '', ' ', '"', ':'), $redirect);
   return array(
     '#action' => '/bibliography/citation/search',
     'pid' => array(
