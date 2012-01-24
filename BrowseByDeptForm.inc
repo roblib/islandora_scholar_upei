@@ -46,7 +46,7 @@ function scholar_browse_by_dept_form() {
     $xml = new SimpleXMLElement($result);
     $array = $xml->xpath('//doc');
     $output = '<ul>';
-    $output .= l(t('Search all authors'), 'islandora/solr/search/mods.identifier:"' . $dept_copy . '"');
+    $output .= l(t('Search all authors'), 'islandora/solr/search/mods.department:"' . $dept_copy . '"');
     $users = array();
     $user = '';
     $key = '';
