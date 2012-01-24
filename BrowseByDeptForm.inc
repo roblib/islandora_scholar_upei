@@ -49,6 +49,7 @@ function scholar_browse_by_dept_form() {
     $users = array();
     $user = '';
     $key = '';
+    $link = array();
     $array = array_filter($array);
     foreach ($array as $arr) {
 //      var_dump($arr);
