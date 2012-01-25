@@ -249,7 +249,7 @@ function scholar_menu() {
     'access arguments' => array('view fedora collection'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
-  
+
   $items['islandora_autocomplete/%/%/%'] = array(
     'title' => 'Auto Complete',
     'description' => 'Islandora autocomplete',
@@ -259,7 +259,7 @@ function scholar_menu() {
     'access arguments' => array('view fedora collection'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
-  
+
   $items['islandora_autocomplete/%/%'] = array(
     'title' => 'Auto Complete',
     'description' => 'Islandora autocomplete',
@@ -301,7 +301,7 @@ function scholar_menu() {
     'access arguments' => array('refworks entry'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
-  
+
   return $items;
 }
 
@@ -701,17 +701,53 @@ function scholar_islandora_solr_primary_display() {
 
 function scholar_block($op = 'list', $delta = 0, $edit = array()) {
   module_load_include('inc', 'scholar', 'scholar_recent');
+  module_load_include('inc', 'scholar', 'scholar_blocks');
   switch ($op) {
 
     case 'list':
       $blocks[0]['info'] = t('Recently added items');
       $blocks[0]['cache'] = BLOCK_NO_CACHE;
+
+      $blocks[1]['info'] = t('Total records added');
+      $blocks[1]['cache'] = BLOCK_NO_CACHE;
+
+      $blocks[2]['info'] = t('Total citation views');
+      $blocks[2]['cache'] = BLOCK_NO_CACHE;
+
+      $blocks[3]['info'] = t('Total full-text downloads');
+      $blocks[3]['cache'] = BLOCK_NO_CACHE;
+
       return $blocks;
 
     case 'view':
-      $block['subject'] = t('Recently added items');
 
-      $block['content'] = drupal_get_form('scholar_recent_items');
+      if ($delta == 0) {
+
+        $block['subject'] = t('Recently added items');
+
+        $block['content'] = drupal_get_form('scholar_recent_items');
+      }
+      elseif ($delta == 1) {
+
+        $block['subject'] = t('Total records added');
+
+
+        $block['content'] = drupal_get_form('scholar_total_records');
+      }
+      elseif ($delta == 2) {
+
+        $block['subject'] = t('Total citation views');
+
+
+        $block['content'] = drupal_get_form('scholar_total_citation_views');
+      }
+      elseif ($delta == 3) {
+
+        $block['subject'] = t('Total full-text downloads');
+
+
+        $block['content'] = drupal_get_form('scholar_total_text_downloads');
+      }
 
       return $block;
   }
