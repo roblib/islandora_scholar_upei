@@ -719,6 +719,9 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[4]['info'] = t('Top viewed citations');
       $blocks[4]['cache'] = BLOCK_NO_CACHE;
       
+      $blocks[5]['info'] = t('Random citation');
+      $blocks[5]['cache'] = BLOCK_NO_CACHE;
+      
       return $blocks;
 
     case 'view':
@@ -752,6 +755,12 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
         $block['subject'] = t('Top viewed citations');
 
         $block['content'] = drupal_get_form('scholar_top_viewed');
+      }
+      elseif ($delta == 5) {
+
+        $block['subject'] = t('Random citation');
+
+        $block['content'] = drupal_get_form('scholar_random_citation');
       }
 
       return $block;

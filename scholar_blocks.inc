@@ -126,3 +126,60 @@ function scholar_top_viewed($form_state) {
 
   return $form;
 }
+
+function scholar_random_citation($form_state) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  module_load_include('inc', 'fedora_repository', 'CollectionClass');
+  $query = file_get_contents('http://localhost:8080/solr/select/?q=PID:ir*&rows=10000');
+  $xml = new SimpleXMLElement($query);
+  $citations = $xml->xpath('//doc');
+  foreach ($citations as $citation) {
+    $pid = $citation->xpath('./str');
+    $pids[] = (string) $pid[0];
+  }
+
+  $rnd = rand(1, count($pids));
+  $random_pid = $pids[$rnd];
+
+  $collection_helper = new CollectionClass();
+  $xmlstr = $collection_helper->getStream($random_pid, "MODS");
+  if ($xmlstr) {
+    $xml = new SimpleXMLElement($xmlstr);
+    $given = array();
+    $family = array();
+    $name = '';
+    $i = 0;
+    if (!$xml->name == NULL) {
+      foreach ($names = $xml->name as $name) {
+        foreach ($name->namePart as $name_part) {
+          if ($name_part['type'] == 'given') {
+            $citation_names[$i]['given'][] = (string) substr($name_part, 0, 1);
+          }
+          elseif ($name_part['type'] == 'family') {
+            $citation_names[$i]['family'] = (string) $name_part;
+          }
+        }
+        $i++;
+      }
+      $citation_name_str = '';
+      foreach ($citation_names as $citation_name) {
+        $citation_name_str .= implode($citation_name['given'], '. ') . '. ' . $citation_name['family'] . ', ';
+      }
+      $citation_name_str = rtrim($citation_name_str, ', ');
+      $citation_info = $xml->titleInfo->title;
+      $content .= l($citation_info . '; ' . $citation_name_str, 'fedora/repository/' . $random_pid, array('html' => TRUE));
+    }
+    else {
+      $content .= l($citation_info, 'fedora/repository/' . $random_pid, array('html' => TRUE));
+    }
+  }
+  else {
+    $content .= l(t('Title not found'), 'fedora/repository/' . $random_pid);
+  }
+
+  $form['random_citation'] = array(
+    '#value' => $content,
+  );
+
+  return $form;
+}
