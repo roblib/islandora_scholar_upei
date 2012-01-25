@@ -101,11 +101,12 @@ function scholar_top_viewed($form_state) {
   $content = '<ul>';
   foreach ($results as $result) {
     $pid = $result['pid'];
+    $count = $result['count(*)'];
     $collection_helper = new CollectionClass();
     $xmlstr = $collection_helper->getStream($pid, "MODS");
     if ($xmlstr) {
       $xml = new SimpleXMLElement($xmlstr);
-      $content .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid, array('html' => TRUE)) . '</li>';
+      $content .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid, array('html' => TRUE)) . ' <i>(' . $count . ')</i></li>';
     }
     else {
       $content .= '<li>' . l(t('Title not found'), 'fedora/repository/' . $pid) . '</li>';
