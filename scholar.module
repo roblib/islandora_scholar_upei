@@ -700,7 +700,6 @@ function scholar_islandora_solr_primary_display() {
 }
 
 function scholar_block($op = 'list', $delta = 0, $edit = array()) {
-  module_load_include('inc', 'scholar', 'scholar_recent');
   module_load_include('inc', 'scholar', 'scholar_blocks');
   switch ($op) {
 
@@ -717,6 +716,9 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[3]['info'] = t('Total full-text downloads');
       $blocks[3]['cache'] = BLOCK_NO_CACHE;
 
+      $blocks[4]['info'] = t('Top viewed citations');
+      $blocks[4]['cache'] = BLOCK_NO_CACHE;
+      
       return $blocks;
 
     case 'view':
@@ -731,13 +733,11 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 
         $block['subject'] = t('Total records added');
 
-
         $block['content'] = drupal_get_form('scholar_total_records');
       }
       elseif ($delta == 2) {
 
         $block['subject'] = t('Total citation views');
-
 
         $block['content'] = drupal_get_form('scholar_total_citation_views');
       }
@@ -745,8 +745,13 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 
         $block['subject'] = t('Total full-text downloads');
 
-
         $block['content'] = drupal_get_form('scholar_total_text_downloads');
+      }
+      elseif ($delta == 4) {
+
+        $block['subject'] = t('Top viewed citations');
+
+        $block['content'] = drupal_get_form('scholar_top_viewed');
       }
 
       return $block;
