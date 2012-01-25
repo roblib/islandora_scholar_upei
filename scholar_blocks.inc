@@ -56,7 +56,7 @@ function scholar_recent_items($form_state) {
 }
 
 function scholar_total_records($form_state) {
-  $query = file_get_contents('http://localhost:8080/solr/select/?q=PID:ir*');
+  $query = file_get_contents('http://localhost:8080/solr/select/?q=PID:ir*%20AND%20rels.hasModel:ir\:citationCModel&start=0&rows=0&indent=on');
   $xml = new SimpleXMLElement($query);
   $number_of_records = $xml->xpath('./result[@name="response"]/@numFound');
 
