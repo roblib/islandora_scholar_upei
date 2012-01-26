@@ -143,9 +143,9 @@ class Scholar {
       }
       
       $rss_feed = l('<img src="' . $path . '/images/feed-icon.28x28.png">', $_SERVER['SERVER_ADDR'] . ':8080//solr/select?q=mods.username:' . $username . '&wt=xslt&tr=example_rss.xsl', array('html' => TRUE));
-      var_dump($rss_feed);
+      var_dump($rows);
       $tabset['first_tab']['tabs']['citations']['table'] = array(
-        '#value' => theme('table', $header, $rows) . $rss_feed,
+        '#value' => theme('table', $header, $rows),
       );
     }
     else {
