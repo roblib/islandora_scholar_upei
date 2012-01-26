@@ -61,7 +61,7 @@ function scholar_total_records($form_state) {
   $number_of_records = $xml->xpath('./result[@name="response"]/@numFound');
 
   $form['records'] = array(
-    '#value' => t('@records records added', array('@records' => $number_of_records[0])),
+    '#value' => t('@records records added', array('@records' => number_format($number_of_records[0]))),
   );
 
   return $form;
@@ -72,7 +72,7 @@ function scholar_total_text_downloads($form_state) {
   $count = db_result($query);
 
   $form['full-text_downloads'] = array(
-    '#value' => t('@downloads full-text downloads', array('@downloads' => $count)),
+    '#value' => t('@downloads full-text downloads', array('@downloads' => number_format($count))),
   );
 
   return $form;
@@ -83,7 +83,7 @@ function scholar_total_citation_views($form_state) {
   $count = db_result($query);
 
   $form['citation_views'] = array(
-    '#value' => t('@views citation views', array('@views' => $count)),
+    '#value' => t('@views citation views', array('@views' => number_format($count))),
   );
 
   return $form;
@@ -111,7 +111,7 @@ function scholar_top_viewed($form_state) {
     $xmlstr = $collection_helper->getStream($pid, "MODS");
     if ($xmlstr) {
       $xml = new SimpleXMLElement($xmlstr);
-      $content .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid, array('html' => TRUE)) . ' <i>(' . $count . ')</i></li>';
+      $content .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid, array('html' => TRUE)) . ' <i>(' . number_format($count) . ')</i></li>';
     }
     else {
       $content .= '<li>' . l(t('Title not found'), 'fedora/repository/' . $pid) . '</li>';
