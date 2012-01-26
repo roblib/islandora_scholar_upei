@@ -110,8 +110,10 @@ class Scholar {
       array('Department(s)', $dept),
     );
 
+    $rss_feed = l('<img src="' . $path . '/images/feed-icon-28x28.png">', $_SERVER['SERVER_ADDR'] . ':8080//solr/select?q=mods.username:' . $username . '&wt=xslt&tr=example_rss.xsl', array('html' => TRUE));
+    
     $tabset['first_tab']['tabs']['details']['table'] = array(
-      '#value' => theme('table', $header, $rows),
+      '#value' => theme('table', $header, $rows) . $rss_feed,
     );
 
     $tabset['first_tab']['tabs']['citations'] = array(
@@ -141,11 +143,9 @@ class Scholar {
         }
         $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
       }
-      
-      $rss_feed = l('<img src="' . $path . '/images/feed-icon.28x28.png">', $_SERVER['SERVER_ADDR'] . ':8080//solr/select?q=mods.username:' . $username . '&wt=xslt&tr=example_rss.xsl', array('html' => TRUE));
-      
+            
       $tabset['first_tab']['tabs']['citations']['table'] = array(
-        '#value' => theme('table', $header, $rows) . $rss_feed,
+        '#value' => theme('table', $header, $rows),
       );
     }
     else {
