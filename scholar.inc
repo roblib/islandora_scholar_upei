@@ -110,7 +110,7 @@ class Scholar {
       array('Department(s)', $dept),
     );
 
-    $rss_feed = l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-28x28.png">', 'http://' . $_SERVER['SERVER_ADDR'] . ':8080/solr/select?q=mods.username:' . $username . '&wt=xslt&tr=example_rss.xsl', array('html' => TRUE));
+    $rss_feed = l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-14x14.png">', 'http://' . $_SERVER['SERVER_ADDR'] . ':8080/solr/select?q=mods.username:' . $username . '&wt=xslt&tr=example_rss.xsl', array('html' => TRUE));
     
     $tabset['first_tab']['tabs']['details']['table'] = array(
       '#value' => theme('table', $header, $rows) . $rss_feed,
