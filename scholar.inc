@@ -111,7 +111,7 @@ class Scholar {
     );
 
     $rss_feed = l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-28x28.png">', 'http://' . $_SERVER['SERVER_ADDR'] . ':8080/solr/select?q=mods.username:' . $username . '&wt=xslt&tr=example_rss.xsl', array('html' => TRUE));
-    
+
     $tabset['first_tab']['tabs']['details']['table'] = array(
       '#value' => theme('table', $header, $rows) . $rss_feed,
     );
@@ -121,42 +121,50 @@ class Scholar {
       '#title' => t('Citations'),
     );
 
-    $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
-    $xml = new SimpleXMLElement($username_query);
-    $array = $xml->xpath('//doc');
-
-    $array = array_filter($array);
-    $rows = array();
-    if (!empty($array)) {
-      $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
-      foreach ($array as $arr) {
-        $pid = (string) $arr->str;
-        $object = new CollectionClass();
-        $pid_xml_str = $object->getStream($pid, "MODS");
-        $pid_xml = new SimpleXMLElement($pid_xml_str);
-        $title = $pid_xml->titleInfo->title;
-        $track = new islandora_scholar_tracking($pid);
-        $read = $track->read_page_count();
-        $time_last_viewed = $read[($read['count'] - 1)];
-        if ($time_last_viewed == NULL) {
-          $time_last_viewed = 'Never';
-        }
-        $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
-      }
+    if ($citations_cache = cache_get('islandora_scholar_citation_cache')) {
+      $rows = unserialize($citations_cache->data);
     }
+    else {
+      $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
+      $xml = new SimpleXMLElement($username_query);
+      $array = $xml->xpath('//doc');
+
+      $array = array_filter($array);
+      $rows = array();
+      if (!empty($array)) {
+        $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+        foreach ($array as $arr) {
+          $pid = (string) $arr->str;
+          $object = new CollectionClass();
+          $pid_xml_str = $object->getStream($pid, "MODS");
+          $pid_xml = new SimpleXMLElement($pid_xml_str);
+          $title = $pid_xml->titleInfo->title;
+          $track = new islandora_scholar_tracking($pid);
+          $read = $track->read_page_count();
+          $time_last_viewed = $read[($read['count'] - 1)];
+          if ($time_last_viewed == NULL) {
+            $time_last_viewed = 'Never';
+          }
+          $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
+        }
+      }
       else {
         $rows = NULL;
       }
-      if ($rows == NULL) {
-              $content = t('No citations found!');
-      }
-      else {
-      $content =  theme('table', $header, $rows);
+      $cache_time = '2';
+      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
     }
-       
+
+    if ($rows == NULL) {
+      $content = t('No citations found!');
+    }
+    else {
+      $content = theme('table', $header, $rows);
+    }
+
     $tabset['first_tab']['tabs']['citations']['table'] = array(
-        '#value' => $content,
-      );
+      '#value' => $content,
+    );
 
     return $tabset;
   }
