@@ -151,7 +151,7 @@ class Scholar {
       else {
         $rows = NULL;
       }
-      $cache_time = '2';
+      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
       cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
     }
 

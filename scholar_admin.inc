@@ -67,6 +67,17 @@ function scholar_admin_settings() {
     '#default_value' => variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine'),
   );
   
+  $form['scholar_cache'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Cache settings'),
+  );
+  
+  $form['scholar_cache']['scholar_researcher_citations_cache_time'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Researcher citations cache time in days'),
+    '#default_value' => variable_get('scholar_researcher_citations_cache_time', '2'),
+  );
+  
   return system_settings_form($form);
 }
 
