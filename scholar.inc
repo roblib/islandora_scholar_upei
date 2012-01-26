@@ -120,10 +120,8 @@ class Scholar {
     );
 
     $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
-//    var_dump($username_query);
     $xml = new SimpleXMLElement($username_query);
     $array = $xml->xpath('//doc');
-//    var_dump($array);
 
     $array = array_filter($array);
     $rows = array();
@@ -141,11 +139,13 @@ class Scholar {
         if ($time_last_viewed == NULL) {
           $time_last_viewed = 'Never';
         }
-//        var_dump($title);
         $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
       }
+      
+      $rss_feed = l('<img src="' . $path . '/images/feed-icon.28x28.png">', $_SERVER['SERVER_ADDR'] . ':8080//solr/select?q=mods.username:' . $username . '&wt=xslt&tr=example_rss.xsl', array('html' => TRUE));
+      
       $tabset['first_tab']['tabs']['citations']['table'] = array(
-        '#value' => theme('table', $header, $rows),
+        '#value' => theme('table', $header, $rows) . $rss_feed,
       );
     }
     else {
@@ -285,12 +285,6 @@ function islandora_scholar_supp_info_form(&$form_state, $pid) {
     '#title' => t('Attach supplementary information'),
   );
 
-//  $form['description'] = array(
-//    '#type' => 'textarea',
-//    '#title' => t('Description'),
-//    '#size' => 100,
-//  );
-
   $form['supp_submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
@@ -331,15 +325,12 @@ function islandora_scholar_supp_info_form_validate($form, &$form_state) {
 
 function islandora_scholar_supp_info_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-//  drupal_set_message('Pid: ' . $form_state['values']['pid']);
   $pid = $form_state['values']['pid'];
   $file = $form_state['values']['file'];
   $name = str_replace(' ', '_', $file->filename);
   $object = new Fedora_Item($pid);
-//  drupal_set_message('File: ' . $file->filepath);
   $object->add_datastream_from_file($file->filepath, 'ZIP', $name);
   $list = islandora_scholar_zip_list($file->filepath);
-//  drupal_set_message('Files: ' . implode(', ', $list));
   $collectionHelper = new CollectionClass();
   $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
 
@@ -347,13 +338,11 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
   $mods_xml->loadXML($xmlstr);
   $xpath = new DOMXPath($mods_xml);
   $test = $xpath->query("//*[@type='supplement']")->item(0)->nodeValue;
-//  drupal_set_message('Test: ' . $test);
   if ($test !== '') {
     $note = $mods_xml->createElement('note', implode(', ', $list));
     $note->setAttribute('type', 'supplement');
     $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
     $mods_element->appendChild($note);
-//  drupal_set_message('DS: ' . $mods_xml->saveXML());
     $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
   }
   else {
@@ -739,7 +728,6 @@ function islandora_scholar_build_citation($pid) {
 
   $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
 
-//  $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></span><br /></div>';
   $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '">UPEI Users Only: Check for Full Text</A></span><br /></div>';
 
 
