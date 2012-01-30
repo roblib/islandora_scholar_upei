@@ -206,7 +206,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
           case 'OBJ':
             $obj = $object->get_datastream('OBJ');
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_obj">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
             break;
           case 'PDF':
             $pdf = $object->get_datastream('PDF');
