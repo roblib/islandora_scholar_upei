@@ -140,7 +140,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
     drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
     static $path;
-    
+
     $path = drupal_get_path('module', 'scholar');
     $items = array();
     $type = "ol";
@@ -193,16 +193,32 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $object = new Fedora_Item($doc->PID);
         $ds_array = $object->get_datastreams_list_as_array();
         $pdf_check = array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array);
+        $check = '';
+        if (array_key_exists('OBJ', $ds_array)) {
+          $check = 'OBJ';
+        }
+        if (array_key_exists('PDF', $ds_array)) {
+          $check = 'PDF';
+        }
         $data = new Coins($doc->PID);
-        if ($pdf_check) {
-          $pdf = $object->get_datastream('PDF');
-          $download_img = $base_url . '/' . $path . '/images/download.png';
-          $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+
+        switch ($check) {
+          case 'OBJ':
+            $obj = $object->get_datastream('OBJ');
+            $download_img = $base_url . '/' . $path . '/images/download.png';
+            $pdf_result = '<div class="scholar_obj">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+            break;
+          case 'PDF':
+            $pdf = $object->get_datastream('PDF');
+            $download_img = $base_url . '/' . $path . '/images/download.png';
+            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+            break;
+          default:
+            $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
+            $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
+            break;
         }
-        else {
-          $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
-          $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
-        }
+
         $abstract_snippet = 600;
         if (strlen($data->abstract) > $abstract_snippet) {
           $abstract = substr($data->abstract, 0, $abstract_snippet);
