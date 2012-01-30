@@ -192,7 +192,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
       if ($mods) {
         $object = new Fedora_Item($doc->PID);
         $ds_array = $object->get_datastreams_list_as_array();
-        $pdf_check = array_key_exists('PDF', $ds_array);
+        $pdf_check = array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array);
         $data = new Coins($doc->PID);
         if ($pdf_check) {
           $pdf = $object->get_datastream('PDF');
