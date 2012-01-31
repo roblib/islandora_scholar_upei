@@ -15,12 +15,22 @@ class Scholar {
     }
   }
 
+  /**
+   * Build up the elements to show a basic citation. This currently
+   * calls another function but customisation can be added in
+   * @return type 
+   */
   function showCitation() {
     $pid = $this->pid;
     $tabset = islandora_scholar_build_citation($pid);
     return $tabset;
   }
 
+  /**
+   * Build up the elements to show a thesis. This uses the citation build function
+   * as well as adding in some extra customisation such as the signature datastream
+   * @return string 
+   */
   function showThesis() {
     $pid = $this->pid;
     $item = new Fedora_Item($pid);
@@ -53,6 +63,13 @@ class Scholar {
     return $tabset;
   }
 
+  /**
+   * This will build the view for a researcher object
+   * @global type $base_url
+   * @global type $base_path
+   * @global type $user
+   * @return type 
+   */
   function show_researcher() {
     global $base_url;
     global $base_path;
@@ -169,6 +186,13 @@ class Scholar {
     return $tabset;
   }
 
+  /**
+   * This will build the view for a department object
+   * @global type $base_url
+   * @global type $base_path
+   * @global type $user
+   * @return type 
+   */
   function show_department() {
     global $base_url;
     global $base_path;
@@ -219,6 +243,13 @@ class Scholar {
 
 }
 
+/**
+ * Construct the form to upload a new document and attach rights 
+ * and usage information
+ * @param type $form_state
+ * @param type $pid
+ * @return type 
+ */
 function build_add_datastream_form(&$form_state, $pid) {
   $form = array();
   $certifyBox = array(
@@ -287,6 +318,13 @@ function build_add_datastream_form(&$form_state, $pid) {
   return $form;
 }
 
+/**
+ * Build the form to upload supplemental information and associate it with
+ * the object
+ * @param type $form_state
+ * @param type $pid
+ * @return string 
+ */
 function islandora_scholar_supp_info_form(&$form_state, $pid) {
   $form = array();
 
@@ -310,6 +348,12 @@ function islandora_scholar_supp_info_form(&$form_state, $pid) {
   return $form;
 }
 
+/**
+ * Validate the upload form
+ * @param type $form
+ * @param type $form_state
+ * @return type 
+ */
 function islandora_scholar_supp_info_form_validate($form, &$form_state) {
 
   $fieldName = 'upload';
@@ -335,6 +379,11 @@ function islandora_scholar_supp_info_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Submit the upload form and push the file into the ZIP datastream
+ * @param type $form
+ * @param type $form_state 
+ */
 function islandora_scholar_supp_info_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
@@ -362,6 +411,13 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Build form to delete the supplemental information so that
+ * the MODS record is updated at the same time
+ * @param type $form_state
+ * @param type $pid
+ * @return string 
+ */
 function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
   $form = array();
 
@@ -378,6 +434,11 @@ function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
   return $form;
 }
 
+/**
+ * Submit the supplementary information delete form
+ * @param type $form
+ * @param type $form_state 
+ */
 function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
@@ -407,6 +468,13 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Form to delete the associated documents and remove the relevant information
+ * in the MODS record
+ * @param type $form_state
+ * @param type $pid
+ * @return type 
+ */
 function islandora_scholar_document_delete_form(&$form_state, $pid) {
 
   module_load_include('inc', 'fedora_repository', 'fedora_item');
@@ -473,6 +541,11 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
   return $form;
 }
 
+/**
+ * Submit the document delete form
+ * @param type $form
+ * @param type $form_state 
+ */
 function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
@@ -529,11 +602,22 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   }
 }
 
+/**
+ * Get a list of files from a zip file
+ * @param type $zip_file
+ * @return type 
+ */
 function islandora_scholar_zip_list($zip_file) {
   exec('unzip -l "' . $zip_file . '"', $info);
   return $info;
 }
 
+/**
+ * Form to upload a signature file
+ * @param type $form_state
+ * @param type $pid
+ * @return type 
+ */
 function islandora_scholar_signature_form(&$form_state, $pid) {
   $form = array();
 
@@ -557,6 +641,12 @@ function islandora_scholar_signature_form(&$form_state, $pid) {
   return $form;
 }
 
+/**
+ * Validate the signature upload
+ * @param type $form
+ * @param type $form_state
+ * @return type 
+ */
 function islandora_scholar_signature_form_validate($form, &$form_state) {
 
   $fieldName = 'upload';
@@ -578,6 +668,11 @@ function islandora_scholar_signature_form_validate($form, &$form_state) {
   }
 }
 
+/**
+ * Submit the signature upload form
+ * @param type $form
+ * @param type $form_state 
+ */
 function islandora_scholar_signature_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
@@ -587,6 +682,15 @@ function islandora_scholar_signature_form_submit($form, &$form_state) {
   $object->add_datastream_from_file($file->filepath, 'SIGNATURE', 'SIGNATURE');
 }
 
+/**
+ * Function to build the content required for viewing a citation
+ * @todo Should split this out into smaller functions
+ * @global type $base_url
+ * @global type $base_path
+ * @global type $user
+ * @param type $pid
+ * @return int 
+ */
 function islandora_scholar_build_citation($pid) {
 
   global $base_url;
@@ -627,6 +731,42 @@ function islandora_scholar_build_citation($pid) {
 
   $csl = 'default'; // This needs to be changed to a value stored in the db
 
+  $item = new Fedora_Item($pid);
+  $ds_array = $item->get_datastreams_list_as_array();
+
+  $full_name = $data->topic;
+  
+  $headers = array('', '');
+  
+  $names = '';
+  foreach ($data->names as $name) {
+    $names .= $name . ', ';
+  }
+  
+  $topics = '';
+  foreach ($data->topic as $topic) {
+    $topics .= $topic . ', ';
+  }
+  
+  $rows = array(
+    array('Title', $data->title),
+    array('Authors', rtrim($names, ', ')),
+    array('Abstract', $data->abstract),
+    array('Journal', $data->journal_title),
+    array('Date', $data->date),
+    array('Volume', $data->volume),
+    array('Issue', $data->issue),
+    array('Start page', $data->start_page),
+    array('ISSN', $data->issn),
+    array('Subjects', rtrim($topics, ', ')),
+    array('Note', $data->note),
+    
+  );
+  
+  $citation = "<h3>Labelled view</h3>";
+  
+  $citation .= theme('table', $headers, $rows);
+
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
@@ -634,15 +774,13 @@ function islandora_scholar_build_citation($pid) {
     $ref = citeproc_citation_from_mods($mods);
     $bibliography->addCitation($ref);
   }
-  $citation = $bibliography->render();
-  $abstract = (string) $data->abstract;
-  if ($abstract != NULL || $abstract != '') {
-    $citation .= '<p><b>Abstract</b></p>';
-    $citation .= $data->abstract . '</br>';
-  }
-
-  $item = new Fedora_Item($pid);
-  $ds_array = $item->get_datastreams_list_as_array();
+  $citation .= "<h3>Citation view</h3>";
+  $citation .= $bibliography->render();
+//  $abstract = (string) $data->abstract;
+//  if ($abstract != NULL || $abstract != '') {
+//    $citation .= '<p><b>Abstract</b></p>';
+//    $citation .= $data->abstract . '</br>';
+//  }
 
   if (array_key_exists('ZIP', $ds_array)) {
     $ds_info = $item->get_datastream_info('ZIP');
@@ -797,6 +935,12 @@ function islandora_scholar_build_citation($pid) {
   return $tabset;
 }
 
+/**
+ * Function to process the information about the supplemental information contained 
+ * within the ZIP file so it can be added to the citation view
+ * @param type $mods
+ * @return type 
+ */
 function islandora_scholar_zip_mods_to_array($mods) {
 
   $xpath = new DOMXPath($mods);

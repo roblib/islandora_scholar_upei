@@ -9,7 +9,7 @@
  * Class to parse relevant data from MODS to create the COINS URL
  */
 class Coins {
-  
+
   public $pid = NULL;
   public $mods = NULL;
   public $issn = NULL;
@@ -21,7 +21,10 @@ class Coins {
   public $sub_title = NULL;
   public $journal_title = NULL;
   public $abstract = NULL;
-  
+  public $names = NULL;
+  public $topic = NULL;
+  public $note = NULL;
+
   /**
    * Create the object properties from the MODS datastream
    * @param type $pid 
@@ -40,34 +43,63 @@ class Coins {
     }
     $xml = new SimpleXMLElement($xmlstr);
     $xml->registerXPathNamespace('mods', 'http://www.loc.gov/mods/v3');
-    
+
     $this->mods = $xml;
-    
+
+    $full_name = array();
+    $i = 0;
+    foreach ($xml->name as $name) {
+      foreach ($name->namePart as $name_part) {
+        if ($name_part['type'] == 'given') {
+          $full_name[$i] .= (string) $name_part . '. ';
+        }
+        if ($name_part['type'] == 'family') {
+          $full_name[$i] .= (string) $name_part;
+        }
+      }
+      $role = (string) $name->role->roleTerm;
+      $full_name[$i] .= ' (' . $role . ')';
+      $i++;
+    }
+    $this->names = $full_name;
+
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
     $this->issn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $issn[0]);
-    
-    $this->date = $xml->xpath('//mods:part/mods:date');
-    
+
+    $this->date = $xml->part->date;
+
     $volume = $xml->xpath('//mods:part/mods:detail[@type="volume"]');
     $this->volume = $volume[0]->number;
-    
+
     $issue = $xml->xpath('//mods:part/mods:detail[@type="issue"]');
     $this->issue = $issue[0]->number;
-    
+
     $start_page = $xml->xpath('//mods:extent[@unit="page"]/mods:start');
     $this->start_page = $start_page[0];
-    
+
     $title = $xml->xpath('//mods:title');
     $this->title = $title[0];
-    
+
     $sub_title = $xml->xpath('//mods:title');
     $this->sub_title = $sub_title[0];
-    
+
     $journal_title = $xml->xpath('//mods:relatedItem[@type="host"]//mods:title');
     $this->journal_title = $journal_title[0];
-    
+
     $abstract = $xml->xpath('//mods:abstract');
     $this->abstract = $abstract[0];
+    
+    $topic = array();
+    foreach ($xml->subject as $subject) {
+      $topic[] = $subject->topic;
+    }
+    $this->topic = $topic;
+    
+    $notes = array();
+    foreach ($xml->note as $note) {
+      $notes[] = $note;
+    }
+    $this->note = $note;
   }
-  
+
 }
