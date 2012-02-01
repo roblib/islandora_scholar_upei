@@ -38,16 +38,11 @@ class Scholar {
     $tabset = islandora_scholar_build_citation($pid);
 
     if (array_key_exists('SIGNATURE', $ds_array)) {
-      module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
-      $track = new islandora_scholar_tracking($pid);
-      $read = $track->read_ds_count('SIGNATURE');
-      $content = l(t('Signature file'), 'download_ds/' . $pid . '/SIGNATURE');
-      $content .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
-      $content .= '<div>Last downloaded: ' . $read[($read['count'] - 1)]['time'] . '</div></br>';
+
       $tabset['first_tab']['tabs']['signature'] = array(
         '#type' => 'tabpage',
         '#title' => t('Signature'),
-        '#content' => $content,
+        '#content' => drupal_get_form('islandora_scholar_signature_delete_form', $pid),
         '#weight' => 4,
       );
     }
@@ -682,6 +677,49 @@ function islandora_scholar_signature_form_submit($form, &$form_state) {
   $object->add_datastream_from_file($file->filepath, 'SIGNATURE', 'SIGNATURE');
 }
 
+function islandora_scholar_signature_delete_form(&$form_state, $pid) {
+  module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
+  $track = new islandora_scholar_tracking($pid);
+  $read = $track->read_ds_count('SIGNATURE');
+  $content = l(t('Signature file'), 'download_ds/' . $pid . '/SIGNATURE');
+  $content .= '</br><div>Times downloaded: ' . $read['count'] . '</div>';
+  $content .= '<div>Last downloaded: ' . $read[($read['count'] - 1)] . '</div></br>';
+
+  $form['content'] = array(
+    '#value' => $content,
+  );
+
+  if (user_access('administer scholarly research')) {
+    $form['sig_delete'] = array(
+      '#type' => 'submit',
+      '#name' => 'sig_delete',
+      '#suffix' => '</br></br>',
+      '#value' => t('Delete signature'),
+    );
+  }
+  
+  $form['pid'] = array(
+    '#type' => 'value',
+    '#value' => $pid,
+  );
+
+  return $form;
+}
+
+function islandora_scholar_signature_delete_form_submit($form, &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  $pid = $form_state['values']['pid'];
+  $dsid = 'SIGNATURE';
+  $object = new Fedora_Item($pid);
+  $result = $object->purge_datastream($dsid);
+  if ($result != NULL) {
+    drupal_set_message(t("Datastream '@dsid' removed!", array('@dsid' => $dsid)));
+  }
+  else {
+    drupal_set_message(t("An error occurred while trying to remove datastream '@dsid'", array('@dsid' => $dsid)), 'error');
+  }
+}
+
 /**
  * Function to build the content required for viewing a citation
  * @todo Should split this out into smaller functions
@@ -735,19 +773,12 @@ function islandora_scholar_build_citation($pid) {
   $ds_array = $item->get_datastreams_list_as_array();
 
   $full_name = $data->topic;
-  
+
   $headers = array('', '');
-  
-  $names = '';
-  foreach ($data->names as $name) {
-    $names .= $name . ', ';
-  }
-  
-  $topics = '';
-  foreach ($data->topic as $topic) {
-    $topics .= $topic . ', ';
-  }
-  
+
+  $names = implode($data->names, ', ');
+  $topics = implode($data->topic, ', ');
+
   $rows = array(
     array('Title', $data->title),
     array('Authors', rtrim($names, ', ')),
@@ -760,11 +791,10 @@ function islandora_scholar_build_citation($pid) {
     array('ISSN', $data->issn),
     array('Subjects', rtrim($topics, ', ')),
     array('Note', $data->note),
-    
   );
-  
+
   $citation = "<h3>Labelled view</h3>";
-  
+
   $citation .= theme('table', $headers, $rows);
 
   $style = citeproc_style($csl);
