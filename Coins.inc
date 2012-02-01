@@ -51,10 +51,10 @@ class Coins {
     foreach ($xml->name as $name) {
       foreach ($name->namePart as $name_part) {
         if ($name_part['type'] == 'given') {
-          $full_name[$i] .= (string) $name_part . '. ';
+          $full_name[$i] .= (string) rtrim($name_part, '.') . '. ';
         }
         if ($name_part['type'] == 'family') {
-          $full_name[$i] .= (string) $name_part;
+          $full_name[$i] .= (string) rtrim($name_part, '.');
         }
       }
       $role = (string) $name->role->roleTerm;
