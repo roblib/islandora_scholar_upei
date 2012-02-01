@@ -472,14 +472,18 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
  */
 function islandora_scholar_document_delete_form(&$form_state, $pid) {
 
-  module_load_include('inc', 'fedora_repository', 'fedora_item');
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  module_load_include('inc', 'fedora_repository', 'ObjectHelper');
   module_load_include('inc', 'scholar', 'tracking/scholar_tracking');
+  
+  global $user;
 
   $form = array();
 
   $object = new Fedora_Item($pid);
   $ds_array = $object->get_datastreams_list_as_array();
   $track = new islandora_scholar_tracking($pid);
+  $object_details = islandora_scholar_get_object_profile($pid);
 
   if (array_key_exists('OBJ', $ds_array)) {
 
@@ -492,6 +496,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
     $form['obj_info'] = array(
       '#value' => $obj_content,
     );
+
     if (user_access('administer scholarly research')) {
       $form['obj_delete'] = array(
         '#type' => 'submit',
@@ -518,6 +523,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       $form['pdf_delete'] = array(
         '#type' => 'submit',
         '#name' => 'pdf_delete',
+        '#suffix' => '</br></br>',
         '#value' => t('Delete PDF'),
       );
     }
@@ -528,11 +534,31 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       '#content' => t('No document has been uploaded yet'),
     );
   }
+  
+  if (array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array)) {
+    if (user_access('administer scholarly research') || $user->name == $object_details['owner']) {
+      if (!array_key_exists('POLICY', $ds_array)) {
+        $form['embargo'] = array(
+          '#type' => 'submit',
+          '#name' => 'embargo',
+          '#value' => t('Embargo documents'),
+        );
+      }
+      else {
+        $form['remove_embargo'] = array(
+          '#type' => 'submit',
+          '#name' => 'remove_embargo',
+          '#value' => t('Remove embargo'),
+        );
+      }
+    }
+  }
+
   $form['pid'] = array(
     '#type' => 'value',
     '#value' => $pid,
   );
-
+  
   return $form;
 }
 
@@ -543,7 +569,10 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
  */
 function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+
+  $path = drupal_get_path('module', 'scholar');
   $pid = $form_state['values']['pid'];
+  $object = new Fedora_Item($pid);
 
   switch ($form_state['clicked_button']['#name']) {
     case 'obj_delete':
@@ -552,47 +581,75 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     case 'pdf_delete':
       $dsid = 'PDF';
       break;
+    case 'embargo':
+      $dsid = 'EMBARGO';
+      break;
+    case 'remove_embargo':
+      $dsid = 'REMOVE_EMBARGO';
+      break;
   }
-  $object = new Fedora_Item($pid);
-  $result = $object->purge_datastream($dsid);
-  if ($result != NULL) {
-    drupal_set_message(t("Datastream '@dsid' removed!", array('@dsid' => $dsid)));
-  }
-  else {
-    drupal_set_message(t("An error occurred while trying to remove datastream '@dsid'", array('@dsid' => $dsid)), 'error');
-  }
-  $collectionHelper = new CollectionClass();
-  $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
 
-  $ds_array = $object->get_datastreams_list_as_array();
-
-  if (!array_key_exists('PDF', $ds_array) && !array_key_exists('OBJ', $ds_array)) {
-
-    $mods_xml = new DOMDocument();
-    $mods_xml->loadXML($xmlstr);
-    $list = $mods_xml->getElementsByTagName('accessCondition');
-    $remove_nodes = array();
-    foreach ($list as $element) {
-      $attribute = $element->getAttribute('type');
-      if ($attribute == 'use and reproduction') {
-        $remove_nodes[] = $element;
-      }
-    }
-    $list2 = $mods_xml->getElementsByTagName('physicalDescription');
-    foreach ($list2 as $element2) {
-      // This is crude as it removes everything in a 'physicalDescription
-      // tag. If this becomes an issue this remove can be more specific.
-      $remove_nodes[] = $element2;
-    }
-    if (!empty($remove_nodes)) {
-      foreach ($remove_nodes as $remove_node) {
-        $remove_node->parentNode->removeChild($remove_node);
-      }
-      $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
-      drupal_set_message(t('MODS data relevant to this document has been removed'));
+  if ($dsid == 'OBJ' || $dsid == 'PDF') {
+    $result = $object->purge_datastream($dsid);
+    if ($result != NULL) {
+      drupal_set_message(t("Datastream '@dsid' removed!", array('@dsid' => $dsid)));
     }
     else {
-      drupal_set_message(t('No MODS element found to remove!'));
+      drupal_set_message(t("An error occurred while trying to remove datastream '@dsid'", array('@dsid' => $dsid)), 'error');
+    }
+    $collectionHelper = new CollectionClass();
+    $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
+
+    $ds_array = $object->get_datastreams_list_as_array();
+
+    if (!array_key_exists('PDF', $ds_array) && !array_key_exists('OBJ', $ds_array)) {
+
+      $mods_xml = new DOMDocument();
+      $mods_xml->loadXML($xmlstr);
+      $list = $mods_xml->getElementsByTagName('accessCondition');
+      $remove_nodes = array();
+      foreach ($list as $element) {
+        $attribute = $element->getAttribute('type');
+        if ($attribute == 'use and reproduction') {
+          $remove_nodes[] = $element;
+        }
+      }
+      $list2 = $mods_xml->getElementsByTagName('physicalDescription');
+      foreach ($list2 as $element2) {
+        // This is crude as it removes everything in a 'physicalDescription
+        // tag. If this becomes an issue this remove can be more specific.
+        $remove_nodes[] = $element2;
+      }
+      if (!empty($remove_nodes)) {
+        foreach ($remove_nodes as $remove_node) {
+          $remove_node->parentNode->removeChild($remove_node);
+        }
+        $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+        drupal_set_message(t('MODS data relevant to this document has been removed'));
+      }
+      else {
+        drupal_set_message(t('No MODS element found to remove!'));
+      }
+    }
+  }
+  else {
+    if ($dsid == 'EMBARGO') {
+      $result = $object->add_datastream_from_file($path . '/xacml/document-embargo.xml', 'POLICY');
+      if ($result != NULL) {
+        drupal_set_message(t('Embargo policy for object \'@pid\' added!', array('@pid' => $pid)));
+      }
+      else {
+        drupal_set_message(t('There was an error trying to add the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
+      }
+    }
+    if ($dsid == 'REMOVE_EMBARGO') {
+      $result = $object->purge_datastream('POLICY');
+      if ($result != NULL) {
+        drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)));
+      }
+      else {
+        drupal_set_message(t('There was an error trying to remove the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
+      }
     }
   }
 }
@@ -697,7 +754,7 @@ function islandora_scholar_signature_delete_form(&$form_state, $pid) {
       '#value' => t('Delete signature'),
     );
   }
-  
+
   $form['pid'] = array(
     '#type' => 'value',
     '#value' => $pid,
@@ -918,22 +975,43 @@ function islandora_scholar_build_citation($pid) {
     '#weight' => 1,
   );
 
-  if (user_access('add scholarly research') == TRUE && array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
+  if (user_access('add scholarly research') == TRUE) {
+    if (array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
 
-    $tabset['first_tab']['tabs']['upload'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Upload'),
-      '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
-      '#weight' => 3,
-    );
+      $tabset['first_tab']['tabs']['upload'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('Upload'),
+        '#content' => drupal_get_form('scholar_add_ir_datastream_form', $pid),
+        '#weight' => 3,
+      );
+    }
+    else {
+      $tabset['first_tab']['tabs']['pdf'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('Document'),
+        '#content' => drupal_get_form('islandora_scholar_document_delete_form', $pid),
+        '#weight' => 3,
+      );
+    }
   }
   else {
-    $tabset['first_tab']['tabs']['pdf'] = array(
-      '#type' => 'tabpage',
-      '#title' => t('Document'),
-      '#content' => drupal_get_form('islandora_scholar_document_delete_form', $pid),
-      '#weight' => 3,
-    );
+
+    if (array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
+      $tabset['first_tab']['tabs']['pdf'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('Document'),
+        '#content' => t('No documents have been uploaded yet.'),
+        '#weight' => 3,
+      );
+    }
+    else {
+      $tabset['first_tab']['tabs']['pdf'] = array(
+        '#type' => 'tabpage',
+        '#title' => t('Document'),
+        '#content' => drupal_get_form('islandora_scholar_document_delete_form', $pid),
+        '#weight' => 3,
+      );
+    }
   }
 
   if (user_access('administer scholarly research')) {
@@ -962,6 +1040,7 @@ function islandora_scholar_build_citation($pid) {
       );
     }
   }
+
   return $tabset;
 }
 
@@ -995,4 +1074,16 @@ function islandora_scholar_zip_mods_to_array($mods) {
     $j++;
   }
   return $filtered_array;
+}
+
+function islandora_scholar_get_object_profile($pid) {
+  $url = 'http://localhost:8080/fedora/objects/' . $pid . '?format=xml';
+  $result = file_get_contents($url);
+  $result_xml = new SimpleXMLElement($result);
+  $details['owner'] = $result_xml->objOwnerId;
+  $details['label'] = $result_xml->objLabel;
+  $details['created'] = $result_xml->objCreateDate;
+  $details['modified'] = $result_xml->objLastModDate;
+  $details['status'] = $result_xml->objState;
+  return $details;
 }

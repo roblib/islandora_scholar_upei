@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" PolicyId="demo-5" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+	<Description>This is an object-specific policy.  It could be stored inside the demo:5 digital object in the POLICY datastream OR in the directory for object-specific policies. (The directory location is set in the Authorization module configuration in the Fedora server configuration file (fedora.fcfg). By using multiple policy Rules, this policy shows how to deny access to all raw datastreams in the object except to particular users (e.g., the object owners).  It also shows how to deny access to a particular disseminations to selected user roles.</Description>
+	<Target>
+		<Subjects>
+			<AnySubject/>
+		</Subjects>
+		<Resources>
+			<Resource>
+				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">PDF</AttributeValue>
+					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:id" MustBePresent="false" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+				</ResourceMatch>
+			</Resource>
+			<Resource>
+				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">OBJ</AttributeValue>
+					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:id" MustBePresent="false" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+				</ResourceMatch>
+			</Resource>
+		</Resources>
+		<Actions>
+			<AnyAction/>
+		</Actions>
+	</Target>
+	<Rule RuleId="1" Effect="Permit">
+		<Target>
+			<Subjects>
+				<AnySubject/>
+			</Subjects>
+			<Resources>
+				<AnyResource/>
+			</Resources>
+			<Actions>
+				<AnyAction/>
+			</Actions>
+		</Target>
+		<Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+			<SubjectAttributeDesignator AttributeId="fedoraRole" MustBePresent="false" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+			<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+				<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">superuser</AttributeValue>
+				<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">administrator</AttributeValue>
+			</Apply>
+		</Condition>
+	</Rule>
+	
+	<Rule RuleId="2" Effect="Permit">
+		<Target>
+			<Subjects>
+				<AnySubject/>
+			</Subjects>
+			<Resources>
+				<AnyResource/>
+			</Resources>
+			<Actions>
+				<Action>
+					<ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:api-a</AttributeValue>
+						<ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string" AttributeId="urn:fedora:names:fedora:2.1:action:api"/>
+					</ActionMatch>
+				</Action>
+			</Actions>
+		</Target>
+		<Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+			<SubjectAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:subject:loginId" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+			<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:owner" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+		</Condition>
+	</Rule>
+	
+	<Rule RuleId="3" Effect="Deny"/>
+</Policy>

@@ -223,33 +223,6 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['researcher_given_autocomplete'] = array(
-    'title' => 'Auto Complete List of Researchers.',
-    'description' => 'Lists Researchers.',
-    'file' => 'autocomplete.inc',
-    'page callback' => 'islandora_autocomplete_researchers_given',
-    'access arguments' => array('view fedora collection'), // Use something fedora specific.
-    'type' => MENU_CALLBACK,
-  );
-
-  $items['researcher_family_autocomplete'] = array(
-    'title' => 'Auto Complete List of Researchers.',
-    'description' => 'Lists Researchers.',
-    'file' => 'autocomplete.inc',
-    'page callback' => 'islandora_autocomplete_researchers_family',
-    'access arguments' => array('view fedora collection'), // Use something fedora specific.
-    'type' => MENU_CALLBACK,
-  );
-
-  $items['department_autocomplete'] = array(
-    'title' => 'Auto Complete List of Departments.',
-    'description' => 'Lists Departments.',
-    'file' => 'autocomplete.inc',
-    'page callback' => 'islandora_autocomplete_departments',
-    'access arguments' => array('view fedora collection'), // Use something fedora specific.
-    'type' => MENU_CALLBACK,
-  );
-
   $items['islandora_autocomplete/%/%/%'] = array(
     'title' => 'Auto Complete',
     'description' => 'Islandora autocomplete',
