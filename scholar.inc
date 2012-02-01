@@ -535,6 +535,9 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
     );
   }
   
+  var_dump($object_details['owner']);
+  var_dump($user->name);
+  
   if (array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array)) {
     if (user_access('administer scholarly research') || $user->name == $object_details['owner']) {
       if (!array_key_exists('POLICY', $ds_array)) {
