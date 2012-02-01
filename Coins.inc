@@ -58,6 +58,7 @@ class Coins {
         }
       }
       $role = (string) $name->role->roleTerm;
+      ($role = 'aut') ? 'author' : $role;
       $full_name[$i] .= ' (' . $role . ')';
       $i++;
     }
