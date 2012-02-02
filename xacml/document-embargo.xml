@@ -23,27 +23,6 @@
 			<AnyAction/>
 		</Actions>
 	</Target>
-        
-        <Rule RuleId="0" Effect="Permit">
-		<Target>
-			<Subjects>
-				<AnySubject/>
-			</Subjects>
-			<Resources>
-				<AnyResource/>
-			</Resources>
-			<Actions>
-				<AnyAction/>
-			</Actions>
-		</Target>
-		<Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:dateTime-greater-than">
-                          <EnvironmentAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:environment:currentDateTime" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-                          <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:at-least-one-member-of">
-                          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#dateTime">2012-02-01T17:47:34.694Z</AttributeValue>
-			</Apply>
-		</Condition>
-	</Rule>
-        
 	<Rule RuleId="1" Effect="Permit">
 		<Target>
 			<Subjects>
