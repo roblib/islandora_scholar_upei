@@ -122,7 +122,7 @@ class Scholar {
       array('Department(s)', $dept),
     );
 
-    $rss_feed = l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-28x28.png">', '/rss/' . $username, array('html' => TRUE));
+    $rss_feed = l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-28x28.png">', 'rss/' . $username, array('html' => TRUE));
 
     $tabset['first_tab']['tabs']['details']['table'] = array(
       '#value' => theme('table', $header, $rows) . $rss_feed,
