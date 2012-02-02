@@ -244,11 +244,11 @@ function scholar_menu() {
   );
 
   $items['rss/%'] = array(
-    'title' => 'Auto Complete List of Departments.',
-    'description' => 'Lists Departments.',
+    'title' => 'RSS feed',
+    'description' => 'RSS feed',
     'file' => 'SearchForm.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholar_rss_feed', 1),
+    'page callback' => 'scholar_rss_feed',
+    'page arguments' => array(1),
     'access arguments' => array('view fedora collection'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );

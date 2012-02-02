@@ -270,11 +270,13 @@ function browse_by_department() {
   return $output;
 }
 
-function scholar_rss_feed($form, $researcher) {
+function scholar_rss_feed($researcher) {
   
 //  $url = variable_get('fedora_solr_search_url', 'http://localhost:8080/solr');
   $url = check_plain($_SERVER['HTTP_HOST']);
-  $query_url = 'http://' . $url . ':8080/solr/select?q=mods.author:' . $researcher . '&wt=xslt&tr=example_rss.xsl';
-  drupal_goto($query_url);
-  
+  $query_url = 'http://' . $url . ':8080/solr/select?q=mods.username:' . $researcher . '&wt=xslt&tr=example_rss.xsl';
+  $result = file_get_contents($query_url);
+//  var_dump($result);
+  drupal_set_header('Content-Type: text/xml; charset=utf-8');
+  print $result;
 }
