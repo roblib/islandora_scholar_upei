@@ -270,6 +270,10 @@ function browse_by_department() {
   return $output;
 }
 
+/**
+ * @todo Put solr server variable in here.
+ * @param type $researcher 
+ */
 function scholar_rss_feed($researcher) {
   
   $query_url = 'http://localhost:8080/solr/select?q=mods.username:' . $researcher . '&wt=xslt&tr=example_rss.xsl';

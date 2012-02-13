@@ -144,20 +144,30 @@ class Scholar {
       $array = array_filter($array);
       $rows = array();
       if (!empty($array)) {
-        $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+        if (module_exists('scholar_tracking')) {
+          $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+        }
+        else {
+          $header = array(t('Title'));
+        }
         foreach ($array as $arr) {
           $pid = (string) $arr->str;
           $object = new CollectionClass();
           $pid_xml_str = $object->getStream($pid, "MODS");
           $pid_xml = new SimpleXMLElement($pid_xml_str);
           $title = $pid_xml->titleInfo->title;
-          $track = new islandora_scholar_tracking($pid);
-          $read = $track->read_page_count();
-          $time_last_viewed = $read[($read['count'] - 1)];
-          if ($time_last_viewed == NULL) {
-            $time_last_viewed = 'Never';
+          if (module_exists('scholar_tracking')) {
+            $track = new islandora_scholar_tracking($pid);
+            $read = $track->read_page_count();
+            $time_last_viewed = $read[($read['count'] - 1)];
+            if ($time_last_viewed == NULL) {
+              $time_last_viewed = 'Never';
+            }
+            $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)));
           }
-          $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
+          else {
+            $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
+          }
         }
       }
       else {
@@ -475,23 +485,30 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'fedora_repository', 'ObjectHelper');
   module_load_include('inc', 'scholar', 'tracking/scholar_tracking');
-  
+
   global $user;
 
   $form = array();
 
   $object = new Fedora_Item($pid);
   $ds_array = $object->get_datastreams_list_as_array();
-  $track = new islandora_scholar_tracking($pid);
+  if (module_exists('scholar_tracking')) {
+    $track = new islandora_scholar_tracking($pid);
+  }
+  else {
+    $track = FALSE;
+  }
   $object_details = islandora_scholar_get_object_profile($pid);
 
   if (array_key_exists('OBJ', $ds_array)) {
 
-    $ds_count_doc = $track->read_ds_count('OBJ');
-
     $obj_content = l(t('Download document'), 'download_ds/' . $pid . '/OBJ') . '</br>';
-    $obj_content .= 'File has been downloaded ' . $ds_count_doc['count'] . ' times';
-    $obj_content .= '<div>Last downloaded: ' . $ds_count_doc[($ds_count_doc['count'] - 1)] . '</div></br>';
+
+    if ($track != FALSE) {
+      $ds_count_doc = $track->read_ds_count('OBJ');
+      $obj_content .= 'File has been downloaded ' . $ds_count_doc['count'] . ' times';
+      $obj_content .= '<div>Last downloaded: ' . $ds_count_doc[($ds_count_doc['count'] - 1)] . '</div></br>';
+    }
 
     $form['obj_info'] = array(
       '#value' => $obj_content,
@@ -509,11 +526,13 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
 
   if (array_key_exists('PDF', $ds_array)) {
 
-    $ds_count_pdf = $track->read_ds_count('PDF');
-
     $pdf_content = l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
-    $pdf_content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
-    $pdf_content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
+
+    if ($track != FALSE) {
+      $ds_count_pdf = $track->read_ds_count('PDF');
+      $pdf_content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
+      $pdf_content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
+    }
 
     $form['pdf_info'] = array(
       '#value' => $pdf_content,
@@ -534,7 +553,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       '#content' => t('No document has been uploaded yet'),
     );
   }
-  
+
   if (array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array)) {
     if (user_access('administer scholarly research') || $user->name === $object_details['owner']) {
       if (!array_key_exists('POLICY', $ds_array)) {
@@ -558,7 +577,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
     '#type' => 'value',
     '#value' => $pid,
   );
-  
+
   return $form;
 }
 
@@ -736,11 +755,15 @@ function islandora_scholar_signature_form_submit($form, &$form_state) {
 
 function islandora_scholar_signature_delete_form(&$form_state, $pid) {
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
-  $track = new islandora_scholar_tracking($pid);
-  $read = $track->read_ds_count('SIGNATURE');
+
   $content = l(t('Signature file'), 'download_ds/' . $pid . '/SIGNATURE');
-  $content .= '</br><div>Times downloaded: ' . $read['count'] . '</div>';
-  $content .= '<div>Last downloaded: ' . $read[($read['count'] - 1)] . '</div></br>';
+
+  if (module_exists('scholar_tracking')) {
+    $track = new islandora_scholar_tracking($pid);
+    $read = $track->read_ds_count('SIGNATURE');
+    $content .= '</br><div>Times downloaded: ' . $read['count'] . '</div>';
+    $content .= '<div>Last downloaded: ' . $read[($read['count'] - 1)] . '</div></br>';
+  }
 
   $form['content'] = array(
     '#value' => $content,
@@ -750,6 +773,7 @@ function islandora_scholar_signature_delete_form(&$form_state, $pid) {
     $form['sig_delete'] = array(
       '#type' => 'submit',
       '#name' => 'sig_delete',
+      '#prefix' => '</br>',
       '#suffix' => '</br></br>',
       '#value' => t('Delete signature'),
     );
@@ -909,15 +933,18 @@ function islandora_scholar_build_citation($pid) {
     }
   }
 
-  $track = new islandora_scholar_tracking($pid);
-  $track->add_page_count();
-  $read = $track->read_page_count();
-  $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
-  $time_last_viewed = $read[($read['count'] - 1)];
-  if ($time_last_viewed == NULL) {
-    $time_last_viewed = 'Never';
+  if (module_exists('scholar_tracking')) {
+
+    $track = new islandora_scholar_tracking($pid);
+    $track->add_page_count();
+    $read = $track->read_page_count();
+    $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
+    $time_last_viewed = $read[($read['count'] - 1)];
+    if ($time_last_viewed == NULL) {
+      $time_last_viewed = 'Never';
+    }
+    $citation .= '<div>Last viewed: ' . $time_last_viewed . '</div></br>';
   }
-  $citation .= '<div>Last viewed: ' . $time_last_viewed . '</div></br>';
 
   $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
 
@@ -1018,11 +1045,13 @@ function islandora_scholar_build_citation($pid) {
 
     if (array_key_exists('ZIP', $ds_array)) {
 
-      $ds_count = $track->read_ds_count('ZIP');
-
       $content = drupal_get_form('islandora_scholar_supp_info_delete_form', $pid);
-      $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
-      $content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
+
+      if (module_exists('scholar_tracking')) {
+        $ds_count = $track->read_ds_count('ZIP');
+        $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
+        $content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
+      }
 
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
