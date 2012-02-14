@@ -874,6 +874,19 @@ function islandora_scholar_build_citation($pid) {
     array('Note', $data->note),
   );
 
+  drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
+  foreach ($data->names as $name) {
+    drupal_set_html_head('<meta name="citation_author" content="' . $name . '" />');
+  }
+  drupal_set_html_head('<meta name="citation_publication_date" content="' . $data->date . '" />');
+  drupal_set_html_head('<meta name="citation_journal_title" content="' . $data->journal_title . '" />');
+  drupal_set_html_head('<meta name="citation_volume" content="' . $data->volume . '" />');
+  drupal_set_html_head('<meta name="citation_issue" content="' . $data->issue . '" />');
+  drupal_set_html_head('<meta name="citation_firstpage" content="' . $data->start_page . '" />');
+  if (array_key_exists('PDF', $ds_array)) {
+  drupal_set_html_head('<meta name="citation_pdf_url" content="' . $base_url . '/download_ds/' . $pid . '/PDF" />');
+  }
+
   $citation = "<h3>Labelled view</h3>";
 
   $citation .= theme('table', $headers, $rows);
