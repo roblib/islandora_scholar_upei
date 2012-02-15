@@ -26,10 +26,10 @@ function scholar_browse_by_dept_form() {
     }
     
     if ($dept_copy == 'Pathology and Microbiology') {
-      $dept_copy = 'Path%20Micro"%20OR%20mods.department:"Pathology%20and%20Microbiology';
+      $dept_copy = 'Path%20Micro"%20OR%20mods.department~~"Pathology%20and%20Microbiology';
     }
     
-    $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&'), array('%20', '?', '?'), ($dept_copy))) . '"';
+    $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
     $dept_result = file_get_contents($dept_result_query);
     var_dump($dept_result_query);
     $dept_xml = new SimpleXMLElement($dept_result);
