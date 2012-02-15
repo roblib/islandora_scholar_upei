@@ -22,7 +22,7 @@ function scholar_browse_by_dept_form() {
       $dept_copy = 'Path Micro"%20OR%20mads.topic:"Pathology and Microbiology';
     }
     if ($dept_copy == 'Political Science') {
-      $dept_copy = 'Political Studies';
+      $dept_copy = 'Political Studies"%20OR%20mads.topic:"Political Science';
     }
     $dept_result = file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&'), array('%20', '?', '?'), ($dept_copy))) . '"');
     $dept_xml = new SimpleXMLElement($dept_result);
