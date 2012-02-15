@@ -16,6 +16,9 @@ function scholar_browse_by_dept_form() {
     $output = '';
     $dept_copy = (string) $dept;
     $dept_query = $dept_title = $dept_copy;
+    var_dump($dept_copy);
+    var_dump($dept_title);
+    var_dump($dept_query);
     
     if ($dept_query == 'Pathology and Microbiology') {
       $dept_query = 'Path Micro"%20OR%20mads.topic:"Pathology and Microbiology';
