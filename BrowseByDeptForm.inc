@@ -24,7 +24,7 @@ function scholar_browse_by_dept_form() {
     if ($dept_copy == 'Political Science') {
       $dept_copy = 'Political Studies"%20OR%20mads.topic:"Political Science';
     }
-    $dept_result = file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&'), array('%20', '?', '?'), ($dept_copy))) . '"');
+    $dept_result = file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&'), array('%20', '?', '?'), ((string)$dept))) . '"');
     $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
     $citations = " (" . (string) $number_of_citations[0] . ")";
