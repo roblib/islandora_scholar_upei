@@ -19,7 +19,7 @@ function scholar_browse_by_dept_form() {
     $dept_copy = (string) $dept;
     $dept_title = $dept_copy;
     if ($dept_copy == 'Pathology and Microbiology') {
-      $dept_copy = 'Path Micro';
+      $dept_copy = 'Path Micro"%20OR%20"Pathology and Microbiology';
     }
     if ($dept_copy == 'Political Science') {
       $dept_copy = 'Political Studies';
