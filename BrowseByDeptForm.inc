@@ -4,6 +4,14 @@
  * @file
  * 
  */
+
+/**
+ * Form to browse the citation objects by department. Each department has its own collapsed fieldset
+ * which contains the researchers that are associated with that department. The number of citations per
+ * dept and researcher are displayed providing the relevant information is available from the citation
+ * object. 
+ * @return string 
+ */
 function scholar_browse_by_dept_form() {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
   module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
@@ -16,7 +24,8 @@ function scholar_browse_by_dept_form() {
     $output = '';
     $dept_copy = (string) $dept;
     $dept_query = $dept_title = $dept_copy;    
-    
+    // Added in mapping for various departments that may be represented by
+    // more than one name
     if ($dept_query == 'Pathology and Microbiology') {
       $dept_query = 'Path Micro"%20OR%20mads.topic:"Pathology and Microbiology';
     }
@@ -28,10 +37,10 @@ function scholar_browse_by_dept_form() {
     if ($dept_copy == 'Pathology and Microbiology') {
       $dept_copy = 'Path%20Micro"%20OR%20mods.department~~"Pathology%20and%20Microbiology';
     }
-    
+    // Replace some of the characters that may be found in the dept names so that they don't break
+    // the solr query
     $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
     $dept_result = file_get_contents($dept_result_query);
-    var_dump($dept_result_query);
     $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
     $citations = " (" . (string) $number_of_citations[0] . ")";
