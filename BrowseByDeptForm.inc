@@ -9,28 +9,27 @@ function scholar_browse_by_dept_form() {
   module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
 
   $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier&rows=500&sort=mads.identifier_sort+asc');
-
   $xml = new SimpleXMLElement($result);
-
   $depts = array_unique($xml->xpath('//doc/arr/str'));
-//  $output = '<ul>';
+
   foreach ($depts as $dept) {
     $output = '';
     $dept_copy = (string) $dept;
-    $dept_title = $dept_copy;
-    if ($dept_copy == 'Pathology and Microbiology') {
-      $dept_copy = 'Path Micro"%20OR%20mads.topic:"Pathology and Microbiology';
+    $dept_query = $dept_title = $dept_copy;
+    
+    if ($dept_query == 'Pathology and Microbiology') {
+      $dept_query = 'Path Micro"%20OR%20mads.topic:"Pathology and Microbiology';
     }
-    if ($dept_copy == 'Political Science') {
-      $dept_copy = 'Political Studies"%20OR%20mads.topic:"Political Science';
+    
+    if ($dept_query == 'Political Science') {
+      $dept_query = 'Political Studies"%20OR%20mads.topic:"Political Science';
     }
-    $dept_result = file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&'), array('%20', '?', '?'), ((string)$dept))) . '"');
+    
+    $dept_result = file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&'), array('%20', '?', '?'), ($dept_copy))) . '"');
     $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
     $citations = " (" . (string) $number_of_citations[0] . ")";
     $dept_link = str_replace(' ', '%20', $dept_copy);
-
-//    $output .= '<li><a href=islandora/solr/search/mods.department:"' . $dept_link . '">' . $dept . '</a><i>' . $citations . '</i></li>';
 
     $form[$dept_title] = array(
       '#type' => 'fieldset',
@@ -39,9 +38,9 @@ function scholar_browse_by_dept_form() {
       '#collapsed' => TRUE,
     );
 
-
     $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
-    $query = 'http://localhost:8080/solr/select/?q=mads.topic:"' . $dept_copy . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
+    $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
+    $query = 'http://localhost:8080/solr/select/?q=mads.topic:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
 //    var_dump($query);
     $result = file_get_contents($query);
     $xml = new SimpleXMLElement($result);
