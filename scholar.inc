@@ -133,10 +133,10 @@ class Scholar {
       '#title' => t('Citations'),
     );
 
-    if ($citations_cache = cache_get('islandora_scholar_citation_cache')) {
-      $rows = unserialize($citations_cache->data);
-    }
-    else {
+//    if ($citations_cache = cache_get('islandora_scholar_citation_cache')) {
+//      $rows = unserialize($citations_cache->data);
+//    }
+//    else {
       $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
       $xml = new SimpleXMLElement($username_query);
       $array = $xml->xpath('//doc');
@@ -173,9 +173,9 @@ class Scholar {
       else {
         $rows = NULL;
       }
-      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
-      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
-    }
+//      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
+//      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
+//    }
 
     if ($rows == NULL) {
       $content = t('No citations found!');
