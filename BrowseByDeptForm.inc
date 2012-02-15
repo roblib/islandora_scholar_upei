@@ -40,7 +40,7 @@ function scholar_browse_by_dept_form() {
     );
 
 
-    $dept_copy = str_replace(' ', '%20', $dept_copy);
+    $dept_copy = str_replace(array(' ', 'CMTC Research Group CMTC: Interdisciplinary Research in Culture, Multimedia, Technology & Cognition'), array('%20', 'CMTC'), $dept_copy);
     $query = 'http://localhost:8080/solr/select/?q=mads.topic:"' . $dept_copy . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
     $result = file_get_contents($query);
     $xml = new SimpleXMLElement($result);
