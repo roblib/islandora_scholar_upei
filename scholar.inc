@@ -140,7 +140,6 @@ class Scholar {
       $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
       $xml = new SimpleXMLElement($username_query);
       $array = $xml->xpath('//doc');
-      var_dump($username_query);
       $array = array_filter($array);
       $rows = array();
       if (!empty($array)) {
