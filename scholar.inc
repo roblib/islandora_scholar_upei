@@ -140,7 +140,7 @@ class Scholar {
       $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
       $xml = new SimpleXMLElement($username_query);
       $array = $xml->xpath('//doc');
-
+      var_dump($username_query);
       $array = array_filter($array);
       $rows = array();
       if (!empty($array)) {
@@ -884,7 +884,7 @@ function islandora_scholar_build_citation($pid) {
   drupal_set_html_head('<meta name="citation_issue" content="' . $data->issue . '" />');
   drupal_set_html_head('<meta name="citation_firstpage" content="' . $data->start_page . '" />');
   if (array_key_exists('PDF', $ds_array)) {
-  drupal_set_html_head('<meta name="citation_pdf_url" content="' . $base_url . '/download_ds/' . $pid . '/PDF" />');
+    drupal_set_html_head('<meta name="citation_pdf_url" content="' . $base_url . '/download_ds/' . $pid . '/PDF" />');
   }
 
   $citation = "<h3>Labelled view</h3>";
