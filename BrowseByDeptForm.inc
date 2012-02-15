@@ -16,9 +16,9 @@ function scholar_browse_by_dept_form() {
     $output = '';
     $dept_copy = (string) $dept;
     $dept_query = $dept_title = $dept_copy;
-    var_dump($dept_copy);
+    
     var_dump($dept_title);
-    var_dump($dept_query);
+    
     
     if ($dept_query == 'Pathology and Microbiology') {
       $dept_query = 'Path Micro"%20OR%20mads.topic:"Pathology and Microbiology';
@@ -43,12 +43,14 @@ function scholar_browse_by_dept_form() {
 
     $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
     $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
+    var_dump($dept_query);
     $query = 'http://localhost:8080/solr/select/?q=mads.topic:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
 //    var_dump($query);
     $result = file_get_contents($query);
     $xml = new SimpleXMLElement($result);
     $array = $xml->xpath('//doc');
     $output = '<ul>';
+    var_dump($dept_copy);
     $output .= l(t('Search all authors'), 'islandora/solr/search/mods.department:"' . $dept_copy . '"');
     $users = array();
     $user = '';
