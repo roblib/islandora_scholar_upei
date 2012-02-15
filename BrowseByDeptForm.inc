@@ -29,7 +29,9 @@ function scholar_browse_by_dept_form() {
       $dept_copy = 'Path%20Micro"%20OR%20mods.department:"Pathology%20and%20Microbiology';
     }
     
-    $dept_result = file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&'), array('%20', '?', '?'), ($dept_copy))) . '"');
+    $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&'), array('%20', '?', '?'), ($dept_copy))) . '"';
+    $dept_result = file_get_contents($dept_result_query);
+    var_dump($dept_result_query);
     $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
     $citations = " (" . (string) $number_of_citations[0] . ")";
@@ -45,7 +47,6 @@ function scholar_browse_by_dept_form() {
     $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
     $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
     $query = 'http://localhost:8080/solr/select/?q=mads.topic:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
-    var_dump($query);
     $result = file_get_contents($query);
     $xml = new SimpleXMLElement($result);
     $array = $xml->xpath('//doc');
