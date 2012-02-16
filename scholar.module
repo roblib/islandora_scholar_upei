@@ -569,6 +569,7 @@ function scholar_bulk_ingest_get_potential_models($collection_pid) {
     $name = $content_model->name;
     $potential_models["$identifier"] = "$name";
   }
+  unset($potential_models['islandora:contentCModel']);
   return $potential_models;
 }
 
