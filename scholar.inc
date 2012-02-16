@@ -874,7 +874,7 @@ function islandora_scholar_build_citation($pid) {
   );
 
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
-  foreach ($data->names as $name) {
+  foreach ($data->reverse_names as $name) {
     drupal_set_html_head('<meta name="citation_author" content="' . $name . '" />');
   }
   drupal_set_html_head('<meta name="citation_publication_date" content="' . $data->date . '" />');

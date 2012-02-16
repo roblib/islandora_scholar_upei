@@ -22,6 +22,7 @@ class Coins {
   public $journal_title = NULL;
   public $abstract = NULL;
   public $names = NULL;
+  public $reverse_names = NULL;
   public $topic = NULL;
   public $note = NULL;
 
@@ -65,6 +66,21 @@ class Coins {
       $i++;
     }
     $this->names = $full_name;
+    
+    $reverse = array();
+    $i = 0;
+    foreach ($xml->name as $name) {
+      foreach ($name->namePart as $name_part) {
+        if ($name_part['type'] == 'family') {
+          $reverse[$i] .= (string) rtrim($name_part, '.') . ', ';
+        }
+        if ($name_part['type'] == 'given') {
+          $reverse[$i] .= (string) rtrim($name_part, '.') . '. ';
+        }
+      }
+      $i++;
+    }
+    $this->reverse_names = $reverse;
 
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
     $this->issn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $issn[0]);
