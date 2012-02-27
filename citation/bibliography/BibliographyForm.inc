@@ -194,7 +194,7 @@ function islandora_bibliography_form_preview(array $form, array &$form_state) {
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
   $selections = $form_state['values']['table']['selections'];
-  $style = citeproc_style($form_state['values']['preview_style']);
+  $style = citeproc_style($form_state['values']['style']);
   $bibliography = new CiteProcJSBibliography($style);
   $selections = array_filter($selections);
   $selections = array_keys($selections);
