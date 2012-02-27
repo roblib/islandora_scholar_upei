@@ -72,8 +72,6 @@ class Scholar {
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
     module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
     module_load_include('inc', 'scholar', 'Users');
-
-    drupal_set_title(t('Test'));
     
     $path = drupal_get_path('module', 'scholar');
 
@@ -98,7 +96,7 @@ class Scholar {
     $username = $xml->identifier;
     $email = $xml->affiliation->email;
     
-//    drupal_set_title(t('@fullname', array('@fullname' => $fullname)));
+    drupal_set_title(t('@fullname', array('@fullname' => $fullname)));
     
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
