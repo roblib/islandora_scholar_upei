@@ -176,7 +176,10 @@ class Scholar {
     );
     
     if ($_SESSION['author_view'] == 'metrics') {
-      $metric_weight = 1;
+      $metric_weight = 0;
+    }
+    else {
+      $metric_weight = 3;
     }
     
     $tabset['first_tab']['tabs']['metrics'] = array(
