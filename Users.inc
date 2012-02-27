@@ -273,7 +273,7 @@ function scholar_batch_user_add_finished($success, $results, $operations) {
   }
 }
 
-function scholar_author_bibliography_form(array &$form_state, array $pids) {
+function scholar_author_bibliography_form(array &$form_state, array $pids, $username) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   module_load_include('inc', 'islandora_bibliography', 'BibliographyForm');
   citation_exporter_include_download_redirect();
@@ -327,7 +327,7 @@ function scholar_author_bibliography_form(array &$form_state, array $pids) {
           '#type' => 'submit',
           '#prefix' => '</br>',
           '#value' => t('Preview Selected'),
-          '#submit' => array('islandora_bibliography_form_preview')
+          '#submit' => array('scholar_author_bibliography_form_preview')
         ),
         'export' => array(
           '#type' => 'submit',
@@ -335,7 +335,38 @@ function scholar_author_bibliography_form(array &$form_state, array $pids) {
           '#export' => 'selected',
           '#value' => t('Export Selected'),
           '#submit' => array('islandora_bibliography_form_export')
-        )
+        ),
+        'username' => array(
+          '#type' => 'hidden',
+          '#value' => $username,
+        ),
     );
   }
+}
+
+function scholar_author_bibliography_form_preview(array $form, array &$form_state) {
+  module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
+  drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
+  $selections = $form_state['values']['table']['selections'];
+  $username = strtolower($form_state['values']['username']);
+  $style = citeproc_style($form_state['values']['style']);
+  $bibliography = new CiteProcJSBibliography($style);
+  $selections = array_filter($selections);
+  $selections = array_keys($selections);
+  foreach ($selections as $pid) {
+    $mods = islandora_bibilgraphy_form_get_mods($pid);
+    if ($mods) {
+      $citation = citeproc_citation_from_mods($mods);
+      $bibliography->addCitation($citation);
+    }
+  }
+  if (isset ($selections[0])) {
+    $output = $bibliography->render();
+    } 
+    else {
+      drupal_set_message(t('No citations were selected!'), 'warning');
+    }
+  $output .= l(t('Return to author.'), 'fedora/repository/ir:' . $username);
+  print theme('page', $output, FALSE);
+  exit();
 }

@@ -188,7 +188,7 @@ class Scholar {
     }
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
-      '#value' => drupal_get_form('scholar_author_bibliography_form', $pids),
+      '#value' => drupal_get_form('scholar_author_bibliography_form', $pids, $username),
     );
     return $tabset;
   }
