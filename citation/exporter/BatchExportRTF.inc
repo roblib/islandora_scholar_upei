@@ -118,7 +118,7 @@ function citation_exporter_batch_convert_txt_to_rtf($filename, array &$context) 
     fwrite($file, $document);
     fclose($file);
   }
-  $rtf_file_name = 'sites/default/files/export.rtf';
+  $rtf_file_name = $temp_file_name;
   /* Batch Values */
   $context['results']['filename'] = $rtf_file_name;
   $context['results']['download_filename'] = 'export.rtf';

@@ -278,6 +278,9 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
   module_load_include('inc', 'islandora_bibliography', 'BibliographyForm');
   module_load_include('inc', 'citation_exporter', 'Batch');
   module_load_include('module', 'citation_exporter', 'citation_exporter');
+  module_load_include('inc', 'citation_exporter', 'BatchExportRIS');
+  module_load_include('inc', 'citation_exporter', 'BatchExportRTF');
+  module_load_include('inc', 'citation_exporter', 'BatchExportPDF');
 
   citation_exporter_include_download_redirect();
 //  $pids = Bibliography::GetCitations();
