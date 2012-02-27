@@ -397,7 +397,7 @@ function scholar_author_metrics_form($username) {
       $header = array(t('Title'));
     }
     $no_of_rows = count($array);
-    for ($i = 0; $i < $no_of_rows; $i++) {
+    for ($i = $offset; $i < $no_of_rows; $i++) {
       $pid = (string) $array[$i]->str;
       $pids[] = $pid;
       $object = new CollectionClass();
