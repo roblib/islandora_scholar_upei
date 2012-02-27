@@ -118,7 +118,7 @@ function islandora_bibilgraphy_form_empty_page() {
  */
 function islandora_bibilgraphy_form_table(array $pids) {
   $table = array(
-    '#header' => array(theme('table_select_header_cell'), t('Title'), t('Author(s)'), ''),
+    '#header' => array(theme('table_select_header_cell', array(1)), t('Title'), t('Author(s)'), ''),
     '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
     '#tree' => TRUE,
     'rows' => array(),
