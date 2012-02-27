@@ -29,7 +29,7 @@ function citation_exporter_batch_get_ris_operations(array $pids) {
   $operations = array();
   $operations[] = array('citation_exporter_batch_combine_mods', array($temp_pids_file, $total, $temp_mods_file));
   $operations[] = array('citation_exporter_batch_convert_mods_to_ris', array($temp_mods_file));
-//  $operations[] = array('citation_exporter_batch_redirect', array($_GET['q']));
+  $operations[] = array('citation_exporter_batch_redirect', array($_GET['q']));
   return $operations;
 }
 
@@ -76,9 +76,9 @@ function _citation_exporter_batch_combine_mods($filename, array $pids) {
  */
 function citation_exporter_batch_convert_mods_to_ris($mods_filename, array &$context) {
   module_load_include('inc', 'bibutils', 'Bibutils');
-  $temp_file_dir = '/var/www/drupal/sites/default/files';
+  $temp_file_dir = '/var/www/drupal/sites/default/files/temp/';
 //  $ris_filename = file_create_filename('ris_export' . $rnd . '.ris', $temp_file_dir);
-  $ris_filename = 'sites/default/files/ris_export.ris';
+  $ris_filename = 'sites/default/files/temp/ris_export.ris';
   if (Bibutils::Convert($mods_filename, 'MODS', $ris_filename, 'RIS')) {
     $context['results']['filename'] = $ris_filename;
     $context['results']['mime_type'] = 'application/x-Research-Info-Systems';
