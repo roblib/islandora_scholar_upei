@@ -95,7 +95,7 @@ function citation_exporter_batch_get_num_pids_from_file($filename, $num = 1) {
  * @param array $context 
  */
 function citation_exporter_batch_redirect($redirect, array &$context) {
-  $context['results']['redirect'] = $redirect;
+  $context['results']['redirect'] = NULL;
 }
 
 /**
