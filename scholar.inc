@@ -176,16 +176,16 @@ class Scholar {
     );
     
     if ($_SESSION['author_view'] == 'metrics') {
-      $metric_weight = 0;
+      $selected = 1;
     }
     else {
-      $metric_weight = 3;
+      $selected = 0;
     }
     
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
-      '#weight' => -5,
+      '#selected' => $selected,
     );
     
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
