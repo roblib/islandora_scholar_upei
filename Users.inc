@@ -423,12 +423,12 @@ function scholar_author_metrics_form($username) {
   }
   
   $no_of_items = count($rows);
-  $total = 10;
+  $total = $no_of_items / $items_per_page;
   $element = 0;
   $GLOBALS['pager_page_array'][$element] = max(0, min((int) $pager_page_array[$element], ((int) $pager_total[$element]) - 1));
   $GLOBALS['pager_total'][$element] = ceil($items_per_page / $no_of_items);
   
-  pager_query("SELECT %d", $items_per_page, 0, NULL, $no_of_items);
+  pager_query("SELECT %d", $items_per_page, 0, NULL, $total);
   
 //      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
 //      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
