@@ -273,11 +273,11 @@ function scholar_batch_user_add_finished($success, $results, $operations) {
   }
 }
 
-function scholar_author_bibliography_form(array &$form_state) {
+function scholar_author_bibliography_form(array &$form_state, array $pids) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   module_load_include('inc', 'islandora_bibliography', 'BibliographyForm');
   citation_exporter_include_download_redirect();
-  $pids = Bibliography::GetCitations();
+//  $pids = Bibliography::GetCitations();
   if (empty($pids)) {
     islandora_bibilgraphy_form_empty_page();
   }
@@ -286,9 +286,6 @@ function scholar_author_bibliography_form(array &$form_state) {
     drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/bibliography.css');
     $styles = CSL::GetNames();
     return array(
-      'fieldset' => array(
-        '#type' => 'fieldset',
-        '#title' => t('Citations'),
         'step_1' => array(
           '#value' => t('Step 1: Select your citations'),
           '#prefix' => '<h3>',
@@ -307,7 +304,7 @@ function scholar_author_bibliography_form(array &$form_state) {
           '#submit' => array('islandora_bibliography_form_remove')
         ),
         'step_3' => array(
-          '#value' => t('Step 2: Save the formatted citations'),
+          '#value' => t('Step 2: Preview or export the formatted citations'),
           '#prefix' => '<h3>',
           '#suffix' => '</h3>'
         ),
@@ -339,7 +336,6 @@ function scholar_author_bibliography_form(array &$form_state) {
           '#value' => t('Export Selected'),
           '#submit' => array('islandora_bibliography_form_export')
         )
-      )
     );
   }
 }

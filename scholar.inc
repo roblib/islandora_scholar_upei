@@ -135,7 +135,7 @@ class Scholar {
       '#type' => 'tabpage',
       '#title' => t('Citations'),
     );
-
+    $pids = array();
 //    if ($citations_cache = cache_get('islandora_scholar_citation_cache')) {
 //      $rows = unserialize($citations_cache->data);
 //    }
@@ -154,6 +154,7 @@ class Scholar {
         }
         foreach ($array as $arr) {
           $pid = (string) $arr->str;
+          $pids[] = $pid;
           $object = new CollectionClass();
           $pid_xml_str = $object->getStream($pid, "MODS");
           $pid_xml = new SimpleXMLElement($pid_xml_str);
@@ -187,7 +188,7 @@ class Scholar {
     }
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
-      '#value' => drupal_get_form('scholar_author_bibliography_form'),
+      '#value' => drupal_get_form('scholar_author_bibliography_form', $pids),
     );
 
     return $tabset;
