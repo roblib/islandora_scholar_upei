@@ -185,7 +185,7 @@ class Scholar {
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
-      '#weight' => $metric_weight,
+      '#weight' => -5,
     );
     
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
