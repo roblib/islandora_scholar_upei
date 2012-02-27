@@ -401,6 +401,8 @@ function scholar_author_metrics_form($username) {
     if ($range < $no_of_rows) {
       $range = $offset + ($no_of_rows - $offset);
     }
+    var_dump($offset);
+    var_dump($range);
     for ($i = $offset; $i < $range; $i++) {
       $pid = (string) $array[$i]->str;
       $pids[] = $pid;
