@@ -16,12 +16,9 @@
  *   The operations required to generate a RIS file from the given citations.
  */
 function citation_exporter_batch_get_ris_operations(array $pids) {
-//  $temp_file_dir = file_directory_temp();
-  $temp_file_dir = 'sites/default/files/temp/';
+  $temp_file_dir = file_directory_temp();
   $temp_mods_file = file_create_filename('ris_mods.xml', $temp_file_dir);
-  drupal_set_message('mods: ' . $temp_mods_file);
   $temp_pids_file = file_create_filename('ris_pids.txt', $temp_file_dir);
-  drupal_set_message('pids: ' . $temp_pids_file);
   citation_exporter_batch_store_pids_in_file($temp_pids_file, $pids);
   $total = count($pids);
   $mods = new DOMDocument();
@@ -77,16 +74,12 @@ function _citation_exporter_batch_combine_mods($filename, array $pids) {
  */
 function citation_exporter_batch_convert_mods_to_ris($mods_filename, array &$context) {
   module_load_include('inc', 'bibutils', 'Bibutils');
-  $temp_file_dir = 'sites/default/files/temp/';
+  $temp_file_dir = file_directory_temp();
 //  $ris_filename = file_create_filename('ris_export' . $rnd . '.ris', $temp_file_dir);
-  $ris_filename = 'sites/default/files/temp/ris_export.ris';
+  $ris_filename = $temp_file_dir . '/ris_export.ris';
   if (Bibutils::Convert($mods_filename, 'MODS', $ris_filename, 'RIS')) {
-    drupal_set_message('Conversion was successful!');
     $context['results']['filename'] = $ris_filename;
     $context['results']['mime_type'] = 'application/x-Research-Info-Systems';
-    $context['results']['download_filename'] = 'sites/default/files/temp/ris_export.ris';
-  }
-  else {
-    drupal_set_message('Conversion was not successful!', 'error');
+    $context['results']['download_filename'] = 'ris_export.ris';
   }
 }
