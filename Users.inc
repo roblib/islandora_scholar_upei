@@ -276,6 +276,9 @@ function scholar_batch_user_add_finished($success, $results, $operations) {
 function scholar_author_bibliography_form(array &$form_state, array $pids, $username) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   module_load_include('inc', 'islandora_bibliography', 'BibliographyForm');
+  module_load_include('inc', 'citation_exporter', 'Batch');
+  module_load_include('module', 'citation_exporter', 'citation_exporter');
+
   citation_exporter_include_download_redirect();
 //  $pids = Bibliography::GetCitations();
   if (empty($pids)) {
