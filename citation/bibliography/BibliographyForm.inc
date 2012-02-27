@@ -43,7 +43,6 @@ function islandora_bibliography_form(array &$form_state) {
           '#value' => t('Remove Selected'),
           '#submit' => array('islandora_bibliography_form_remove')
         ),
-
         'step_2' => array(
           '#value' => t('Step 2: Preview the formatted citations'),
           '#prefix' => '<h3>',

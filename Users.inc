@@ -294,30 +294,20 @@ function scholar_author_bibliography_form(array &$form_state) {
           '#prefix' => '<h3>',
           '#suffix' => '</h3>'
         ),
+        'table_div_open' => array(
+          '#value' => '<div class="bibliography-table">',
+        ),
         'table' => islandora_bibilgraphy_form_table($pids),
+        'table_div_close' => array(
+          '#value' => '</div>',
+        ),
         'remove' => array(
           '#type' => 'submit',
           '#value' => t('Remove Selected'),
           '#submit' => array('islandora_bibliography_form_remove')
         ),
-
-        'step_2' => array(
-          '#value' => t('Step 2: Preview the formatted citations'),
-          '#prefix' => '<h3>',
-          '#suffix' => '</h3>'
-        ),
-        'preview_style' => array(
-          '#title' => t('Style'),
-          '#type' => 'select',
-          '#options' => $styles
-        ),
-        'preview' => array(
-          '#type' => 'submit',
-          '#value' => t('Preview Selected'),
-          '#submit' => array('islandora_bibliography_form_preview')
-        ),
         'step_3' => array(
-          '#value' => t('Step 3: Save the formatted citations'),
+          '#value' => t('Step 2: Save the formatted citations'),
           '#prefix' => '<h3>',
           '#suffix' => '</h3>'
         ),
@@ -335,6 +325,12 @@ function scholar_author_bibliography_form(array &$form_state) {
           '#title' => t('Style'),
           '#type' => 'select',
           '#options' => $styles
+        ),
+          'preview' => array(
+          '#type' => 'submit',
+          '#prefix' => '</br>',
+          '#value' => t('Preview Selected'),
+          '#submit' => array('islandora_bibliography_form_preview')
         ),
         'export' => array(
           '#type' => 'submit',
