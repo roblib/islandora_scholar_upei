@@ -100,6 +100,7 @@ function _citation_exporter_batch_append_citations_to_text_file(array $pids, $fi
  */
 function citation_exporter_batch_convert_txt_to_rtf($filename, array &$context) {
   module_load_include('php', 'citation_exporter', 'class_rtf');
+  global $base_path;
   $text = '';
   $file = fopen($filename, 'rw');
   while (!feof($file)) {
@@ -110,7 +111,7 @@ function citation_exporter_batch_convert_txt_to_rtf($filename, array &$context) 
   $rtf = new rtf();
   $rtf->addText($text);
   /* File */
-  $temp_file_dir = file_directory_temp();
+  $temp_file_dir = $base_path . file_directory_temp();
   $temp_file_name = file_create_filename("export.rtf", $temp_file_dir);
   $file = fopen($temp_file_name, 'w');
   if ($file !== FALSE) {
