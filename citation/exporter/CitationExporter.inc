@@ -92,7 +92,6 @@ class CitationExporter {
         curl_close($curl_handle);
       }
       else {
-        sleep(5);
         drupal_goto($redirect);
         exit();
       }
