@@ -96,7 +96,7 @@ class Scholar {
     $username = $xml->identifier;
     $email = $xml->affiliation->email;
     
-    drupal_set_title(t('@fullname', array('@fullname' => $fullname)));
+//    drupal_set_title(t('@fullname', array('@fullname' => $fullname)));
     
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
@@ -190,7 +190,6 @@ class Scholar {
     $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $pids),
     );
-
     return $tabset;
   }
 
