@@ -381,7 +381,7 @@ function scholar_author_metrics_form($username) {
   module_load_include('inc', 'scholar', 'Users');
 
   $page = isset($_GET['page']) ? $_GET['page'] : '0';
-  $items_per_page = 5;
+  $items_per_page = 10;
   $offset = $page * $items_per_page;
   
   $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
