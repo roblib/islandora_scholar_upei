@@ -190,6 +190,16 @@ class Scholar {
     $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $pids, $username),
     );
+    
+    $tabset['first_tab']['tabs']['metrics'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Metrics'),
+    );
+    
+    $tabset['first_tab']['tabs']['metrics']['content'] = array(
+      '#value' => $content,
+    );
+    
     return $tabset;
   }
 
