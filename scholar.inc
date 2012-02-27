@@ -155,22 +155,6 @@ class Scholar {
         foreach ($array as $arr) {
           $pid = (string) $arr->str;
           $pids[] = $pid;
-          $object = new CollectionClass();
-          $pid_xml_str = $object->getStream($pid, "MODS");
-          $pid_xml = new SimpleXMLElement($pid_xml_str);
-          $title = $pid_xml->titleInfo->title;
-          if (module_exists('scholar_tracking')) {
-            $track = new islandora_scholar_tracking($pid);
-            $read = $track->read_page_count();
-            $time_last_viewed = $read[($read['count'] - 1)];
-            if ($time_last_viewed == NULL) {
-              $time_last_viewed = 'Never';
-            }
-            $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)));
-          }
-          else {
-            $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
-          }
         }
       }
       else {
@@ -197,7 +181,7 @@ class Scholar {
     );
     
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
-      '#value' => $content,
+      '#value' => scholar_author_metrics_form($username),
     );
     
     return $tabset;

@@ -150,36 +150,36 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
 //  $max = count($users);
   $max = 1;
   if ($collection_policy !== FALSE) {
-    
+
     foreach ($users as $user) {
 //  $result = in_array($user, $context['results']);
 //  if (!$result === TRUE) {
-    $details = new UsersClass($user);
-    $check = $details->check_user();
-    if ($check !== TRUE) {
-    $collection_pid = 'ir:people';
-    $content_model_pid = 'ir:researcherCModel';
-    $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
-    $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
-    
-    $xml = $details->ldap_to_mads();
-    $dir = $_SERVER['DOCUMENT_ROOT'] . base_path() . file_directory_path();
-    $filename = $dir . '/mads.xml';
-    $xmlstr = $xml->save($filename);
+      $details = new UsersClass($user);
+      $check = $details->check_user();
+      if ($check !== TRUE) {
+        $collection_pid = 'ir:people';
+        $content_model_pid = 'ir:researcherCModel';
+        $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
+        $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
 
-    $label = $details->cn;
-    $pid = 'ir:' . strtolower($label);
-    $dsid = 'MADS';
-    $relationship = $collection_policy->getRelationship();
-    $ingest_file_locations = array();
-    $document = $xml;
-    
-      $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
-      $foxml->ingest();
-      // TODO: add thumbnail external reference
+        $xml = $details->ldap_to_mads();
+        $dir = $_SERVER['DOCUMENT_ROOT'] . base_path() . file_directory_path();
+        $filename = $dir . '/mads.xml';
+        $xmlstr = $xml->save($filename);
+
+        $label = $details->cn;
+        $pid = 'ir:' . strtolower($label);
+        $dsid = 'MADS';
+        $relationship = $collection_policy->getRelationship();
+        $ingest_file_locations = array();
+        $document = $xml;
+
+        $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
+        $foxml->ingest();
+        // TODO: add thumbnail external reference
+      }
     }
-  }
-    
+
 //    foreach ($users as $user) {
 //      $operations[] = array(
 //        'scholar_batch_user_add',
@@ -196,7 +196,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
 //        'error_message' => t('An error occurred'),
 //      );
 //      batch_set($batch);
-    }
+  }
 //  }
 }
 
@@ -219,42 +219,42 @@ function scholar_batch_user_add($users, $max, &$context) {
     $context['sandbox']['users'] = array();
   }
   foreach ($users as $user) {
-  $result = in_array($user, $context['results']);
-  if (!$result === TRUE) {
-    $details = new UsersClass($user);
-    $check = $details->check_user();
-    if ($check !== TRUE) {
-    $collection_pid = 'ir:people';
-    $content_model_pid = 'ir:researcherCModel';
-    $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
-    $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
-    
-    $xml = $details->ldap_to_mads();
-    $dir = $_SERVER['DOCUMENT_ROOT'] . base_path() . file_directory_path();
-    $filename = $dir . '/mads.xml';
-    $xmlstr = $xml->save($filename);
+    $result = in_array($user, $context['results']);
+    if (!$result === TRUE) {
+      $details = new UsersClass($user);
+      $check = $details->check_user();
+      if ($check !== TRUE) {
+        $collection_pid = 'ir:people';
+        $content_model_pid = 'ir:researcherCModel';
+        $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
+        $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
 
-    $label = $details->cn;
-    $pid = $collection_policy->getNextPid('ISLANDORACM');
-    $dsid = 'MADS';
-    $relationship = $collection_policy->getRelationship();
-    $ingest_file_locations = array();
-    $document = $xml;
-    
-      $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
-      $foxml->ingest();
+        $xml = $details->ldap_to_mads();
+        $dir = $_SERVER['DOCUMENT_ROOT'] . base_path() . file_directory_path();
+        $filename = $dir . '/mads.xml';
+        $xmlstr = $xml->save($filename);
+
+        $label = $details->cn;
+        $pid = $collection_policy->getNextPid('ISLANDORACM');
+        $dsid = 'MADS';
+        $relationship = $collection_policy->getRelationship();
+        $ingest_file_locations = array();
+        $document = $xml;
+
+        $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
+        $foxml->ingest();
+      }
     }
-  }
-  $context['sandbox']['progress']++;
-  $context['sandbox']['users'][] = $user;
-  $context['results'][] = $user;
-  if ($context['sandbox']['progress'] == $context['sandbox']['max']) {
+    $context['sandbox']['progress']++;
+    $context['sandbox']['users'][] = $user;
+    $context['results'][] = $user;
+    if ($context['sandbox']['progress'] == $context['sandbox']['max']) {
 // Done!
-    $context['finished'] = 1;
-  }
-  else {
-    $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
-  }
+      $context['finished'] = 1;
+    }
+    else {
+      $context['finished'] = ($context['sandbox']['progress'] / $context['sandbox']['max']);
+    }
   }
 }
 
@@ -292,55 +292,55 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
     drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/bibliography.css');
     $styles = CSL::GetNames();
     return array(
-        'step_1' => array(
-          '#value' => t('Step 1: Select your citations'),
-          '#prefix' => '<h3>',
-          '#suffix' => '</h3>'
-        ),
-        'table_div_open' => array(
-          '#value' => '<div class="bibliography-table">',
-        ),
-        'table' => islandora_bibilgraphy_form_table($pids),
-        'table_div_close' => array(
-          '#value' => '</div>',
-        ),
-        'step_3' => array(
-          '#value' => t('Step 2: Preview or export the formatted citations'),
-          '#prefix' => '<h3>',
-          '#suffix' => '</h3>'
-        ),
-        'format' => array(
-          '#title' => t('Format'),
-          '#type' => 'select',
-          '#length' => 50,
-          '#options' => array(
-            'RIS' => 'RIS',
-            'RTF' => 'RTF',
-            'PDF' => 'PDF',
-          )
-        ),
-        'style' => array(
-          '#title' => t('Style'),
-          '#type' => 'select',
-          '#options' => $styles
-        ),
-          'preview' => array(
-          '#type' => 'submit',
-          '#prefix' => '</br>',
-          '#value' => t('Preview Selected'),
-          '#submit' => array('scholar_author_bibliography_form_preview')
-        ),
-        'export' => array(
-          '#type' => 'submit',
-          '#action' => 'export',
-          '#export' => 'selected',
-          '#value' => t('Export Selected'),
-          '#submit' => array('islandora_bibliography_form_export')
-        ),
-        'username' => array(
-          '#type' => 'hidden',
-          '#value' => $username,
-        ),
+      'step_1' => array(
+        '#value' => t('Step 1: Select your citations'),
+        '#prefix' => '<h3>',
+        '#suffix' => '</h3>'
+      ),
+      'table_div_open' => array(
+        '#value' => '<div class="bibliography-table">',
+      ),
+      'table' => islandora_bibilgraphy_form_table($pids),
+      'table_div_close' => array(
+        '#value' => '</div>',
+      ),
+      'step_3' => array(
+        '#value' => t('Step 2: Preview or export the formatted citations'),
+        '#prefix' => '<h3>',
+        '#suffix' => '</h3>'
+      ),
+      'format' => array(
+        '#title' => t('Format'),
+        '#type' => 'select',
+        '#length' => 50,
+        '#options' => array(
+          'RIS' => 'RIS',
+          'RTF' => 'RTF',
+          'PDF' => 'PDF',
+        )
+      ),
+      'style' => array(
+        '#title' => t('Style'),
+        '#type' => 'select',
+        '#options' => $styles
+      ),
+      'preview' => array(
+        '#type' => 'submit',
+        '#prefix' => '</br>',
+        '#value' => t('Preview Selected'),
+        '#submit' => array('scholar_author_bibliography_form_preview')
+      ),
+      'export' => array(
+        '#type' => 'submit',
+        '#action' => 'export',
+        '#export' => 'selected',
+        '#value' => t('Export Selected'),
+        '#submit' => array('islandora_bibliography_form_export')
+      ),
+      'username' => array(
+        '#type' => 'hidden',
+        '#value' => $username,
+      ),
     );
   }
 }
@@ -361,13 +361,86 @@ function scholar_author_bibliography_form_preview(array $form, array &$form_stat
       $bibliography->addCitation($citation);
     }
   }
-  if (isset ($selections[0])) {
+  if (isset($selections[0])) {
     $output = $bibliography->render();
-    } 
-    else {
-      drupal_set_message(t('No citations were selected!'), 'warning');
-    }
+  }
+  else {
+    drupal_set_message(t('No citations were selected!'), 'warning');
+  }
   $output .= l(t('Return to author.'), 'fedora/repository/ir:' . $username);
   print theme('page', $output, FALSE);
   exit();
+}
+
+function scholar_author_metrics_form($username) {
+  global $base_url;
+  global $base_path;
+  global $user;
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
+  module_load_include('inc', 'scholar', 'Users');
+
+  $page = isset($_GET['page']) ? $_GET['page'] : '0';
+  $items_per_page = 5;
+  $offset = $page * $items_per_page;
+  
+  $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
+  $xml = new SimpleXMLElement($username_query);
+  $array = $xml->xpath('//doc');
+  $array = array_filter($array);
+  $rows = array();
+  if (!empty($array)) {
+    if (module_exists('scholar_tracking')) {
+      $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+    }
+    else {
+      $header = array(t('Title'));
+    }
+    foreach ($array as $arr) {
+      $pid = (string) $arr->str;
+      $pids[] = $pid;
+      $object = new CollectionClass();
+      $pid_xml_str = $object->getStream($pid, "MODS");
+      $pid_xml = new SimpleXMLElement($pid_xml_str);
+      $title = $pid_xml->titleInfo->title;
+      if (module_exists('scholar_tracking')) {
+        $track = new islandora_scholar_tracking($pid);
+        $read = $track->read_page_count();
+        $time_last_viewed = $read[($read['count'] - 1)];
+        if ($time_last_viewed == NULL) {
+          $time_last_viewed = 'Never';
+        }
+        $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)));
+      }
+      else {
+        $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
+      }
+    }
+  }
+  else {
+    $rows = NULL;
+  }
+  
+  $no_of_items = count($rows);
+  $total = $no_of_items / $items_per_page;
+  $element = 0;
+  $GLOBALS['pager_page_array'][$element] = max(0, min((int) $pager_page_array[$element], ((int) $pager_total[$element]) - 1));
+  $GLOBALS['pager_total'][$element] = ceil($no_of_items / $total);
+  
+  pager_query("SELECT %d", $items_per_page, 0, NULL, $total);
+  
+//      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
+//      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
+//    }
+
+  if ($rows == NULL) {
+    $content = t('No citations found!');
+  }
+  else {
+    $content = theme('table', $header, $rows);
+  }
+  
+  $output = $content . theme('pager');
+
+  return $output;
 }
