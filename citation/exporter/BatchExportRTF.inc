@@ -110,8 +110,7 @@ function citation_exporter_batch_convert_txt_to_rtf($filename, array &$context) 
   $rtf = new rtf();
   $rtf->addText($text);
   /* File */
-//  $temp_file_dir = file_directory_temp();
-  $temp_file_dir = '/var/www/drupal/sites/default/files';
+  $temp_file_dir = file_directory_temp();
   $temp_file_name = file_create_filename("export.rtf", $temp_file_dir);
   $file = fopen($temp_file_name, 'w');
   if ($file !== FALSE) {
