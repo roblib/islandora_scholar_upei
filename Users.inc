@@ -426,7 +426,7 @@ function scholar_author_metrics_form($username) {
   $total = $no_of_items / $items_per_page;
   $element = 0;
   $GLOBALS['pager_page_array'][$element] = max(0, min((int) $pager_page_array[$element], ((int) $pager_total[$element]) - 1));
-  $GLOBALS['pager_total'][$element] = ceil($no_of_items / $total);
+  $GLOBALS['pager_total'][$element] = ceil($no_of_items / $items_per_page);
   
   pager_query("SELECT %d", $items_per_page, 0, NULL, $total);
   
