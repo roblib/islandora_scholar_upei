@@ -398,6 +398,7 @@ function scholar_author_metrics_form($username) {
     }
     $no_of_rows = count($array);
     $range = $offset + $items_per_page;
+    var_dump($range);
     if ($range < $no_of_rows) {
       $range = $offset + ($no_of_rows - $offset);
     }
