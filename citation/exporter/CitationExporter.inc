@@ -44,7 +44,6 @@ class CitationExporter {
     $table['mime_type'] = $mime_type;
     $table['download_filename'] = $download_filename;
     $table['redirect'] = $redirect;
-    sleep(5);
   }
 
   /**
@@ -93,6 +92,7 @@ class CitationExporter {
         curl_close($curl_handle);
       }
       else {
+        sleep(5);
         drupal_goto($redirect);
         exit();
       }
