@@ -95,7 +95,6 @@ function citation_exporter_batch_get_num_pids_from_file($filename, $num = 1) {
  * @param array $context 
  */
 function citation_exporter_batch_redirect($redirect, array &$context) {
-  sleep(5);
   $context['results']['redirect'] = $redirect;
 }
 
@@ -111,6 +110,7 @@ function citation_exporter_batch_redirect($redirect, array &$context) {
  */
 function citation_exporter_batch_finished($successful, array $results, array $operations) {
   module_load_include('inc', 'citation_exporter', 'CitationExporter');
+  sleep(5);
   if ($successful) {
     CitationExporter::PrepareToExport($results['filename'], $results['mime_type'], $results['download_filename'], $results['redirect']);
   }
