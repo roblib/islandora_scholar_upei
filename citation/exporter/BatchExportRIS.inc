@@ -18,7 +18,9 @@
 function citation_exporter_batch_get_ris_operations(array $pids) {
   $temp_file_dir = file_directory_temp();
   $temp_mods_file = file_create_filename('ris_mods.xml', $temp_file_dir);
-  $temp_pids_file = file_create_filename('ris_pids.txt', $temp_file_dir);  
+  drupal_set_message('mods: ' . $temp_mods_file);
+  $temp_pids_file = file_create_filename('ris_pids.txt', $temp_file_dir);
+  drupal_set_message('pids: ' . $temp_pids_file);
   citation_exporter_batch_store_pids_in_file($temp_pids_file, $pids);
   $total = count($pids);
   $mods = new DOMDocument();
