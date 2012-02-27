@@ -126,6 +126,7 @@ function islandora_bibilgraphy_form_table(array $pids) {
     'selections' => array(
       '#type' => 'checkboxes',
       '#options' => array_fill_keys($pids, ''),
+      '#value' => array_fill_keys($pids, '1'),
     ),
   );
   $rows = &$table['rows'];

@@ -272,3 +272,78 @@ function scholar_batch_user_add_finished($success, $results, $operations) {
     drupal_set_message(t('An error occurred and has been recorded in the system log.'), 'error');
   }
 }
+
+function scholar_author_bibliography_form(array &$form_state) {
+  module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+  module_load_include('inc', 'islandora_bibliography', 'BibliographyForm');
+  citation_exporter_include_download_redirect();
+  $pids = Bibliography::GetCitations();
+  if (empty($pids)) {
+    islandora_bibilgraphy_form_empty_page();
+  }
+  else {
+    module_load_include('inc', 'csl', 'CSL');
+    drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/bibliography.css');
+    $styles = CSL::GetNames();
+    return array(
+      'fieldset' => array(
+        '#type' => 'fieldset',
+        '#title' => t('Citations'),
+        'step_1' => array(
+          '#value' => t('Step 1: Select your citations'),
+          '#prefix' => '<h3>',
+          '#suffix' => '</h3>'
+        ),
+        'table' => islandora_bibilgraphy_form_table($pids),
+        'remove' => array(
+          '#type' => 'submit',
+          '#value' => t('Remove Selected'),
+          '#submit' => array('islandora_bibliography_form_remove')
+        ),
+
+        'step_2' => array(
+          '#value' => t('Step 2: Preview the formatted citations'),
+          '#prefix' => '<h3>',
+          '#suffix' => '</h3>'
+        ),
+        'preview_style' => array(
+          '#title' => t('Style'),
+          '#type' => 'select',
+          '#options' => $styles
+        ),
+        'preview' => array(
+          '#type' => 'submit',
+          '#value' => t('Preview Selected'),
+          '#submit' => array('islandora_bibliography_form_preview')
+        ),
+        'step_3' => array(
+          '#value' => t('Step 3: Save the formatted citations'),
+          '#prefix' => '<h3>',
+          '#suffix' => '</h3>'
+        ),
+        'format' => array(
+          '#title' => t('Format'),
+          '#type' => 'select',
+          '#length' => 50,
+          '#options' => array(
+            'RIS' => 'RIS',
+            'RTF' => 'RTF',
+            'PDF' => 'PDF',
+          )
+        ),
+        'style' => array(
+          '#title' => t('Style'),
+          '#type' => 'select',
+          '#options' => $styles
+        ),
+        'export' => array(
+          '#type' => 'submit',
+          '#action' => 'export',
+          '#export' => 'selected',
+          '#value' => t('Export Selected'),
+          '#submit' => array('islandora_bibliography_form_export')
+        )
+      )
+    );
+  }
+}

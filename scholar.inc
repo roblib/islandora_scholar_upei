@@ -71,9 +71,33 @@ class Scholar {
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
     module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
+    module_load_include('inc', 'scholar', 'Users');
 
     $path = drupal_get_path('module', 'scholar');
 
+    $collectionHelper = new CollectionClass();
+    $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
+    $xml = new SimpleXMLElement($xmlstr);
+
+    $names = $xml->authority->name->namePart;
+    $fullname = $names[0] . ' ' . $names[1];
+
+    foreach ($xml->related->topic as $dept) {
+      $depts[] = str_replace('_', ' ', (string) $dept);
+    }
+
+    if (is_array($depts)) {
+      $dept = implode(', ', array_unique($depts));
+    }
+    else {
+      $dept = $depts;
+    }
+
+    $username = $xml->identifier;
+    $email = $xml->affiliation->email;
+    
+    drupal_set_title(t('@fullname', array('@fullname' => $fullname)));
+    
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
       '#title' => t('Description'),
@@ -92,31 +116,10 @@ class Scholar {
       '#value' => '<img src="' . $base_url . '/' . $path . '/images/gnome_stock_person.png"/>',
     );
 
-    $collectionHelper = new CollectionClass();
-    $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
-    $xml = new SimpleXMLElement($xmlstr);
-
-    $names = $xml->authority->name->namePart;
-    $fullName = $names[0] . ' ' . $names[1];
-
-    foreach ($xml->related->topic as $dept) {
-      $depts[] = str_replace('_', ' ', (string) $dept);
-    }
-
-    if (is_array($depts)) {
-      $dept = implode(', ', array_unique($depts));
-    }
-    else {
-      $dept = $depts;
-    }
-
-    $username = $xml->identifier;
-    $email = $xml->affiliation->email;
-
     $header = array();
 
     $rows = array(
-      array('Name', $fullName),
+      array('Name', $fullname),
       array('User name', $username),
       array('Email', $email),
       array('Department(s)', $dept),
@@ -184,7 +187,7 @@ class Scholar {
     }
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
-      '#value' => $content,
+      '#value' => drupal_get_form('scholar_author_bibliography_form'),
     );
 
     return $tabset;
