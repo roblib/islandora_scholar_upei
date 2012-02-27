@@ -441,6 +441,8 @@ function scholar_author_metrics_form($username) {
   }
   
   $output = $content . theme('pager');
+  
+  $_SESSION['author_view'] = 'metrics';
 
   return $output;
 }

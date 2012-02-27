@@ -175,9 +175,14 @@ class Scholar {
       '#value' => drupal_get_form('scholar_author_bibliography_form', $pids, $username),
     );
     
+    if ($_SESSION['author_view'] == 'metrics') {
+      $metric_weight = 1;
+    }
+    
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
+      '#weight' => $metric_weight,
     );
     
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
