@@ -82,6 +82,6 @@ function citation_exporter_batch_convert_mods_to_ris($mods_filename, array &$con
   if (Bibutils::Convert($mods_filename, 'MODS', $ris_filename, 'RIS')) {
     $context['results']['filename'] = $ris_filename;
     $context['results']['mime_type'] = 'application/x-Research-Info-Systems';
-    $context['results']['download_filename'] = 'export.ris';
+    $context['results']['download_filename'] = 'ris_export.ris';
   }
 }
