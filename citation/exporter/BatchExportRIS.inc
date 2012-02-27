@@ -80,6 +80,7 @@ function citation_exporter_batch_convert_mods_to_ris($mods_filename, array &$con
   $temp_file_dir = 'sites/default/files/temp/';
 //  $ris_filename = file_create_filename('ris_export' . $rnd . '.ris', $temp_file_dir);
   $ris_filename = '/var/www/html/drupal/sites/default/files/temp/ris_export.ris';
+  $ris_filename_download = 'sites/default/files/temp/ris_export.ris';
   if (Bibutils::Convert($mods_filename, 'MODS', $ris_filename, 'RIS')) {
     $context['results']['filename'] = $ris_filename;
     $context['results']['mime_type'] = 'application/x-Research-Info-Systems';
