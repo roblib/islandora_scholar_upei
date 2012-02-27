@@ -298,11 +298,6 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
         'table_div_close' => array(
           '#value' => '</div>',
         ),
-        'remove' => array(
-          '#type' => 'submit',
-          '#value' => t('Remove Selected'),
-          '#submit' => array('islandora_bibliography_form_remove')
-        ),
         'step_3' => array(
           '#value' => t('Step 2: Preview or export the formatted citations'),
           '#prefix' => '<h3>',
