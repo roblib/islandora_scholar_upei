@@ -95,7 +95,7 @@ class Scholar {
 
     $username = $xml->identifier;
     $email = $xml->affiliation->email;
-    var_dump($fullname);
+    
     drupal_set_title(t('@fullname', array('@fullname' => $fullname)));
     
     $tabset['first_tab'] = array(
