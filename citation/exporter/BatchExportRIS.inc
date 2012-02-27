@@ -87,4 +87,7 @@ function citation_exporter_batch_convert_mods_to_ris($mods_filename, array &$con
     $context['results']['mime_type'] = 'application/x-Research-Info-Systems';
     $context['results']['download_filename'] = 'sites/default/files/temp/ris_export.ris';
   }
+  else {
+    drupal_set_message('Conversion was not successful!', 'error');
+  }
 }
