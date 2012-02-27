@@ -66,6 +66,7 @@ class CitationExporter {
     if (self::ReadyToExport()) {
       $table = &self::GetExportTable();
       $filename = $table['filename'];
+      drupal_set_message('Filename: ' . $filename);
       $mime_type = $table['mime_type'];
       $download_filename = $table['download_filename'];
       $redirect = $table['redirect'];
