@@ -44,6 +44,7 @@ class CitationExporter {
     $table['mime_type'] = $mime_type;
     $table['download_filename'] = $download_filename;
     $table['redirect'] = $redirect;
+    sleep(5);
   }
 
   /**

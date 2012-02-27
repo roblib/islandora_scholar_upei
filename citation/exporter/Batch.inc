@@ -110,7 +110,6 @@ function citation_exporter_batch_redirect($redirect, array &$context) {
  */
 function citation_exporter_batch_finished($successful, array $results, array $operations) {
   module_load_include('inc', 'citation_exporter', 'CitationExporter');
-  sleep(5);
   if ($successful) {
     CitationExporter::PrepareToExport($results['filename'], $results['mime_type'], $results['download_filename'], $results['redirect']);
   }
