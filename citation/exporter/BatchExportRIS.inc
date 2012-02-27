@@ -74,8 +74,10 @@ function _citation_exporter_batch_combine_mods($filename, array $pids) {
  */
 function citation_exporter_batch_convert_mods_to_ris($mods_filename, array &$context) {
   module_load_include('inc', 'bibutils', 'Bibutils');
+  drupal_set_message('mods file: ' . $mods_filename);
   $temp_file_dir = file_directory_temp();
-  $ris_filename = file_create_filename('ris_export' . $rnd . '.ris', $temp_file_dir);
+  $ris_filename = file_create_filename('ris_export.ris', $temp_file_dir);
+  drupal_set_message('ris file: ' . $ris_filename);
   if (Bibutils::Convert($mods_filename, 'MODS', $ris_filename, 'RIS')) {
     $context['results']['filename'] = $ris_filename;
     $context['results']['mime_type'] = 'application/x-Research-Info-Systems';
