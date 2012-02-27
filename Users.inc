@@ -396,8 +396,9 @@ function scholar_author_metrics_form($username) {
     else {
       $header = array(t('Title'));
     }
-    foreach ($array as $arr) {
-      $pid = (string) $arr->str;
+    $no_of_rows = count($array);
+    for ($i = 0; $i < $no_of_rows; $i++) {
+      $pid = (string) $array[$i]->str;
       $pids[] = $pid;
       $object = new CollectionClass();
       $pid_xml_str = $object->getStream($pid, "MODS");
