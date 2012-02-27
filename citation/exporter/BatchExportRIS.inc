@@ -29,7 +29,7 @@ function citation_exporter_batch_get_ris_operations(array $pids) {
   $operations = array();
   $operations[] = array('citation_exporter_batch_combine_mods', array($temp_pids_file, $total, $temp_mods_file));
   $operations[] = array('citation_exporter_batch_convert_mods_to_ris', array($temp_mods_file));
-  $operations[] = array('citation_exporter_batch_redirect', array($_GET['q']));
+//  $operations[] = array('citation_exporter_batch_redirect', array($_GET['q']));
   return $operations;
 }
 
