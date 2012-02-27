@@ -116,7 +116,6 @@ class Bibutils {
     $command = self::GetCommand($src_format, $dest_format);
     if ($command) {
       $command = "$command $src 2>&- 1> $dest";
-      drupal_set_message('Command: ' . $command);
       module_invoke_all('preprocess_bibutils_convert', $src, $src_format, $dest_format);
       list($exit_status, $output) = self::Execute($command);
       if ($exit_status == 0) {
