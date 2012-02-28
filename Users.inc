@@ -445,13 +445,6 @@ function scholar_author_metrics_form($username) {
   }
   
   $output = $content . theme('pager');
-  var_dump($_GET);
-  if (isset ($_GET['page'])) {
-  
-  $_SESSION['author_view'] = 'metrics';
-  
-  }
-  
 
   return $output;
 }
