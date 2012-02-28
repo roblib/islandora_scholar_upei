@@ -175,17 +175,9 @@ class Scholar {
       '#value' => drupal_get_form('scholar_author_bibliography_form', $pids, $username),
     );
     
-    if ($_SESSION['author_view'] == 'metrics') {
-      $selected = 1;
-    }
-    else {
-      $selected = 0;
-    }
-    
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
-      '#selected' => $selected,
     );
     
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
