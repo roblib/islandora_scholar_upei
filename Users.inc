@@ -167,7 +167,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         $filename = $dir . '/mads.xml';
         $xmlstr = $xml->save($filename);
 
-        $label = $details->fullname;
+        $label = str_replace(' ', '_', $details->fullname);
         $pid = 'ir:' . strtolower($label);
         $dsid = 'MADS';
         $relationship = $collection_policy->getRelationship();
