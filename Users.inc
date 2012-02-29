@@ -397,12 +397,14 @@ function scholar_object_metrics_form($identifier, $type) {
       $query_type = 'mods.username';      
       break;
   }
-  $solr_query = 'http://localhost:8080/solr/select/?q=' . $query_type . ':"' . (str_replace(';', ' ', ($identifier))) . '"&fl=PID&rows=10000';
+  $solr_query = 'http://localhost:8080/solr/select/?q=' . $query_type . ':"' . (str_replace(';', ' ', ($identifier))) . '"&fl=PID,mods.title&rows=10000';
   $username_query = @file_get_contents($solr_query);
   if ($username_query != NULL) {
   $xml = new SimpleXMLElement($username_query);
   $array = $xml->xpath('//doc');
   $array = array_filter($array);
+//  $title = $xml->xpath("//doc/arr['mods.title']");
+//  var_dump($title[0]->str);
   $rows = array();
   if (!empty($array)) {
     if (module_exists('scholar_tracking')) {
@@ -419,10 +421,11 @@ function scholar_object_metrics_form($identifier, $type) {
     foreach ($array as $arr) {
       $pid = (string) $arr->str;
       $pids[] = $pid;
-      $object = new CollectionClass();
-      $pid_xml_str = $object->getStream($pid, "MODS");
-      $pid_xml = new SimpleXMLElement($pid_xml_str);
-      $title = $pid_xml->titleInfo->title;
+      $title = $arr->arr->str;
+//      $object = new CollectionClass();
+//      $pid_xml_str = $object->getStream($pid, "MODS");
+//      $pid_xml = new SimpleXMLElement($pid_xml_str);
+//      $title = $pid_xml->titleInfo->title;
       if (module_exists('scholar_tracking')) {
         $track = new islandora_scholar_tracking($pid);
         $read = $track->read_page_count();
