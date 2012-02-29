@@ -431,9 +431,7 @@ function scholar_author_metrics_form($username) {
     $content = t('No citations found!');
   }
   else {
-    $content = '<div class="scholar_metrics_table">';
-    $content .= theme('table', $header, $rows);
-    $content .= '</div>';
+    $content = theme('table', $header, $rows);
   }
   
   return $content;

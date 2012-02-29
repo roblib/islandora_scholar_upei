@@ -73,6 +73,6 @@ root {
 }
 
 .scholar_metrics_table {
-    height: 200px;
+    height: 300px;
     overflow-y: auto;
 }
