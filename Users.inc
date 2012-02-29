@@ -386,7 +386,7 @@ function islandora_bibilgraphy_solr_form_table(array $pids) {
 function islandora_bibilgraphy_solr_form_get_title_authors($pid) {
   $title = $authors = 'Missing';
 
-  $solr_query = 'http://localhost:8080/solr/select/?q=PID:' . (str_replace(':', '?', ($pid))) . '&fl=mods.title,dc.creator&rows=10000';
+  $solr_query = 'http://localhost:8080/solr/select/?q=PID:' . (str_replace(':', '?', ($pid))) . '&fl=dc.title,dc.creator&rows=10000';
   $solr_result = file_get_contents($solr_query);
   $xml = new SimpleXMLElement($solr_result);
   $array = $xml->xpath('//doc');
