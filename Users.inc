@@ -397,7 +397,7 @@ function scholar_object_metrics_form($identifier, $type) {
       $query_type = 'mods.username';      
       break;
   }
-  $solr_query = 'http://localhost:8080/solr/select/?q=' . $query_type . ':' . (str_replace(';', ' ', (strtolower($identifier)))) . '&fl=PID&rows=10000';
+  $solr_query = 'http://localhost:8080/solr/select/?q=' . $query_type . ':"' . (str_replace(';', ' ', (strtolower($identifier)))) . '"&fl=PID&rows=10000';
   var_dump($solr_query);
   $username_query = @file_get_contents($solr_query);
   if ($username_query != NULL) {
