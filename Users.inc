@@ -305,7 +305,7 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
       'table_div_open' => array(
         '#value' => '<div class="bibliography-table">',
       ),
-      'table' => islandora_bibilgraphy_form_table($pids),
+      'table' => islandora_bibilgraphy_solr_form_table($pids),
       'table_div_close' => array(
         '#value' => '</div>',
       ),
@@ -350,6 +350,60 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
   }
 }
 
+function islandora_bibilgraphy_solr_form_table(array $pids) {
+  $table = array(
+    '#header' => array(theme('table_select_header_cell', array(1)), t('Title'), t('Author(s)'), ''),
+    '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
+    '#tree' => TRUE,
+    'rows' => array(),
+    'selections' => array(
+      '#type' => 'checkboxes',
+      '#options' => array_fill_keys($pids, ''),
+      '#value' => array_fill_keys($pids, '1'),
+    ),
+  );
+  $rows = &$table['rows'];
+  foreach ($pids as $pid) {
+    list($title, $authors) = islandora_bibilgraphy_solr_form_get_title_authors($pid);
+    $rows[] = array(
+      '#pid' => $pid,
+      'title' => array('#value' => l($title, 'fedora/repository/' . $pid, array('html' => TRUE))),
+      'author' => array('#value' => check_plain($authors)),
+    );
+  }
+  return $table;
+}
+
+/**
+ * Get the title and author of a given citation.
+ * 
+ * @param string $pid
+ *   A citations within the bibliography.
+ * 
+ * @return array
+ *   Where the first key is the title and the second is the authors.
+ */
+function islandora_bibilgraphy_solr_form_get_title_authors($pid) {
+  $title = $authors = 'Missing';
+
+  $solr_query = 'http://localhost:8080/solr/select/?q=PID:' . (str_replace(':', '?', ($pid))) . '&fl=mods.title,dc.creator&rows=10000';
+  $solr_result = file_get_contents($solr_query);
+  $xml = new SimpleXMLElement($solr_result);
+  $array = $xml->xpath('//doc');
+  $array = array_filter($array);
+  $names = array();
+  foreach ($array as $arr) {
+    $names_array = $arr->arr[0]->str;
+    foreach ($names_array as $name) {
+      $names[] = str_replace(',', ', ', (string) $name);
+    }
+
+    $title = $arr->arr[1]->str;
+  }
+  $authors = implode('; ', $names);
+  return array($title, $authors);
+}
+
 function scholar_author_bibliography_form_preview(array $form, array &$form_state) {
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
@@ -385,7 +439,7 @@ function scholar_object_metrics_form($identifier, $type) {
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
   module_load_include('inc', 'scholar', 'Users');
   drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
-  
+
   switch ($type) {
     case 'author':
       $query_type = 'mods.username';
@@ -393,61 +447,61 @@ function scholar_object_metrics_form($identifier, $type) {
     case 'department':
       $query_type = 'mods.department';
       break;
-    default: 
-      $query_type = 'mods.username';      
+    default:
+      $query_type = 'mods.username';
       break;
   }
   $solr_query = 'http://localhost:8080/solr/select/?q=' . $query_type . ':"' . (str_replace(';', ' ', ($identifier))) . '"&fl=PID,mods.title&rows=10000';
   $username_query = @file_get_contents($solr_query);
   if ($username_query != NULL) {
-  $xml = new SimpleXMLElement($username_query);
-  $array = $xml->xpath('//doc');
-  $array = array_filter($array);
+    $xml = new SimpleXMLElement($username_query);
+    $array = $xml->xpath('//doc');
+    $array = array_filter($array);
 //  $title = $xml->xpath("//doc/arr['mods.title']");
 //  var_dump($title[0]->str);
-  $rows = array();
-  if (!empty($array)) {
-    if (module_exists('scholar_tracking')) {
-      $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
-    }
-    else {
-      $header = array(t('Title'));
-    }
-    $no_of_rows = count($array);
-    $range = $offset + $items_per_page;
-    if ($range > $no_of_rows) {
-      $range = $offset + ($no_of_rows - $offset);
-    }
-    foreach ($array as $arr) {
-      $pid = (string) $arr->str;
-      $pids[] = $pid;
-      $title = $arr->arr->str;
+    $rows = array();
+    if (!empty($array)) {
+      if (module_exists('scholar_tracking')) {
+        $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+      }
+      else {
+        $header = array(t('Title'));
+      }
+      $no_of_rows = count($array);
+      $range = $offset + $items_per_page;
+      if ($range > $no_of_rows) {
+        $range = $offset + ($no_of_rows - $offset);
+      }
+      foreach ($array as $arr) {
+        $pid = (string) $arr->str;
+        $pids[] = $pid;
+        $title = $arr->arr->str;
 //      $object = new CollectionClass();
 //      $pid_xml_str = $object->getStream($pid, "MODS");
 //      $pid_xml = new SimpleXMLElement($pid_xml_str);
 //      $title = $pid_xml->titleInfo->title;
-      if (module_exists('scholar_tracking')) {
-        $track = new islandora_scholar_tracking($pid);
-        $read = $track->read_page_count();
-        $time_last_viewed = $read[($read['count'] - 1)];
-        if ($time_last_viewed == NULL) {
-          $time_last_viewed = 'Never';
+        if (module_exists('scholar_tracking')) {
+          $track = new islandora_scholar_tracking($pid);
+          $read = $track->read_page_count();
+          $time_last_viewed = $read[($read['count'] - 1)];
+          if ($time_last_viewed == NULL) {
+            $time_last_viewed = 'Never';
+          }
+          $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)));
         }
-        $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)));
+        else {
+          $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
+        }
       }
-      else {
-        $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
-      }
+    }
+    else {
+      $rows = NULL;
     }
   }
   else {
     $rows = NULL;
   }
-  }
-  else {
-    $rows = NULL;
-  }
-  
+
 //      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
 //      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
 //    }
@@ -458,6 +512,7 @@ function scholar_object_metrics_form($identifier, $type) {
   else {
     $content = theme('table', $header, $rows);
   }
-  
+
   return $content;
 }
+
