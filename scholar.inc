@@ -72,8 +72,8 @@ class Scholar {
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
     module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
     module_load_include('inc', 'scholar', 'Users');
-    
     $path = drupal_get_path('module', 'scholar');
+    drupal_add_css($path . '/scholar.css');
 
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
@@ -182,6 +182,8 @@ class Scholar {
     
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
       '#value' => scholar_author_metrics_form($username),
+      '#prefix' => '<div class="scholar_metrics_table">',
+      '#suffix' => '</div>',
     );
     
     return $tabset;
