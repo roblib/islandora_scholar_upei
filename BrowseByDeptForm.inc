@@ -44,6 +44,7 @@ function scholar_browse_by_dept_form() {
     // Replace some of the characters that may be found in the dept names so that they don't break
     // the solr query
     $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
+    var_dump($dept_result_query);
     $dept_result = file_get_contents($dept_result_query);
     $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
