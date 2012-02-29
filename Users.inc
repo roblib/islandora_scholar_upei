@@ -285,7 +285,12 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
   citation_exporter_include_download_redirect();
 //  $pids = Bibliography::GetCitations();
   if (empty($pids)) {
-    islandora_bibilgraphy_form_empty_page();
+//    islandora_bibilgraphy_form_empty_page();
+    return array(
+      'no_citations' => array(
+        '#value' => t('No citations found!'),
+      ),
+    );
   }
   else {
     module_load_include('inc', 'csl', 'CSL');
@@ -372,7 +377,7 @@ function scholar_author_bibliography_form_preview(array $form, array &$form_stat
   exit();
 }
 
-function scholar_author_metrics_form($username) {
+function scholar_object_metrics_form($identifier, $type) {
   global $base_url;
   global $base_path;
   global $user;
@@ -381,7 +386,20 @@ function scholar_author_metrics_form($username) {
   module_load_include('inc', 'scholar', 'Users');
   drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
   
-  $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
+  switch ($type) {
+    case 'author':
+      $query_type = 'mods.username';
+      break;
+    case 'department':
+      $query_type = 'mods.department';
+      break;
+    default: 
+      $query_type = 'mods.username';      
+      break;
+  }
+  
+  $username_query = @file_get_contents('http://localhost:8080/solr/select/?q=' . $query_type . ':' . (str_replace(';', ' ', (strtolower($identifier)))) . '&fl=PID&rows=10000');
+  if ($username_query != NULL) {
   $xml = new SimpleXMLElement($username_query);
   $array = $xml->xpath('//doc');
   $array = array_filter($array);
@@ -418,6 +436,10 @@ function scholar_author_metrics_form($username) {
         $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
       }
     }
+  }
+  else {
+    $rows = NULL;
+  }
   }
   else {
     $rows = NULL;

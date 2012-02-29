@@ -181,7 +181,7 @@ class Scholar {
     );
     
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
-      '#value' => scholar_author_metrics_form($username),
+      '#value' => scholar_object_metrics_form($username, 'author'),
       '#prefix' => '<div class="scholar_metrics_table">',
       '#suffix' => '</div>',
     );
@@ -201,8 +201,10 @@ class Scholar {
     global $base_path;
     global $user;
     module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-
+    module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
+    module_load_include('inc', 'scholar', 'Users');
     $path = drupal_get_path('module', 'scholar');
+    drupal_add_css($path . '/scholar.css');
 
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
@@ -212,8 +214,13 @@ class Scholar {
     $tabset['first_tab']['tabs'] = array(
       '#type' => 'tabset',
     );
+    
+    $tabset['first_tab']['tabs']['details'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Details'),
+    );
 
-    $tabset['first_tab']['tabs']['tn'] = array(
+    $tabset['first_tab']['tabs']['details']['tn'] = array(
       '#value' => '<img src="' . $base_url . '/' . $path . '/images/gnome_stock_person.png"/>',
     );
 
@@ -237,10 +244,64 @@ class Scholar {
       array('URL', $url),
     );
 
-    $tabset['first_tab']['tabs']['table'] = array(
+    $tabset['first_tab']['tabs']['details']['table'] = array(
       '#value' => theme('table', $header, $rows),
     );
 
+       $tabset['first_tab']['tabs']['citations'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Citations'),
+    );
+    $pids = array();
+
+      $username_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:' . (str_replace(';', ' ', (strtolower($names)))) . '&fl=PID&rows=10000');
+      if ($username_query != NULL) {
+      $xml = new SimpleXMLElement($username_query);
+      $array = $xml->xpath('//doc');
+      $array = array_filter($array);
+      $rows = array();
+      if (!empty($array)) {
+        if (module_exists('scholar_tracking')) {
+          $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+        }
+        else {
+          $header = array(t('Title'));
+        }
+        foreach ($array as $arr) {
+          $pid = (string) $arr->str;
+          $pids[] = $pid;
+        }
+      }
+      else {
+        $rows = NULL;
+      }
+      }
+      else {
+        $rows = NULL;
+      }
+
+    if ($rows == NULL) {
+      $content = t('No citations found!');
+    }
+    else {
+      $content = theme('table', $header, $rows);
+    }
+
+    $tabset['first_tab']['tabs']['citations']['table'] = array(
+      '#value' => drupal_get_form('scholar_author_bibliography_form', $pids, $username),
+    );
+    
+    $tabset['first_tab']['tabs']['metrics'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Metrics'),
+    );
+    
+    $tabset['first_tab']['tabs']['metrics']['content'] = array(
+      '#value' => scholar_object_metrics_form($names, 'department'),
+      '#prefix' => '<div class="scholar_metrics_table">',
+      '#suffix' => '</div>',
+    );
+    
     return $tabset;
   }
 
