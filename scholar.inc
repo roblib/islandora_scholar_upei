@@ -254,7 +254,7 @@ class Scholar {
     );
     $pids = array();
 
-      $username_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', (strtolower($names)))) . '"&fl=PID&rows=10000');
+      $username_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
       if ($username_query != NULL) {
       $xml = new SimpleXMLElement($username_query);
       $array = $xml->xpath('//doc');
