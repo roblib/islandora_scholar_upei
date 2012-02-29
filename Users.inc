@@ -393,8 +393,6 @@ function islandora_bibilgraphy_solr_form_get_title_authors($pid) {
   $array = array_filter($array);
   $names = array();
   foreach ($array as $arr) {
-    var_dump($arr->arr[0]['name']);
-    var_dump($arr->arr[1]['name']);
     if ($arr->arr[0]['name'] == 'author') {
       $names_array = $arr->arr[0]->str;
       foreach ($names_array as $name) {
