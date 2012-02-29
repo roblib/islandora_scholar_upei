@@ -71,3 +71,7 @@ root {
     margin-right: 15px;
     margin-top: 5px;
 }
+
+.scholar_metrics_table {
+    overflow-y: auto;
+}

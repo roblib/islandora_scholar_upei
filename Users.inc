@@ -379,10 +379,7 @@ function scholar_author_metrics_form($username) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
   module_load_include('inc', 'scholar', 'Users');
-
-  $page = isset($_GET['page']) ? $_GET['page'] : '0';
-  $items_per_page = 10;
-  $offset = $page * $items_per_page;
+  drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
   
   $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
   $xml = new SimpleXMLElement($username_query);
@@ -401,8 +398,8 @@ function scholar_author_metrics_form($username) {
     if ($range > $no_of_rows) {
       $range = $offset + ($no_of_rows - $offset);
     }
-    for ($i = $offset; $i < $range; $i++) {
-      $pid = (string) $array[$i]->str;
+    foreach ($array as $arr) {
+      $pid = (string) $arr->str;
       $pids[] = $pid;
       $object = new CollectionClass();
       $pid_xml_str = $object->getStream($pid, "MODS");
@@ -426,13 +423,6 @@ function scholar_author_metrics_form($username) {
     $rows = NULL;
   }
   
-  $no_of_items = count($array);
-  $element = 0;
-  $GLOBALS['pager_page_array'][$element] = max(0, min((int) $pager_page_array[$element], ((int) $pager_total[$element]) - 1));
-  $GLOBALS['pager_total'][$element] = ceil($items_per_page / $no_of_items);
-  
-  pager_query("SELECT %d", $items_per_page, 0, NULL, $no_of_items);
-  
 //      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
 //      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
 //    }
@@ -441,10 +431,10 @@ function scholar_author_metrics_form($username) {
     $content = t('No citations found!');
   }
   else {
-    $content = theme('table', $header, $rows);
+    $content = '<div class="scholar_metrics_table">';
+    $content .= theme('table', $header, $rows);
+    $content .= '</div>';
   }
   
-  $output = $content . theme('pager');
-
-  return $output;
+  return $content;
 }
