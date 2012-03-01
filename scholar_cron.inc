@@ -8,7 +8,7 @@ function scholar_cron_embargo_check() {
   $solr_result = @file_get_contents($solr_query);
 
   if ($solr_result != NULL) {
-//    $xml = new SimpleXMLElement($solr_result);
+    $xml = new SimpleXMLElement($solr_result);
 //    $array = $xml->xpath('//doc');
 //    $array = array_filter($array);
 //    $pids = array();
