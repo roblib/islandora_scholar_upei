@@ -13,7 +13,11 @@ function scholar_cron_embargo_check() {
     $array = array_filter($array);
     $pids = array();
     foreach ($array as $arr) {
-      $pids[] = (string) $arr[0]->str;
+      $pid = (string) $arr[0]->str;
+      $pids[] = $pid;
+      $item = new Fedora_Item($pid);
+      $ds_array = $item->get_datastreams_list_as_array();
+      drupal_set_message('DS: ' . implode(', ', $ds_array));
     }
     drupal_set_message('PIDS: ' . implode(', ', $pids));
   }
