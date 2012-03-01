@@ -931,7 +931,7 @@ function islandora_scholar_build_citation($pid) {
     array('ISSN', $data->issn),
     array('Subjects', rtrim($topics, ', ')),
     array('Note', $data->note),
-    array('Embargo date', tstamptotime((string) $data->embargo_date)),
+    array('Embargo date', date('r', tstamptotime((string) $data->embargo_date))),
   );
 
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
