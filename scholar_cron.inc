@@ -19,14 +19,14 @@ function scholar_cron_embargo_check() {
       $item = new Fedora_Item($pid);
       $ds_array = $item->get_datastreams_list_as_array();
       foreach ($ds_array as $key => $ds) {
-        drupal_set_message('KEY: ' . $key);
-      drupal_set_message('DS: ' . implode(', ', $ds));
-      if ($key == 'POLICY' && $ds['label'] == 'Embargo policy') {
-        drupal_set_message('Embargo policy');
-      }
-        
+        if ($key == 'POLICY' && $ds['label'] == 'Embargo policy') {
+          drupal_set_message('Embargo policy');
+          $purge_status = $item->purge_datastream('POLICY');
+          if ($purge_status != NULL) {
+            drupal_set_message(t('Embargo policy removed for @pid', array('@pid' => $pid)));
+          }
+        }
       }
     }
-    drupal_set_message('PIDS: ' . implode(', ', $pids));
   }
 }
