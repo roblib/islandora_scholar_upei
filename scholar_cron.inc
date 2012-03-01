@@ -21,6 +21,9 @@ function scholar_cron_embargo_check() {
       foreach ($ds_array as $key => $ds) {
         drupal_set_message('KEY: ' . $key);
       drupal_set_message('DS: ' . implode(', ', $ds));
+      if ($key == 'POLICY' && $ds['label'] == 'Embargo policy') {
+        drupal_set_message('Embargo policy');
+      }
         
       }
     }
