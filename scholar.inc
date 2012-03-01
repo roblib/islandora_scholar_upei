@@ -144,10 +144,6 @@ class Scholar {
       $xml = new SimpleXMLElement($username_query);
       $array = $xml->xpath('//doc');
       $array = array_filter($array);
-      var_dump($array);
-      foreach ($array as $arr) {
-        var_dump((string) $arr[0]->str);
-      }
       
       $rows = array();
       if (!empty($array)) {
@@ -924,6 +920,13 @@ function islandora_scholar_build_citation($pid) {
   $names = implode($data->names, ', ');
   $topics = implode($data->topic, ', ');
 
+  if ($data->embargo_date != NULL) {
+    $embargo_date = date('r', tstamptotime((string) $data->embargo_date));
+  }
+  else {
+    $embargo_date = NULL;
+  }
+  
   $rows = array(
     array('Title', $data->title),
     array('Authors', rtrim($names, ', ')),
@@ -936,7 +939,7 @@ function islandora_scholar_build_citation($pid) {
     array('ISSN', $data->issn),
     array('Subjects', rtrim($topics, ', ')),
     array('Note', $data->note),
-    array('Embargo date', date('r', tstamptotime((string) $data->embargo_date))),
+    array('Embargo date', $embargo_date),
   );
 
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
