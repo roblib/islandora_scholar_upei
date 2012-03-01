@@ -12,9 +12,9 @@ function scholar_cron_embargo_check() {
     $array = $xml->xpath('//doc');
     $array = array_filter($array);
     $pids = array();
-//    foreach ($array as $arr) {
-//      $pids[] = (string) $arr[0]->str;
-//    }
+    foreach ($array as $arr) {
+      $pids[] = (string) $arr[0]->str;
+    }
 //    drupal_set_message('PIDS: ' . $implode(', ', $pids));
     drupal_set_message('XML');
   }
