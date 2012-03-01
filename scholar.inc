@@ -939,8 +939,11 @@ function islandora_scholar_build_citation($pid) {
     array('ISSN', $data->issn),
     array('Subjects', rtrim($topics, ', ')),
     array('Note', $data->note),
-    array('Embargo date', $embargo_date),
   );
+  
+  if ($embargo_date != NULL ) {
+    $rows[] = array('Embargo date', $embargo_date);
+  }
 
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
   foreach ($data->reverse_names as $name) {
