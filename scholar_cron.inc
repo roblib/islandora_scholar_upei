@@ -9,9 +9,9 @@ function scholar_cron_embargo_check() {
 
   if ($solr_result != NULL) {
     $xml = new SimpleXMLElement($solr_result);
-//    $array = $xml->xpath('//doc');
-//    $array = array_filter($array);
-//    $pids = array();
+    $array = $xml->xpath('//doc');
+    $array = array_filter($array);
+    $pids = array();
 //    foreach ($array as $arr) {
 //      $pids[] = (string) $arr[0]->str;
 //    }
