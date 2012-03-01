@@ -4,6 +4,7 @@
  * @file
  */
 function scholar_cron_embargo_check() {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $solr_query = 'http://localhost:8080/solr/select/?q=mods.embargo_date:[NOW-7DAY%20TO%20NOW]&fl=PID&rows=10000';
   $solr_result = @file_get_contents($solr_query);
 
@@ -16,8 +17,8 @@ function scholar_cron_embargo_check() {
       $pid = (string) $arr[0]->str;
       $pids[] = $pid;
       $item = new Fedora_Item($pid);
-      $ds_array = $item->get_datastream_info('MODS');
-//      drupal_set_message('DS: ' . implode(', ', $ds_array));
+      $ds_array = $item->get_datastreams_list_as_array();
+      drupal_set_message('DS: ' . implode(', ', $ds_array));
     }
     drupal_set_message('PIDS: ' . implode(', ', $pids));
   }
