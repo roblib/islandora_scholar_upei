@@ -144,6 +144,11 @@ class Scholar {
       $xml = new SimpleXMLElement($username_query);
       $array = $xml->xpath('//doc');
       $array = array_filter($array);
+      var_dump($array);
+      foreach ($array as $arr) {
+        var_dump((string) $arr[0]->str);
+      }
+      
       $rows = array();
       if (!empty($array)) {
         if (module_exists('scholar_tracking')) {
