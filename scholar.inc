@@ -931,7 +931,7 @@ function islandora_scholar_build_citation($pid) {
     array('ISSN', $data->issn),
     array('Subjects', rtrim($topics, ', ')),
     array('Note', $data->note),
-    array('Embargo date', date('l jS \of F Y h:i:s A', (string) $data->embargo_date)),
+    array('Embargo date', tstamptotime((string) $data->embargo_date)),
   );
 
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
@@ -1188,4 +1188,13 @@ function islandora_scholar_get_object_profile($pid) {
   $details['modified'] = $result_xml->objLastModDate;
   $details['status'] = $result_xml->objState;
   return $details;
+}
+
+
+function tstamptotime($tstamp) {
+  // converts ISODATE to unix date
+  // 1984-09-01T14:21:31Z
+  sscanf($tstamp, "%u-%u-%uT%u:%u:%uZ", $year, $month, $day, $hour, $min, $sec);
+  $newtstamp = mktime($hour, $min, $sec, $month, $day, $year);
+  return $newtstamp;
 }
