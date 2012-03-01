@@ -25,6 +25,7 @@ class Coins {
   public $reverse_names = NULL;
   public $topic = NULL;
   public $note = NULL;
+  public $embargo_date = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -120,6 +121,9 @@ class Coins {
       $notes[] = $note;
     }
     $this->note = $note;
+    
+    $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
+    $this->embargo_date = $embargo_date;
   }
 
 }
