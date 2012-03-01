@@ -16,6 +16,5 @@ function scholar_cron_embargo_check() {
       $pids[] = (string) $arr[0]->str;
     }
     drupal_set_message('PIDS: ' . implode(', ', $pids));
-    drupal_set_message('XML');
   }
 }

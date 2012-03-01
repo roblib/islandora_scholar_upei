@@ -744,5 +744,4 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 function scholar_cron() {
   module_load_include('inc', 'scholar', 'scholar_cron');
   scholar_cron_embargo_check();
-  drupal_set_message('Test');
 }
