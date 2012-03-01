@@ -123,7 +123,7 @@ class Coins {
     $this->note = $note;
     
     $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
-    $this->embargo_date = $embargo_date;
+    $this->embargo_date = $embargo_date[0];
   }
 
 }
