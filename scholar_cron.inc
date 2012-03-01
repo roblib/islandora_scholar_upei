@@ -18,7 +18,8 @@ function scholar_cron_embargo_check() {
       $pids[] = $pid;
       $item = new Fedora_Item($pid);
       $ds_array = $item->get_datastreams_list_as_array();
-      foreach ($ds_array as $ds) {
+      foreach ($ds_array as $key => $ds) {
+        drupal_set_message('KEY: ' . $key);
       drupal_set_message('DS: ' . implode(', ', $ds));
         
       }
