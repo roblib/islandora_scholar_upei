@@ -351,7 +351,6 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username)
 }
 
 function islandora_bibilgraphy_solr_form_table($names) {
-  var_dump($names);
   $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
   if ($deptname_query != NULL) {
     $xml = new SimpleXMLElement($deptname_query);
@@ -364,14 +363,22 @@ function islandora_bibilgraphy_solr_form_table($names) {
     foreach ($array as $arr) {
       $pid = (string) $arr->str;
       $pids[] = $pid;
-      var_dump($arr->arr[0]['name']);
-      foreach ($arr->arr[0] as $author) {
-      $author_array[] = str_replace(',', ', ', $author);
+      if ($arr->arr[0]['name'] == 'author') {
+        foreach ($arr->arr[0] as $author) {
+          $author_array[] = str_replace(',', ', ', $author);
+        }
+        $authors[$pid] = implode('; ', $author_array);
       }
-      $authors[$pid] = implode('; ', $author_array);
-      var_dump($arr->arr[1]['name']);
-      
-      $titles[$pid] = ($arr->arr[1]->str);
+      else {
+        $authors[$pid] = t('Missing');
+      }
+      if ($arr->arr[1]['name'] == 'mods.title') {
+
+        $titles[$pid] = ($arr->arr[1]->str);
+      }
+      else {
+        $titles[$pid] = t('Missing');
+      }
     }
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Title'), t('Author(s)'), ''),
