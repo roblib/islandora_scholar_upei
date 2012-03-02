@@ -359,11 +359,15 @@ function islandora_bibilgraphy_solr_form_table($names) {
     $array = array_filter($array);
     $pids = array();
     $titles = array();
+    $authors = array();
     foreach ($array as $arr) {
-      var_dump($arr->arr[0]);
-      var_dump($arr->arr[1]);
       $pid = (string) $arr->str;
       $pids[] = $pid;
+      var_dump($arr->arr[0]);
+      $author_array = $arr->arr[0];
+      $authors[$pid] = implode('; ', $author_array);
+      var_dump($arr->arr[1]);
+      
       $titles[$pid] = ($arr->arr->str);
     }
     $table = array(
