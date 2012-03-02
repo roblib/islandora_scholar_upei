@@ -360,8 +360,8 @@ function islandora_bibilgraphy_solr_form_table($names) {
     $pids = array();
     $titles = array();
     foreach ($array as $arr) {
-      var_dump($arr['author']->arr);
-      var_dump($arr['mods.title']->arr);
+      var_dump($arr->arr[0]);
+      var_dump($arr->arr[1]);
       $pid = (string) $arr->str;
       $pids[] = $pid;
       $titles[$pid] = ($arr->arr->str);
