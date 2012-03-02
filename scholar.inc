@@ -255,9 +255,9 @@ class Scholar {
     );
     $pids = array();
 
-      $username_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
-      if ($username_query != NULL) {
-      $xml = new SimpleXMLElement($username_query);
+      $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
+      if ($deptname_query != NULL) {
+      $xml = new SimpleXMLElement($deptname_query);
       $array = $xml->xpath('//doc');
       $array = array_filter($array);
       $rows = array();
@@ -289,7 +289,7 @@ class Scholar {
     }
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
-      '#value' => drupal_get_form('scholar_author_bibliography_form', $pids, $username),
+      '#value' => drupal_get_form('scholar_author_bibliography_form', $names, $username),
     );
     
     $tabset['first_tab']['tabs']['metrics'] = array(

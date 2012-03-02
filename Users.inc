@@ -273,7 +273,7 @@ function scholar_batch_user_add_finished($success, $results, $operations) {
   }
 }
 
-function scholar_author_bibliography_form(array &$form_state, array $pids, $username) {
+function scholar_author_bibliography_form(array &$form_state, $names, $username) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   module_load_include('inc', 'islandora_bibliography', 'BibliographyForm');
   module_load_include('inc', 'citation_exporter', 'Batch');
@@ -284,7 +284,7 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
 
   citation_exporter_include_download_redirect();
 //  $pids = Bibliography::GetCitations();
-  if (empty($pids)) {
+  if (empty($names)) {
 //    islandora_bibilgraphy_form_empty_page();
     return array(
       'no_citations' => array(
@@ -305,7 +305,7 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
       'table_div_open' => array(
         '#value' => '<div class="bibliography-table">',
       ),
-      'table' => islandora_bibilgraphy_solr_form_table($pids),
+      'table' => islandora_bibilgraphy_solr_form_table($names),
       'table_div_close' => array(
         '#value' => '</div>',
       ),
@@ -350,28 +350,45 @@ function scholar_author_bibliography_form(array &$form_state, array $pids, $user
   }
 }
 
-function islandora_bibilgraphy_solr_form_table(array $pids) {
-  $table = array(
-    '#header' => array(theme('table_select_header_cell', array(1)), t('Title'), t('Author(s)'), ''),
-    '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
-    '#tree' => TRUE,
-    'rows' => array(),
-    'selections' => array(
-      '#type' => 'checkboxes',
-      '#options' => array_fill_keys($pids, ''),
-      '#value' => array_fill_keys($pids, '1'),
-    ),
-  );
-  $rows = &$table['rows'];
-  foreach ($pids as $pid) {
-    list($title, $authors) = islandora_bibilgraphy_solr_form_get_title_authors($pid);
-    $rows[] = array(
-      '#pid' => $pid,
-      'title' => array('#value' => l($title, 'fedora/repository/' . $pid, array('html' => TRUE))),
-      'author' => array('#value' => check_plain($authors)),
+function islandora_bibilgraphy_solr_form_table($names) {
+  var_dump($names);
+  $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
+  if ($deptname_query != NULL) {
+    $xml = new SimpleXMLElement($deptname_query);
+    $array = $xml->xpath('//doc');
+    $array = array_filter($array);
+    $pids = array();
+    $titles = array();
+    foreach ($array as $arr) {
+      $pid = (string) $arr->str;
+      $pids[] = $pid;
+      $titles[$pid] = ($arr->arr->str);
+    }
+    var_dump($titles);
+    $table = array(
+      '#header' => array(theme('table_select_header_cell', array(1)), t('Title'), t('Author(s)'), ''),
+      '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
+      '#tree' => TRUE,
+      'rows' => array(),
+      'selections' => array(
+        '#type' => 'checkboxes',
+        '#options' => array_fill_keys($pids, ''),
+        '#value' => array_fill_keys($pids, '1'),
+      ),
     );
+    $rows = &$table['rows'];
+
+
+    foreach ($pids as $pid) {
+//    list($title, $authors) = islandora_bibilgraphy_solr_form_get_title_authors($pid);
+      $rows[] = array(
+        '#pid' => $pid,
+        'title' => array('#value' => l($titles[$pid], 'fedora/repository/' . $pid, array('html' => TRUE))),
+        'author' => array('#value' => check_plain($authors)),
+      );
+    }
+    return $table;
   }
-  return $table;
 }
 
 /**
@@ -518,4 +535,3 @@ function scholar_object_metrics_form($identifier, $type) {
 
   return $content;
 }
-
