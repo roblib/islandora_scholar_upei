@@ -389,7 +389,7 @@ function islandora_bibilgraphy_solr_form_table($names) {
       $rows[] = array(
         '#pid' => $pid,
         'title' => array('#value' => l($titles[$pid], 'fedora/repository/' . $pid, array('html' => TRUE))),
-        'author' => array('#value' => check_plain($authors)),
+        'author' => array('#value' => check_plain($authors[$pid])),
       );
     }
     return $table;
