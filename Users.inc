@@ -358,9 +358,10 @@ function islandora_bibilgraphy_solr_form_table($names) {
     $array = array_filter($array);
     $pids = array();
     $titles = array();
-    $authors = array();
-    $author_array = array();
+    
     foreach ($array as $arr) {
+      $authors = array();
+    $author_array = array();
       $pid = (string) $arr->str;
       $pids[] = $pid;
       if ($arr->arr[0]['name'] == 'author') {
