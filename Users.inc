@@ -371,7 +371,7 @@ function islandora_bibilgraphy_solr_form_table($names) {
       $authors[$pid] = implode('; ', $author_array);
       var_dump($arr->arr[1]);
       
-      $titles[$pid] = ($arr->arr->str);
+      $titles[$pid] = ($arr->arr[1]->str);
     }
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Title'), t('Author(s)'), ''),
