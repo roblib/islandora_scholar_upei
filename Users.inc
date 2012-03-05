@@ -285,7 +285,7 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username)
   citation_exporter_include_download_redirect();
   $table = islandora_bibilgraphy_solr_form_table($names);
 //  $pids = Bibliography::GetCitations();
-  if (empty($names)) {
+  if (empty($names) || $table == NULL) {
 //    islandora_bibilgraphy_form_empty_page();
     return array(
       'no_citations' => array(
@@ -394,6 +394,9 @@ function islandora_bibilgraphy_solr_form_table($names) {
     );
     $rows = &$table['rows'];
 
+    if (empty($pids)) {
+      return NULL;
+    }
 
     foreach ($pids as $pid) {
 //    list($title, $authors) = islandora_bibilgraphy_solr_form_get_title_authors($pid);
