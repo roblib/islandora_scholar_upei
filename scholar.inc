@@ -15,6 +15,13 @@ class Scholar {
     }
   }
 
+  function create_embargo($parameterArray = NULL, $dsid, $file, $file_ext) {
+    $pid = $this->pid;
+    $xml = new SimpleXMLElement($file);
+    $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
+    drupal_set_message('Embargo date: ' . $embargo_date);
+  }
+  
   /**
    * Build up the elements to show a basic citation. This currently
    * calls another function but customisation can be added in
