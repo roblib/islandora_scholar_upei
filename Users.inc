@@ -283,6 +283,7 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username)
   module_load_include('inc', 'citation_exporter', 'BatchExportPDF');
 
   citation_exporter_include_download_redirect();
+  $table = islandora_bibilgraphy_solr_form_table($names);
 //  $pids = Bibliography::GetCitations();
   if (empty($names)) {
 //    islandora_bibilgraphy_form_empty_page();
@@ -305,7 +306,7 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username)
       'table_div_open' => array(
         '#value' => '<div class="bibliography-table">',
       ),
-      'table' => islandora_bibilgraphy_solr_form_table($names),
+      'table' => $table,
       'table_div_close' => array(
         '#value' => '</div>',
       ),
