@@ -320,9 +320,9 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username,
         '#type' => 'select',
         '#length' => 50,
         '#options' => array(
-          'RIS' => 'RIS',
           'RTF' => 'RTF',
           'PDF' => 'PDF',
+          'RIS' => 'RIS',
         )
       ),
       'style' => array(

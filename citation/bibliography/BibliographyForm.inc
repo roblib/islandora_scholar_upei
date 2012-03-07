@@ -48,16 +48,6 @@ function islandora_bibliography_form(array &$form_state) {
           '#prefix' => '<h3>',
           '#suffix' => '</h3>'
         ),
-        'preview_style' => array(
-          '#title' => t('Style'),
-          '#type' => 'select',
-          '#options' => $styles
-        ),
-        'preview' => array(
-          '#type' => 'submit',
-          '#value' => t('Preview Selected'),
-          '#submit' => array('islandora_bibliography_form_preview')
-        ),
         'step_3' => array(
           '#value' => t('Step 3: Save the formatted citations'),
           '#prefix' => '<h3>',
@@ -68,15 +58,20 @@ function islandora_bibliography_form(array &$form_state) {
           '#type' => 'select',
           '#length' => 50,
           '#options' => array(
-            'RIS' => 'RIS',
             'RTF' => 'RTF',
             'PDF' => 'PDF',
+            'RIS' => 'RIS',
           )
         ),
         'style' => array(
           '#title' => t('Style'),
           '#type' => 'select',
           '#options' => $styles
+        ),
+          'preview' => array(
+          '#type' => 'submit',
+          '#value' => t('Preview Selected'),
+          '#submit' => array('islandora_bibliography_form_preview')
         ),
         'export' => array(
           '#type' => 'submit',
