@@ -273,7 +273,7 @@ function scholar_batch_user_add_finished($success, $results, $operations) {
   }
 }
 
-function scholar_author_bibliography_form(array &$form_state, $names, $username) {
+function scholar_author_bibliography_form(array &$form_state, $names, $username, $type) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   module_load_include('inc', 'islandora_bibliography', 'BibliographyForm');
   module_load_include('inc', 'citation_exporter', 'Batch');
@@ -283,7 +283,7 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username)
   module_load_include('inc', 'citation_exporter', 'BatchExportPDF');
 
   citation_exporter_include_download_redirect();
-  $table = islandora_bibilgraphy_solr_form_table($names);
+  $table = islandora_bibilgraphy_solr_form_table($names, $type);
 //  $pids = Bibliography::GetCitations();
   if (empty($names) || $table == NULL) {
 //    islandora_bibilgraphy_form_empty_page();
@@ -351,10 +351,16 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username)
   }
 }
 
-function islandora_bibilgraphy_solr_form_table($names) {
-  $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
-  if ($deptname_query != NULL) {
-    $xml = new SimpleXMLElement($deptname_query);
+function islandora_bibilgraphy_solr_form_table($names, $type) {
+  if ($type == 'author') {
+    $query = '';
+  }
+  else {
+  $query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
+    
+  }
+  if ($query != NULL) {
+    $xml = new SimpleXMLElement($query);
     $array = $xml->xpath('//doc');
     $array = array_filter($array);
     $pids = array();

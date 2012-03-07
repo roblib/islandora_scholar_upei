@@ -180,7 +180,7 @@ class Scholar {
     }
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
-      '#value' => drupal_get_form('scholar_author_bibliography_form', $pids, $username),
+      '#value' => drupal_get_form('scholar_author_bibliography_form', $pids, $username, 'author'),
     );
     
     $tabset['first_tab']['tabs']['metrics'] = array(
@@ -296,7 +296,7 @@ class Scholar {
     }
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
-      '#value' => drupal_get_form('scholar_author_bibliography_form', $names, $username),
+      '#value' => drupal_get_form('scholar_author_bibliography_form', $names, $username, 'department'),
     );
     
     $tabset['first_tab']['tabs']['metrics'] = array(
