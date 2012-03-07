@@ -353,7 +353,7 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username,
 
 function islandora_bibilgraphy_solr_form_table($names, $type) {
   if ($type == 'author') {
-    $query = '';
+    $query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.username:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
   }
   else {
   $query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
