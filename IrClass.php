@@ -298,11 +298,12 @@ class IrClass {
         $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
       }
     }
-    
+
     if ($test) { //in ingest successfull convert to pdf and add datastream
       $xmlString = 'requestXML=<?xml version="1.0"?><submission><repository><username>' . $user->name .
           '</username><password>' . $user->pass . '</password><host>' . variable_get('fedora_base_url', 'http://localhost:8080/fedora') .
           '</host></repository><pids><pid>' . $form_values['pid'] . '</pid></pids><dsid>' . $form_values['version'] . '</dsid><collection>/opt/ruleengine/pdfconverter/</collection></submission>';
+// ** Let microservices deal with this now **
 //      //path to ruleengine framework
 //      $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
 //      $returnValue = do_curl($url, 1, 1, $xmlString); //$objectHelper->doCurl($url, 1, 1, $xmlString);
@@ -1152,7 +1153,21 @@ class IrClass {
       }
     }
     if (isset($version)) {
+      //check if the physicalDescription element exists
+      if ($doc->getElementsByTagName('physicalDescription')->length != 0) {
+        drupal_set_message(t('physicalDescription element already exists!'));
+        $statusNode = $doc->getElementsByTagName('physicalDescription');
+        $form_node = $doc->createElement('form', $version);
+        $form_node->setAttribute('authority', 'local');
+        foreach ($statusNode as $node) {
+          $node->appendChild($form_node);
+        }
+        //add it to the reference node
+        $reference_node_list = $doc->getElementsByTagName('mods');
+      }
+      else {
         //create the useage element as it does not exist
+        drupal_set_message(t('physicalDescription element does not exist, creating...'));
         $statusNode = $doc->createElement('physicalDescription');
         $form_node = $doc->createElement('form', $version);
         $form_node->setAttribute('authority', 'local');
@@ -1162,10 +1177,11 @@ class IrClass {
         foreach ($reference_node_list as $reference) {
           $reference->appendChild($statusNode);
         }
+      }
     }
-        $result = $object->modify_datastream_by_value($doc->saveXML(), 'MODS', 'MODS record', 'text/xml', TRUE, 'MODS datastream modified');
+    $result = $object->modify_datastream_by_value($doc->saveXML(), 'MODS', 'MODS record', 'text/xml', TRUE, 'MODS datastream modified');
   }
-  
+
   //parses the return from the ruleengine framework
   function parseReturnValue($input) {
     $doc = new DOMDocument();
@@ -1388,8 +1404,8 @@ class IrClass {
 
     $form['version'] = array(
       '#type' => 'radios',
-      '#title' => t('Document Version'), 
-      '#options' => $versions, 
+      '#title' => t('Document Version'),
+      '#options' => $versions,
       '#required' => 'true',
       '#weight' => 2,
     );

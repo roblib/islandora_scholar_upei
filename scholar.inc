@@ -700,11 +700,15 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
           $remove_nodes[] = $element;
         }
       }
-      $list2 = $mods_xml->getElementsByTagName('physicalDescription');
+      $list2 = $mods_xml->getElementsByTagName('form');
       foreach ($list2 as $element2) {
+        $attribute2 = $element2->getAttribute('authority');
+        if ($attribute2 == 'local') {
         // This is crude as it removes everything in a 'physicalDescription
         // tag. If this becomes an issue this remove can be more specific.
         $remove_nodes[] = $element2;
+        }
+        
       }
       if (!empty($remove_nodes)) {
         foreach ($remove_nodes as $remove_node) {
