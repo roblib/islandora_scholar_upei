@@ -919,7 +919,7 @@ function islandora_scholar_build_citation($pid) {
   $data = new Coins($pid);
 //    Get MODS datastream and pull the ISSN from there.
 
-  $csl = 'default'; // This needs to be changed to a value stored in the db
+  $csl = 'default'; // @todo This needs to be changed to a value stored in the db
 
   $item = new Fedora_Item($pid);
   $ds_array = $item->get_datastreams_list_as_array();
