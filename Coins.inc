@@ -53,7 +53,7 @@ class Coins {
     foreach ($xml->name as $name) {
       foreach ($name->namePart as $name_part) {
         if ($name_part['type'] == 'given') {
-          $full_name[$i] .= (string) substr(rtrim($name_part, '.') . '. ', 0, 1);
+          $full_name[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
         }
         if ($name_part['type'] == 'family') {
           $full_name[$i] .= (string) rtrim($name_part, '.');
