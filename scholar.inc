@@ -938,19 +938,19 @@ function islandora_scholar_build_citation($pid) {
     $embargo_date = NULL;
   }
   
-  $rows = array(
-    array('Title', $data->title),
-    array('Authors', rtrim($names, ', ')),
-    array('Abstract', $data->abstract),
-    array('Journal', $data->journal_title),
-    array('Date', $data->date),
-    array('Volume', $data->volume),
-    array('Issue', $data->issue),
-    array('Start page', $data->start_page),
-    array('ISSN', $data->issn),
-    array('Subjects', rtrim($topics, ', ')),
-    array('Note', $data->note),
-  );
+  $rows = array();
+  
+  $rows[] = array('Title', $data->title);
+  $rows[] = array('Authors', rtrim($names, ', '));
+  $rows[] = array('Abstract', $data->abstract);
+  $rows[] = array('Journal', $data->journal_title);
+  $rows[] = array('Date', $data->date);
+  $rows[] = array('Volume', $data->volume);
+  $rows[] = array('Issue', $data->issue);
+  $rows[] = array('Start page', $data->start_page);
+  $rows[] = array('ISSN', $data->issn);
+  $rows[] = array('Subjects', rtrim($topics, ', '));
+  $rows[] = array('Note', $data->note);
   
   if ($embargo_date != NULL ) {
     $rows[] = array('Embargo date', $embargo_date);
