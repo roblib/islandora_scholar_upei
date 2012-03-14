@@ -940,7 +940,7 @@ function islandora_scholar_build_citation($pid) {
   
   $rows = array();
 
-  if ($data->title != NULL) {
+  if ((string) $data->title != NULL) {
     $rows[] = array('Title', $data->title);
   }
   elseif (user_access('administer scholarly research')) {
@@ -954,34 +954,34 @@ function islandora_scholar_build_citation($pid) {
     $rows[] = array('Authors', rtrim($names, ', '));
   }
   
-  if ($data->abstract != NULL) {
+  if ((string) $data->abstract != NULL) {
     $rows[] = array('Abstract', $data->abstract);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Abstract', $data->abstract);
   }
   
-  if ($data->journal_title != NULL) {
+  if ((string) $data->journal_title != NULL) {
     $rows[] = array('Journal', $data->journal_title);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Journal', $data->journal_title);
   }
   
-  if ($data->date != NULL) {
+  if ((string) $data->date != NULL) {
     $rows[] = array('Date', $data->date);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Date', $data->date);
   }
   
-  if ($data->volume != NULL) {
+  if ((string) $data->volume != NULL) {
   $rows[] = array('Volume', $data->volume);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Volume', $data->volume);
   }
-  var_dump((string) $data->issue);
+
   if ((string) $data->issue != NULL) {
   $rows[] = array('Issue', $data->issue);
   }
@@ -989,28 +989,28 @@ function islandora_scholar_build_citation($pid) {
     $rows[] = array('Issue', $data->issue);
   }
   
-  if ($data->start_page != NULL) {
+  if ((string) $data->start_page != NULL) {
   $rows[] = array('Start page', $data->start_page);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Start page', $data->start_page);
   }
   
-  if ($data->issn != NULL) {
+  if ((string) $data->issn != NULL) {
   $rows[] = array('ISSN', $data->issn);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('ISSN', $data->issn);
   }
   
-  if ($topics != NULL) {
+  if ((string) $topics != NULL) {
   $rows[] = array('Subjects', rtrim($topics, ', '));
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Subjects', rtrim($topics, ', '));
   }
   
-  if ($data->note != NULL) {
+  if ((string) $data->note != NULL) {
   $rows[] = array('Note', $data->note);
   }
   elseif (user_access('administer scholarly research')) {
