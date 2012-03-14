@@ -939,7 +939,7 @@ function islandora_scholar_build_citation($pid) {
   }
   
   $rows = array();
-  var_dump($user);
+
   if ($data->title != NULL) {
     $rows[] = array('Title', $data->title);
   }
@@ -981,7 +981,7 @@ function islandora_scholar_build_citation($pid) {
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Volume', $data->volume);
   }
-  var_dump($data->issue);
+  var_dump((string) $data->issue);
   if ($data->issue != NULL) {
   $rows[] = array('Issue', $data->issue);
   }
