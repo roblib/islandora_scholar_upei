@@ -46,7 +46,7 @@ function scholar_search_form(array &$form_state) {
         '#options' => array(
           'mods.abstract' => t('Abstract'),
           'mods.roleTerm' => t('Author Identifier'),
-          'mods.Author' => t('Author'),
+          'creator' => t('Author'),
           'mods.title' => t('Title'),
           'mods.isbn' => t('ISBN'),
           'mods.issn' => t('ISSN'),
