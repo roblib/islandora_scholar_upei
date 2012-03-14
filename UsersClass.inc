@@ -103,7 +103,7 @@ class UsersClass {
     $affiliation = $dom->createElement("affiliation");
     $mads->appendChild($affiliation);
 
-    $email = $dom->createElement("email", $this->mail);
+    $email = $dom->createElement("email", str_replace('groupwise.', '', $this->mail));
     $affiliation->appendChild($email);
 
 //    $xml = $dom->saveXML();
