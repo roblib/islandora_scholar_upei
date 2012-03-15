@@ -170,10 +170,13 @@ class ScholarSolrResults extends IslandoraSolrResults {
     foreach ($results->response->docs as $doc) {
       $rows = array();
       $csl = 'default';
-      $person = FALSE;
+      $department = $person = FALSE;
       foreach ($doc as $field => $value) {
         if ($field == 'rels.isMemberOfCollection' && $value == 'ir:people') {
           $person = TRUE;
+        }
+        elseif ($field == 'rels.isMemberOfCollection' && $value == 'ir:departments') {
+          $department = TRUE;
         }
       }
 
@@ -263,6 +266,39 @@ class ScholarSolrResults extends IslandoraSolrResults {
               $rows[$row][] = ucfirst(ltrim($value[0]));
             }
             elseif ($field == 'mads.fullname' && $value != NULL) {
+              $l = l($value, 'fedora/repository/' . $doc->PID) . '</BR>';              
+              $rows[$row][] = $l;
+            }
+            else {
+              $rows[$row][] = ucfirst(ltrim($value));
+            }
+            $row++;
+          }
+        }
+      }
+      elseif ($department) {
+        $image_path = $base_path . drupal_get_path('module', 'scholar') . '/images/gnome_stock_dept.png';
+        $rows[][] = '<img src="' . $image_path . '"/>';
+        foreach ($doc as $field => $value) {
+            $person_result_fields = array('mads.identifier');
+            if (in_array($field, $person_result_fields)) {
+            if ($limitResults && empty($this->resultFieldArray[$field])) {
+              continue;
+            }
+            $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
+            $rows[$row][] = array(
+              'data' => $translated_field_name,
+              'header' => TRUE,
+            );
+
+            if ($field == 'PID') {
+              $l = l($value, 'fedora/repository/' . htmlspecialchars($value, ENT_QUOTES, 'utf-8')) . '</BR>';
+              $rows[$row][] = $l;
+            }
+            elseif ($field == 'Title' && is_array($value)) {
+              $rows[$row][] = ucfirst(ltrim($value[0]));
+            }
+            elseif ($field == 'mads.identifier' && $value != NULL) {
               $l = l($value, 'fedora/repository/' . $doc->PID) . '</BR>';              
               $rows[$row][] = $l;
             }
