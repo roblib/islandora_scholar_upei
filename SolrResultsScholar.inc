@@ -168,8 +168,17 @@ class ScholarSolrResults extends IslandoraSolrResults {
 
     foreach ($results->response->docs as $doc) {
       $rows = array();
-
+      var_dump($doc);
       $csl = 'default';
+
+      foreach ($doc as $field => $value) {
+        if ($field == 'rels.isMemberOfCollection' && $value == 'ir:people') {
+          $person = TRUE;
+        }
+        else {
+          $person = FALSE;
+        }
+      }
 
       $style = citeproc_style($csl);
       $bibliography = new CiteProcJSBibliography($style);
@@ -234,26 +243,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $related;
         $row++;
       }
-      else {
+      elseif ($person) {
         foreach ($doc as $field => $value) {
-
-          if ($field == 'rels.isMemberOfCollection' && $value == 'ir:people') {
-            $result_fields_people = array('mads.fullname', 'mads.topic');
-            if (in_array($field, $result_fields_people)) {
-            if ($limitResults && empty($this->resultFieldArray[$field])) {
-              continue;
-            }
-
-            $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
-            $rows[$row][] = array(
-              'data' => $translated_field_name,
-              'header' => TRUE,
-            );
-              $rows[$row][] = ucfirst(ltrim($value));
-            }
-            $row++;
-          }
-          else {
+            $person_result_fields = array('mads.fullname', 'mads.topic');
+            if (in_array($field, $person_result_fields)) {
             if ($limitResults && empty($this->resultFieldArray[$field])) {
               continue;
             }
@@ -278,6 +271,32 @@ class ScholarSolrResults extends IslandoraSolrResults {
           }
         }
       }
+      else {
+        foreach ($doc as $field => $value) {
+          if ($limitResults && empty($this->resultFieldArray[$field])) {
+            continue;
+          }
+
+          $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
+          $rows[$row][] = array(
+            'data' => $translated_field_name,
+            'header' => TRUE,
+          );
+
+          if ($field == 'PID') {
+            $l = l($value, 'fedora/repository/' . htmlspecialchars($value, ENT_QUOTES, 'utf-8')) . '</BR>';
+            $rows[$row][] = $l;
+          }
+          elseif ($field == 'Title' && is_array($value)) {
+            $rows[$row][] = ucfirst(ltrim($value[0]));
+          }
+          else {
+            $rows[$row][] = ucfirst(ltrim($value));
+          }
+          $row++;
+        }
+      }
+
       $items[] = theme_table(NULL, $rows, array('class' => 'islandora_solr_search_results_object'));
     }
     $output = theme_item_list($items, $title, $type, array('class' => 'stuff', 'start' => ($recordStart + 1)));
