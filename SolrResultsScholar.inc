@@ -249,7 +249,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
             }
             $image_path = $base_path . drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
 
-            $rows[$row][] = '<href src=' . $image_path . '/>';
+            $rows[$row][] = '<img src=' . $image_path . '/>';
             $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
             $rows[$row][] = array(
               'data' => $translated_field_name,
