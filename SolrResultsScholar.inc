@@ -239,6 +239,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
 
           if ($field == 'rels.isMemberOfCollection' && $value == 'ir:people') {
             $result_fields_people = array('mads.fullname', 'mads.topic');
+            if (in_array($field, $result_fields_people)) {
             if ($limitResults && empty($this->resultFieldArray[$field])) {
               continue;
             }
@@ -248,8 +249,6 @@ class ScholarSolrResults extends IslandoraSolrResults {
               'data' => $translated_field_name,
               'header' => TRUE,
             );
-
-            if (in_array($field, $result_fields_people)) {
               $rows[$row][] = ucfirst(ltrim($value));
             }
             $row++;
