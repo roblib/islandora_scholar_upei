@@ -238,30 +238,44 @@ class ScholarSolrResults extends IslandoraSolrResults {
         foreach ($doc as $field => $value) {
 
           if ($field == 'rels.isMemberOfCollection' && $value == 'ir:people') {
-            drupal_set_message('People');
-          }
-          
-          if ($limitResults && empty($this->resultFieldArray[$field])) {
-            continue;
-          }
+            $result_fields_people = array('mads.fullname', 'mads.topic');
+            if ($limitResults && empty($this->resultFieldArray[$field])) {
+              continue;
+            }
 
-          $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
-          $rows[$row][] = array(
-            'data' => $translated_field_name,
-            'header' => TRUE,
-          );
+            $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
+            $rows[$row][] = array(
+              'data' => $translated_field_name,
+              'header' => TRUE,
+            );
 
-          if ($field == 'PID') {
-            $l = l($value, 'fedora/repository/' . htmlspecialchars($value, ENT_QUOTES, 'utf-8')) . '</BR>';
-            $rows[$row][] = $l;
-          }
-          elseif ($field == 'Title' && is_array($value)) {
-            $rows[$row][] = ucfirst(ltrim($value[0]));
+            if (in_array($field, $result_fields_people)) {
+              $rows[$row][] = ucfirst(ltrim($value));
+            }
           }
           else {
-            $rows[$row][] = ucfirst(ltrim($value));
+            if ($limitResults && empty($this->resultFieldArray[$field])) {
+              continue;
+            }
+
+            $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
+            $rows[$row][] = array(
+              'data' => $translated_field_name,
+              'header' => TRUE,
+            );
+
+            if ($field == 'PID') {
+              $l = l($value, 'fedora/repository/' . htmlspecialchars($value, ENT_QUOTES, 'utf-8')) . '</BR>';
+              $rows[$row][] = $l;
+            }
+            elseif ($field == 'Title' && is_array($value)) {
+              $rows[$row][] = ucfirst(ltrim($value[0]));
+            }
+            else {
+              $rows[$row][] = ucfirst(ltrim($value));
+            }
+            $row++;
           }
-          $row++;
         }
       }
       $items[] = theme_table(NULL, $rows, array('class' => 'islandora_solr_search_results_object'));
