@@ -241,15 +241,14 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $row++;
       }
       elseif ($person) {
+        $image_path = $base_path . drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
+        $rows[][] = '<img src="' . $image_path . '"/>';
         foreach ($doc as $field => $value) {
             $person_result_fields = array('mads.fullname', 'mads.topic');
             if (in_array($field, $person_result_fields)) {
             if ($limitResults && empty($this->resultFieldArray[$field])) {
               continue;
             }
-            $image_path = $base_path . drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
-
-            $rows[][] = '<img src="' . $image_path . '"/>';
             $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
             $rows[$row][] = array(
               'data' => $translated_field_name,
