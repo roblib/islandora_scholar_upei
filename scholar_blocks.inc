@@ -58,11 +58,11 @@ function scholar_recent_items($form_state) {
 function scholar_total_records($form_state) {
   $query = @file_get_contents('http://localhost:8080/solr/select/?q=PID:ir*%20AND%20rels.hasModel:ir\:citationCModel&start=0&rows=0&indent=on');
   if ($query != NULL) {
-  $xml = new SimpleXMLElement($query);
-  $number_of_records = $xml->xpath('./result[@name="response"]/@numFound');
-  $form['records'] = array(
-    '#value' => t('@records records added', array('@records' => number_format((string) $number_of_records[0]))),
-  );
+    $xml = new SimpleXMLElement($query);
+    $number_of_records = $xml->xpath('./result[@name="response"]/@numFound');
+    $form['records'] = array(
+      '#value' => t('@records records added', array('@records' => number_format((string) $number_of_records[0]))),
+    );
   }
 
   return $form;
@@ -132,7 +132,7 @@ function scholar_random_citation($form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
   module_load_include('inc', 'fedora_repository', 'CollectionClass');
-  
+
   $query_string = 'select $object from <#ri> where $object <fedora-model:hasModel> <info:fedora/ir:citationCModel>';
   $query_string = htmlentities(urlencode($query_string));
   $result = '';
@@ -147,12 +147,12 @@ function scholar_random_citation($form_state) {
   $result = new SimpleXMLElement($result);
 
   $entries = $result->results->result;
-  
+
   foreach ($entries as $entry) {
     $pid = explode('/', $entry->object['uri']);
     $pids[] = $pid[1];
   }
-    
+
   $rnd = rand(1, count($pids));
   $random_pid = $pids[$rnd];
 

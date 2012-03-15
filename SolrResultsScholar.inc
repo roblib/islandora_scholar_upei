@@ -237,6 +237,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
       else {
         foreach ($doc as $field => $value) {
 
+          if ($field == 'rels.isMemberOfCollection' && $value == 'ir:people') {
+            drupal_set_message('People');
+          }
+          
           if ($limitResults && empty($this->resultFieldArray[$field])) {
             continue;
           }
