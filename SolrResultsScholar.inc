@@ -168,7 +168,6 @@ class ScholarSolrResults extends IslandoraSolrResults {
 
     foreach ($results->response->docs as $doc) {
       $rows = array();
-      var_dump($doc);
       $csl = 'default';
 
       foreach ($doc as $field => $value) {
