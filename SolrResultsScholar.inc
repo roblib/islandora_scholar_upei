@@ -252,6 +252,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
             if (in_array($field, $result_fields_people)) {
               $rows[$row][] = ucfirst(ltrim($value));
             }
+            $row++;
           }
           else {
             if ($limitResults && empty($this->resultFieldArray[$field])) {
