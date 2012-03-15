@@ -260,6 +260,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
             elseif ($field == 'Title' && is_array($value)) {
               $rows[$row][] = ucfirst(ltrim($value[0]));
             }
+            elseif ($field == 'mads.fullname' && $value != NULL) {
+              $l = l($value, 'fedora/repository/' . $doc->PID) . '</BR>';              
+              $rows[$row][] = $l;
+            }
             else {
               $rows[$row][] = ucfirst(ltrim($value));
             }
