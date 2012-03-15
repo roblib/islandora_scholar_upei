@@ -160,6 +160,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
     }
 
     global $base_url;
+    global $base_path;
     if (empty($results)) {
       return "no results";
     }
@@ -246,7 +247,9 @@ class ScholarSolrResults extends IslandoraSolrResults {
             if ($limitResults && empty($this->resultFieldArray[$field])) {
               continue;
             }
+            $image_path = $base_path . drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
 
+            $rows[$row] = '<href src=' . $image_path . '/>';
             $translated_field_name = isset($this->allSubsArray[$field]) ? $this->allSubsArray[$field] : $field;
             $rows[$row][] = array(
               'data' => $translated_field_name,
