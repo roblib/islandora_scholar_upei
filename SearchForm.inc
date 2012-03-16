@@ -50,12 +50,12 @@ function scholar_search_form(array &$form_state) {
           'mods.title' => t('Title'),
           'mods.isbn' => t('ISBN'),
           'mods.issn' => t('ISSN'),
-          'mods.hostTitle' => t('Full Journal Title'),
+          'mods.journal' => t('Full Journal Title'),
           'mods.type' => t('Publication Type'),
-          'dc.title' => t('Title'),
           'mods.doi' => t('DOI'),
           'mods.subject' => t('Keywords'),
           'mods.date' => t('Year published'),
+          'pdf.text' => t('Full text'),
         )
       ),
       'search' => array(
