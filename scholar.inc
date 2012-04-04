@@ -17,11 +17,16 @@ class Scholar {
 
   function create_embargo($parameterArray = NULL, $dsid, $file, $file_ext) {
     $pid = $this->pid;
-    $xml = new SimpleXMLElement($file);
-    $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
-    drupal_set_message('Embargo date: ' . $embargo_date);
+    if ($file != NULL) {
+      $xml = new SimpleXMLElement($file);
+      $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
+      drupal_set_message('Embargo date: ' . $embargo_date);
+    }
+    else {
+      drupal_set_message(t('No file specified!'), 'warning');
+    }
   }
-  
+
   /**
    * Build up the elements to show a basic citation. This currently
    * calls another function but customisation can be added in
@@ -84,27 +89,32 @@ class Scholar {
 
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
-    $xml = new SimpleXMLElement($xmlstr);
 
-    $names = $xml->authority->name->namePart;
-    $fullname = $names[0] . ' ' . $names[1];
+    if ($xmlstr != NULL) {
+      $xml = new SimpleXMLElement($xmlstr);
 
-    foreach ($xml->related->topic as $dept) {
-      $depts[] = str_replace('_', ' ', (string) $dept);
-    }
+      $names = $xml->authority->name->namePart;
+      $fullname = $names[0] . ' ' . $names[1];
 
-    if (is_array($depts)) {
-      $dept = implode(', ', array_unique($depts));
+      foreach ($xml->related->topic as $dept) {
+        $depts[] = str_replace('_', ' ', (string) $dept);
+      }
+
+      if (is_array($depts)) {
+        $dept = implode(', ', array_unique($depts));
+      }
+      else {
+        $dept = $depts;
+      }
+
+      $username = $xml->identifier;
+      $email = $xml->affiliation->email;
     }
     else {
-      $dept = $depts;
+      drupal_set_message(t('No MADS datastream found!'), 'warning');
     }
-
-    $username = $xml->identifier;
-    $email = $xml->affiliation->email;
-    
 //    drupal_set_title(t('@fullname', array('@fullname' => $fullname)));
-    
+
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
       '#title' => t('Description'),
@@ -147,11 +157,12 @@ class Scholar {
 //      $rows = unserialize($citations_cache->data);
 //    }
 //    else {
-      $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
+    $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
+    if ($xml != NULL) {
       $xml = new SimpleXMLElement($username_query);
       $array = $xml->xpath('//doc');
       $array = array_filter($array);
-      
+
       $rows = array();
       if (!empty($array)) {
         if (module_exists('scholar_tracking')) {
@@ -168,6 +179,10 @@ class Scholar {
       else {
         $rows = NULL;
       }
+    }
+    else {
+      $rows = NULL;
+    }
 //      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
 //      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
 //    }
@@ -182,18 +197,18 @@ class Scholar {
     $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $username, $username, 'author'),
     );
-    
+
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
     );
-    
+
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
       '#value' => scholar_object_metrics_form($username, 'author'),
       '#prefix' => '<div class="scholar_metrics_table">',
       '#suffix' => '</div>',
     );
-    
+
     return $tabset;
   }
 
@@ -222,7 +237,7 @@ class Scholar {
     $tabset['first_tab']['tabs'] = array(
       '#type' => 'tabset',
     );
-    
+
     $tabset['first_tab']['tabs']['details'] = array(
       '#type' => 'tabpage',
       '#title' => t('Details'),
@@ -234,36 +249,43 @@ class Scholar {
 
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
-    $xml = new SimpleXMLElement($xmlstr);
+    if ($xml_str != NULL) {
+      $xml = new SimpleXMLElement($xmlstr);
 
-    $names = $xml->authority->name->namePart;
-    $date = $xml->authority->name->namePart[1];
-    $faculty = $xml->related->name->namePart;
-    $note = $xml->note;
-    $url = $xml->url;
+      $names = $xml->authority->name->namePart;
+      $date = $xml->authority->name->namePart[1];
+      $faculty = $xml->related->name->namePart;
+      $note = $xml->note;
+      $url = $xml->url;
 
-    $header = array();
+      $header = array();
 
-    $rows = array(
-      array('Name', $names),
-      array('Date', $date),
-      array('Parent school/faculty', $faculty),
-      array('Historical note', $note),
-      array('URL', $url),
-    );
+      $rows = array(
+        array('Name', $names),
+        array('Date', $date),
+        array('Parent school/faculty', $faculty),
+        array('Historical note', $note),
+        array('URL', $url),
+      );
 
-    $tabset['first_tab']['tabs']['details']['table'] = array(
-      '#value' => theme('table', $header, $rows),
-    );
+      $tabset['first_tab']['tabs']['details']['table'] = array(
+        '#value' => theme('table', $header, $rows),
+      );
+    }
+    else {
+      $tabset['first_tab']['tabs']['details']['table'] = array(
+        '#value' => t('No MADS datastream found!'),
+      );
+    }
 
-       $tabset['first_tab']['tabs']['citations'] = array(
+    $tabset['first_tab']['tabs']['citations'] = array(
       '#type' => 'tabpage',
       '#title' => t('Citations'),
     );
     $pids = array();
 
-      $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
-      if ($deptname_query != NULL) {
+    $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
+    if ($deptname_query != NULL) {
       $xml = new SimpleXMLElement($deptname_query);
       $array = $xml->xpath('//doc');
       $array = array_filter($array);
@@ -283,10 +305,10 @@ class Scholar {
       else {
         $rows = NULL;
       }
-      }
-      else {
-        $rows = NULL;
-      }
+    }
+    else {
+      $rows = NULL;
+    }
 
     if ($rows == NULL) {
       $content = t('No citations found!');
@@ -298,18 +320,18 @@ class Scholar {
     $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $names, $username, 'department'),
     );
-    
+
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
     );
-    
+
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
       '#value' => scholar_object_metrics_form($names, 'department'),
       '#prefix' => '<div class="scholar_metrics_table">',
       '#suffix' => '</div>',
     );
-    
+
     return $tabset;
   }
 
@@ -468,18 +490,23 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
   $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
 
   $mods_xml = new DOMDocument();
-  $mods_xml->loadXML($xmlstr);
-  $xpath = new DOMXPath($mods_xml);
-  $test = $xpath->query("//*[@type='supplement']")->item(0)->nodeValue;
-  if ($test !== '') {
-    $note = $mods_xml->createElement('note', implode(', ', $list));
-    $note->setAttribute('type', 'supplement');
-    $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
-    $mods_element->appendChild($note);
-    $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+  if ($mods_xml != NULL) {
+    $mods_xml->loadXML($xmlstr);
+    $xpath = new DOMXPath($mods_xml);
+    $test = $xpath->query("//*[@type='supplement']")->item(0)->nodeValue;
+    if ($test !== '') {
+      $note = $mods_xml->createElement('note', implode(', ', $list));
+      $note->setAttribute('type', 'supplement');
+      $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
+      $mods_element->appendChild($note);
+      $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+    }
+    else {
+      drupal_set_message(t('Entry for supplementary information already exists!'), 'warning');
+    }
   }
   else {
-    drupal_set_message(t('Entry for supplementary information already exists!'), 'warning');
+    drupal_set_message(t('Could not find MODS datastream!'), 'warning');
   }
 }
 
@@ -520,23 +547,28 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
 
   $mods_xml = new DOMDocument();
-  $mods_xml->loadXML($xmlstr);
-  $list = $mods_xml->getElementsByTagName('note');
-  $remove_nodes = array();
-  foreach ($list as $element) {
-    $attribute = $element->getAttribute('type');
-    if ($attribute == 'supplement') {
-      $remove_nodes[] = $element;
+  if ($mods_xml != NULL) {
+    $mods_xml->loadXML($xmlstr);
+    $list = $mods_xml->getElementsByTagName('note');
+    $remove_nodes = array();
+    foreach ($list as $element) {
+      $attribute = $element->getAttribute('type');
+      if ($attribute == 'supplement') {
+        $remove_nodes[] = $element;
+      }
     }
-  }
-  if (!empty($remove_nodes)) {
-    foreach ($remove_nodes as $remove_node) {
-      $remove_node->parentNode->removeChild($remove_node);
+    if (!empty($remove_nodes)) {
+      foreach ($remove_nodes as $remove_node) {
+        $remove_node->parentNode->removeChild($remove_node);
+      }
+      $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
     }
-    $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+    else {
+      drupal_set_message(t('No MODS element found to remove!'));
+    }
   }
   else {
-    drupal_set_message(t('No MODS element found to remove!'));
+    drupal_set_message(t('No MODS datastream found!'), 'warning');
   }
 }
 
@@ -691,34 +723,38 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     if (!array_key_exists('PDF', $ds_array) && !array_key_exists('OBJ', $ds_array)) {
 
       $mods_xml = new DOMDocument();
-      $mods_xml->loadXML($xmlstr);
-      $list = $mods_xml->getElementsByTagName('accessCondition');
-      $remove_nodes = array();
-      foreach ($list as $element) {
-        $attribute = $element->getAttribute('type');
-        if ($attribute == 'use and reproduction') {
-          $remove_nodes[] = $element;
+      if ($mods_xml != NULL) {
+        $mods_xml->loadXML($xmlstr);
+        $list = $mods_xml->getElementsByTagName('accessCondition');
+        $remove_nodes = array();
+        foreach ($list as $element) {
+          $attribute = $element->getAttribute('type');
+          if ($attribute == 'use and reproduction') {
+            $remove_nodes[] = $element;
+          }
         }
-      }
-      $list2 = $mods_xml->getElementsByTagName('form');
-      foreach ($list2 as $element2) {
-        $attribute2 = $element2->getAttribute('authority');
-        if ($attribute2 == 'local') {
-        // This is crude as it removes everything in a 'physicalDescription
-        // tag. If this becomes an issue this remove can be more specific.
-        $remove_nodes[] = $element2;
+        $list2 = $mods_xml->getElementsByTagName('form');
+        foreach ($list2 as $element2) {
+          $attribute2 = $element2->getAttribute('authority');
+          if ($attribute2 == 'local') {
+            // This is crude as it removes everything in a 'physicalDescription
+            // tag. If this becomes an issue this remove can be more specific.
+            $remove_nodes[] = $element2;
+          }
         }
-        
-      }
-      if (!empty($remove_nodes)) {
-        foreach ($remove_nodes as $remove_node) {
-          $remove_node->parentNode->removeChild($remove_node);
+        if (!empty($remove_nodes)) {
+          foreach ($remove_nodes as $remove_node) {
+            $remove_node->parentNode->removeChild($remove_node);
+          }
+          $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+          drupal_set_message(t('MODS data relevant to this document has been removed'));
         }
-        $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
-        drupal_set_message(t('MODS data relevant to this document has been removed'));
+        else {
+          drupal_set_message(t('No MODS element found to remove!'));
+        }
       }
       else {
-        drupal_set_message(t('No MODS element found to remove!'));
+        drupal_set_message(t('No MODS datastream found!'), 'warning');
       }
     }
   }
@@ -937,7 +973,7 @@ function islandora_scholar_build_citation($pid) {
   else {
     $embargo_date = NULL;
   }
-  
+
   $rows = array();
 
   if ((string) $data->title != NULL) {
@@ -946,78 +982,78 @@ function islandora_scholar_build_citation($pid) {
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Title', $data->title);
   }
-  
+
   if ($names != NULL) {
     $rows[] = array('Authors', rtrim($names, ', '));
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Authors', rtrim($names, ', '));
   }
-  
+
   if ((string) $data->abstract != NULL) {
     $rows[] = array('Abstract', $data->abstract);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Abstract', $data->abstract);
   }
-  
+
   if ((string) $data->journal_title != NULL) {
     $rows[] = array('Journal', $data->journal_title);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Journal', $data->journal_title);
   }
-  
+
   if ((string) $data->date != NULL) {
     $rows[] = array('Date', $data->date);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Date', $data->date);
   }
-  
+
   if ((string) $data->volume != NULL) {
-  $rows[] = array('Volume', $data->volume);
+    $rows[] = array('Volume', $data->volume);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Volume', $data->volume);
   }
 
   if ((string) $data->issue != NULL) {
-  $rows[] = array('Issue', $data->issue);
+    $rows[] = array('Issue', $data->issue);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Issue', $data->issue);
   }
-  
+
   if ((string) $data->start_page != NULL) {
-  $rows[] = array('Start page', $data->start_page);
+    $rows[] = array('Start page', $data->start_page);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Start page', $data->start_page);
   }
-  
+
   if ((string) $data->issn != NULL) {
-  $rows[] = array('ISSN', $data->issn);
+    $rows[] = array('ISSN', $data->issn);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('ISSN', $data->issn);
   }
-  
+
   if ((string) $topics != NULL) {
-  $rows[] = array('Subjects', rtrim($topics, ', '));
+    $rows[] = array('Subjects', rtrim($topics, ', '));
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Subjects', rtrim($topics, ', '));
   }
-  
+
   if ((string) $data->note != NULL) {
-  $rows[] = array('Note', $data->note);
+    $rows[] = array('Note', $data->note);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Note', $data->note);
   }
-  
-  if ($embargo_date != NULL ) {
+
+  if ($embargo_date != NULL) {
     $rows[] = array('Embargo date', $embargo_date);
   }
 
@@ -1132,12 +1168,14 @@ function islandora_scholar_build_citation($pid) {
       $xsl = new DOMDocument();
       $xsl->load($path . '/xsl/romeo.xsl');
       $input = new DOMDocument();
-      $input->loadXML(trim($issn_url));
-      $xsl = $proc->importStylesheet($xsl);
-      $newdom = $proc->transformToDoc($input);
-      $romeo = $newdom->saveXML();
-      $cache_time = variable_get('scholar_romeo_cache_time', '2');
-      cache_set('islandora_scholar_romeo_cache_' . $data->issn, serialize($romeo), 'cache', time() + ($cache_time * 86400));
+      if ($issn_url != NULL) {
+        $input->loadXML(trim($issn_url));
+        $xsl = $proc->importStylesheet($xsl);
+        $newdom = $proc->transformToDoc($input);
+        $romeo = $newdom->saveXML();
+        $cache_time = variable_get('scholar_romeo_cache_time', '2');
+        cache_set('islandora_scholar_romeo_cache_' . $data->issn, serialize($romeo), 'cache', time() + ($cache_time * 86400));
+      }
     }
 
     $tabset['first_tab']['tabs']['romeo'] = array(
@@ -1268,15 +1306,19 @@ function islandora_scholar_zip_mods_to_array($mods) {
 function islandora_scholar_get_object_profile($pid) {
   $url = 'http://localhost:8080/fedora/objects/' . $pid . '?format=xml';
   $result = file_get_contents($url);
-  $result_xml = new SimpleXMLElement($result);
-  $details['owner'] = $result_xml->objOwnerId;
-  $details['label'] = $result_xml->objLabel;
-  $details['created'] = $result_xml->objCreateDate;
-  $details['modified'] = $result_xml->objLastModDate;
-  $details['status'] = $result_xml->objState;
-  return $details;
+  if ($result != NULL) {
+    $result_xml = new SimpleXMLElement($result);
+    $details['owner'] = $result_xml->objOwnerId;
+    $details['label'] = $result_xml->objLabel;
+    $details['created'] = $result_xml->objCreateDate;
+    $details['modified'] = $result_xml->objLastModDate;
+    $details['status'] = $result_xml->objState;
+    return $details;
+  }
+  else {
+    return NULL;
+  }
 }
-
 
 function tstamptotime($tstamp) {
   // converts ISODATE to unix date
