@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.loc.gov/mods/v3"
     version="1.0">
-
+    
     <xsl:template match="/">
         <mods>
             <titleInfo>
@@ -29,8 +29,7 @@
                             <xsl:attribute name="type">code</xsl:attribute>author</roleTerm>
                     </role>
                 </name>
-            </xsl:for-each>
-
+            </xsl:for-each>            
             <xsl:for-each select="//reference/u1">
                 <xsl:call-template name="links">
                     <xsl:with-param name="str" select="."/>
@@ -40,8 +39,7 @@
                 <identifier type="u2">
                     <xsl:value-of select="normalize-space(text())"/>
                 </identifier>
-            </xsl:for-each>
-
+            </xsl:for-each>            
             <originInfo>
                 <dateIssued>
                     <xsl:value-of select="//reference/yr"/>
@@ -96,6 +94,13 @@
                     <xsl:value-of select="//reference/id"/>
                 </identifier>
             </relatedItem>
+                <subject authority="local">
+                    <xsl:for-each select="//reference/k1">
+                    <topic>
+                    <xsl:value-of select="normalize-space(text())"/>
+                    </topic>
+                    </xsl:for-each>            
+                </subject>
             <abstract>
                 <xsl:value-of select="//reference/ab"/>
             </abstract>
@@ -150,15 +155,12 @@
                     </languageTerm>
                 </language>
             </xsl:if>
-            <xsl:if test="//reference/usage/text() [normalize-space(.) ]">
-
+            <xsl:if test="//reference/usage/text() [normalize-space(.) ]">                
                 <accessCondition type="use and reproduction">
                     <xsl:value-of select="//reference/usage"/>
-                </accessCondition>
-
+                </accessCondition>                
             </xsl:if>
-            <xsl:if test="//reference/status/text() [normalize-space(.) ]">
-
+            <xsl:if test="//reference/status/text() [normalize-space(.) ]">               
                 <physicalDescription>
                     <form authority="local">
                         <xsl:value-of select="//reference/status"/>
@@ -167,7 +169,7 @@
             </xsl:if>
         </mods>
     </xsl:template>
-
+    
     <xsl:template name="links">
         <xsl:param name="str"/>
         <xsl:choose>
@@ -186,5 +188,5 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
+    
 </xsl:stylesheet>

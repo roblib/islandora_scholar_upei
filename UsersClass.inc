@@ -88,7 +88,7 @@ class UsersClass {
         $dept = strtok($group, ',');
         $dept = ltrim($dept, 'cn=');
         $dept = islandora_scholar_convert_dept($dept);
-        if ($dept != '' && strlen($dept) > 1 && $dept != NULL) {
+        if (strlen($dept) > 1) {
           $topic = $dom->createElement("topic", $dept);
           $topic->setAttribute("authority", "department");
           $related->appendChild($topic);
@@ -148,7 +148,8 @@ class UsersClass {
 
 function islandora_scholar_convert_dept($dept) {
 
-  $find = array('Robertson Library',
+  $find = array(
+    'Robertson Library',
     'Anatomy Physiology',
     'Biology',
     'Business',
@@ -178,7 +179,8 @@ function islandora_scholar_convert_dept($dept) {
     'Womens Studies',
     'Blood',
   );
-  $replace = array('Robertson Library',
+  $replace = array(
+    'Robertson Library',
     'Biomedical Sciences',
     'Biology',
     'School of Business',//Is this correct?

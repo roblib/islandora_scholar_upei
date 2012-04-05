@@ -599,7 +599,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
   }
   $object_details = islandora_scholar_get_object_profile($pid);
 
-  if (array_key_exists('OBJ', $ds_array)) {
+  if (array_key_exists('OBJ', $ds_array) && $user->name === $object_details['owner']) {
 
     $obj_content = l(t('Download document'), 'download_ds/' . $pid . '/OBJ') . '</br>';
 
@@ -947,6 +947,7 @@ function islandora_scholar_build_citation($pid) {
   $tabset['first_tab']['tabs'] = array(
     '#type' => 'tabset',
   );
+  $object_details = islandora_scholar_get_object_profile($pid);
 
   $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
   $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
