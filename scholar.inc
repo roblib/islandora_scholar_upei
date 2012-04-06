@@ -602,26 +602,26 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
   if (array_key_exists('OBJ', $ds_array)) {
     if ($user->name === $object_details['owner'] || user_access('administer scholarly research')) {
 
-    $obj_content = l(t('Download document'), 'download_ds/' . $pid . '/OBJ') . '</br>';
+      $obj_content = l(t('Download document'), 'download_ds/' . $pid . '/OBJ') . '</br>';
 
-    if ($track != FALSE) {
-      $ds_count_doc = $track->read_ds_count('OBJ');
-      $obj_content .= 'File has been downloaded ' . $ds_count_doc['count'] . ' times';
-      $obj_content .= '<div>Last downloaded: ' . $ds_count_doc[($ds_count_doc['count'] - 1)] . '</div></br>';
-    }
+      if ($track != FALSE) {
+        $ds_count_doc = $track->read_ds_count('OBJ');
+        $obj_content .= 'File has been downloaded ' . $ds_count_doc['count'] . ' times';
+        $obj_content .= '<div>Last downloaded: ' . $ds_count_doc[($ds_count_doc['count'] - 1)] . '</div></br>';
+      }
 
-    $form['obj_info'] = array(
-      '#value' => $obj_content,
-    );
-
-    if (user_access('administer scholarly research')) {
-      $form['obj_delete'] = array(
-        '#type' => 'submit',
-        '#name' => 'obj_delete',
-        '#suffix' => '</br></br>',
-        '#value' => t('Delete document'),
+      $form['obj_info'] = array(
+        '#value' => $obj_content,
       );
-    }
+
+      if (user_access('administer scholarly research')) {
+        $form['obj_delete'] = array(
+          '#type' => 'submit',
+          '#name' => 'obj_delete',
+          '#suffix' => '</br></br>',
+          '#value' => t('Delete document'),
+        );
+      }
     }
   }
 
@@ -1019,12 +1019,12 @@ function islandora_scholar_build_citation($pid, $type) {
   }
 
   if ($type == 'citation') {
-  if ((string) $data->journal_title != NULL) {
-    $rows[] = array('Journal', $data->journal_title);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Journal', $data->journal_title);
-  }
+    if ((string) $data->journal_title != NULL) {
+      $rows[] = array('Journal', $data->journal_title);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Journal', $data->journal_title);
+    }
   }
 
   if ((string) $data->date != NULL) {
@@ -1035,33 +1035,35 @@ function islandora_scholar_build_citation($pid, $type) {
   }
 
   if ($type == 'citation') {
-  if ((string) $data->volume != NULL) {
-    $rows[] = array('Volume', $data->volume);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Volume', $data->volume);
+    if ((string) $data->volume != NULL) {
+      $rows[] = array('Volume', $data->volume);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Volume', $data->volume);
+    }
+
+    if ((string) $data->issue != NULL) {
+      $rows[] = array('Issue', $data->issue);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Issue', $data->issue);
+    }
+
+    if ((string) $data->start_page != NULL) {
+      $rows[] = array('Start page', $data->start_page);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Start page', $data->start_page);
+    }
   }
 
-  if ((string) $data->issue != NULL) {
-    $rows[] = array('Issue', $data->issue);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Issue', $data->issue);
-  }
-
-  if ((string) $data->start_page != NULL) {
-    $rows[] = array('Start page', $data->start_page);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Start page', $data->start_page);
-  }
-  }
-  
-  if ((string) $data->issn != NULL) {
-    $rows[] = array('ISSN', $data->issn);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('ISSN', $data->issn);
+  if ($type == 'citation') {
+    if ((string) $data->issn != NULL) {
+      $rows[] = array('ISSN', $data->issn);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('ISSN', $data->issn);
+    }
   }
 
   if ((string) $topics != NULL) {
@@ -1071,11 +1073,13 @@ function islandora_scholar_build_citation($pid, $type) {
     $rows[] = array('Subjects', rtrim($topics, ', '));
   }
 
-  if ((string) $data->note != NULL) {
-    $rows[] = array('Note', $data->note);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Note', $data->note);
+  if ($type == 'citation') {
+    if ((string) $data->note != NULL) {
+      $rows[] = array('Note', $data->note);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Note', $data->note);
+    }
   }
 
   if ($embargo_date != NULL) {
