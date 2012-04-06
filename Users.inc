@@ -171,9 +171,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         $pid = 'ir:' . strtolower($details->cn);
         $dsid = 'MADS';
         $relationship = $collection_policy->getRelationship();
-        $ingest_file_locations = array(
-          'TN' => drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png',
-        );
+        $ingest_file_locations = array();
         $document = $xml;
 
         $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
@@ -184,6 +182,8 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         foreach ($groups as $group) {
           $item->add_relationship('hasDepartment', $group);
         }
+        $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
+        $item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
         // TODO: add thumbnail external reference
       }
     }
