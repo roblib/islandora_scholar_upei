@@ -551,9 +551,9 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
-  drupal_set_message('button id' . $form_state['clicked_button']['#id']);
+
   switch ($form_state['clicked_button']['#id']) {
-    case 'supp_delete':
+    case 'idedit-supp-delete':
       $object->purge_datastream('ZIP');
       $collectionHelper = new CollectionClass();
       $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
@@ -584,7 +584,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
       }
       break;
 
-    case 'supp_embargo':
+    case 'idedit-supp-embargo':
 
       break;
   }
