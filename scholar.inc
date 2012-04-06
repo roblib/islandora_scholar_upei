@@ -426,7 +426,7 @@ function islandora_scholar_supp_info_form(&$form_state, $pid) {
 
   $form['upload'] = array(
     '#type' => 'file',
-    '#title' => t('Attach supplementary information'),
+    '#title' => t('Attach supplemental information'),
   );
 
   $form['supp_submit'] = array(
@@ -502,7 +502,7 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
       $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
     }
     else {
-      drupal_set_message(t('Entry for supplementary information already exists!'), 'warning');
+      drupal_set_message(t('Entry for supplemental information already exists!'), 'warning');
     }
   }
   else {
@@ -1129,7 +1129,7 @@ function islandora_scholar_build_citation($pid, $type) {
 
   if (array_key_exists('ZIP', $ds_array)) {
     $ds_info = $item->get_datastream_info('ZIP');
-    $citation .= '</br><b>Supplementary information</b></br>';
+    $citation .= '</br><b>Supplemental information</b></br>';
     $description = $ds_array['ZIP']['label'];
     $citation .= '<p>' . 'Name: ' . l($description, 'download_ds/' . $pid . '/ZIP') . '</br>';
     $citation .= t('Size: @size bytes', array('@size' => $ds_info->datastream->size)) . '</br>';
@@ -1163,7 +1163,7 @@ function islandora_scholar_build_citation($pid, $type) {
       $citation .= drupal_render($supp_fieldset);
     }
     else {
-      drupal_set_message(t('A supplementary information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
+      drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
     }
   }
 
@@ -1291,7 +1291,7 @@ function islandora_scholar_build_citation($pid, $type) {
 
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
-        '#title' => t('Supplementary information'),
+        '#title' => t('Supplemental information'),
         '#content' => $content,
         '#weight' => 6,
       );
@@ -1299,7 +1299,7 @@ function islandora_scholar_build_citation($pid, $type) {
     else {
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
-        '#title' => t('Supplementary information'),
+        '#title' => t('Supplemental information'),
         '#content' => drupal_get_form('islandora_scholar_supp_info_form', $pid),
         '#weight' => 6,
       );
