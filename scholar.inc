@@ -520,8 +520,17 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
 function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
   $form = array();
 
+  $form['supp_embargo'] = array(
+    '#type' => 'submit',
+    '#prefix' => '<p>',
+    '#suffix' => '</p>',
+    '#value' => t('Embargo supplemental information'),
+  );
+  
   $form['supp_delete'] = array(
     '#type' => 'submit',
+    '#prefix' => '<p>',
+    '#suffix' => '</p>',
     '#value' => t('Delete supplemental information'),
   );
 
