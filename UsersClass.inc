@@ -136,7 +136,7 @@ class UsersClass {
     $result->loadXML($content);
     $entry = $result->getElementsByTagName('title')->item(0)->nodeValue;
     $text = $result->saveXML();
-    var_dump($content);
+//    var_dump($content);
     if (isset($entry)) {
       return TRUE;
     }
