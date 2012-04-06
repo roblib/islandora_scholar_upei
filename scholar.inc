@@ -526,7 +526,7 @@ function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
     '#suffix' => '</p>',
     '#value' => t('Embargo supplemental information'),
   );
-  
+
   $form['supp_delete'] = array(
     '#type' => 'submit',
     '#prefix' => '<p>',
@@ -551,33 +551,42 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
-  $object->purge_datastream('ZIP');
-  $collectionHelper = new CollectionClass();
-  $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
 
-  $mods_xml = new DOMDocument();
-  if ($mods_xml != NULL) {
-    $mods_xml->loadXML($xmlstr);
-    $list = $mods_xml->getElementsByTagName('note');
-    $remove_nodes = array();
-    foreach ($list as $element) {
-      $attribute = $element->getAttribute('type');
-      if ($attribute == 'supplement') {
-        $remove_nodes[] = $element;
+  switch ($form_state['clicked_button']['#id']) {
+    case 'supp_delete':
+      $object->purge_datastream('ZIP');
+      $collectionHelper = new CollectionClass();
+      $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
+
+      $mods_xml = new DOMDocument();
+      if ($mods_xml != NULL) {
+        $mods_xml->loadXML($xmlstr);
+        $list = $mods_xml->getElementsByTagName('note');
+        $remove_nodes = array();
+        foreach ($list as $element) {
+          $attribute = $element->getAttribute('type');
+          if ($attribute == 'supplement') {
+            $remove_nodes[] = $element;
+          }
+        }
+        if (!empty($remove_nodes)) {
+          foreach ($remove_nodes as $remove_node) {
+            $remove_node->parentNode->removeChild($remove_node);
+          }
+          $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
+        }
+        else {
+          drupal_set_message(t('No MODS element found to remove!'));
+        }
       }
-    }
-    if (!empty($remove_nodes)) {
-      foreach ($remove_nodes as $remove_node) {
-        $remove_node->parentNode->removeChild($remove_node);
+      else {
+        drupal_set_message(t('No MODS datastream found!'), 'warning');
       }
-      $object->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml');
-    }
-    else {
-      drupal_set_message(t('No MODS element found to remove!'));
-    }
-  }
-  else {
-    drupal_set_message(t('No MODS datastream found!'), 'warning');
+      break;
+
+    case 'supp_embargo':
+
+      break;
   }
 }
 
