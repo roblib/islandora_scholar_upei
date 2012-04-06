@@ -1018,11 +1018,13 @@ function islandora_scholar_build_citation($pid, $type) {
     $rows[] = array('Abstract', $data->abstract);
   }
 
+  if ($type == 'citation') {
   if ((string) $data->journal_title != NULL) {
     $rows[] = array('Journal', $data->journal_title);
   }
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Journal', $data->journal_title);
+  }
   }
 
   if ((string) $data->date != NULL) {
@@ -1032,6 +1034,7 @@ function islandora_scholar_build_citation($pid, $type) {
     $rows[] = array('Date', $data->date);
   }
 
+  if ($type == 'citation') {
   if ((string) $data->volume != NULL) {
     $rows[] = array('Volume', $data->volume);
   }
@@ -1052,7 +1055,8 @@ function islandora_scholar_build_citation($pid, $type) {
   elseif (user_access('administer scholarly research')) {
     $rows[] = array('Start page', $data->start_page);
   }
-
+  }
+  
   if ((string) $data->issn != NULL) {
     $rows[] = array('ISSN', $data->issn);
   }
