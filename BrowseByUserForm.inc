@@ -27,9 +27,9 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
     }
   }
 
-  $form['choice'] = array(
-    '#value' => l('By name', 'browse_authors/A') . ' | ' . l('By department', 'browse_users_dept/Robertson%20Library') . "</br></br>",
-  );
+//  $form['choice'] = array(
+//    '#value' => l('By name', 'browse_authors/A') . ' | ' . l('By department', 'browse_users_dept/Robertson%20Library') . "</br></br>",
+//  );
 
   $form['list'] = array(
     '#value' => $list,
