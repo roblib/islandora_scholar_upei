@@ -80,6 +80,7 @@ function scholar_get_ldap_users($query) {
     array('data' => t('UID')),
     array('data' => t('cn')),
     array('data' => t('Mail')),
+    array('data' => t('Imported')),
   );
 
 // Todo: work out a way of checking and displaying if the users have already been added
@@ -96,10 +97,13 @@ function scholar_get_ldap_users($query) {
   );
   $rows = &$table['rows'];
   foreach ($users as $user) {
+    $details = new UsersClass($user);
+    $details->check_user() ? $user_image = '<src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<src="' . url('misc/watchdog-error.png') . '"/>';
     $rows[] = array(
       '#pid' => $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
       'mail' => array('#value' => check_plain($user['mail'])),
+      'image' => $user_image,
     );
   }
   return $table;
