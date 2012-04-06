@@ -49,7 +49,7 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
       $username_query = file_get_contents($username_str);
       $username_xml = new SimpleXMLElement($username_query);
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
-        $citations[] = " (" . (string) $number_of_citations[0] . ")";
+        $citations[] = $number_of_citations[0];
     }
     $users[] = $family[0] . ', ' . $given[0];
     $link[] = '<li><a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
@@ -57,7 +57,7 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   asort($users);
   foreach ($users as $key => $user) {
     if ($citations[$key] > 0) {
-      $output .= $link[$key] . $user . '</a><i>' . $citations[$key] . '</i></li>';
+      $output .= $link[$key] . $user . '</a><i> (' . (string) $citations[$key] . ')</i></li>';
     }
   }
 
