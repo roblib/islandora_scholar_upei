@@ -54,7 +54,7 @@ function scholar_search_form(array &$form_state) {
           'type' => t('Publication Type'),
           'mods.doi' => t('DOI'),
           'mods.subject' => t('Keywords'),
-          'mods.date' => t('Year published'),
+          'mods.dateIssued' => t('Year published'),
           'pdf.text' => t('Full text'),
         )
       ),
