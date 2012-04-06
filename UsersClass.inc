@@ -35,7 +35,6 @@ class UsersClass {
     $sr = ldap_list($ds, $basedn, $filter);
 
     $list = ldap_get_entries($ds, $sr);
-    var_dump($list);
     $this->uid = $list[0]['uid'][0];
     $this->cn = $list[0]['cn'][0];
     $this->fullname = $list[0]['fullname'][0];
