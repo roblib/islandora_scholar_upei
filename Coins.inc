@@ -67,7 +67,7 @@ class Coins {
       }
       if ($role == 'author') {
         var_dump($role);
-        var_dump($fullname[$i]);
+        var_dump($fullname);
         $authors[] = $fullname[$i];
       }
       $full_name[$i] .= ' (' . $role . ')';
