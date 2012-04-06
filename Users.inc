@@ -103,7 +103,6 @@ function scholar_get_ldap_users($query) {
       'fullname' => array('#value' => check_plain($user['fullname'])),
       'mail' => array('#value' => check_plain($user['mail'])),
       'image' => array('#value' => $user_image),
-      '#disabled' => $details->check_user(),
     );
   }
   return $table;
