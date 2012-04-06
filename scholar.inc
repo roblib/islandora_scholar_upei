@@ -988,6 +988,7 @@ function islandora_scholar_build_citation($pid, $type) {
 
   if ($type == 'thesis') {
     var_dump($data->authors);
+    var_dump($data->names);
   }
   else {
     if ($names != NULL) {
