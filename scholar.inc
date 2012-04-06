@@ -556,6 +556,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   drupal_set_message('Button id ' . $form_state['clicked_button']['#id']);
   switch ($form_state['clicked_button']['#id']) {
     case 'supp-delete':
+      drupal_set_message('Delete!');
       $object->purge_datastream('ZIP');
       $collectionHelper = new CollectionClass();
       $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
@@ -587,7 +588,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
       break;
 
     case 'supp-embargo':
-
+      drupal_set_message('Embargo!');
       break;
   }
 }
