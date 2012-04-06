@@ -521,6 +521,7 @@ function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
   $form = array();
 
   $form['supp_embargo'] = array(
+    '#id' => 'supp_embargo',
     '#type' => 'submit',
     '#prefix' => '<p>',
     '#suffix' => '</p>',
@@ -528,6 +529,7 @@ function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
   );
 
   $form['supp_delete'] = array(
+    '#id' => 'supp_delete',
     '#type' => 'submit',
     '#prefix' => '<p>',
     '#suffix' => '</p>',
@@ -553,7 +555,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   $object = new Fedora_Item($pid);
 
   switch ($form_state['clicked_button']['#id']) {
-    case 'idedit-supp-delete':
+    case 'supp-delete':
       $object->purge_datastream('ZIP');
       $collectionHelper = new CollectionClass();
       $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
@@ -584,7 +586,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
       }
       break;
 
-    case 'idedit-supp-embargo':
+    case 'supp-embargo':
 
       break;
   }
