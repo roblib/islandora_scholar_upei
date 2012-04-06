@@ -97,7 +97,7 @@ function scholar_get_ldap_users($query) {
   $rows = &$table['rows'];
   foreach ($users as $user) {
     $details = new UsersClass($user);
-    $details->check_user() ? $user_image = '<src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<src="' . url('misc/watchdog-error.png') . '"/>';
+    $details->check_user() ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
     $rows[] = array(
       '#pid' => $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
