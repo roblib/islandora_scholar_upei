@@ -269,6 +269,9 @@ class ScholarSolrResults extends IslandoraSolrResults {
               $l = l($value, 'fedora/repository/' . $doc->PID) . '</BR>';              
               $rows[$row][] = $l;
             }
+            elseif ($field == 'mads.topic') {
+              $rows[$row][] = implode(', ', array_unique($value));
+            }
             else {
               $rows[$row][] = ucfirst(ltrim($value));
             }
