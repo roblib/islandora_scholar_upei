@@ -34,7 +34,7 @@ class Scholar {
    */
   function showCitation() {
     $pid = $this->pid;
-    $tabset = islandora_scholar_build_citation($pid);
+    $tabset = islandora_scholar_build_citation($pid, 'citation');
     return $tabset;
   }
 
@@ -47,7 +47,7 @@ class Scholar {
     $pid = $this->pid;
     $item = new Fedora_Item($pid);
     $ds_array = $item->get_datastreams_list_as_array();
-    $tabset = islandora_scholar_build_citation($pid);
+    $tabset = islandora_scholar_build_citation($pid, 'thesis');
 
     if (array_key_exists('SIGNATURE', $ds_array)) {
 
@@ -919,7 +919,7 @@ function islandora_scholar_signature_delete_form_submit($form, &$form_state) {
  * @param type $pid
  * @return int 
  */
-function islandora_scholar_build_citation($pid) {
+function islandora_scholar_build_citation($pid, $type) {
 
   global $base_url;
   global $base_path;
@@ -986,11 +986,16 @@ function islandora_scholar_build_citation($pid) {
     $rows[] = array('Title', $data->title);
   }
 
-  if ($names != NULL) {
-    $rows[] = array('Authors', rtrim($names, ', '));
+  if ($type == 'thesis') {
+    var_dump($data->authors);
   }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Authors', rtrim($names, ', '));
+  else {
+    if ($names != NULL) {
+      $rows[] = array('Authors', rtrim($names, ', '));
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Authors', rtrim($names, ', '));
+    }
   }
 
   if ((string) $data->abstract != NULL) {

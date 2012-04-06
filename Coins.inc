@@ -22,6 +22,7 @@ class Coins {
   public $journal_title = NULL;
   public $abstract = NULL;
   public $names = NULL;
+  public $authors = NULL;
   public $reverse_names = NULL;
   public $topic = NULL;
   public $note = NULL;
@@ -49,6 +50,7 @@ class Coins {
     $this->mods = $xml;
 
     $full_name = array();
+    $authors = array();
     $i = 0;
     foreach ($xml->name as $name) {
       foreach ($name->namePart as $name_part) {
@@ -63,10 +65,14 @@ class Coins {
       if ($role == 'aut') {
         $role = 'author';
       }
+      if ($role == 'author') {
+        $authors[$i] = $fullname[$i];
+      }
       $full_name[$i] .= ' (' . $role . ')';
       $i++;
     }
     $this->names = $full_name;
+    $this->authors = $authors;
     
     $reverse = array();
     $i = 0;
