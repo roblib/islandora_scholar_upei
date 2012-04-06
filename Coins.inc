@@ -100,6 +100,9 @@ class Coins {
     $this->issn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $issn[0]);
 
     $this->date = $xml->part->date;
+    if ($this->date == NULL) {
+      $this->date = $xml->originInfo->dateCreated;
+    }
 
     $volume = $xml->xpath('//mods:part/mods:detail[@type="volume"]');
     $this->volume = $volume[0]->number;
