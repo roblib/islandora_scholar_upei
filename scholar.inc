@@ -1064,16 +1064,15 @@ function islandora_scholar_build_citation($pid, $type) {
     elseif (user_access('administer scholarly research')) {
       $rows[] = array('ISSN', $data->issn);
     }
-  }
 
-  if ((string) $topics != NULL) {
-    $rows[] = array('Subjects', rtrim($topics, ', '));
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Subjects', rtrim($topics, ', '));
-  }
 
-  if ($type == 'citation') {
+    if ((string) $topics != NULL) {
+      $rows[] = array('Subjects', rtrim($topics, ', '));
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Subjects', rtrim($topics, ', '));
+    }
+
     if ((string) $data->note != NULL) {
       $rows[] = array('Note', $data->note);
     }
