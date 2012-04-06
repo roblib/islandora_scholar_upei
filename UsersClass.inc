@@ -125,7 +125,7 @@ class UsersClass {
                              and $object <fedora-model:state> <info:fedora/fedora-system:def/model#Active>
                              and $title <mulgara:is> \'' . $user . '\')
                              order by $title';
-
+var_dump($query_string);
     $query_string = htmlentities(urlencode($query_string));
     $content = '';
     $url = variable_get('fedora_repository_url', 'http://localhost:8080/fedora/risearch');
