@@ -599,7 +599,8 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
   }
   $object_details = islandora_scholar_get_object_profile($pid);
 
-  if (array_key_exists('OBJ', $ds_array) && $user->name === $object_details['owner']) {
+  if (array_key_exists('OBJ', $ds_array)) {
+    if ($user->name === $object_details['owner'] || user_access('administer scholarly research')) {
 
     $obj_content = l(t('Download document'), 'download_ds/' . $pid . '/OBJ') . '</br>';
 
@@ -620,6 +621,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
         '#suffix' => '</br></br>',
         '#value' => t('Delete document'),
       );
+    }
     }
   }
 
