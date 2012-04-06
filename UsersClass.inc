@@ -119,12 +119,11 @@ class UsersClass {
   public function check_user() {
     module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
     $user = $this->cn;
-    $query_string = 'select $object $title $content from <#ri>
+    $query_string = 'select $object $title from <#ri>
                              where ($object <dc:title>$title
-                             and $object <fedora-model:hasModel> $content
+                             and $object <fedora-model:hasModel> <info:fedora/ir:researcherCModel>
                              and $object <fedora-model:state> <info:fedora/fedora-system:def/model#Active>
                              and $title <mulgara:is> \'' . $user . '\')
-                             minus $content <mulgara:is> <info:fedora/fedora-system:FedoraObject-3.0>
                              order by $title';
 
     $query_string = htmlentities(urlencode($query_string));
