@@ -553,7 +553,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
-  drupal_set_message('Button id ' . $form_state['clicked_button']['#id']);
+  
   switch ($form_state['clicked_button']['#id']) {
     case 'supp_delete':
       $object->purge_datastream('ZIP');
