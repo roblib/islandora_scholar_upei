@@ -134,9 +134,9 @@ class UsersClass {
     $content .= do_curl($url);
     $result = new DOMDocument();
     $result->loadXML($content);
-    var_dump($result);
     $entry = $result->getElementsByTagName('title')->item(0)->nodeValue;
     $text = $result->saveXML();
+    var_dump($text);
     if (isset($entry)) {
       return TRUE;
     }
