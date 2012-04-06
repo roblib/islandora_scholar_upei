@@ -129,7 +129,7 @@ function scholar_get_ldap_users_form($form, $query) {
   }
   else {
     drupal_set_message(t('No results were found!'), 'warning');
-    $form['#redirect'] = 'search_users';
+    drupal_goto('search_users');
   }
   return $form;
 }
