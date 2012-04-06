@@ -20,7 +20,7 @@ class Scholar {
     if ($file != NULL) {
       $xml = new SimpleXMLElement($file);
       $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
-      drupal_set_message('Embargo date: ' . $embargo_date);
+      drupal_set_message(t('Embargo date: @embargo_date', array('@embargo_date' => $embargo_date)));
     }
     else {
       drupal_set_message(t('No file specified!'), 'warning');
@@ -916,7 +916,8 @@ function islandora_scholar_signature_delete_form_submit($form, &$form_state) {
  * @global type $base_url
  * @global type $base_path
  * @global type $user
- * @param type $pid
+ * @param type $pid PID of the object that contains the citation data
+ * @param type $type The type of object, currently limited to citation or thesis
  * @return int 
  */
 function islandora_scholar_build_citation($pid, $type) {

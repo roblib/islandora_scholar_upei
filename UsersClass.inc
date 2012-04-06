@@ -207,7 +207,8 @@ function islandora_scholar_convert_dept($dept) {
     'Religious Studies',
     'Sociology and Anthropology',
     'Women\'s Studies',
-    'Blood',);//Not sure about this one
+    'Blood',
+    );//Not sure about this one
   
   $dept = str_replace($find, $replace, $dept);
   if (in_array($dept, $replace)) {

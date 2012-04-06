@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ */
+
+
+/**
  *
  * @param type $content_model
  * @param type $index_field

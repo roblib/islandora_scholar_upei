@@ -52,7 +52,7 @@ function scholar_browse_by_dept_form() {
 
     $form[$dept_title] = array(
       '#type' => 'fieldset',
-      '#title' => $dept_title . " " . $citations,
+      '#title' => t('@dept_title @citations', array('@dept_title' => $dept_title, '@citations' => $citations)),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
