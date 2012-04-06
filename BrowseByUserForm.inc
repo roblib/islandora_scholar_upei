@@ -45,7 +45,9 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
     $username = $arr->xpath('./arr[@name="mads.username"]/str');
     if ($username[0] != '') {
-      $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0])))));
+      $username_str = 'http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
+      var_dump($username_str);
+      $username_query = file_get_contents($username_str);
       $username_xml = new SimpleXMLElement($username_query);
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
         $citations[] = " (" . (string) $number_of_citations[0] . ")";
