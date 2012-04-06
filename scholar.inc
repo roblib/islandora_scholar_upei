@@ -967,7 +967,9 @@ function islandora_scholar_build_citation($pid, $type) {
 
   $headers = array('', '');
 
-  $names = implode($data->names, ', ');
+  $names = implode(', ', $data->names);
+  $authors = implode(', ', $data->authors);
+  $contributors = implode(', ', $data->contributors);
   $topics = implode($data->topic, ', ');
 
   if ($data->embargo_date != NULL) {
@@ -987,8 +989,18 @@ function islandora_scholar_build_citation($pid, $type) {
   }
 
   if ($type == 'thesis') {
-    var_dump($data->authors);
-    var_dump($data->names);
+    if ($authors != NULL) {
+      $rows[] = array('Authors', rtrim($authors, ', '));
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Authors', rtrim($authors, ', '));
+    }
+    if ($contributors != NULL) {
+      $rows[] = array('Contributors', rtrim($contributors, ', '));
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Contributors', rtrim($contributors, ', '));
+    }
   }
   else {
     if ($names != NULL) {

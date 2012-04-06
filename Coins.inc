@@ -23,6 +23,7 @@ class Coins {
   public $abstract = NULL;
   public $names = NULL;
   public $authors = NULL;
+  public $contributors = NULL;
   public $reverse_names = NULL;
   public $topic = NULL;
   public $note = NULL;
@@ -51,6 +52,7 @@ class Coins {
 
     $full_name = array();
     $authors = array();
+    $contributors = array();
     $i = 0;
     foreach ($xml->name as $name) {
       foreach ($name->namePart as $name_part) {
@@ -66,15 +68,17 @@ class Coins {
         $role = 'author';
       }
       if ($role == 'author') {
-        var_dump($role);
-        var_dump($full_name);
         $authors[] = $full_name[$i];
+      }
+      else {
+        $contributors[] = $full_name[$i];
       }
       $full_name[$i] .= ' (' . $role . ')';
       $i++;
     }
     $this->names = $full_name;
     $this->authors = $authors;
+    $this->contributors = $contributors;
     
     $reverse = array();
     $i = 0;
