@@ -122,7 +122,7 @@ class UsersClass {
                              where ($object <dc:title>$title
                              and $object <fedora-model:hasModel> <info:fedora/ir:researcherCModel>
                              and $object <fedora-model:state> <info:fedora/fedora-system:def/model#Active>
-                             and $title <mulgara:is> <info:fedora/\'ir:' . strtolower($user) . '>\')
+                             and $title <mulgara:is> <info:fedora/\'ir:' . strtolower($user) . '\'>)
                              order by $title';
 var_dump($query_string);
     $query_string = htmlentities(urlencode($query_string));
