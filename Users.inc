@@ -171,7 +171,9 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         $pid = 'ir:' . strtolower($details->cn);
         $dsid = 'MADS';
         $relationship = $collection_policy->getRelationship();
-        $ingest_file_locations = array();
+        $ingest_file_locations = array(
+          'TN' => drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png',
+        );
         $document = $xml;
 
         $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
