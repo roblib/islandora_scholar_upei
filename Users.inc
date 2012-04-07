@@ -204,8 +204,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
           }
         }
         $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
-        //$item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
-        $item->add_or_modify_by_reference($thumbnail, 'TN', "Thumbnail", 'image/png', 'E');
+        $item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
         // TODO: add thumbnail external reference
       }
     }
