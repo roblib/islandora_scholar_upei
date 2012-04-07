@@ -977,8 +977,8 @@ function islandora_scholar_build_citation($pid, $type) {
 
   $path = drupal_get_path('module', 'Fedora_Repository');
   $data = new Coins($pid);
-  var_dump($data->genre);
-  if (stripos((string) $data->genre[0], 'book')) {
+  var_dump((string) $data->genre);
+  if (stripos((string) $data->genre, 'book')) {
     drupal_set_message('Book');
   }
   
