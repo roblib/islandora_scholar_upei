@@ -978,9 +978,8 @@ function islandora_scholar_build_citation($pid, $type) {
   $path = drupal_get_path('module', 'Fedora_Repository');
   $data = new Coins($pid);
   $genre = $data->genre;
-  var_dump(stripos((string) $genre[0], 'book'));
   if (stripos((string) $genre[0], 'book') !== FALSE) {
-    drupal_set_message('Book');
+    $type = 'book';
   }
   
 //    Get MODS datastream and pull the ISSN from there.
