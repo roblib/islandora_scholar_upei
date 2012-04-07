@@ -151,7 +151,6 @@ function islandora_scholar_convert_dept($dept) {
     'Robertson Library',
     'Anatomy Physiology',
     'Biology',
-    'School_of_Business',
     'Business',
     'Chemistry',
     'Classics',
@@ -184,7 +183,6 @@ function islandora_scholar_convert_dept($dept) {
     'Biomedical Sciences',
     'Biology',
     'School of Business',//Is this correct?
-    'School of Business',//Is this correct?
     'Chemistry',
     'Classics',
     'Companion Animals',
@@ -210,6 +208,7 @@ function islandora_scholar_convert_dept($dept) {
     'Sociology and Anthropology',
     'Women\'s Studies',
     'Blood',
+    'School_of_Business', 
     );//Not sure about this one
   
   $dept = str_replace($find, $replace, $dept);
