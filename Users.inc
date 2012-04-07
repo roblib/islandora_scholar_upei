@@ -196,7 +196,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
           }
         }
         $depts = array_unique($depts);
-        foreach ($depts as $dept)
+        foreach ($depts as $dept) {
             $item->add_relationship('hasDepartment', $dept);
         }
         $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
