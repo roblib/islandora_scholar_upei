@@ -187,7 +187,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         foreach ($groups as $group) {
           drupal_set_message('Before: ' . $group);
           $dept = strtok($group, ',');
-          $dept = ltrim($group, 'cn=');
+          $dept = ltrim($dept, 'cn=');
           $dept = islandora_scholar_convert_dept($dept);
           drupal_set_message('After: ' . $dept);
           if ($dept) {
