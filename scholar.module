@@ -771,6 +771,10 @@ function scholar_clear_people_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   
   $pid_array = get_related_items_as_array('ir:people');
-  drupal_set_message(implode(', ', $pid_array));
+  foreach ($pid_array as $pid) {
+    $item = new Fedora_Item($pid);
+    $item->purge();
+    drupal_set_message(t('Object @pid purged!', array('@pid' => $pid)));
+  }
   
 }
