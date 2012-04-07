@@ -185,7 +185,9 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         $groups = $details->groupmembership;
         
         foreach ($groups as $group) {
+          drupal_set_message('Before: ' . $group);
           $group = islandora_scholar_convert_dept($group);
+          drupal_set_message('After: ' . $group);
           $item->add_relationship('hasDepartment', $group);
         }
         $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
