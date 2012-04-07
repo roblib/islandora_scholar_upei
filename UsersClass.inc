@@ -214,6 +214,7 @@ function islandora_scholar_convert_dept($dept) {
   
   $dept = str_replace($find, $replace, $dept);
   if (in_array($dept, $replace)) {
+    drupal_set_message('Dept found');
     $new_dept = $dept;
   }
   else {
