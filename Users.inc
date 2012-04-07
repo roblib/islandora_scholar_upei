@@ -183,7 +183,9 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         
         $item = new Fedora_Item($pid);
         $groups = $details->groupmembership;
+        
         foreach ($groups as $group) {
+          $group = islandora_scholar_convert_dept($group);
           $item->add_relationship('hasDepartment', $group);
         }
         $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
