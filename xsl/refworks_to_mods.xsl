@@ -15,19 +15,29 @@
             <xsl:for-each select="//reference/a1">
                 <name>
                     <xsl:attribute name="type">personal</xsl:attribute>
-                    <namePart>
-                        <xsl:attribute name="type">given</xsl:attribute>
-                        <xsl:value-of select="normalize-space(substring-after(text(), ','))"/>
-                    </namePart>
-                    <namePart>
-                        <xsl:attribute name="type">family</xsl:attribute>
-                        <xsl:value-of select="normalize-space(substring-before(text(), ','))"/>
-                    </namePart>
-                    <role>
-                        <roleTerm>
-                            <xsl:attribute name="authority">marcrelator</xsl:attribute>
-                            <xsl:attribute name="type">code</xsl:attribute>author</roleTerm>
-                    </role>
+                    <xsl:choose>
+                        <xsl:when test="contains(text(), ',')">
+                            <namePart>
+                                <xsl:attribute name="type">given</xsl:attribute>
+                                <xsl:value-of select="normalize-space(substring-after(text(), ','))"/>
+                            </namePart>
+                            <namePart>
+                                <xsl:attribute name="type">family</xsl:attribute>
+                                <xsl:value-of select="normalize-space(substring-before(text(), ','))"/>
+                            </namePart>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <namePart>
+                                <xsl:attribute name="type">family</xsl:attribute>
+                                <xsl:value-of select="normalize-space(text())"/>
+                            </namePart>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                        <role>
+                            <roleTerm>
+                                <xsl:attribute name="authority">marcrelator</xsl:attribute>
+                                <xsl:attribute name="type">code</xsl:attribute>author</roleTerm>
+                        </role>
                 </name>
             </xsl:for-each>            
             <xsl:for-each select="//reference/u1">
@@ -40,11 +50,6 @@
                     <xsl:value-of select="normalize-space(text())"/>
                 </identifier>
             </xsl:for-each>            
-            <originInfo>
-                <dateIssued>
-                    <xsl:value-of select="//reference/yr"/>
-                </dateIssued>
-            </originInfo>
             <typeOfResource>text</typeOfResource>
             <relatedItem>
                 <xsl:attribute name="type">host</xsl:attribute>
@@ -56,14 +61,15 @@
                         <xsl:value-of select="//reference/jo"/>
                     </title>
                 </titleInfo>
-                <xsl:if test="//reference/ad/text() [normalize-space(.) ]">
                     <originInfo>
+                        <xsl:if test="//reference/ad/text() [normalize-space(.) ]">
                         <place>
                             <placeTerm>
                                 <xsl:attribute name="type">text</xsl:attribute>
                                 <xsl:value-of select="//reference/ad"/>
                             </placeTerm>
                         </place>
+                        </xsl:if>
                         <xsl:if test="//reference/pp/text() [normalize-space(.) ]">
                             <place>
                                 <placeTerm>
@@ -72,8 +78,16 @@
                                 </placeTerm>
                             </place>
                         </xsl:if>
+                        <xsl:for-each select="//reference/pb">
+                            <publisher>
+                                <xsl:value-of select="normalize-space(text())"/>
+                            </publisher>
+                        </xsl:for-each>
+                        <dateIssued>
+                            <xsl:attribute name="keyDate">yes</xsl:attribute>
+                            <xsl:value-of select="//reference/yr"/>
+                        </dateIssued>
                     </originInfo>
-                </xsl:if>
                 <genre>
                     <xsl:value-of select="//reference/rt"/>
                 </genre>
@@ -94,13 +108,13 @@
                     <xsl:value-of select="//reference/id"/>
                 </identifier>
             </relatedItem>
-                <subject authority="local">
-                    <xsl:for-each select="//reference/k1">
+            <subject authority="local">
+                <xsl:for-each select="//reference/k1">
                     <topic>
-                    <xsl:value-of select="normalize-space(text())"/>
+                        <xsl:value-of select="normalize-space(text())"/>
                     </topic>
-                    </xsl:for-each>            
-                </subject>
+                </xsl:for-each>            
+            </subject>
             <abstract>
                 <xsl:value-of select="//reference/ab"/>
             </abstract>

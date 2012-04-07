@@ -28,6 +28,7 @@ class Coins {
   public $topic = NULL;
   public $note = NULL;
   public $embargo_date = NULL;
+  public $genre = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -139,6 +140,9 @@ class Coins {
     
     $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
     $this->embargo_date = $embargo_date[0];
+    
+    $genre = $xml->xpath('//mods:genre');
+    $this->genre = $genre;
   }
 
 }
