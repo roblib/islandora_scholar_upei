@@ -177,7 +177,9 @@ function islandora_scholar_convert_dept($dept) {
     'Soc Anth',
     'Womens Studies',
     'Blood',
+    'School_of_School of Business',
   );
+  
   $replace = array(
     'Robertson Library',
     'Biomedical Sciences',
