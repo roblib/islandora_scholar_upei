@@ -151,6 +151,7 @@ function islandora_scholar_convert_dept($dept) {
     'Robertson Library',
     'Anatomy Physiology',
     'Biology',
+    'School_of_Business',
     'Business',
     'Chemistry',
     'Classics',
@@ -174,7 +175,6 @@ function islandora_scholar_convert_dept($dept) {
     'Political Studies',
     'Psychology',
     'Religious Studies',
-    'School_of_Business',
     'Soc Anth',
     'Womens Studies',
     'Blood',
@@ -183,6 +183,7 @@ function islandora_scholar_convert_dept($dept) {
     'Robertson Library',
     'Biomedical Sciences',
     'Biology',
+    'School of Business',//Is this correct?
     'School of Business',//Is this correct?
     'Chemistry',
     'Classics',
@@ -206,7 +207,6 @@ function islandora_scholar_convert_dept($dept) {
     'Political Science',
     'Psychology',
     'Religious Studies',
-    'School of Business',//Is this correct?
     'Sociology and Anthropology',
     'Women\'s Studies',
     'Blood',
