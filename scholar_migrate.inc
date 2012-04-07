@@ -96,7 +96,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       $output = $xslt->transformToDoc($input);
       $xml = (string) $output->saveXML();
       drupal_set_message('Before: ' . $xml);
-      $xml = str_replace(array('&#39;', '&#039;', '&apos;', '$amp;#39;', '$amp;#039;', '$amp;apos;'), "'", $xml);
+      $xml = str_replace(array('&#39;', '&#039;', '&apos;', '&amp;#39;', '&amp;#039;', '&amp;apos;'), "'", $xml);
       drupal_set_message('After: ' . $xml);
       $u1 = str_replace(' ', '_', $input->getElementsByTagName('u1')->item(0)->nodeValue);
       $u2 = str_replace(' ', '_', $input->getElementsByTagName('u2')->item(0)->nodeValue);
