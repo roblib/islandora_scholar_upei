@@ -184,6 +184,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         $item = new Fedora_Item($pid);
         $groups = $details->groupmembership;
         
+        $depts = array();
         foreach ($groups as $group) {
           drupal_set_message('Before: ' . $group);
           $dept = strtok($group, ',');
@@ -191,8 +192,12 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
           $dept = islandora_scholar_convert_dept($dept);
           drupal_set_message('After: ' . $dept);
           if ($dept) {
-            $item->add_relationship('hasDepartment', $dept);
+            $depts[] = $dept;
           }
+        }
+        $depts = array_unique($depts);
+        foreach ($depts as $dept)
+            $item->add_relationship('hasDepartment', $dept);
         }
         $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
         $item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
