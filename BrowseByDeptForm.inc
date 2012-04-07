@@ -40,6 +40,11 @@ function scholar_browse_by_dept_form() {
     if ($dept_copy == 'Department of Biomedical Sciences') {
       $dept_copy = 'Biomedical%20Sciences"%20OR%20mods.department~~"Department%20of%20Biomedical%20Sciences';
     }
+    
+    if ($dept_copy == 'Applied Human Sciences') {
+      $dept_copy = 'Applied%20Human%20Sciences"%20OR%20mods.department~~"Home%20Economics';
+    }
+    
     // Replace some of the characters that may be found in the dept names so that they don't break
     // the solr query
     $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
