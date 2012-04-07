@@ -274,15 +274,6 @@ function scholar_menu() {
     'access arguments' => array('refworks entry'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
-
-  $items['clear_people'] = array(
-    'title' => 'Clear people',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholar_clear_people_form'),
-    'access callback' => 'user_access',
-    'access arguments' => array('migrate content'), // Use something fedora specific.
-    'type' => MENU_NORMAL_ITEM,
-  );
   
   return $items;
 }
@@ -753,28 +744,4 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 function scholar_cron() {
   module_load_include('inc', 'scholar', 'scholar_cron');
   scholar_cron_embargo_check();
-}
-
-function scholar_clear_people_form() {
-  $form = array();
-  
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Clear people'),
-  );
-  
-  return $form;
-}
-
-function scholar_clear_people_form_submit($form, &$form_state) {
-  module_load_include('inc', 'fedora_repository', 'api/fedora_collection');
-  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-  
-  $pid_array = get_related_items_as_array('ir:people');
-  foreach ($pid_array as $pid) {
-    $item = new Fedora_Item($pid);
-    $item->purge();
-    drupal_set_message(t('Object @pid purged!', array('@pid' => $pid)));
-  }
-  
 }

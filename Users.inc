@@ -180,28 +180,32 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
 
         $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
         $foxml->ingest();
-        
+
         $item = new Fedora_Item($pid);
         $groups = $details->groupmembership;
-        
+
         $depts = array();
-        foreach ($groups as $group) {
-          drupal_set_message('Before: ' . $group);
-          $dept = strtok($group, ',');
-          $dept = ltrim($dept, 'cn=');
-          $dept = islandora_scholar_convert_dept($dept);
-          $dept = str_replace(' ', '_', $dept);
-          drupal_set_message('After: ' . $dept);
-          if ($dept) {
-            $depts[] = $dept;
+
+        if ($groups != NULL) {
+          foreach ($groups as $group) {
+            drupal_set_message('Before: ' . $group);
+            $dept = strtok($group, ',');
+            $dept = ltrim($dept, 'cn=');
+            $dept = islandora_scholar_convert_dept($dept);
+            $dept = str_replace(' ', '_', $dept);
+            drupal_set_message('After: ' . $dept);
+            if ($dept) {
+              $depts[] = $dept;
+            }
+          }
+          $depts = array_unique($depts);
+          foreach ($depts as $dept) {
+            $item->add_relationship('hasDepartment', $dept);
           }
         }
-        $depts = array_unique($depts);
-        foreach ($depts as $dept) {
-            $item->add_relationship('hasDepartment', $dept);
-        }
         $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
-        $item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
+        //$item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
+        $item->add_or_modify_by_reference($thumbnail, 'TN', "Thumbnail", 'image/png', 'E');
         // TODO: add thumbnail external reference
       }
     }
@@ -382,8 +386,7 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
     $query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.username:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
   }
   else {
-  $query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
-    
+    $query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
   }
   if ($query != NULL) {
     $xml = new SimpleXMLElement($query);
