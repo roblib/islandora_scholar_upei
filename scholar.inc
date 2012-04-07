@@ -979,7 +979,7 @@ function islandora_scholar_build_citation($pid, $type) {
   $data = new Coins($pid);
   $genre = $data->genre;
   var_dump((string) $genre[0]);
-  if (stripos((string) $genre[0], 'book')) {
+  if (stripos((string) $genre[0], 'book') != FALSE) {
     drupal_set_message('Book');
   }
   
