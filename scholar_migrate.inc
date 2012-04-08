@@ -14,7 +14,7 @@ function scholar_migrate_refworks_table() {
   $url .= "?type=tuples&flush=TRUE&format=Sparql&limit=200&offset=0&lang=itql&stream=on&query=" . $query_string;
   $content .= do_curl($url);
   $query = new SimpleXMLElement($content);
-  $list = '';
+//  $list = '';
   $results = $query->results->result;
   foreach ($results as $result) {
     $pid = explode('/', $result->object['uri']);
@@ -23,9 +23,9 @@ function scholar_migrate_refworks_table() {
     $keys[] = $pid[1];
   }
 
-  $form['list'] = array(
-    '#value' => $list,
-  );
+//  $form['list'] = array(
+//    '#value' => $list,
+//  );
 
   if ($keys != NULL) {
 
