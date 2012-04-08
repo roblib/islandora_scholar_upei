@@ -13,6 +13,8 @@
  * @return type 
  */
 function islandora_autocomplete($content_model = '', $index_field = '', $string = '') {
+  var_dump($content_model);
+  var_dump($index_field);
   if ($content_model == '' || $index_field == '') {
     $output[''] = '';
     return drupal_json($output);
