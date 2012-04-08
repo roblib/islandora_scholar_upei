@@ -13,8 +13,6 @@
  * @return type 
  */
 function islandora_autocomplete($content_model = '', $index_field = '', $string = '') {
-  var_dump($content_model);
-  var_dump($index_field);
   if ($content_model == '' || $index_field == '') {
     $output[''] = '';
     return drupal_json($output);
@@ -22,6 +20,7 @@ function islandora_autocomplete($content_model = '', $index_field = '', $string 
   $string = str_replace('*', '', $string);
   if ($string == '') {
     $results = islandora_scholar_get_values($content_model, $index_field);
+    var_dump($results);
   }
   else {
     $query = $content_model . '%20AND%20' . $index_field . ':' . strtolower($string) . '*';
