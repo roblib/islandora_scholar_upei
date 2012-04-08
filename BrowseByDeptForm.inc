@@ -29,6 +29,10 @@ function scholar_browse_by_dept_form() {
       $dept_copy = 'Path Micro" OR mods.department~~"Pathology and Microbiology';
     }
     
+    if ($dept_copy == 'School of Business') {
+      $dept_copy = 'School of Business" OR mods.department~~"Business';
+    }
+    
     if ($dept_copy == 'Political Science') {
       $dept_copy = 'Political Studies" OR mods.department~~"Political Science';
     }
