@@ -33,6 +33,10 @@ function scholar_browse_by_dept_form() {
       $dept_copy = 'Political Studies" OR mods.department~~"Political Science';
     }
     
+    if ($dept_copy == 'Sociology and Anthropology') {
+      $dept_copy = 'Sociology and Anthropology" OR mods.department~~"Soc Anth';
+    }
+    
     if ($dept_copy == 'Women\'s Studies') {
       $dept_copy = 'Women\'s Studies" OR mods.department~~"Womens Studies';
     }
