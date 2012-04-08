@@ -47,13 +47,13 @@ function scholar_migrate_refworks_table() {
         'title' => array('#value' => $object),
       );
     }
-    $table['result'] = TRUE;
+//    $table['result'] = TRUE;
   }
   else {
-    $table = array(
-      '#value' => t('No refworks objects found!'),
-    );
-    $table['result'] = FALSE;
+//    $table = array(
+//      '#value' => t('No refworks objects found!'),
+//    );
+    $table = FALSE;
   }
   return $table;
 }
@@ -62,15 +62,20 @@ function scholar_migrate_refworks_form() {
 
   $table = scholar_migrate_refworks_table();
 
+  if ($table != FALSE) {
+  
   $form['table'] = array(
     'table' => $table,
   );
 
-  if ($table['result']) {
-
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Submit'),
+    );
+  }
+  else {
+    $form['table'] = array(
+      '#value' => t('No refworks objects found!'),
     );
   }
   return $form;
