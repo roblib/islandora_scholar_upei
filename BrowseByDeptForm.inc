@@ -30,7 +30,7 @@ function scholar_browse_by_dept_form() {
     }
     
     if ($dept_query == 'Political Science') {
-      $dept_query = 'Political Studies"%20OR%20mads.topic:"Political Science';
+      $dept_query = 'Political%20Studies"%20OR%20mads.topic:"Political%20Science';
     }
     
     if ($dept_copy == 'Pathology and Microbiology') {
