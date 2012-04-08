@@ -26,11 +26,11 @@ function scholar_browse_by_dept_form() {
     // Added in mapping for various departments that may be represented by
     // more than one name
     if ($dept_query == 'Pathology and Microbiology') {
-      $dept_query = 'Path Micro" OR mods.department:"Pathology and Microbiology';
+      $dept_query = 'Path Micro" OR mods.department~~"Pathology and Microbiology';
     }
     
     if ($dept_query == 'Political Science') {
-      $dept_query = 'Political Studies" OR mods.department:"Political Science';
+      $dept_query = 'Political Studies" OR mods.department~~"Political Science';
     }
     
     if ($dept_copy == 'Pathology and Microbiology') {
