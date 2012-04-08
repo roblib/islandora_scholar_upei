@@ -46,9 +46,9 @@
                 </xsl:call-template>
             </xsl:for-each>
             <xsl:for-each select="//reference/u2">
-                <identifier type="u2">
-                    <xsl:value-of select="normalize-space(text())"/>
-                </identifier>
+                <xsl:call-template name="links2">
+                    <xsl:with-param name="str" select="."/>
+                </xsl:call-template>
             </xsl:for-each>            
             <typeOfResource>text</typeOfResource>
             <relatedItem>
@@ -197,6 +197,25 @@
             </xsl:when>
             <xsl:otherwise>
                 <identifier type="u1">
+                    <xsl:value-of select="$str"/>
+                </identifier>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="links2">
+        <xsl:param name="str"/>
+        <xsl:choose>
+            <xsl:when test="contains($str,';')">
+                <identifier type="u2">
+                    <xsl:value-of select="normalize-space(substring-before($str,';'))"/>
+                </identifier>
+                <xsl:call-template name="links">
+                    <xsl:with-param name="str" select="normalize-space(substring-after($str,';'))"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <identifier type="u2">
                     <xsl:value-of select="$str"/>
                 </identifier>
             </xsl:otherwise>
