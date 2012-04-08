@@ -100,9 +100,9 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       $xslt->importStylesheet($xsl);
       $output = $xslt->transformToDoc($input);
       $xml = (string) $output->saveXML();
-      drupal_set_message('Before: ' . $xml);
+//      drupal_set_message('Before: ' . $xml);
       $xml = str_replace(array('&#39;', '&#039;', '&apos;', '&amp;#39;', '&amp;#039;', '&amp;apos;'), "'", $xml);
-      drupal_set_message('After: ' . $xml);
+//      drupal_set_message('After: ' . $xml);
       $u1 = $input->getElementsByTagName('u1')->item(0)->nodeValue;
       $u1 = explode(';', $u1);
       $u2 = $input->getElementsByTagName('u2')->item(0)->nodeValue;
