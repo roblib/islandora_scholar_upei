@@ -57,6 +57,7 @@ function islandora_scholar_get_values($query, $results) {
   else {
     $query = file_get_contents($solr_url . '/select?q=' . $query . '&fl=' . $results);
   }
+  var_dump($query);
   $result = new SimpleXMLElement($query);
   $number = $result->xpath('./result[@name="response"]/@numFound');
   if ((int) $number[0]['numFound'] < 1) {
