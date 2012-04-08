@@ -51,10 +51,10 @@ function islandora_scholar_get_values($query, $results) {
 
   if (is_array($results)) {
     $result_string = implode(',', $results);
-    $query = file_get_contents($solr_url . '/select?q=rels.hasModel' . $query . '&fl=' . $result_string);
+    $query = file_get_contents($solr_url . '/select?q=rels.hasModel:' . $query . '&fl=' . $result_string);
   }
   else {
-    $query = file_get_contents($solr_url . '/select?q=rels.hasModel' . $query . '&fl=' . $results);
+    $query = file_get_contents($solr_url . '/select?q=rels.hasModel:' . $query . '&fl=' . $results);
   }
   $result = new SimpleXMLElement($query);
   $number = $result->xpath('./result[@name="response"]/@numFound');
