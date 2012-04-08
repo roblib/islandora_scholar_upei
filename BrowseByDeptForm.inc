@@ -25,12 +25,12 @@ function scholar_browse_by_dept_form() {
     $dept_query = $dept_title = $dept_copy;    
     // Added in mapping for various departments that may be represented by
     // more than one name
-    if ($dept_query == 'Pathology and Microbiology') {
-      $dept_query = 'Path Micro" OR mods.department~~"Pathology and Microbiology';
+    if ($dept_copy == 'Pathology and Microbiology') {
+      $dept_copy = 'Path Micro" OR mods.department~~"Pathology and Microbiology';
     }
     
-    if ($dept_query == 'Political Science') {
-      $dept_query = 'Political Studies" OR mods.department~~"Political Science';
+    if ($dept_copy == 'Political Science') {
+      $dept_copy = 'Political Studies" OR mods.department~~"Political Science';
     }
     
     if ($dept_copy == 'Pathology and Microbiology') {
@@ -69,7 +69,7 @@ function scholar_browse_by_dept_form() {
       '#collapsed' => TRUE,
     );
 
-//    $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
+    $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
     $dept_query = str_replace(array(' ', '&', ':', 'mods.department'), array('%20', '%26', '%3A', 'mads.topic'), $dept_query);
     $query = 'http://localhost:8080/solr/select/?q=mads.topic_facet:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
     $result = file_get_contents($query);
