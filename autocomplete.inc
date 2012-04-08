@@ -23,6 +23,7 @@ function islandora_autocomplete($content_model = '', $index_field = '', $string 
   }
   else {
     $query = $content_model . '%20AND%20' . $index_field . ':' . strtolower($string) . '*';
+    var_dump($query);
     $results = islandora_scholar_get_values($query, $index_field);
   }
   if ($results == 'None') {
