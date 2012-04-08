@@ -84,7 +84,6 @@ function scholar_browse_by_dept_form() {
     $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
     $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
     $query = 'http://localhost:8080/solr/select/?q=mads.topic_facet:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
-    var_dump($query);
     $result = file_get_contents($query);
     $xml = new SimpleXMLElement($result);
     $array = $xml->xpath('//doc');
