@@ -92,14 +92,16 @@ function scholar_browse_by_dept_form() {
         $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0])))));
         $username_xml = new SimpleXMLElement($username_query);
         $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
-        $author_citations[] = " (" . (string) $number_of_citations[0] . ")";
+        $author_citations[] = $number_of_citations[0];
       }
       $users[] = $family[0] . ', ' . $given[0];
       $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
     }
     asort($users);
     foreach ($users as $key => $user) {
-      $output .= '<li>' . $link[$key] . $user . '</a><i>' . $author_citations[$key] . '</i></li>';
+      if ($author_citations[$key] > 0) {
+        $output .= '<li>' . $link[$key] . $user . '</a><i> (' . (string) $author_citations[$key] . ')</i></li>';
+      }
     }
     $output .= '</ul>';
 
