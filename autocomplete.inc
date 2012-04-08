@@ -17,14 +17,13 @@ function islandora_autocomplete($content_model = '', $index_field = '', $string 
     $output[''] = '';
     return drupal_json($output);
   }
+  $content_model = str_replace(':', '\:', $content_model);
   $string = str_replace('*', '', $string);
   if ($string == '') {
     $results = islandora_scholar_get_values($content_model, $index_field);
-    var_dump($results);
   }
   else {
     $query = $content_model . '%20AND%20' . $index_field . ':' . strtolower($string) . '*';
-    var_dump($query);
     $results = islandora_scholar_get_values($query, $index_field);
   }
   if ($results == 'None') {
@@ -57,7 +56,6 @@ function islandora_scholar_get_values($query, $results) {
   else {
     $query = file_get_contents($solr_url . '/select?q=rels.hasModel' . $query . '&fl=' . $results);
   }
-  var_dump($query);
   $result = new SimpleXMLElement($query);
   $number = $result->xpath('./result[@name="response"]/@numFound');
   if ((int) $number[0]['numFound'] < 1) {
