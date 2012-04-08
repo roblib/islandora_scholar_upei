@@ -130,6 +130,9 @@ class UsersClass {
     $url = variable_get('fedora_repository_url', 'http://localhost:8080/fedora/risearch');
     $url .= "?type=tuples&flush=TRUE&format=Sparql&limit=1000&offset=0&lang=itql&stream=on&query=" . $query_string;
     $content .= do_curl($url);
+    if ($content == NULL) {
+      return FALSE;
+    }
     $result = new DOMDocument();
     $result->loadXML($content);
     $entry = $result->getElementsByTagName('title')->item(0)->nodeValue;
