@@ -33,6 +33,10 @@ function scholar_browse_by_dept_form() {
       $dept_copy = 'Political Studies" OR mods.department~~"Political Science';
     }
     
+    if ($dept_copy == 'Women\'s Studies') {
+      $dept_copy = 'Women\'s Studies" OR mods.department~~"Womens Studies';
+    }
+    
     if ($dept_copy == 'Pathology and Microbiology') {
       $dept_copy = 'Path Micro" OR mods.department~~"Pathology and Microbiology';
     }
