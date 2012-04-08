@@ -55,7 +55,7 @@ function scholar_browse_by_dept_form() {
     
     // Replace some of the characters that may be found in the dept names so that they don't break
     // the solr query
-    $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
+    $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department_facet:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
     $dept_result = file_get_contents($dept_result_query);
     $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
@@ -70,13 +70,13 @@ function scholar_browse_by_dept_form() {
     );
 
     $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
-    $dept_query = str_replace(array(' ', '&', ':', 'mods.department'), array('%20', '%26', '%3A', 'mads.topic'), $dept_query);
+    $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
     $query = 'http://localhost:8080/solr/select/?q=mads.topic_facet:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
     $result = file_get_contents($query);
     $xml = new SimpleXMLElement($result);
     $array = $xml->xpath('//doc');
     $output = '<ul>';
-    $output .= l(t('Search all authors'), 'islandora/solr/search/mods.department:"' . str_replace('~~', ':', $dept_copy) . '"');
+    $output .= l(t('Search all authors'), 'islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
     $users = array();
     $user = '';
     $key = '';
