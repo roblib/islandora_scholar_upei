@@ -26,43 +26,43 @@ function scholar_browse_by_dept_form() {
     // Added in mapping for various departments that may be represented by
     // more than one name
     if ($dept_copy == 'Pathology and Microbiology') {
-      $dept_copy = 'Path Micro" OR mods.department~~"Pathology and Microbiology';
+      $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
     }
     
     if ($dept_copy == 'School of Business') {
-      $dept_copy = 'School of Business" OR mods.department~~"Business';
+      $dept_copy = 'School of Business" OR mods.department_facet~~"Business';
     }
     
     if ($dept_copy == 'Political Science') {
-      $dept_copy = 'Political Studies" OR mods.department~~"Political Science';
+      $dept_copy = 'Political Studies" OR mods.department_facet~~"Political Science';
     }
     
     if ($dept_copy == 'Sociology and Anthropology') {
-      $dept_copy = 'Sociology and Anthropology" OR mods.department~~"Soc Anth';
+      $dept_copy = 'Sociology and Anthropology" OR mods.department_facet~~"Soc Anth';
     }
     
     if ($dept_copy == 'Women\'s Studies') {
-      $dept_copy = 'Women\'s Studies" OR mods.department~~"Womens Studies';
+      $dept_copy = 'Women\'s Studies" OR mods.department_facet~~"Womens Studies';
     }
     
     if ($dept_copy == 'Pathology and Microbiology') {
-      $dept_copy = 'Path Micro" OR mods.department~~"Pathology and Microbiology';
+      $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
     }
     
     if ($dept_copy == 'Department of Biomedical Sciences') {
-      $dept_copy = 'Biomedical Sciences" OR mods.department~~"Department of Biomedical Sciences';
+      $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Department of Biomedical Sciences';
     }
     
     if ($dept_copy == 'Applied Human Sciences') {
-      $dept_copy = 'Applied Human Sciences" OR mods.department~~"Home Economics';
+      $dept_copy = 'Applied Human Sciences" OR mods.department_facet~~"Home Economics';
     }
     
     if ($dept_copy == 'Biomedical Sciences') {
-      $dept_copy = 'Biomedical Sciences" OR mods.department~~"Anatomy Physiology';
+      $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Anatomy Physiology';
     }
     
     if ($dept_copy == 'Computer Science and Information Technology') {
-      $dept_copy = 'Computer Science and Information Technology" OR mods.department~~"Computer Science and Info Technology';
+      $dept_copy = 'Computer Science and Information Technology" OR mods.department_facet~~"Computer Science and Info Technology';
     }
     
     // Replace some of the characters that may be found in the dept names so that they don't break
