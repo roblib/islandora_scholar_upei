@@ -210,7 +210,7 @@
                 <identifier type="u2">
                     <xsl:value-of select="normalize-space(substring-before($str,';'))"/>
                 </identifier>
-                <xsl:call-template name="links">
+                <xsl:call-template name="links2">
                     <xsl:with-param name="str" select="normalize-space(substring-after($str,';'))"/>
                 </xsl:call-template>
             </xsl:when>
