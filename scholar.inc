@@ -1245,12 +1245,14 @@ function islandora_scholar_build_citation($pid, $type) {
     '#content' => $citation,
     '#weight' => 1,
   );
-  
+
+  if (user_access('add scholarly research') == TRUE) {
     $tabset['first_tab']['tabs']['summary']['associate'] = array(
-    '#type' => 'submit',
-    '#value' => t('Associate'),
-    '#id' => 'assoc',
-  );
+      '#type' => 'submit',
+      '#value' => t('Associate'),
+      '#id' => 'assoc',
+    );
+  }
 
   if (user_access('add scholarly research') == TRUE) {
     if (array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
