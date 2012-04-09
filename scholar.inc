@@ -282,102 +282,20 @@ class Scholar {
       '#type' => 'tabpage',
       '#title' => t('Citations'),
     );
-//    $pids = array();
-//
-//    $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
-//    if ($deptname_query != NULL) {
-//      $xml = new SimpleXMLElement($deptname_query);
-//      $array = $xml->xpath('//doc');
-//      $array = array_filter($array);
-//      $rows = array();
-//      if (!empty($array)) {
-//        if (module_exists('scholar_tracking')) {
-//          $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
-//        }
-//        else {
-//          $header = array(t('Title'));
-//        }
-//        foreach ($array as $arr) {
-//          $pid = (string) $arr->str;
-//          $pids[] = $pid;
-//        }
-//      }
-//      else {
-//        $rows = NULL;
-//      }
-//    }
-//    else {
-//      $rows = NULL;
-//    }
-//
-//    if ($rows == NULL) {
-//      $content = t('No citations found!');
-//    }
-//    else {
-//      $content = theme('table', $header, $rows);
-//    }
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $names, $username, 'department'),
     );
 
-    
-    
-    
-    
-    
-    
     $tabset['first_tab']['tabs']['theses'] = array(
       '#type' => 'tabpage',
       '#title' => t('Theses'),
     );
-//    $thesis_pids = array();
-//
-//    $thesis_deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
-//    if ($thesis_deptname_query != NULL) {
-//      $thesis_xml = new SimpleXMLElement($thesis_deptname_query);
-//      $thesis_array = $thesis_xml->xpath('//doc');
-//      $thesis_array = array_filter($thesis_array);
-//      $thesis_rows = array();
-//      if (!empty($thesis_array)) {
-//        if (module_exists('scholar_tracking')) {
-//          $thesis_header = array(t('Title'), t('Times viewed'), t('Last viewed'));
-//        }
-//        else {
-//          $thesis_header = array(t('Title'));
-//        }
-//        foreach ($thesis_array as $thesis_arr) {
-//          $thesis_pid = (string) $thesis_arr->str;
-//          $thesis_pids[] = $thesis_pid;
-//        }
-//      }
-//      else {
-//        $thesis_rows = NULL;
-//      }
-//    }
-//    else {
-//      $thesis_rows = NULL;
-//    }
-//
-//    if ($thesis_rows == NULL) {
-//      $thesis_content = t('No citations found!');
-//    }
-//    else {
-//      $thesis_content = theme('table', $thesis_header, $thesis_rows);
-//    }
-//
+
     $tabset['first_tab']['tabs']['theses']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $names, $username, 'department'),
     );
-//    
-    
-    
-    
-    
-    
-    
-    
-    
+
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
