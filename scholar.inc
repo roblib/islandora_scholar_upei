@@ -273,7 +273,6 @@ class Scholar {
       $faculty = $xml->related->name->namePart;
       $note = $xml->note;
       $url = $xml->url;
-      var_dump($names);
       $header = array();
 
       $rows = array(
