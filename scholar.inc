@@ -284,7 +284,7 @@ class Scholar {
     );
     $pids = array();
 
-    $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
+    $deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
     if ($deptname_query != NULL) {
       $xml = new SimpleXMLElement($deptname_query);
       $array = $xml->xpath('//doc');
@@ -333,7 +333,7 @@ class Scholar {
     );
     $thesis_pids = array();
 
-    $thesis_deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
+    $thesis_deptname_query = @file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID&rows=10000');
     if ($thesis_deptname_query != NULL) {
       $thesis_xml = new SimpleXMLElement($thesis_deptname_query);
       $thesis_array = $thesis_xml->xpath('//doc');
