@@ -388,19 +388,23 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
 
   switch ($type) {
   case 'author-citations':
-    $query = @file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:citation%20AND%20mods.username:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
+    $url = 'http://localhost:8080/solr/select/?q=rels.hasModel:citation%20AND%20mods.username:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000';
+    $query = @file_get_contents($url);
     break;
   case 'department-citations':
-    $query = @file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
+    $url = 'http://localhost:8080/solr/select/?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000';
+    $query = @file_get_contents($url);
     break;
   case 'author-theses':
-    $query = @file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:thesis%20AND%20mods.username:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
+    $url = 'http://localhost:8080/solr/select/?q=rels.hasModel:thesis%20AND%20mods.username:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000';
+    $query = @file_get_contents($url);
     break;
   case 'department-theses':
-    $query = @file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000');
+    $url = 'http://localhost:8080/solr/select/?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(';', ' ', ($names))) . '"&fl=PID,mods.title,author&rows=10000';
+    $query = @file_get_contents($url);
     break;
   }
-  var_dump($query);
+  var_dump($url);
   if ($query != NULL) {
     $xml = new SimpleXMLElement($query);
     $array = $xml->xpath('//doc');
