@@ -597,7 +597,7 @@ function islandora_scholar_researcher_compare_form() {
   
   $form = array();
   
-  $existing_researchers_query = 'http://localhost:8080/solr/select?q=rels.masModel:researcher&fl=mads.username&rows=10000';
+  $existing_researchers_query = 'http://localhost:8080/solr/select?q=rels.hasModel:researcher&fl=mads.username&rows=10000';
   $existing_researchers_result = @file_get_contents($existing_researchers_query);
   
   if ($existing_researchers_result != NULL) {
@@ -610,7 +610,7 @@ function islandora_scholar_researcher_compare_form() {
     }
   }
   
-  $citation_researchers_query = 'http://localhost:8080/solr/select?q=rels.masModel:citation&fl=mods.username&rows=10000';
+  $citation_researchers_query = 'http://localhost:8080/solr/select?q=rels.hasModel:citation&fl=mods.username&rows=10000';
   $citation_researchers_result = @file_get_contents($citation_researchers_query);
   
   if ($citation_researchers_result != NULL) {
