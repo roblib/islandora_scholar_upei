@@ -208,7 +208,7 @@ class Scholar {
     );
 
     $tabset['first_tab']['tabs']['theses']['table'] = array(
-      '#value' => drupal_get_form('scholar_author_bibliography_form', $names, $username, 'author-theses'),
+      '#value' => drupal_get_form('scholar_author_bibliography_form', $username, $username, 'author-theses'),
     );
 
 
