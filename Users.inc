@@ -418,15 +418,15 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       $pids[] = $pid;
       $author_xml = $arr->xpath('./arr[@name="mods.author"]/str');
       var_dump($arr);
-      if ($author_xml) {
         foreach ($author_xml as $author) {
           $author_array[] = str_replace(',', ', ', $author);
-        }
+        if ($author_array) {
         $authors[$pid] = implode('; ', $author_array);
       }
       else {
         $authors[$pid] = t('Missing');
       }
+        }
       if ($arr->arr[1]['name'] == 'mods.title') {
 
         $titles[$pid] = ($arr->arr[1]->str);
