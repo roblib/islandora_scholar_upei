@@ -127,6 +127,7 @@ class Scholar {
     $tabset['first_tab']['tabs']['details'] = array(
       '#type' => 'tabpage',
       '#title' => t('Details'),
+      '#weight' => 0,
     );
 
     $tabset['first_tab']['tabs']['details']['tn'] = array(
@@ -151,7 +152,9 @@ class Scholar {
     $tabset['first_tab']['tabs']['citations'] = array(
       '#type' => 'tabpage',
       '#title' => t('Citations'),
+      '#weight' => 1,
     );
+    
     $pids = array();
 //    if ($citations_cache = cache_get('islandora_scholar_citation_cache')) {
 //      $rows = unserialize($citations_cache->data);
@@ -212,6 +215,7 @@ class Scholar {
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
+      '#weight' => 3,
     );
 
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
