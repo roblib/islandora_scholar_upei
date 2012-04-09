@@ -1239,17 +1239,17 @@ function islandora_scholar_build_citation($pid, $type) {
 
   $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '">UPEI Users Only: Check for Full Text</A></span><br /></div>';
 
-  $tabset['first_tab']['tabs']['summary']['associate'] = array(
-    '#type' => 'submit',
-    '#value' => t('Associate'),
-    '#id' => 'assoc',
-  );
-
   $tabset['first_tab']['tabs']['summary'] = array(
     '#type' => 'tabpage',
     '#title' => t('Citation'),
     '#content' => $citation,
     '#weight' => 1,
+  );
+  
+    $tabset['first_tab']['tabs']['summary']['associate'] = array(
+    '#type' => 'submit',
+    '#value' => t('Associate'),
+    '#id' => 'assoc',
   );
 
   if (user_access('add scholarly research') == TRUE) {
