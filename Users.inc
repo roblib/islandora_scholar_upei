@@ -404,7 +404,7 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
     $query = file_get_contents($url);
     break;
   }
-
+  var_dump($url);
   if ($query != NULL) {
     $xml = new SimpleXMLElement($query);
     $array = $xml->xpath('//doc');
