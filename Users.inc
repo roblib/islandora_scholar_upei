@@ -612,7 +612,7 @@ function islandora_scholar_researcher_compare_form() {
     }
   }
   
-  var_dump($existing_researchers);
+  var_dump(array_unique($existing_researchers));
   
   $citation_researchers_query = 'http://localhost:8080/solr/select?q=rels.hasModel:citation&fl=mods.username&rows=10000';
   $citation_researchers_result = @file_get_contents($citation_researchers_query);
@@ -628,9 +628,9 @@ function islandora_scholar_researcher_compare_form() {
     }
   }
   
-  var_dump($citation_researchers);
+  var_dump(array_unique($citation_researchers));
   
-  $diff = array_diff($citation_researchers, $existing_researchers);
+  $diff = array_diff(array_unique($citation_researchers), array_unique($existing_researchers));
   
   $diff_list = '<ul>';
   
