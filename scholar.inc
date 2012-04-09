@@ -37,6 +37,10 @@ class Scholar {
     $tabset = islandora_scholar_build_citation($pid, 'citation');
     return $tabset;
   }
+  
+  function showCitation_submit($form, &$form_state) {
+    drupal_set_message('Submitted!');
+  }
 
   /**
    * Build up the elements to show a thesis. This uses the citation build function
