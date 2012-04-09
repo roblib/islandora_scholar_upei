@@ -1250,8 +1250,8 @@ function islandora_scholar_build_citation($pid, $type) {
     $tabset['first_tab']['tabs']['summary']['associate'] = array(
       '#type' => 'submit',
       '#value' => t('Associate'),
-      '#prefix' => '<p>',
-      '#suffix' => '</p>',
+      '#prefix' => '<div>',
+      '#suffix' => '</div>',
       '#id' => 'assoc',
     );
   }
