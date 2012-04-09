@@ -241,6 +241,7 @@ class Scholar {
     $tabset['first_tab']['tabs']['details'] = array(
       '#type' => 'tabpage',
       '#title' => t('Details'),
+      '#weight' => 0,
     );
 
     $tabset['first_tab']['tabs']['details']['tn'] = array(
@@ -281,6 +282,7 @@ class Scholar {
     $tabset['first_tab']['tabs']['citations'] = array(
       '#type' => 'tabpage',
       '#title' => t('Citations'),
+      '#weight' => 1,
     );
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
@@ -290,6 +292,7 @@ class Scholar {
     $tabset['first_tab']['tabs']['theses'] = array(
       '#type' => 'tabpage',
       '#title' => t('Theses'),
+      '#weight' => 2,
     );
 
     $tabset['first_tab']['tabs']['theses']['table'] = array(
@@ -299,6 +302,7 @@ class Scholar {
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
       '#title' => t('Metrics'),
+      '#weight' => 3,
     );
 
     $tabset['first_tab']['tabs']['metrics']['content'] = array(
