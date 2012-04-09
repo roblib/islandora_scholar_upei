@@ -422,6 +422,12 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
         }
         $authors[$pid] = implode('; ', $author_array);
       }
+      elseif ($arr->arr[0]['name'] == 'author') {
+        foreach ($arr->arr[0] as $author) {
+          $author_array[] = str_replace(',', ', ', $author);
+        }
+        $authors[$pid] = implode('; ', $author_array);
+      }
       else {
         $authors[$pid] = t('Missing');
       }
