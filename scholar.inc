@@ -249,7 +249,7 @@ class Scholar {
 
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
-    if ($xml_str != NULL) {
+    if ($xmlstr != NULL) {
       $xml = new SimpleXMLElement($xmlstr);
 
       $names = $xml->authority->name->namePart;
