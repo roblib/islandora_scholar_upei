@@ -623,8 +623,9 @@ function islandora_scholar_researcher_compare_form() {
     $citation_researchers = array();
     foreach ($array as $arr) {
       $name = $arr->xpath('./arr[@name="mods.username"]/str');
+      if ($name) {
         $citation_researchers[] = strtolower($name[0]);
-      
+      }
     }
   }
   
