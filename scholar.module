@@ -275,6 +275,17 @@ function scholar_menu() {
     'type' => MENU_CALLBACK,
   );
   
+    $items['users_suggest'] = array(
+    'title' => 'Users suggest',
+    'description' => 'Migrate content from refworks',
+    'file' => 'Users.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_scholar_researcher_compare_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('migrate content'), // Use something fedora specific.
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
   return $items;
 }
 
