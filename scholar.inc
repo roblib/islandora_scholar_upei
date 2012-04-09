@@ -197,6 +197,17 @@ class Scholar {
     $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $username, $username, 'author-citations'),
     );
+    
+    $tabset['first_tab']['tabs']['theses'] = array(
+      '#type' => 'tabpage',
+      '#title' => t('Theses'),
+      '#weight' => 2,
+    );
+
+    $tabset['first_tab']['tabs']['theses']['table'] = array(
+      '#value' => drupal_get_form('scholar_author_bibliography_form', $names, $username, 'author-theses'),
+    );
+
 
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
