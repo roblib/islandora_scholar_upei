@@ -607,7 +607,7 @@ function islandora_scholar_researcher_compare_form() {
     foreach ($array as $arr) {
       $name = $arr->xpath('./arr[@name="mads.username"]/str');
       if ($name) {
-        $existing_researchers[] = $name[0];  
+        $existing_researchers[] = strtolower($name[0]);
       }
     }
   }
@@ -623,7 +623,7 @@ function islandora_scholar_researcher_compare_form() {
     $citation_researchers = array();
     foreach ($array as $arr) {
       $name = $arr->xpath('./arr[@name="mods.username"]/str');
-        $citation_researchers[] = $name[0];
+        $citation_researchers[] = strtolower($name[0]);
       
     }
   }
