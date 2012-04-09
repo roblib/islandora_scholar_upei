@@ -107,6 +107,7 @@ function scholar_browse_by_dept_form() {
         $username_xml = new SimpleXMLElement($username_query);
         $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
         $author_citations[] = $number_of_citations[0];
+        var_dump($author_citations);
       }
       $users[] = $family[0] . ', ' . $given[0];
       $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
