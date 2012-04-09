@@ -388,19 +388,19 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
 
   switch ($type) {
   case 'author-citations':
-    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author&rows=10000';
+    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
     $query = file_get_contents($url);
     break;
   case 'department-citations':
-    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author&rows=10000';
+    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
     $query = file_get_contents($url);
     break;
   case 'author-theses':
-    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author&rows=10000';
+    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
     $query = file_get_contents($url);
     break;
   case 'department-theses':
-    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(array(';' , ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author&rows=10000';
+    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(array(';' , ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
     $query = file_get_contents($url);
     break;
   }
@@ -416,7 +416,7 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       $author_array = array();
       $pid = (string) $arr->str;
       $pids[] = $pid;
-      if ($arr->arr[0]['name'] == 'author') {
+      if ($arr->arr[0]['name'] == 'author' || $arr->arr[0]['name'] == 'mods.author') {
         foreach ($arr->arr[0] as $author) {
           $author_array[] = str_replace(',', ', ', $author);
         }
