@@ -85,7 +85,6 @@ function scholar_browse_by_dept_form() {
     $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
     $query = 'http://localhost:8080/solr/select/?q=mads.topic_facet:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
     $result = file_get_contents($query);
-    var_dump($query);
     $xml = new SimpleXMLElement($result);
     $array = $xml->xpath('//doc');
     $output = '<ul>';
@@ -98,7 +97,6 @@ function scholar_browse_by_dept_form() {
     $array = array_filter($array);
     foreach ($array as $arr) {
       $family = $arr->xpath('./arr[@name="mads.family"]/str');
-      var_dump($family);
       $given = $arr->xpath('./arr[@name="mads.given"]/str');
       $fullname = $arr->xpath('./arr[@name="mads.fullname"]/str');
       $username = $arr->xpath('./arr[@name="mads.username"]/str');
@@ -107,7 +105,6 @@ function scholar_browse_by_dept_form() {
         $username_xml = new SimpleXMLElement($username_query);
         $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
         $author_citations[] = $number_of_citations[0];
-        var_dump($author_citations);
       }
       $users[] = $family[0] . ', ' . $given[0];
       $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
