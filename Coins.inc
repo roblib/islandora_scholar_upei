@@ -29,6 +29,7 @@ class Coins {
   public $note = NULL;
   public $embargo_date = NULL;
   public $genre = NULL;
+  public $family_names = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -54,6 +55,7 @@ class Coins {
     $full_name = array();
     $authors = array();
     $contributors = array();
+    $family_names = array();
     $i = 0;
     foreach ($xml->name as $name) {
       foreach ($name->namePart as $name_part) {
@@ -62,6 +64,7 @@ class Coins {
         }
         if ($name_part['type'] == 'family') {
           $full_name[$i] .= (string) rtrim($name_part, '.');
+          $family_names[$i] = (string) rtrim($name_part, '.');
         }
       }
       $role = (string) $name->role->roleTerm;
