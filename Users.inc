@@ -54,7 +54,7 @@ function islandora_scholar_ldap_search($query) {
     foreach ($query as $q) {
       $filter .= "(fullName=*$q*)";
     }
-    $filter .= ")";
+    $filter .= "))";
     var_dump($filter);
   }
   else {
