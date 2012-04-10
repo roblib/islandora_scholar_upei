@@ -752,24 +752,23 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['dept'] = $researcher_dept;
       $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
-    
-      $list = islandora_scholar_ldap_search($details->family_names);
 
-  $count = $list['count'];
+    $list = islandora_scholar_ldap_search($details->family_names);
 
-  for ($i = 0; $i < $count; $i++) {
+    $count = $list['count'];
 
-    $cn = strtolower($list[$i]['cn'][0]);
-    $users[$i]['uid'] = $list[$i]['uid'][0];
-    $users[$i]['cn'] = $cn;
-    $users[$i]['fullname'] = $list[$i]['fullname'][0];
-    $users[$i]['mail'] = $list[$i]['mail'][0];
-    $users[$i]['dept'] = $list[$i]['groupmembership'][0];
-    $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
-  }
+    for ($i = 0; $i < $count; $i++) {
 
-  $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
-  var_dump($researcher_keys);
+      $cn = strtolower($list[$i]['cn'][0]);
+      $users[$i]['uid'] = $list[$i]['uid'][0];
+      $users[$i]['cn'] = $cn;
+      $users[$i]['fullname'] = $list[$i]['fullname'][0];
+      $users[$i]['mail'] = $list[$i]['mail'][0];
+      $users[$i]['dept'] = $list[$i]['groupmembership'][0];
+      $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
+    }
+
+    $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), t('Source'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
@@ -791,11 +790,10 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       );
     }
   }
-  
+
   $rows2 = &$table['rows'];
 
-  
-   foreach ($users as $user) {
+  foreach ($users as $user) {
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
@@ -805,7 +803,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   }
 
   $rows = array_merge($rows1, $rows2);
-  var_dump($rows);
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
