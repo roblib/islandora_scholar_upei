@@ -779,10 +779,10 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
         '#options' => array_fill_keys($researcher_keys, ''),
       ),
     );
-    $rows = &$table['rows'];
+    $rows1 = &$table['rows'];
 
     foreach ($researcher_pids as $r_pid) {
-      $rows[] = array(
+      $rows1[] = array(
         '#pid' => $r_pid['pid'],
         'fullname' => array('#value' => check_plain($r_pid['name'])),
         'dept' => array('#value' => check_plain($r_pid['dept'])),
@@ -791,8 +791,11 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
   }
   
+  $rows2 = &$table['rows'];
+
+  
    foreach ($users as $user) {
-    $rows[] = array(
+    $rows2[] = array(
       '#pid' => 'ir:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
       'dept' => array('#value' => check_plain($user['dept'])),
@@ -800,6 +803,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     );
   }
 
+  $rows = array_merge($rows1, $rows2);
+  
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
