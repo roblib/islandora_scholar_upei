@@ -776,10 +776,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       );
     }
   }
-
-  $query = 
   
-  $list = islandora_scholar_ldap_search($query);
+  $list = islandora_scholar_ldap_search($details->family_names);
 
   if ($list == NULL) {
     return $list;
@@ -796,7 +794,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $usernames[$i] = $list[$i]['cn'][0];
   }
   
-  var_dump($researcher_pids);
+  var_dump($users);
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
