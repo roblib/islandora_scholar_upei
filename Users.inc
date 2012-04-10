@@ -723,10 +723,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
   }
   
-  $form['pids'] = array(
-    '#value' => implode(', ', $researcher_pids),
-  );
-  
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
@@ -739,6 +735,10 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   $form['citation'] = array(
     '#value' => $citation,
+  );
+  
+  $form['pids'] = array(
+    '#value' => implode(', ', $researcher_pids),
   );
   
   return $form;
