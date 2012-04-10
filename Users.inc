@@ -692,6 +692,7 @@ function islandora_scholar_associate_button_form_submit($form, &$form_state) {
 function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  module_load_include('inc', 'scholar', 'Coins');
   
   $pid = html_entity_decode($pid);
   
@@ -704,6 +705,25 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   $form['mods'] = array(
     '#value' => $mods,
+  );
+  
+  $details = new Coins($pid);
+  
+  $solr_url = 'http://localhost:8080/solr/select?q=mods.fullname:' . $details->authors . '&fl=PID,&rows=10000';
+  $solr_query = @file_get_contents($solr_url);
+  
+  if ($solr_query != NULL) {
+    $solr_xml = new SimpleXMLElement($solr_query);
+    $results = $xml->xpath('//doc');
+    $pids = array();
+    foreach ($results as $result) {
+      $pid = $result->xpath('./str[@name="PID"]/str');
+      $pids[] = $pid;
+    }
+  }
+  
+  $form['pids'] = array(
+    '#value' => implode(', ', $pids),
   );
   
   return $form;
