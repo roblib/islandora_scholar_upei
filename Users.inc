@@ -717,8 +717,9 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $results = $xml->xpath('//doc');
     $pids = array();
     foreach ($results as $result) {
-      $pid = $result->xpath('./str[@name="PID"]/str');
-      $pids[] = $pid;
+      var_dump($result);
+//      $pid = $result->xpath('./str[@name="PID"]/str');
+//      $pids[] = $pid;
     }
   }
   
