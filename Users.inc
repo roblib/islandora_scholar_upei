@@ -797,7 +797,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
-      'dept' => array('#value' => check_plain($user['groupmembership'])),
+      'dept' => array('#value' => check_plain($user['dept'])),
       'source' => array('#value' => check_plain('LDAP')),
     );
   }
