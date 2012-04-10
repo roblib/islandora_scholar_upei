@@ -775,17 +775,18 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
   }
 
-  $list = islandora_scholar_ldap_search('*belvadi*');
+  $list = islandora_scholar_ldap_search($details->family_names);
 
   $count = $list['count'];
 
   for ($i = 0; $i < $count; $i++) {
 
+    $cn = $list[$i]['cn'][0];
     $users[$i]['uid'] = $list[$i]['uid'][0];
-    $users[$i]['cn'] = $list[$i]['cn'][0];
+    $users[$i]['cn'] = $cn;
     $users[$i]['fullname'] = $list[$i]['fullname'][0];
     $users[$i]['mail'] = $list[$i]['mail'][0];
-    $researcher_keys[$list[$i]['cn']] = $list[$i]['cn'][0];
+    $researcher_keys[$cn] = $list[$i]['cn'][0];
   }
 
   foreach ($users as $user) {
