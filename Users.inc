@@ -710,14 +710,12 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   $solr_url = 'http://localhost:8080/solr/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.topic,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
-  var_dump($solr_url);
   if ($solr_query != NULL) {
     $solr_xml = new SimpleXMLElement($solr_query);
     $results = $solr_xml->xpath('//doc');
     $researcher_pids = array();
 
     foreach ($results as $result) {
-      var_dump($result);
       $researcher_pid = (string) $result->str;
       $researcher = explode(':', $researcher_pid);
       $researcher_pids[$researcher[1]]['pid'] = $researcher_pid;
@@ -749,7 +747,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
   }
 
-
   var_dump($researcher_pids);
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
@@ -770,4 +767,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   );
 
   return $form;
+}
+
+function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
+  
 }
