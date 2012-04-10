@@ -55,11 +55,9 @@ function islandora_scholar_ldap_search($query) {
       $filter .= "(fullName=*$q*)";
     }
     $filter .= "))";
-    var_dump($filter);
   }
   else {
     $filter = "(&(objectClass=person)(uid=*)(fullName=$query))";
-    var_dump($filter);
   }
   
   $attr = array("dn", "cn", "mail");
@@ -69,7 +67,6 @@ function islandora_scholar_ldap_search($query) {
   $list = ldap_get_entries($ds, $sr);
   
   $count = $list['count'];
-  var_dump($list);
   if ($count == 0) {
     return NULL;
   }
@@ -793,7 +790,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $usernames[$i] = $list[$i]['cn'][0];
   }
   
-  var_dump($list);
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
