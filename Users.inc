@@ -75,7 +75,7 @@ function scholar_get_ldap_users($query) {
   module_load_include('inc', 'scholar', 'UsersClass');
 
   $list = islandora_scholar_ldap_search($query);
-
+  var_dump($list);
   $count = $list['count'];
   
   for ($i = 0; $i < $count; $i++) {
