@@ -764,7 +764,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $users[$i]['cn'] = $cn;
     $users[$i]['fullname'] = $list[$i]['fullname'][0];
     $users[$i]['mail'] = $list[$i]['mail'][0];
-    $researcher_keys[$cn] = $list[$i]['cn'][0];
+    $researcher_keys['ir:' . $cn] = 'ir:' . $cn;
   }
 
     $table = array(
