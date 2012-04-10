@@ -36,6 +36,12 @@ function scholar_ldap_users_search_form_submit($form, &$form_state) {
 }
 
 
+/**
+ * Function to query LDAP
+ * @param type $query Can be a string or array. Works best with * at the start and
+ * end of the query (eg *username*)
+ * @return type 
+ */
 function islandora_scholar_ldap_search($query) {
   $ldap_host = variable_get('scholar_ldap_host', '');
   $ldap_port = variable_get('scholar_ldap_port', '389');
@@ -46,12 +52,12 @@ function islandora_scholar_ldap_search($query) {
   if (is_array($query)) {
     $filter = "(&(objectClass=person)(uid=*)(| ";
     foreach ($query as $q) {
-      $filter .= "(fullName=$query)";
+      $filter .= "(fullName=*$query*)";
     }
     $filter .= ")";
   }
   else {
-    $filter = "(&(objectClass=person)(uid=*)(fullName=$query))";
+    $filter = "(&(objectClass=person)(uid=*)(fullName=*$query*))";
   }
   
   $attr = array("dn", "cn", "mail");
