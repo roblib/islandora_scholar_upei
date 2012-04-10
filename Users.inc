@@ -761,14 +761,16 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
       $cn = strtolower($list[$i]['cn'][0]);
       $groups = array();
-      foreach ($list[$i]['groupmembership'] as $group) {
-            $dept = strtok($group, ',');
-            $dept = ltrim($dept, 'cn=');
-            $dept = islandora_scholar_convert_dept($dept);
-            $dept = str_replace(' ', '_', $dept);
-            if ($dept) {
-              $groups[] = $dept;
-            }
+      if (is_array($list[$i]['groupmembership'])) {
+        foreach ($list[$i]['groupmembership'] as $group) {
+          $dept = strtok($group, ',');
+          $dept = ltrim($dept, 'cn=');
+          $dept = islandora_scholar_convert_dept($dept);
+          $dept = str_replace(' ', '_', $dept);
+          if ($dept) {
+            $groups[] = $dept;
+          }
+        }
       }
       $groups = array_unique($groups);
       $users[$i]['uid'] = $list[$i]['uid'][0];
