@@ -791,7 +791,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $usernames[$i] = $list[$i]['cn'][0];
   }
   
-  var_dump($users);
+  var_dump($list);
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
