@@ -719,11 +719,15 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     foreach ($results as $result) {
       var_dump($result);
       $researcher_pid = (string) $result->str;
-      var_dump($researcher_pid);
-      $researcher_pids[] = $researcher_pid;
+      $researcher = explode(':', $researcher_pid);
+      $researcher_pids[$researcher[0]]['pid'] = $researcher_pid;
+      $researcher_name = (string) $result->arr[0]->str;
+      $researcher_pids[$researcher[0]]['name'] = $researcher_name;
+      $researcher_dept = (string) $result->arr[1]->str;
+      $researcher_pids[$researcher[0]]['dept'] = $researcher_dept;
     }
   }
-  
+  var_dump($researcher_pids);
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
