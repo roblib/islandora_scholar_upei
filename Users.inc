@@ -47,10 +47,7 @@ function islandora_scholar_ldap_search($query) {
   $ldap_port = variable_get('scholar_ldap_port', '389');
   $ds = ldap_connect($ldap_host, $ldap_port) or die("Could not connect to ldap host!");
 
-  $basedns = variable_get('scholar_ldap_basedn', '');
-  
-  $basedns = explode("\n", $basedns);
-  var_dump($basedns);
+  $basedn = variable_get('scholar_ldap_basedn', '');
   
   if (is_array($query)) {
     $filter = "(&(objectClass=person)(uid=*)(|";
@@ -67,11 +64,9 @@ function islandora_scholar_ldap_search($query) {
   
   $attr = array("dn", "cn", "mail");
 
-  foreach ($basedns as $basedn) {
   $sr = ldap_list($ds, $basedn, $filter);
 
-  $list[] = ldap_get_entries($ds, $sr);
-  }
+  $list = ldap_get_entries($ds, $sr);
   
   $count = $list['count'];
 
