@@ -948,6 +948,7 @@ function islandora_scholar_build_citation($pid, $type) {
   module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
   module_load_include('inc', 'scholar', 'Coins');
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+  module_load_include('inc', 'scholar', 'Users');
   drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
   drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
@@ -1195,7 +1196,9 @@ function islandora_scholar_build_citation($pid, $type) {
 
   $citation .= '<div class="scholar_refworks_link">' . $refworks_link . '</div>';
 
-  $citation .= '<div>' . drupal_get_form('islandora_scholar_associate_button_form', $pid) . '</div>';
+  if (user_access('add scholarly research') == TRUE) {
+    $citation .= '<div>' . drupal_get_form('islandora_scholar_associate_button_form', $pid) . '</div>';
+  }
 
   //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
   //    Only get the ROMEO data if an ISSN exists and the user is authenticated.
@@ -1247,16 +1250,6 @@ function islandora_scholar_build_citation($pid, $type) {
     '#content' => $citation,
     '#weight' => 1,
   );
-
-  if (user_access('add scholarly research') == TRUE) {
-    $tabset['first_tab']['tabs']['summary']['associate'] = array(
-      '#type' => 'submit',
-      '#value' => t('Associate'),
-      '#prefix' => '<div>',
-      '#suffix' => '</div>',
-      '#id' => 'assoc',
-    );
-  }
 
   if (user_access('add scholarly research') == TRUE) {
     if (array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
