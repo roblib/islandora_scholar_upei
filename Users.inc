@@ -670,9 +670,9 @@ function islandora_scholar_associate_button_form($pid) {
   
   $form['associate'] = array(
     '#type' => 'submit',
-//    '#value' => t('Associate'),
+    '#value' => t('Associate'),
   );
-  
+  var_dump($pid);
   $form['pid'] = array(
     '#type' => 'hidden',
     '#value' => $pid,
