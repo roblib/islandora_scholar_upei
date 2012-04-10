@@ -64,7 +64,7 @@ function islandora_scholar_ldap_search($query) {
   
   $attr = array("dn", "cn", "mail");
 
-  $sr = ldap_list($ds, $basedn, $filter);
+  $sr = ldap_search($ds, $basedn, $filter, array('uid', 'cn', 'fullname', 'mail'));
 
   $list = ldap_get_entries($ds, $sr);
   
