@@ -693,6 +693,9 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'scholar', 'Coins');
+  module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
+
+  $csl = 'default'; // @todo This needs to be changed to a value stored in the db
   
   $pid = html_entity_decode($pid);
   
@@ -703,10 +706,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $mods = $item->get_datastream_dissemination('MODS');
   $mods_xml = new SimpleXMLElement($mods);
   
-  $form['mods'] = array(
-    '#value' => $mods,
-  );
-  
   $details = new Coins($pid);
   
   $solr_url = 'http://localhost:8080/solr/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,&rows=10000';
@@ -715,17 +714,31 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   if ($solr_query != NULL) {
     $solr_xml = new SimpleXMLElement($solr_query);
     $results = $solr_xml->xpath('//doc');
-    $pids = array();
+    $researcher_pids = array();
     foreach ($results as $result) {
       var_dump($result);
-      $pid = (string) $result->str;
-      var_dump($pid);
-      $pids[] = $pid;
+      $researcher_pid = (string) $result->str;
+      var_dump($researcher_pid);
+      $researcher_pids[] = $researcher_pid;
     }
   }
   
   $form['pids'] = array(
-    '#value' => implode(', ', $pids),
+    '#value' => implode(', ', $researcher_pids),
+  );
+  
+  $style = citeproc_style($csl);
+  $bibliography = new CiteProcJSBibliography($style);
+  $mods = islandora_bibilgraphy_form_get_mods($pid);
+  if ($mods) {
+    $ref = citeproc_citation_from_mods($mods);
+    $bibliography->addCitation($ref);
+  }
+  $citation = "<h3>Citation view</h3>";
+  $citation .= $bibliography->render();
+  
+  $form['citation'] = array(
+    '#value' => $citation,
   );
   
   return $form;
