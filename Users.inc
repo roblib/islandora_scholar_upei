@@ -51,7 +51,7 @@ function islandora_scholar_ldap_search($query) {
   if (is_array($query)) {
     $filter = "(&(objectClass=person)(uid=*)(|";
     foreach ($query as $q) {
-      $filter .= "(fullName=*$q*)";
+      $filter .= "(fullName=* $q *)";
     }
     $filter .= "))";
   }
