@@ -848,7 +848,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   );
   
   $form['existing'] = array(
-    '#value' => implode(', ', $details->username),
+    '#value' => '<ul><li>' . implode('</li><li>', $details->username) . '</li></ul>',
     '#prefix' => '<h3>Already associated</h3>',
   );
 
