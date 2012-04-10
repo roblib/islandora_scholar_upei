@@ -675,7 +675,7 @@ function islandora_scholar_associate_button_form(&$form_state, $pid = NULL) {
 
   $form['pid'] = array(
     '#type' => 'hidden',
-    '#value' => $pid,
+    '#value' => htmlentities($pid),
   );
   
   return $form;
@@ -701,7 +701,7 @@ function islandora_scholar_associate_citation_form($pid) {
   $mods_xml = new SimpleXMLElement($mods);
   
   $form['mods'] = array(
-    '#value' => $mods,
+    '#value' => html_entity_decode($mods),
   );
   
   return $form;
