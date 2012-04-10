@@ -756,7 +756,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $list = islandora_scholar_ldap_search($details->family_names);
 
     $count = $list['count'];
-
+    var_dump($list);
     for ($i = 0; $i < $count; $i++) {
 
       $cn = strtolower($list[$i]['cn'][0]);
@@ -764,7 +764,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $users[$i]['cn'] = $cn;
       $users[$i]['fullname'] = $list[$i]['fullname'][0];
       $users[$i]['mail'] = $list[$i]['mail'][0];
-      $users[$i]['dept'] = $list[$i]['groupmembership'][0];
+      $users[$i]['dept'] = $list[$i]['groupmembership'];
       $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
     }
 
@@ -794,7 +794,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $rows2 = &$table['rows'];
 
   foreach ($users as $user) {
-    var_dump($user);
+
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
