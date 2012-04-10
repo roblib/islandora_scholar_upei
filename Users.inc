@@ -756,7 +756,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $list = islandora_scholar_ldap_search($details->family_names);
 
     $count = $list['count'];
-    var_dump($list);
+//    var_dump($list);
     for ($i = 0; $i < $count; $i++) {
 
       $cn = strtolower($list[$i]['cn'][0]);
