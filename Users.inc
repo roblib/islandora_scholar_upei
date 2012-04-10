@@ -711,15 +711,12 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   $solr_url = 'http://localhost:8080/solr/select?q=mods.fullname:' . implode('%20OR%20', $details->family_names) . '&fl=PID,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
-  var_dump($solr_url);
-  var_dump($solr_query);
+  
   if ($solr_query != NULL) {
     $solr_xml = new SimpleXMLElement($solr_query);
     $results = $solr_xml->xpath('//doc');
-    var_dump($results);
     $pids = array();
     foreach ($results as $result) {
-      var_dump($result);
       $pid = $result->xpath('./str[@name="PID"]/str');
       $pids[] = $pid;
     }
