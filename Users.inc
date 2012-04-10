@@ -758,33 +758,33 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
 
-    $list = islandora_scholar_ldap_search($details->family_names);
-
-    $count = $list['count'];
-//    var_dump($list);
-    for ($i = 0; $i < $count; $i++) {
-
-      $cn = strtolower($list[$i]['cn'][0]);
-      $ldap_groups = array();
-      if (is_array($list[$i]['groupmembership'])) {
-        foreach ($list[$i]['groupmembership'] as $ldap_group) {
-          $ldap_dept = strtok($ldap_group, ',');
-          $ldap_dept = ltrim($ldap_dept, 'cn=');
-          $ldap_dept = islandora_scholar_convert_dept($ldap_dept);
-          $ldap_dept = str_replace(' ', '_', $ldap_dept);
-          if ($ldap_dept) {
-            $ldap_groups[] = $ldap_dept;
-          }
-        }
-      }
-      $ldap_groups = array_unique($ldap_groups);
-      $users[$i]['uid'] = $list[$i]['uid'][0];
-      $users[$i]['cn'] = $cn;
-      $users[$i]['fullname'] = $list[$i]['fullname'][0];
-      $users[$i]['mail'] = $list[$i]['mail'][0];
-      $users[$i]['dept'] = implode(', ', $ldap_groups);
-      $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
-    }
+//    $list = islandora_scholar_ldap_search($details->family_names);
+//
+//    $count = $list['count'];
+////    var_dump($list);
+//    for ($i = 0; $i < $count; $i++) {
+//
+//      $cn = strtolower($list[$i]['cn'][0]);
+//      $ldap_groups = array();
+//      if (is_array($list[$i]['groupmembership'])) {
+//        foreach ($list[$i]['groupmembership'] as $ldap_group) {
+//          $ldap_dept = strtok($ldap_group, ',');
+//          $ldap_dept = ltrim($ldap_dept, 'cn=');
+//          $ldap_dept = islandora_scholar_convert_dept($ldap_dept);
+//          $ldap_dept = str_replace(' ', '_', $ldap_dept);
+//          if ($ldap_dept) {
+//            $ldap_groups[] = $ldap_dept;
+//          }
+//        }
+//      }
+//      $ldap_groups = array_unique($ldap_groups);
+//      $users[$i]['uid'] = $list[$i]['uid'][0];
+//      $users[$i]['cn'] = $cn;
+//      $users[$i]['fullname'] = $list[$i]['fullname'][0];
+//      $users[$i]['mail'] = $list[$i]['mail'][0];
+//      $users[$i]['dept'] = implode(', ', $ldap_groups);
+//      $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
+//    }
 
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
     $table = array(
