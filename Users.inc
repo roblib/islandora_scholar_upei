@@ -709,7 +709,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   $details = new Coins($pid);
   
-  $solr_url = 'http://localhost:8080/solr/select?q=mods.fullname:' . implode(' OR ', $details->family_names) . '&fl=PID,&rows=10000';
+  $solr_url = 'http://localhost:8080/solr/select?q=mods.fullname:' . implode('%20OR%20', $details->family_names) . '&fl=PID,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
   var_dump($solr_url);
   var_dump($solr_query);
