@@ -788,7 +788,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
     $table = array(
-      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), ''),
+      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), t('Added'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
       '#tree' => TRUE,
       'rows' => array(),
@@ -800,12 +800,14 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $rows1 = &$table['rows'];
 
     foreach ($researcher_pids as $r_pid) {
+      in_array($r_pid['cn'], $details->username) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
       $rows1[] = array(
         '#pid' => $r_pid['pid'],
         'fullname' => array('#value' => check_plain($r_pid['name'])),
         'cn' => array('#value' => check_plain($r_pid['cn'])),
         'dept' => array('#value' => check_plain($r_pid['dept'])),
         'source' => array('#value' => check_plain('Authority records')),
+        'image' => array('#value' => $user_image),
       );
     }
   }
