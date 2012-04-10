@@ -727,7 +727,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
 
     $table = array(
-      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), ''),
+      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), t('Source'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
       '#tree' => TRUE,
       'rows' => array(),
@@ -743,6 +743,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
         '#pid' => $r_pid['pid'],
         'fullname' => array('#value' => check_plain($r_pid['name'])),
         'dept' => array('#value' => check_plain($r_pid['dept'])),
+        'source' => array('#value' => check_plain('Authority records')),
       );
     }
   }
@@ -774,6 +775,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   $form['names'] = array(
     '#value' => $name_list,
+    '#prefix' => '<h3>Author list</h3>',
   );
 
   $form['table'] = array(
