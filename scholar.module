@@ -290,8 +290,8 @@ function scholar_menu() {
     'title' => 'Associate citation',
     'description' => 'Associate citation with researcher and department',
     'file' => 'Users.inc',
-    'page callback' => 'islandora_scholar_associate_citation_form',
-    'page arguments' => array(1),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_scholar_associate_citation_form', 1),
     'access callback' => 'user_access',
     'access arguments' => array('migrate content'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
