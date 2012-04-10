@@ -752,6 +752,29 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['dept'] = $researcher_dept;
       $researcher_keys[$researcher[1]] = $researcher_pid;
     }
+    
+      $list = islandora_scholar_ldap_search($details->family_names);
+
+  $count = $list['count'];
+
+  for ($i = 0; $i < $count; $i++) {
+
+    $cn = $list[$i]['cn'][0];
+    $users[$i]['uid'] = $list[$i]['uid'][0];
+    $users[$i]['cn'] = $cn;
+    $users[$i]['fullname'] = $list[$i]['fullname'][0];
+    $users[$i]['mail'] = $list[$i]['mail'][0];
+    $researcher_keys[$cn] = $list[$i]['cn'][0];
+  }
+
+  foreach ($users as $user) {
+    $rows[] = array(
+      '#pid' => check_plain('ldap'),
+      'fullname' => array('#value' => check_plain($user['fullname'])),
+      'dept' => array('#value' => check_plain($user['dept'])),
+      'source' => array('#value' => check_plain('LDAP')),
+    );
+  }
 
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), t('Source'), ''),
@@ -773,29 +796,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
         'source' => array('#value' => check_plain('Authority records')),
       );
     }
-  }
-
-  $list = islandora_scholar_ldap_search($details->family_names);
-
-  $count = $list['count'];
-
-  for ($i = 0; $i < $count; $i++) {
-
-    $cn = $list[$i]['cn'][0];
-    $users[$i]['uid'] = $list[$i]['uid'][0];
-    $users[$i]['cn'] = $cn;
-    $users[$i]['fullname'] = $list[$i]['fullname'][0];
-    $users[$i]['mail'] = $list[$i]['mail'][0];
-    $researcher_keys[$cn] = $list[$i]['cn'][0];
-  }
-
-  foreach ($users as $user) {
-    $rows[] = array(
-      '#pid' => check_plain('ldap'),
-      'fullname' => array('#value' => check_plain($user['fullname'])),
-      'dept' => array('#value' => check_plain($user['dept'])),
-      'source' => array('#value' => check_plain('LDAP')),
-    );
   }
 
   $style = citeproc_style($csl);
