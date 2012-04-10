@@ -666,13 +666,13 @@ function islandora_scholar_researcher_compare_form() {
   return $form;
 }
 
-function islandora_scholar_associate_button_form($pid) {
+function islandora_scholar_associate_button_form(&$form_state, $pid = NULL) {
   
   $form['associate'] = array(
     '#type' => 'submit',
     '#value' => t('Associate'),
   );
-  var_dump($pid);
+
   $form['pid'] = array(
     '#type' => 'hidden',
     '#value' => $pid,
