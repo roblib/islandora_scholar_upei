@@ -55,6 +55,7 @@ function islandora_scholar_ldap_search($query) {
       $filter .= "(fullName=*$q*)";
     }
     $filter .= ")";
+    var_dump($filter);
   }
   else {
     $filter = "(&(objectClass=person)(uid=*)(fullName=$query))";
