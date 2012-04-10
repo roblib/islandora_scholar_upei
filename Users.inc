@@ -700,5 +700,9 @@ function islandora_scholar_associate_citation_form($pid) {
   $mods = $item->get_datastream_dissemination('MODS');
   $mods_xml = new SimpleXMLElement($mods);
   
+  $form['mods'] = array(
+    '#value' => $mods,
+  );
+  
   return $form;
 }
