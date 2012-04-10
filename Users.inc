@@ -814,13 +814,14 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $rows2 = &$table['rows'];
 
   foreach ($users as $user) {
-
+  in_array(strtolower($user['cn']), $details->username) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
       'cn' => array('#value' => check_plain($user['cn'])),
       'dept' => array('#value' => check_plain($user['dept'])),
       'source' => array('#value' => check_plain('LDAP')),
+      'image' => array('#value' => $user_image),
     );
   }
 
