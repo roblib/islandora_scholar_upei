@@ -716,7 +716,18 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $solr_xml = new SimpleXMLElement($solr_query);
     $results = $solr_xml->xpath('//doc');
     $researcher_pids = array();
-    $rows = &$table['rows'];
+    
+    $table = array(
+    '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), ''),
+    '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
+    '#tree' => TRUE,
+    'rows' => array(),
+    'selections' => array(
+      '#type' => 'checkboxes',
+      '#options' => array_fill_keys($usernames, ''),
+    ),
+  );
+  $rows = &$table['rows'];
     
     foreach ($results as $result) {
       var_dump($result);
@@ -734,20 +745,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       'dept' => array('#value' => check_plain($researcher_dept)),
     );
     }
-    
-    $table = array(
-    '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), ''),
-    '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
-    '#tree' => TRUE,
-    'rows' => array(),
-    'selections' => array(
-      '#type' => 'checkboxes',
-      '#options' => array_fill_keys($usernames, ''),
-    ),
-  );
   }
 
-  
   
   var_dump($researcher_pids);
   $style = citeproc_style($csl);
