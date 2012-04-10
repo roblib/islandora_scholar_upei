@@ -30,7 +30,6 @@ class Coins {
   public $embargo_date = NULL;
   public $genre = NULL;
   public $family_names = NULL;
-  public $names = NULL;
   public $full_names = NULL;
 
   /**
