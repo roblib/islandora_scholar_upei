@@ -743,7 +743,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     'rows' => array(),
     'selections' => array(
       '#type' => 'checkboxes',
-      '#options' => array_fill_keys($researcher_pids[$researcher[1]]['pid'], ''),
+//      '#options' => array_fill_keys($researcher_pids[$researcher[1]]['pid'], ''),
     ),
   );
   }
