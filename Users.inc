@@ -721,6 +721,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   module_load_include('inc', 'scholar', 'Coins');
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
+  module_load_include('inc', 'scholar', 'UsersClass');
 
   $csl = 'default'; // @todo This needs to be changed to a value stored in the db
 
