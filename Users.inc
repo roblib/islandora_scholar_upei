@@ -736,7 +736,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   $details = new Coins($pid);
   $usernames = $details->username;
-
+var_dump($usernames);
   $solr_url = 'http://localhost:8080/solr/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.username,mads.topic,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
   if ($solr_query != NULL) {
@@ -800,7 +800,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
     foreach ($researcher_pids as $r_pid) {
       var_dump($r_pid['cn']);
-      var_dump($usernames);
       in_array($r_pid['cn'], $details->username) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
       $rows1[] = array(
         '#pid' => $r_pid['pid'],
