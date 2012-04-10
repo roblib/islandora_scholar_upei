@@ -716,7 +716,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $solr_xml = new SimpleXMLElement($solr_query);
     $results = $solr_xml->xpath('//doc');
     $researcher_pids = array();
-    $table = array();
     $rows = &$table['rows'];
     
     foreach ($results as $result) {
