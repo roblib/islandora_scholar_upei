@@ -683,6 +683,10 @@ function islandora_scholar_associate_button_form(&$form_state, $pid = NULL) {
 
 function islandora_scholar_associate_button_form_submit($form, &$form_state) {
   
+  $pid = $form_state['values']['pid'];
+  
+  drupal_goto('scholar_associate/' . $pid);
+  
 }
 
 function islandora_scholar_associate_citation_form($pid) {
