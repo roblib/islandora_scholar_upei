@@ -720,11 +720,11 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       var_dump($result);
       $researcher_pid = (string) $result->str;
       $researcher = explode(':', $researcher_pid);
-      $researcher_pids[$researcher[0]]['pid'] = $researcher_pid;
+      $researcher_pids[$researcher[1]]['pid'] = $researcher_pid;
       $researcher_name = (string) $result->arr[0]->str;
-      $researcher_pids[$researcher[0]]['name'] = $researcher_name;
+      $researcher_pids[$researcher[1]]['name'] = $researcher_name;
       $researcher_dept = (string) $result->arr[1]->str;
-      $researcher_pids[$researcher[0]]['dept'] = $researcher_dept;
+      $researcher_pids[$researcher[1]]['dept'] = $researcher_dept;
     }
   }
   var_dump($researcher_pids);
