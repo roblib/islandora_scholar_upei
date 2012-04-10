@@ -800,6 +800,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $rows1 = &$table['rows'];
 
     foreach ($researcher_pids as $r_pid) {
+      var_dump($r_pid['cn']);
+      var_dump($details->username);
       in_array($r_pid['cn'], $details->username) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
       $rows1[] = array(
         '#pid' => $r_pid['pid'],
