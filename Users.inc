@@ -35,18 +35,8 @@ function scholar_ldap_users_search_form_submit($form, &$form_state) {
   drupal_goto('add_users/' . $query);
 }
 
-/**
- * Function that queries the LDAP server based on the value passed and
- * displays the results in a table. The results can be selected and objects 
- * with MADS datastreams will be created in fedora.
- * 
- * @param type $query
- * Value entered in the LDAP search form. Can have wildcards (eg r* will
- * bring back all the ldap entries beginning with r)
- * @return array 
- */
-function scholar_get_ldap_users($query) {
-  module_load_include('inc', 'scholar', 'UsersClass');
+
+function islandora_scholar_ldap_search($query) {
   $ldap_host = variable_get('scholar_ldap_host', '');
   $ldap_port = variable_get('scholar_ldap_port', '389');
   $ds = ldap_connect($ldap_host, $ldap_port) or die("Could not connect to ldap host!");
@@ -65,7 +55,29 @@ function scholar_get_ldap_users($query) {
   if ($count == 0) {
     return NULL;
   }
+  else {
+    return $list;
+  }
+}
 
+
+/**
+ * Function that queries the LDAP server based on the value passed and
+ * displays the results in a table. The results can be selected and objects 
+ * with MADS datastreams will be created in fedora.
+ * 
+ * @param type $query
+ * Value entered in the LDAP search form. Can have wildcards (eg r* will
+ * bring back all the ldap entries beginning with r)
+ * @return array 
+ */
+function scholar_get_ldap_users($query) {
+  module_load_include('inc', 'scholar', 'UsersClass');
+
+  $list = islandora_scholar_ldap_search($query);
+
+  $count = $list['count'];
+  
   for ($i = 0; $i < $count; $i++) {
 
     $users[$i]['uid'] = $list[$i]['uid'][0];
@@ -82,8 +94,6 @@ function scholar_get_ldap_users($query) {
     array('data' => t('Mail')),
   );
 
-// Todo: work out a way of checking and displaying if the users have already been added
-// Method using the ITQL query takes a long time, maybe use solr?
   $table = array(
     '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Email'), t('Imported'), ''),
     '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
