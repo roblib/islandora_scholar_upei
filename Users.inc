@@ -744,7 +744,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $researcher_pids = array();
 
     foreach ($results as $result) {
-      var_dump($result);
       $researcher_pid = (string) $result->str;
       $researcher = explode(':', $researcher_pid);
       $researcher_pids[$researcher[1]]['pid'] = $researcher_pid;
@@ -755,7 +754,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['cn'] = (string) $researcher_cn[0]->str;
       $researcher_dept = $result->xpath('./arr[@name="mads.topic"]');
       var_dump($researcher_dept);
-      $researcher_pids[$researcher[1]]['dept'] = (string) $researcher_dept[0];
+      $researcher_pids[$researcher[1]]['dept'] = (string) $researcher_dept[0]->str;
       $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
 
