@@ -177,7 +177,7 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
         else {
           $label = $details->cn;
         }
-
+        
         $pid = 'ir:' . strtolower($details->cn);
         $dsid = 'MADS';
         $relationship = $collection_policy->getRelationship();
@@ -387,22 +387,22 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username,
 function islandora_bibilgraphy_solr_form_table($names, $type) {
 
   switch ($type) {
-    case 'author-citations':
-      $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
-      $query = file_get_contents($url);
-      break;
-    case 'department-citations':
-      $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
-      $query = file_get_contents($url);
-      break;
-    case 'author-theses':
-      $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
-      $query = file_get_contents($url);
-      break;
-    case 'department-theses':
-      $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
-      $query = file_get_contents($url);
-      break;
+  case 'author-citations':
+    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
+    $query = file_get_contents($url);
+    break;
+  case 'department-citations':
+    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
+    $query = file_get_contents($url);
+    break;
+  case 'author-theses':
+    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
+    $query = file_get_contents($url);
+    break;
+  case 'department-theses':
+    $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(array(';' , ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
+    $query = file_get_contents($url);
+    break;
   }
 
   if ($query != NULL) {
@@ -608,12 +608,12 @@ function scholar_object_metrics_form($identifier, $type) {
 }
 
 function islandora_scholar_researcher_compare_form() {
-
+  
   $form = array();
-
+  
   $existing_researchers_query = 'http://localhost:8080/solr/select?q=rels.hasModel:researcher&fl=mads.username&rows=10000';
   $existing_researchers_result = @file_get_contents($existing_researchers_query);
-
+  
   if ($existing_researchers_result != NULL) {
     $xml = new SimpleXMLElement($existing_researchers_result);
     $array = $xml->xpath('//doc');
@@ -627,12 +627,12 @@ function islandora_scholar_researcher_compare_form() {
       }
     }
   }
-
+  
 //  var_dump(array_unique($existing_researchers));
-
+  
   $citation_researchers_query = 'http://localhost:8080/solr/select?q=rels.hasModel:citation&fl=mods.username&rows=10000';
   $citation_researchers_result = @file_get_contents($citation_researchers_query);
-
+  
   if ($citation_researchers_result != NULL) {
     $xml = new SimpleXMLElement($citation_researchers_result);
     $array = $xml->xpath('//doc');
@@ -646,28 +646,28 @@ function islandora_scholar_researcher_compare_form() {
       }
     }
   }
-
+  
 //  var_dump(array_unique($citation_researchers));
-
+  
   $diff = array_diff(array_unique($citation_researchers), array_unique($existing_researchers));
-
+  
   $diff_list = '<ul>';
-
+  
   foreach ($diff as $d) {
     $diff_list .= '<li>' . $d . '</li>';
   }
-
+  
   $diff_list .= '</ul>';
-
+  
   $form['list'] = array(
     '#value' => $diff_list,
   );
-
+  
   return $form;
 }
 
 function islandora_scholar_associate_button_form(&$form_state, $pid = NULL) {
-
+  
   $form['associate'] = array(
     '#type' => 'submit',
     '#value' => t('Associate'),
@@ -677,37 +677,38 @@ function islandora_scholar_associate_button_form(&$form_state, $pid = NULL) {
     '#type' => 'hidden',
     '#value' => htmlentities($pid),
   );
-
+  
   return $form;
 }
 
 function islandora_scholar_associate_button_form_submit($form, &$form_state) {
-
+  
   $pid = $form_state['values']['pid'];
-
+  
   drupal_goto('scholar_associate/' . $pid);
+  
 }
 
 function islandora_scholar_associate_citation_form(&$form_state, $pid) {
-
+  
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'scholar', 'Coins');
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
 
   $csl = 'default'; // @todo This needs to be changed to a value stored in the db
-
+  
   $pid = html_entity_decode($pid);
-
+  
   $form = array();
-
+    
   $item = new Fedora_Item($pid);
-
+  
   $mods = $item->get_datastream_dissemination('MODS');
   $mods_xml = new SimpleXMLElement($mods);
-
+  
   $details = new Coins($pid);
-
+  
   $solr_url = 'http://localhost:8080/solr/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.topic,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
   var_dump($solr_url);
@@ -717,7 +718,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $researcher_pids = array();
     $table = array();
     $rows = &$table['rows'];
-
+    
     foreach ($results as $result) {
       var_dump($result);
       $researcher_pid = (string) $result->str;
@@ -727,27 +728,28 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['name'] = $researcher_name;
       $researcher_dept = (string) $result->arr[1]->str;
       $researcher_pids[$researcher[1]]['dept'] = $researcher_dept;
-      $researcher_keys[$researcher[1]] = $researcher_pid;
-
+      
       $rows[] = array(
-        '#pid' => $researcher_pid,
-        'fullname' => array('#value' => check_plain($researcher_name)),
-        'dept' => array('#value' => check_plain($researcher_dept)),
-      );
-    }
-
-    $table = array(
-      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), ''),
-      '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
-      '#tree' => TRUE,
-      'rows' => array(),
-      'selections' => array(
-        '#type' => 'checkboxes',
-        '#options' => array_fill_keys($researcher_keys, ''),
-      ),
+      '#pid' => $researcher_pid,
+      'fullname' => array('#value' => check_plain($researcher_name)),
+      'dept' => array('#value' => check_plain($researcher_dept)),
     );
+    }
+    
+    $table = array(
+    '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), ''),
+    '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
+    '#tree' => TRUE,
+    'rows' => array(),
+    'selections' => array(
+      '#type' => 'checkboxes',
+      '#options' => array_fill_keys($usernames, ''),
+    ),
+  );
   }
 
+  
+  
   var_dump($researcher_pids);
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
@@ -758,14 +760,14 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   }
   $citation = "<h3>Citation view</h3>";
   $citation .= $bibliography->render();
-
+  
   $form['citation'] = array(
     '#value' => $citation,
   );
-
+  
   $form['table'] = array(
     'table' => $table,
   );
-
+  
   return $form;
 }
