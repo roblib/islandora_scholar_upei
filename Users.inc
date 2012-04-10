@@ -69,7 +69,7 @@ function islandora_scholar_ldap_search($query) {
   $list = ldap_get_entries($ds, $sr);
   
   $count = $list['count'];
-
+  var_dump($list);
   if ($count == 0) {
     return NULL;
   }
