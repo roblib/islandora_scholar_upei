@@ -787,7 +787,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
     $table = array(
-      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), t('Added'), ''),
+      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), t('Associated'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
       '#tree' => TRUE,
       'rows' => array(),
@@ -854,11 +854,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#prefix' => '<h3>Author list</h3>',
   );
   
-  $form['existing'] = array(
-    '#value' => '<ul><li>' . implode('</li><li>', $details->username) . '</li></ul>',
-    '#prefix' => '<h3>Already associated</h3>',
-  );
-
   $form['table'] = array(
     '#prefix' => '<h3>Potential matches</h3>',
     'table' => $table,
