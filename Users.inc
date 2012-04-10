@@ -767,15 +767,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $researcher_keys[$cn] = $list[$i]['cn'][0];
   }
 
-  foreach ($users as $user) {
-    $rows[] = array(
-      '#pid' => check_plain('ldap'),
-      'fullname' => array('#value' => check_plain($user['fullname'])),
-      'dept' => array('#value' => check_plain($user['dept'])),
-      'source' => array('#value' => check_plain('LDAP')),
-    );
-  }
-
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), t('Source'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
@@ -796,6 +787,15 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
         'source' => array('#value' => check_plain('Authority records')),
       );
     }
+  }
+  
+   foreach ($users as $user) {
+    $rows[] = array(
+      '#pid' => check_plain('ldap'),
+      'fullname' => array('#value' => check_plain($user['fullname'])),
+      'dept' => array('#value' => check_plain($user['dept'])),
+      'source' => array('#value' => check_plain('LDAP')),
+    );
   }
 
   $style = citeproc_style($csl);
