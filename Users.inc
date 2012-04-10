@@ -778,7 +778,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
   }
   
-  $list = islandora_scholar_ldap_search('McNiven');
+  $list = islandora_scholar_ldap_search('*McNiven*');
   
   $count = $list['count'];
   
