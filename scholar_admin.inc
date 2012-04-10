@@ -51,7 +51,7 @@ function scholar_admin_settings() {
   );
 
   $form['ldap']['scholar_ldap_basedn'] = array(
-    '#type' => 'textfield',
+    '#type' => 'textarea',
     '#title' => t('Base DN'),
     '#default_value' => variable_get('scholar_ldap_basedn', ''),
   );
