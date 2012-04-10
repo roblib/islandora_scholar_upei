@@ -35,7 +35,6 @@ function scholar_ldap_users_search_form_submit($form, &$form_state) {
   drupal_goto('add_users/' . $query);
 }
 
-
 /**
  * Function to query LDAP
  * @param type $query Can be a string or array. Works best with * at the start and
@@ -48,7 +47,7 @@ function islandora_scholar_ldap_search($query) {
   $ds = ldap_connect($ldap_host, $ldap_port) or die("Could not connect to ldap host!");
 
   $basedn = variable_get('scholar_ldap_basedn', '');
-  
+
   if (is_array($query)) {
     $filter = "(&(objectClass=person)(uid=*)(|";
     foreach ($query as $q) {
@@ -59,13 +58,13 @@ function islandora_scholar_ldap_search($query) {
   else {
     $filter = "(&(objectClass=person)(uid=*)(fullName=$query))";
   }
-  
+
   $attr = array("dn", "cn", "mail");
 
   $sr = ldap_search($ds, $basedn, $filter, array('uid', 'cn', 'fullname', 'mail'));
 
   $list = ldap_get_entries($ds, $sr);
-  
+
   $count = $list['count'];
   if ($count == 0) {
     return NULL;
@@ -74,7 +73,6 @@ function islandora_scholar_ldap_search($query) {
     return $list;
   }
 }
-
 
 /**
  * Function that queries the LDAP server based on the value passed and
@@ -94,9 +92,9 @@ function scholar_get_ldap_users($query) {
   if ($list == NULL) {
     return $list;
   }
-  
+
   $count = $list['count'];
-  
+
   for ($i = 0; $i < $count; $i++) {
 
     $users[$i]['uid'] = $list[$i]['uid'][0];
@@ -776,20 +774,29 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       );
     }
   }
-  
+
   $list = islandora_scholar_ldap_search('*belvadi*');
-  
+
   $count = $list['count'];
-  
+
   for ($i = 0; $i < $count; $i++) {
 
     $users[$i]['uid'] = $list[$i]['uid'][0];
     $users[$i]['cn'] = $list[$i]['cn'][0];
     $users[$i]['fullname'] = $list[$i]['fullname'][0];
     $users[$i]['mail'] = $list[$i]['mail'][0];
-    $usernames[$i] = $list[$i]['cn'][0];
+    $researcher_keys[$list[$i]['cn']] = $list[$i]['cn'][0];
   }
-  
+
+  foreach ($users as $user) {
+    $rows[] = array(
+      '#pid' => check_plain('ldap'),
+      'fullname' => array('#value' => check_plain($user['fullname'])),
+      'dept' => array('#value' => check_plain($user['dept'])),
+      'source' => array('#value' => check_plain('LDAP')),
+    );
+  }
+
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
   $mods = islandora_bibilgraphy_form_get_mods($pid);
@@ -799,21 +806,21 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   }
   $citation = "<h3>Citation view</h3>";
   $citation .= $bibliography->render();
-  
+
   $names = $details->full_names;
-  
+
   $name_list = '<ul>';
-  
+
   foreach ($names as $name) {
     $name_list .= '<li>' . $name . '</li>';
   }
-  
+
   $name_list .= '</ul>';
 
   $form['citation'] = array(
     '#value' => $citation,
   );
-  
+
   $form['names'] = array(
     '#value' => $name_list,
     '#prefix' => '<h3>Author list</h3>',
