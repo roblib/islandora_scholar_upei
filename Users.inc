@@ -689,22 +689,22 @@ function islandora_scholar_associate_button_form_submit($form, &$form_state) {
   
 }
 
-function islandora_scholar_associate_citation_form($pid) {
+function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   
+  $pid = html_entity_decode($pid);
+  
   $form = array();
+    
+  $item = new Fedora_Item($pid);
   
-  var_dump($pid);
+  $mods = $item->get_datastream_dissemination('MODS');
+  $mods_xml = new SimpleXMLElement($mods);
   
-//  $item = new Fedora_Item($pid);
-//  
-//  $mods = $item->get_datastream_dissemination('MODS');
-//  $mods_xml = new SimpleXMLElement($mods);
-//  
-//  $form['mods'] = array(
-//    '#value' => html_entity_decode($mods),
-//  );
-//  
-//  return $form;
+  $form['mods'] = array(
+    '#value' => $mods,
+  );
+  
+  return $form;
 }
