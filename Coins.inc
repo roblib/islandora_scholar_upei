@@ -30,6 +30,8 @@ class Coins {
   public $embargo_date = NULL;
   public $genre = NULL;
   public $family_names = NULL;
+  public $names = NULL;
+  public $full_names = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -52,7 +54,8 @@ class Coins {
 
     $this->mods = $xml;
 
-    $full_name = array();
+    $full_names = array();
+    $names = array();
     $authors = array();
     $contributors = array();
     $family_names = array();
@@ -60,11 +63,13 @@ class Coins {
     foreach ($xml->name as $name) {
       foreach ($name->namePart as $name_part) {
         if ($name_part['type'] == 'given') {
-          $full_name[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
+          $names[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
+          $full_names[$i] .= (string) $name_part;
         }
         if ($name_part['type'] == 'family') {
-          $full_name[$i] .= (string) rtrim($name_part, '.');
+          $names[$i] .= (string) rtrim($name_part, '.');
           $family_names[$i] = (string) rtrim($name_part, '.');
+          $full_names[$i] .= (string) rtrim($name_part, '.');
         }
       }
       $role = (string) $name->role->roleTerm;
@@ -72,15 +77,16 @@ class Coins {
         $role = 'author';
       }
       if ($role == 'author') {
-        $authors[] = $full_name[$i];
+        $authors[] = $names[$i];
       }
       else {
-        $contributors[] = $full_name[$i];
+        $contributors[] = $names[$i];
       }
-      $full_name[$i] .= ' (' . $role . ')';
+      $names[$i] .= ' (' . $role . ')';
       $i++;
     }
-    $this->names = $full_name;
+    $this->names = $names;
+    $this->full_names = $full_names;
     $this->authors = $authors;
     $this->contributors = $contributors;
     $this->family_names = $family_names;
