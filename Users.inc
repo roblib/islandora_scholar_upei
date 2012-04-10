@@ -709,9 +709,9 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   $details = new Coins($pid);
   
-  $solr_url = 'http://localhost:8080/solr/select?q=mads.fullname:' . implode('%20OR%20', $details->family_names) . '&fl=PID,&rows=10000';
+  $solr_url = 'http://localhost:8080/solr/select?q=rels.hasModel:researcher%20AND%20mads.namePart:' . implode('%20OR%20', $details->family_names) . '&fl=PID,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
-  var_dump($solr_url);
+  
   if ($solr_query != NULL) {
     $solr_xml = new SimpleXMLElement($solr_query);
     $results = $solr_xml->xpath('//doc');
