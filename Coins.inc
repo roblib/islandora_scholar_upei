@@ -68,7 +68,7 @@ class Coins {
         if ($name_part['type'] == 'family') {
           $names[$i] .= (string) rtrim($name_part, '.');
           $family_names[$i] = (string) rtrim($name_part, '.');
-          $full_names[$i] .= (string) rtrim($name_part, '.');
+          $full_names[$i] .= ' ' . (string) rtrim($name_part, '.');
         }
       }
       $role = (string) $name->role->roleTerm;
