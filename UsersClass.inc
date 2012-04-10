@@ -32,7 +32,7 @@ class UsersClass {
 
     $filter = "(&(objectClass=person)(uid=*)(cn=$user))";
 
-    $sr = ldap_list($ds, $basedn, $filter);
+    $sr = ldap_search($ds, $basedn, $filter, array('uid', 'cn', 'fullname', 'mail', 'groupmembership', 'givenname', 'sn'));
 
     $list = ldap_get_entries($ds, $sr);
     $this->uid = $list[0]['uid'][0];
