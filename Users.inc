@@ -768,6 +768,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
             $dept = str_replace(' ', '_', $dept);
             if ($dept) {
               $groups[] = $dept;
+            }
       }
       $groups = array_unique($groups);
       $users[$i]['uid'] = $list[$i]['uid'][0];
