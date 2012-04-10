@@ -744,6 +744,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $researcher_pids = array();
 
     foreach ($results as $result) {
+      var_dump($result);
       $researcher_pid = (string) $result->str;
       $researcher = explode(':', $researcher_pid);
       $researcher_pids[$researcher[1]]['pid'] = $researcher_pid;
