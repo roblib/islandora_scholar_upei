@@ -83,6 +83,7 @@ class Coins {
     $this->names = $full_name;
     $this->authors = $authors;
     $this->contributors = $contributors;
+    $this->family_names = $family_names;
     
     $reverse = array();
     $i = 0;
