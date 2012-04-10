@@ -846,8 +846,14 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#value' => $name_list,
     '#prefix' => '<h3>Author list</h3>',
   );
+  
+  $form['existing'] = array(
+    '#value' => implode(', ', $details->username),
+    '#prefix' => '<h3>Already associated</h3>',
+  );
 
   $form['table'] = array(
+    '#prefix' => '<h3>Potential matches</h3>',
     'table' => $table,
   );
 

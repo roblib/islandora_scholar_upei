@@ -31,6 +31,8 @@ class Coins {
   public $genre = NULL;
   public $family_names = NULL;
   public $full_names = NULL;
+  public $username = NULL;
+  public $department = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -152,6 +154,12 @@ class Coins {
     
     $genre = $xml->xpath('//mods:genre');
     $this->genre = $genre;
+    
+    $username = $xml->xpath('//mods:identifier[@type="u1"]');
+    $this->username = $username;
+    
+    $department = $xml->xpath('//mods:identifier[@type="u2"]');
+    $this->department = $department;
   }
 
 }
