@@ -37,7 +37,6 @@ function scholar_ldap_users_search_form_submit($form, &$form_state) {
 
 
 function islandora_scholar_ldap_search($query) {
-  var_dump($query);
   $ldap_host = variable_get('scholar_ldap_host', '');
   $ldap_port = variable_get('scholar_ldap_port', '389');
   $ds = ldap_connect($ldap_host, $ldap_port) or die("Could not connect to ldap host!");
@@ -50,7 +49,6 @@ function islandora_scholar_ldap_search($query) {
   $sr = ldap_list($ds, $basedn, $filter);
 
   $list = ldap_get_entries($ds, $sr);
-  var_dump($list);
   $count = $list['count'];
 
   if ($count == 0) {
