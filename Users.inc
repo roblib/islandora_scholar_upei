@@ -736,7 +736,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   $details = new Coins($pid);
 
-  $solr_url = 'http://localhost:8080/solr/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.topic,&rows=10000';
+  $solr_url = 'http://localhost:8080/solr/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.topic,mads.username,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
   if ($solr_query != NULL) {
     $solr_xml = new SimpleXMLElement($solr_query);
@@ -751,6 +751,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['name'] = $researcher_name;
       $researcher_dept = (string) $result->arr[1]->str;
       $researcher_pids[$researcher[1]]['dept'] = $researcher_dept;
+      $researcher_cn = (string) $result->arr[2]->str;
+      $researcher_pids[$researcher[1]]['cn'] = $researcher_cn;
       $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
 
@@ -779,12 +781,13 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $users[$i]['fullname'] = $list[$i]['fullname'][0];
       $users[$i]['mail'] = $list[$i]['mail'][0];
       $users[$i]['dept'] = implode(', ', $ldap_groups);
+      $users[$i]['cn'] = $list[$i]['cn'][0];
       $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
     }
 
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
     $table = array(
-      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), t('Source'), ''),
+      '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
       '#tree' => TRUE,
       'rows' => array(),
@@ -799,6 +802,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $rows1[] = array(
         '#pid' => $r_pid['pid'],
         'fullname' => array('#value' => check_plain($r_pid['name'])),
+        'cn' => array('#value' => check_plain($r_pid['cn'])),
         'dept' => array('#value' => check_plain($r_pid['dept'])),
         'source' => array('#value' => check_plain('Authority records')),
       );
@@ -812,6 +816,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
+      'cn' => array('#value' => check_plain($user['cn'])),
       'dept' => array('#value' => check_plain($user['dept'])),
       'source' => array('#value' => check_plain('LDAP')),
     );
