@@ -714,12 +714,11 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   
   if ($solr_query != NULL) {
     $solr_xml = new SimpleXMLElement($solr_query);
-    $results = $xml->xpath('//doc');
+    $results = $solr_xml->xpath('//doc');
     $pids = array();
     foreach ($results as $result) {
-      var_dump($result);
-//      $pid = $result->xpath('./str[@name="PID"]/str');
-//      $pids[] = $pid;
+      $pid = $result->xpath('./str[@name="PID"]/str');
+      $pids[] = $pid;
     }
   }
   
