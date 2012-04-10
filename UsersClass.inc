@@ -118,6 +118,7 @@ class UsersClass {
   public function check_user() {
     module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
     $user = $this->cn;
+    var_dump($user);
     $query_string = 'select $object $title from <#ri>
                              where ($object <dc:title>$title
                              and $object <fedora-model:hasModel> <info:fedora/ir:researcherCModel>
