@@ -725,6 +725,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['name'] = $researcher_name;
       $researcher_dept = (string) $result->arr[1]->str;
       $researcher_pids[$researcher[1]]['dept'] = $researcher_dept;
+      $researcher_keys[$researcher[1]] = $researcher_pid;
     }
 
     $table = array(
@@ -734,7 +735,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       'rows' => array(),
       'selections' => array(
         '#type' => 'checkboxes',
-        '#options' => array_fill_keys($usernames, ''),
+        '#options' => array_fill_keys($researcher_keys, ''),
       ),
     );
     $rows = &$table['rows'];
