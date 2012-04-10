@@ -750,7 +750,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['name'] = $researcher_name;
       $researcher_dept = (string) $result->arr[1]->str;
       $researcher_pids[$researcher[1]]['dept'] = $researcher_dept;
-      $researcher_keys[$researcher[1]] = $researcher_pid;
+      $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
     
       $list = islandora_scholar_ldap_search($details->family_names);
@@ -764,9 +764,11 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $users[$i]['cn'] = $cn;
     $users[$i]['fullname'] = $list[$i]['fullname'][0];
     $users[$i]['mail'] = $list[$i]['mail'][0];
-    $researcher_keys['ldap:' . $cn] = 'ldap:' . $cn;
+    $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
   }
 
+  $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
+  
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), t('Source'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
