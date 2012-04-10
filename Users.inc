@@ -691,6 +691,8 @@ function islandora_scholar_associate_button_form_submit($form, &$form_state) {
 
 function islandora_scholar_associate_citation_form($pid) {
   
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  
   $form = array();
   
   $item = new Fedora_Item($pid);
