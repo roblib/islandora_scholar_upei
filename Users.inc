@@ -61,7 +61,7 @@ function islandora_scholar_ldap_search($query) {
 
   $attr = array("dn", "cn", "mail");
 
-  $sr = ldap_search($ds, $basedn, $filter, array('uid', 'cn', 'fullname', 'mail'));
+  $sr = ldap_search($ds, $basedn, $filter, array('uid', 'cn', 'fullname', 'mail', 'groupmembership'));
 
   $list = ldap_get_entries($ds, $sr);
 
@@ -764,6 +764,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $users[$i]['cn'] = $cn;
     $users[$i]['fullname'] = $list[$i]['fullname'][0];
     $users[$i]['mail'] = $list[$i]['mail'][0];
+    $users[$i]['dept'] = $list[$i]['groupmembership'][0];
     $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
   }
 
@@ -798,7 +799,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
-      'dept' => array('#value' => check_plain($user['dept'])),
+      'dept' => array('#value' => check_plain($user['groupmembership'])),
       'source' => array('#value' => check_plain('LDAP')),
     );
   }
