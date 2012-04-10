@@ -695,14 +695,16 @@ function islandora_scholar_associate_citation_form($pid) {
   
   $form = array();
   
-  $item = new Fedora_Item($pid);
+  var_dump($pid);
   
-  $mods = $item->get_datastream_dissemination('MODS');
-  $mods_xml = new SimpleXMLElement($mods);
-  
-  $form['mods'] = array(
-    '#value' => html_entity_decode($mods),
-  );
-  
-  return $form;
+//  $item = new Fedora_Item($pid);
+//  
+//  $mods = $item->get_datastream_dissemination('MODS');
+//  $mods_xml = new SimpleXMLElement($mods);
+//  
+//  $form['mods'] = array(
+//    '#value' => html_entity_decode($mods),
+//  );
+//  
+//  return $form;
 }
