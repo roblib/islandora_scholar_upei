@@ -43,7 +43,17 @@ function islandora_scholar_ldap_search($query) {
 
   $basedn = variable_get('scholar_ldap_basedn', '');
 
-  $filter = "(&(objectClass=person)(uid=*)(fullName=$query))";
+  if (is_array($query)) {
+    $filter = "(&(objectClass=person)(uid=*)(| ";
+    foreach ($query as $q) {
+      $filter .= "(fullName=$query)";
+    }
+    $filter .= ")";
+  }
+  else {
+    $filter = "(&(objectClass=person)(uid=*)(fullName=$query))";
+  }
+  
   $attr = array("dn", "cn", "mail");
 
   $sr = ldap_list($ds, $basedn, $filter);
@@ -761,6 +771,25 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
   }
 
+  $query = 
+  
+  $list = islandora_scholar_ldap_search($query);
+
+  if ($list == NULL) {
+    return $list;
+  }
+  
+  $count = $list['count'];
+  
+  for ($i = 0; $i < $count; $i++) {
+
+    $users[$i]['uid'] = $list[$i]['uid'][0];
+    $users[$i]['cn'] = $list[$i]['cn'][0];
+    $users[$i]['fullname'] = $list[$i]['fullname'][0];
+    $users[$i]['mail'] = $list[$i]['mail'][0];
+    $usernames[$i] = $list[$i]['cn'][0];
+  }
+  
   var_dump($researcher_pids);
   $style = citeproc_style($csl);
   $bibliography = new CiteProcJSBibliography($style);
