@@ -768,7 +768,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   }
 
   $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
-  
+  var_dump($researcher_keys);
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Department'), t('Source'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
