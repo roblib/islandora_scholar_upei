@@ -666,6 +666,25 @@ function islandora_scholar_researcher_compare_form() {
   return $form;
 }
 
+function islandora_scholar_associate_button_form($pid) {
+  
+  $form['associate'] = array(
+    '#type' => 'submit',
+    '#value' => t('Associate'),
+  );
+  
+  $form['pid'] = array(
+    '#type' => 'hidden',
+    '#value' => $pid,
+  );
+  
+  return $form;
+}
+
+function islandora_scholar_associate_button_form_submit($form, &$form_state) {
+  
+}
+
 function islandora_scholar_associate_citation_form($pid) {
   
   $form = array();

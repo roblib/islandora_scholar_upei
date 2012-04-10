@@ -1195,6 +1195,8 @@ function islandora_scholar_build_citation($pid, $type) {
 
   $citation .= '<div class="scholar_refworks_link">' . $refworks_link . '</div>';
 
+  $citation .= '<div>' . drupal_get_form('islandora_scholar_associate_button_form', $pid) . '</div>';
+
   //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
   //    Only get the ROMEO data if an ISSN exists and the user is authenticated.
   //    Store 
