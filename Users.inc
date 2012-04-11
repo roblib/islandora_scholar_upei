@@ -756,8 +756,14 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['dept'] = (string) $researcher_dept[0]->str;
       $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
-
-    $list = islandora_scholar_ldap_search($details->family_names);
+    
+    if ($list_cache = cache_get('islandora_scholar_associate_ldap_cache_' . $pid)) {
+      $list = unserialize($list_cache->data);
+    }
+    else {
+      $list = islandora_scholar_ldap_search($details->family_names);
+      cache_set('islandora_scholar_associate_ldap_cache_' . $pid, serialize($list), 'cache', time() + 3600);
+    }
 
     $count = $list['count'];
 //    var_dump($list);
