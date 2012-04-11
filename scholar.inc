@@ -583,6 +583,9 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
 
     case 'supp_embargo':
       drupal_set_message('Embargo!');
+      $info = $object->get_datastream_info('POLICY');
+      var_dump($info);
+      exit;
       break;
   }
 }
