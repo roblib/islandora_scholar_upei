@@ -755,7 +755,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['cn'] = (string) $researcher_cn[0]->str;
       $researcher_dept = $result->xpath('./arr[@name="mads.topic"]');
       $researcher_pids[$researcher[1]]['dept'] = (string) $researcher_dept[0]->str;
-      $researcher_keys1[$researcher[1]] = strtolower(str_replace(' ', '_', (string) $researcher_dept[0]->str));
+      $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
 
     // Run LDAP search. This takes a while and so it's cached for an hour to speed up
@@ -791,11 +791,10 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $users[$i]['fullname'] = $list[$i]['fullname'][0];
       $users[$i]['mail'] = $list[$i]['mail'][0];
       $users[$i]['dept'] = implode(', ', $ldap_groups);
-      $researcher_keys2['ldap:' . $cn] = strtolower(str_replace(' ', '_', implode('-', $ldap_groups)));
+      $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
     }
 
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
-    var_dump($researcher_keys);
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), t('Associated'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
