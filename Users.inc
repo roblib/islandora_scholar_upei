@@ -896,6 +896,13 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $departments = explode(',', $form_state['values']['old_departments']);
 
   $pids = array_keys($selections);
+  
+  $new_pids = array();
+  
+  foreach ($pids as $pid) {
+    $pid_array = explode(':', $pid);
+    $new_pids[] = $pid_array[1];
+  }
 
   $selected_depts = array();
   foreach ($dept_array as $key => $dept) {
@@ -904,7 +911,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
     }
   }
   
-  drupal_set_message('New ' . implode(', ', $pids));
+  drupal_set_message('New ' . implode(', ', $new_pids));
   drupal_set_message('Old ' . implode(', ', $existing_assoc));
   drupal_set_message('Old departments: ' . implode(', ', $departments));
   drupal_set_message('New departments: ' . implode(', ', $selected_depts));
@@ -913,7 +920,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
 
   $mods = $item->get_datastream_dissemination('MODS');
 
-  $pids_to_associate = array_diff($pids, $existing);
+  $pids_to_associate = array_diff($new_pids, $existing);
   $depts_to_associate = array_diff($selected_depts, $departments);
 
   drupal_set_message(implode(', ', $pids_to_associate));
