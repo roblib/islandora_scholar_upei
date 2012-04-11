@@ -872,12 +872,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $selections = $form_state['values']['table']['selections'];
   drupal_set_message(implode(', ', $selections));
   
-  $pids = array();
-  
-  foreach ($selections as $key => $selection) {
-    if ($selection != 0) {
-      $pids[] = $key;
-    }
-  }
+  $pids = array_keys($selections);
+
   drupal_set_message(implode(', ', $pids));
 }
