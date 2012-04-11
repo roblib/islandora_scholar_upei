@@ -883,8 +883,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#value' => implode(',', $usernames),
   );
   
-  drupal_set_message('Users: ' . implode(', ', $usernames));
-
   return $form;
 }
 
@@ -892,14 +890,18 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
   $selections = array_filter($form_state['values']['table']['selections']);
   $citation_pid = $form_state['values']['pid'];
-  $existing_assoc = explode(',', $form_state['values']['existing']);
-//  drupal_set_message(implode(', ', $selections));
-
+  $existing = explode(',', $form_state['values']['existing']);
+  
+  $existing_assoc = array();
+  
+  foreach ($existing_assoc as $assoc) {
+    $existing_assoc[] = 'ir:' . $assoc;
+  }
+  
   $pids = array_keys($selections);
 
   drupal_set_message('New ' . implode(', ', $pids));
   drupal_set_message('Old ' . $form_state['values']['existing']);
-  drupal_set_message('PID: ' . $citation_pid);
 
   $item = new Fedora_Item($citation_pid);
 
