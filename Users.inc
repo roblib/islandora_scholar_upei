@@ -757,6 +757,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
     
+    // Run LDAP search. This takes a while and so it's cached for an hour to speed up
+    // subsequent searches.
     if ($list_cache = cache_get('islandora_scholar_associate_ldap_cache_' . $pid)) {
       $list = unserialize($list_cache->data);
     }
@@ -766,7 +768,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
 
     $count = $list['count'];
-//    var_dump($list);
+
     for ($i = 0; $i < $count; $i++) {
 
       $cn = strtolower($list[$i]['cn'][0]);
@@ -805,7 +807,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     $rows1 = &$table['rows'];
 
     foreach ($researcher_pids as $r_pid) {
-      in_array(strtolower($r_pid['cn']), $details->username) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
+      in_array(strtolower($r_pid['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
       $rows1[] = array(
         '#pid' => $r_pid['pid'],
         'fullname' => array('#value' => check_plain($r_pid['name'])),
@@ -820,7 +822,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $rows2 = &$table['rows'];
 
   foreach ($users as $user) {
-  in_array(strtolower($user['cn']), $details->username) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
+  in_array(strtolower($user['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
@@ -876,17 +878,26 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#value' => $pid,
   );
   
+  $form['exisiting'] = array(
+    '#type' => 'hidden',
+    '#value' => implode(',', $usernames),
+  );
+  
   return $form;
 }
 
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $selections = array_filter($form_state['values']['table']['selections']);
   $citation_pid = $form_state['values']['pid'];
+  $existing_assoc = explode(',', $form_state['values']['existing']);
   drupal_set_message(implode(', ', $selections));
   
   $pids = array_keys($selections);
 
   drupal_set_message(implode(', ', $pids));
   
-  drupal_goto('fedora/repository/' . $citation_pid);
+  var_dump($selections);
+  var_dump($existing_assoc);
+  
+//  drupal_goto('fedora/repository/' . $citation_pid);
 }
