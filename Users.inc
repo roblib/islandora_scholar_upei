@@ -892,16 +892,23 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   exit;
   $existing_assoc = array();
 
+  $pids = array_keys($selected_user);
+  
   foreach ($existing as $assoc) {
     $existing_assoc[] = 'ir:' . $assoc;
   }
 
-  $pids = array_keys($selected_user);
-
+  $selected_depts = array();
+  foreach ($dept_array as $key => $dept) {
+    if (in_array($key, $pids)) {
+      $selected_depts[] = $dept;
+    }
+  }
+  
   drupal_set_message('New ' . implode(', ', $pids));
   drupal_set_message('Old ' . implode(', ', $existing_assoc));
   drupal_set_message('Old departments: ' . implode(', ', $departments));
-  drupal_set_message('New departments: ' . implode(', ', $selected_dept));
+  drupal_set_message('New departments: ' . implode(', ', $selected_depts));
 
   $item = new Fedora_Item($citation_pid);
 
