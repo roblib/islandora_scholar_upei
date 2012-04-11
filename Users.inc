@@ -755,7 +755,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['cn'] = (string) $researcher_cn[0]->str;
       $researcher_dept = $result->xpath('./arr[@name="mads.topic"]');
       $researcher_pids[$researcher[1]]['dept'] = (string) $researcher_dept[0]->str;
-      $researcher_keys1[$researcher[1]] = str_replace(' ', '_', $researcher_dept);
+      $researcher_keys1[$researcher[1]] = str_replace(' ', '_', (string) $researcher_dept[0]->str);
     }
 
     // Run LDAP search. This takes a while and so it's cached for an hour to speed up
