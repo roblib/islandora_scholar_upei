@@ -878,7 +878,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#value' => $pid,
   );
 
-  $form['exisiting'] = array(
+  $form['existing'] = array(
     '#type' => 'hidden',
     '#value' => implode(',', $usernames),
   );
@@ -894,8 +894,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $citation_pid = $form_state['values']['pid'];
   $existing_assoc = explode(',', $form_state['values']['existing']);
 //  drupal_set_message(implode(', ', $selections));
-  var_dump($form_state['values']);
-  exit;
+
   $pids = array_keys($selections);
 
   drupal_set_message('New ' . implode(', ', $pids));
