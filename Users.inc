@@ -891,7 +891,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
  
   $existing_assoc = array();
 
-  $pids = array_keys($selected_user);
+  $pids = array_keys($selections);
   
   foreach ($existing as $assoc) {
     $existing_assoc[] = 'ir:' . $assoc;
