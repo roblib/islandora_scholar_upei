@@ -891,11 +891,12 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $selections = array_filter($form_state['values']['table']['selections']);
   $citation_pid = $form_state['values']['pid'];
   $existing_assoc = explode(',', $form_state['values']['existing']);
-  drupal_set_message(implode(', ', $selections));
+//  drupal_set_message(implode(', ', $selections));
 
   $pids = array_keys($selections);
 
-  drupal_set_message(implode(', ', $pids));
+  drupal_set_message('New' . implode(', ', $pids));
+  drupal_set_message('Old' . implode(', ', $existing_assoc));
 
   $item = new Fedora_Item($citation_pid);
 
@@ -907,9 +908,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   
   $existing_type = gettype($existing_assoc);
   $new_type = gettype($selections);
-  
-  drupal_set_message($existing_type . ' -- ' . $new_type);
-  
+    
   if ($mods != NULL) {
     $mods_xml = new DOMDocument();
     $mods_xml->loadXML($mods);
