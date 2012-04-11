@@ -701,6 +701,14 @@ function islandora_scholar_associate_button_form_submit($form, &$form_state) {
   drupal_goto('scholar_associate/' . $pid);
 }
 
+/**
+ * This form gives users a selection of possible matches for users that can be 
+ * associated with the citation. Users are brought back from the existing
+ * authority records as well as from the specified LDAP server
+ * @param type $form_state
+ * @param type $pid
+ * @return type 
+ */
 function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
@@ -886,6 +894,14 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   return $form;
 }
 
+/**
+ * Submit function for adding associations. This adds mods:identifier elements
+ * to the MODS record as well as RDF statements in the RELS-EXT. If a user does
+ * not already have an authority record then one is created at the same time as 
+ * the association occurs.
+ * @param type $form
+ * @param type $form_state 
+ */
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
   
