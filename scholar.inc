@@ -737,8 +737,8 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
 
     if (!array_key_exists('PDF', $ds_array) && !array_key_exists('OBJ', $ds_array)) {
 
-      $mods_xml = new DOMDocument();
-      if ($mods_xml != NULL) {
+      if ($xmlstr != NULL) {
+        $mods_xml = new DOMDocument();
         $mods_xml->loadXML($xmlstr);
         $list = $mods_xml->getElementsByTagName('accessCondition');
         $remove_nodes = array();
