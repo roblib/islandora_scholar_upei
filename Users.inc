@@ -714,6 +714,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $pid = html_entity_decode($pid);
 
   $form = array();
+  $dept_array = array();
 
   $item = new Fedora_Item($pid);
 
@@ -742,6 +743,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_dept = $result->xpath('./arr[@name="mads.topic"]');
       $researcher_pids[$researcher[1]]['dept'] = (string) $researcher_dept[0]->str;
       $researcher_keys1[$researcher[1]] = $researcher_pid;
+      $dept_array[$researcher_pid] = (string) $researcher_dept[0]->str;
     }
 
     // Run LDAP search. This takes a while and so it's cached for an hour to speed up
@@ -778,6 +780,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $users[$i]['mail'] = $list[$i]['mail'][0];
       $users[$i]['dept'] = implode(', ', $ldap_groups);
       $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
+      $dept_array['ldap:' . $cn] = implode(',', $ldap_groups);
     }
 
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
@@ -873,7 +876,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   $form['departments'] = array(
     '#type' => 'hidden',
-    '#value' => implode(',', $departments),
+    '#value' => serialize($dept_array),
   );
 
   return $form;
@@ -882,17 +885,12 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
   $selections = array_filter($form_state['values']['table']['selections']);
-  $selected_user = array();
-  $selected_dept = array();
-  foreach ($selections as $key => $selection) {
-    $selection_array = explode('/', $selection);
-    $selected_user[$key] = $selection_array[0];
-    $selected_dept[$key] = $selection_array[1];
-  }
+  
+  
   $citation_pid = $form_state['values']['pid'];
   $existing = explode(',', $form_state['values']['existing']);
-  $departments = explode(',', $form_state['values']['departments']);
-  var_dump($form_state['values']);
+  $dept_array = unserialize($form_state['values']['departments']);
+  var_dump($dept_array);
   exit;
   $existing_assoc = array();
 
