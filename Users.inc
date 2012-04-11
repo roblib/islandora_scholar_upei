@@ -903,7 +903,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
     $pid_array = explode(':', $pid);
     $new_pids[] = $pid_array[1];
     if ($pid_array[0] == 'ldap') {
-      islandora_scholar_ldap_add_user($pid_array[0]);
+      islandora_scholar_ldap_add_user($pid_array[1]);
     }
   }
 
