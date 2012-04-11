@@ -880,7 +880,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   $form['exisiting'] = array(
     '#type' => 'hidden',
-    '#value' => implode(',', $usernames),
+    '#value' => $usernames,
   );
   
   drupal_set_message('Users: ' . implode(', ', $usernames));
