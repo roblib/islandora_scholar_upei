@@ -15,7 +15,7 @@ function scholar_browse_by_dept_form() {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
   module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
 
-  $solr_location = variable_get('islandora_solr_search_block_url', 'http://localhost:8080/solr');
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier&rows=500&sort=mads.identifier_sort+asc');
   $xml = new SimpleXMLElement($result);

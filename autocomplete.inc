@@ -47,14 +47,14 @@ function islandora_autocomplete($content_model = '', $index_field = '', $string 
  */
 function islandora_scholar_get_values($query, $results) {
 
-  $solr_url = variable_get('fedora_solr_search_url', 'http://localhost:8080/solr');
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   if (is_array($results)) {
     $result_string = implode(',', $results);
-    $query = file_get_contents($solr_url . '/select?q=rels.hasModel:' . $query . '&fl=' . $result_string);
+    $query = file_get_contents('http://' . $solr_url . '/select?q=rels.hasModel:' . $query . '&fl=' . $result_string);
   }
   else {
-    $query = file_get_contents($solr_url . '/select?q=rels.hasModel:' . $query . '&fl=' . $results);
+    $query = file_get_contents('http://' . $solr_url . '/select?q=rels.hasModel:' . $query . '&fl=' . $results);
   }
   $result = new SimpleXMLElement($query);
   $number = $result->xpath('./result[@name="response"]/@numFound');
