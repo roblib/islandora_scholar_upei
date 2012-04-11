@@ -875,7 +875,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $pids = array();
   
   foreach ($selections as $key => $selection) {
-    if ($selection == 1) {
+    if ($selection != 0) {
       $pids[] = $key;
     }
   }
