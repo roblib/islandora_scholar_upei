@@ -919,7 +919,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
 
   $mods = $item->get_datastream_dissemination('MODS');
 
-  $pids_to_associate = array_diff($selected_user, $existing_assoc);
+  $pids_to_associate = array_diff($pids, $existing_assoc);
 
   drupal_set_message(implode(', ', $pids_to_associate));
 
