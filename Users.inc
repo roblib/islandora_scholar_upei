@@ -791,7 +791,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $users[$i]['fullname'] = $list[$i]['fullname'][0];
       $users[$i]['mail'] = $list[$i]['mail'][0];
       $users[$i]['dept'] = implode(', ', $ldap_groups);
-      $researcher_keys2['ldap:' . $cn] = implode('-', $ldap_groups);
+      $researcher_keys2['ldap:' . $cn] = str_replace(' ', '_', implode('-', $ldap_groups));
     }
 
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
