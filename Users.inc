@@ -864,12 +864,20 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#type' => 'submit',
     '#value' => t('Add associations'),
   );
+  
+  $form['pid'] = array(
+    '#type' => 'hidden',
+    '#value' => $pid,
+  );
+  
+  $form['#redirect'] = 'fedora/repository/' . $pid;
 
   return $form;
 }
 
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $selections = array_filter($form_state['values']['table']['selections']);
+  $citation_pid = $form_state['values']['pid'];
   drupal_set_message(implode(', ', $selections));
   
   $pids = array_keys($selections);
