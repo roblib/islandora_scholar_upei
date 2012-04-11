@@ -911,8 +911,8 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
     }
   }
   
-  drupal_set_message('New ' . implode(', ', $new_pids));
-  drupal_set_message('Old ' . implode(', ', $existing_assoc));
+  drupal_set_message('New: ' . implode(', ', $new_pids));
+  drupal_set_message('Old: ' . implode(', ', $existing));
   drupal_set_message('Old departments: ' . implode(', ', $departments));
   drupal_set_message('New departments: ' . implode(', ', $selected_depts));
 
