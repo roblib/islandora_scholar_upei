@@ -859,6 +859,11 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#prefix' => '<h3>Potential matches</h3>',
     'table' => $table,
   );
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add associations'),
+  );
 
   return $form;
 }
