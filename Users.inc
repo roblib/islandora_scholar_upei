@@ -888,8 +888,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
-  $selections = array_filter($form_state['values']['table']['selections']);
   
+  $selections = array_filter($form_state['values']['table']['selections']);
   $citation_pid = $form_state['values']['pid'];
   $existing = explode(',', $form_state['values']['existing']);
   $dept_array = array_filter(unserialize($form_state['values']['new_departments']));
@@ -902,6 +902,9 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   foreach ($pids as $pid) {
     $pid_array = explode(':', $pid);
     $new_pids[] = $pid_array[1];
+    if ($pid_array[0] == 'ldap') {
+      islandora_scholar_ldap_add_user($pid_array[0]);
+    }
   }
 
   $selected_depts = array();
@@ -910,11 +913,6 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
       $selected_depts[] = $dept;
     }
   }
-  
-  drupal_set_message('New: ' . implode(', ', $new_pids));
-  drupal_set_message('Old: ' . implode(', ', $existing));
-  drupal_set_message('Old departments: ' . implode(', ', $departments));
-  drupal_set_message('New departments: ' . implode(', ', $selected_depts));
 
   $item = new Fedora_Item($citation_pid);
 
@@ -922,9 +920,6 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
 
   $pids_to_associate = array_diff($new_pids, $existing);
   $depts_to_associate = array_diff($selected_depts, $departments);
-
-  drupal_set_message(implode(', ', $pids_to_associate));
-  drupal_set_message(implode(', ', $depts_to_associate));
 
   if ($mods != NULL) {
     $mods_xml = new DOMDocument();
@@ -935,7 +930,6 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
       $u1->setAttribute('type', 'u1');
       $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
       $mods_element->appendChild($u1);
-      drupal_set_message($mods_xml->saveXML());
       $item->add_relationship('hasResearcher', $pid_to_associate);
     }
     
@@ -944,7 +938,6 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
       $u2->setAttribute('type', 'u2');
       $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
       $mods_element->appendChild($u2);
-      drupal_set_message($mods_xml->saveXML());
       $item->add_relationship('hasDepartment', $dept_to_associate);
     }
     $item->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml', FALSE, 'User and department associations added by Scholar module');
