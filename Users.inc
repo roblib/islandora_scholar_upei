@@ -937,6 +937,14 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
       $mods_element->appendChild($u1);
       drupal_set_message($mods_xml->saveXML());
     }
+    
+    foreach ($depts_to_associate as $dept_to_associate) {
+      $u2 = $mods_xml->createElement('identifier', $dept_to_associate);
+      $u2->setAttribute('type', 'u2');
+      $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
+      $mods_element->appendChild($u2);
+      drupal_set_message($mods_xml->saveXML());
+    }
   }
   else {
     drupal_set_message(t('No MODS datastream found!'), 'warning');
