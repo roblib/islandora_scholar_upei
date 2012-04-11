@@ -178,86 +178,72 @@ function scholar_get_ldap_users_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'CollectionPolicy');
   module_load_include('inc', 'scholar', 'UsersClass');
   $users = array_filter($form_state['values']['table']['selections']);
-//  $max = count($users);
   $max = 1;
   if ($collection_policy !== FALSE) {
-
     foreach ($users as $user) {
-//  $result = in_array($user, $context['results']);
-//  if (!$result === TRUE) {
-      $details = new UsersClass($user);
-      $check = $details->check_user();
-      if ($check !== TRUE) {
-        $collection_pid = 'ir:people';
-        $content_model_pid = 'ir:researcherCModel';
-        $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
-        $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
+      islandora_scholar_ldap_add_user($user);
+    }
+  }
+}
 
-        $xml = $details->ldap_to_mads();
-        $dir = $_SERVER['DOCUMENT_ROOT'] . base_path() . file_directory_path();
-        $filename = $dir . '/mads.xml';
-        $xmlstr = $xml->save($filename);
+function islandora_scholar_ldap_add_user($user) {
+  module_load_include('inc', 'islandora_content_model_forms', 'FOXML');
+  module_load_include('inc', 'fedora_repository', 'CollectionPolicy');
+  module_load_include('inc', 'scholar', 'UsersClass');
 
-        if ($details->fullname != NULL) {
-          $label = $details->fullname;
-        }
-        else {
-          $label = $details->cn;
-        }
+  $details = new UsersClass($user);
+  $check = $details->check_user();
+  if ($check !== TRUE) {
+    $collection_pid = 'ir:people';
+    $content_model_pid = 'ir:researcherCModel';
+    $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
+    $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
 
-        $pid = 'ir:' . strtolower($details->cn);
-        $dsid = 'MADS';
-        $relationship = $collection_policy->getRelationship();
-        $ingest_file_locations = array();
-        $document = $xml;
+    $xml = $details->ldap_to_mads();
+    $dir = $_SERVER['DOCUMENT_ROOT'] . base_path() . file_directory_path();
+    $filename = $dir . '/mads.xml';
+    $xmlstr = $xml->save($filename);
 
-        $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
-        $foxml->ingest();
-
-        $item = new Fedora_Item($pid);
-        $groups = $details->groupmembership;
-
-        $depts = array();
-
-        if ($groups != NULL) {
-          foreach ($groups as $group) {
-            $dept = strtok($group, ',');
-            $dept = ltrim($dept, 'cn=');
-            $dept = islandora_scholar_convert_dept($dept);
-            $dept = str_replace(' ', '_', $dept);
-            if ($dept) {
-              $depts[] = $dept;
-            }
-          }
-          $depts = array_unique($depts);
-          foreach ($depts as $dept) {
-            $item->add_relationship('hasDepartment', $dept);
-          }
-        }
-        $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
-        $item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
-        // TODO: add thumbnail external reference
-      }
+    if ($details->fullname != NULL) {
+      $label = $details->fullname;
+    }
+    else {
+      $label = $details->cn;
     }
 
-//    foreach ($users as $user) {
-//      $operations[] = array(
-//        'scholar_batch_user_add',
-//        array(
-//          $users,
-//          $max,
-//        ),
-//      );
-//      $batch = array(
-//        'operations' => $operations,
-//        'file' => drupal_get_path('module', 'scholar') . '/Users.inc',
-//        'finished' => 'scholar_batch_user_add_finished',
-//        'title' => t('Importing users'),
-//        'error_message' => t('An error occurred'),
-//      );
-//      batch_set($batch);
+    $pid = 'ir:' . strtolower($details->cn);
+    $dsid = 'MADS';
+    $relationship = $collection_policy->getRelationship();
+    $ingest_file_locations = array();
+    $document = $xml;
+
+    $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_locations, $document, $transform);
+    $foxml->ingest();
+
+    $item = new Fedora_Item($pid);
+    $groups = $details->groupmembership;
+
+    $depts = array();
+
+    if ($groups != NULL) {
+      foreach ($groups as $group) {
+        $dept = strtok($group, ',');
+        $dept = ltrim($dept, 'cn=');
+        $dept = islandora_scholar_convert_dept($dept);
+        $dept = str_replace(' ', '_', $dept);
+        if ($dept) {
+          $depts[] = $dept;
+        }
+      }
+      $depts = array_unique($depts);
+      foreach ($depts as $dept) {
+        $item->add_relationship('hasDepartment', $dept);
+      }
+    }
+    $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
+    $item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
+    // TODO: add thumbnail external reference 
   }
-//  }
 }
 
 /**
@@ -884,12 +870,12 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#type' => 'hidden',
     '#value' => implode(',', $usernames),
   );
-  
+
   $form['departments'] = array(
     '#type' => 'hidden',
     '#value' => implode(',', $departments),
   );
-  
+
   return $form;
 }
 
@@ -909,11 +895,11 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   var_dump($form_state['values']);
   exit;
   $existing_assoc = array();
-  
+
   foreach ($existing as $assoc) {
     $existing_assoc[] = 'ir:' . $assoc;
   }
-  
+
   $pids = array_keys($selected_user);
 
   drupal_set_message('New ' . implode(', ', $pids));
@@ -926,13 +912,13 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $mods = $item->get_datastream_dissemination('MODS');
 
   $pids_to_associate = array_diff($selected_user, $existing_assoc);
-  
+
   drupal_set_message(implode(', ', $pids_to_associate));
-    
+
   if ($mods != NULL) {
     $mods_xml = new DOMDocument();
     $mods_xml->loadXML($mods);
-    
+
     foreach ($pids_to_associate as $pid_to_associate) {
       $pid_to_associate = explode(':', $pid_to_associate);
       $u1 = $mods_xml->createElement('identifier', $pid_to_associate[1]);
@@ -941,7 +927,6 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
       $mods_element->appendChild($u1);
       drupal_set_message($mods_xml->saveXML());
     }
-    
   }
   else {
     drupal_set_message(t('No MODS datastream found!'), 'warning');
