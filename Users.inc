@@ -870,8 +870,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#value' => $pid,
   );
   
-  $form['#redirect'] = 'fedora/repository/' . $pid;
-
   return $form;
 }
 
@@ -883,4 +881,6 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $pids = array_keys($selections);
 
   drupal_set_message(implode(', ', $pids));
+  
+  drupal_goto('fedora/repository/' . $citation_pid);
 }
