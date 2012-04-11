@@ -4,6 +4,7 @@
  * @file
  */
 function scholar_admin_settings() {
+  module_load_include('inc', 'scholar', 'citation/csl/CSL');
   $form = array();
 
   $form['romeo'] = array(
@@ -76,6 +77,21 @@ function scholar_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('Researcher citations cache time in days'),
     '#default_value' => variable_get('scholar_researcher_citations_cache_time', '2'),
+  );
+  
+  $form['scholar_csl'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('CSL settings'),
+  );
+  
+  $csl = new CSL();
+  
+  $options = $csl->GetNames();
+  
+  $form['scholar_csl']['scholar_default_csl'] = array(
+    '#type' => 'select',
+    '#options' => $options,
+    '#default_value' => variable_get('scholar_default_csl', 'default'),
   );
   
   return system_settings_form($form);
