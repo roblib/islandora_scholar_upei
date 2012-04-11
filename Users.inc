@@ -936,6 +936,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
       $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
       $mods_element->appendChild($u1);
       drupal_set_message($mods_xml->saveXML());
+      $item->add_relationship('hasResearcher', $pid_to_associate[1]);
     }
     
     foreach ($depts_to_associate as $dept_to_associate) {
@@ -944,7 +945,9 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
       $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
       $mods_element->appendChild($u2);
       drupal_set_message($mods_xml->saveXML());
+      $item->add_relationship('hasDepartment', $dept_to_associate);
     }
+    $item->modify_datastream_by_value($mods_xml->saveXML(), 'MODS', 'MODS Record', 'text/xml', FALSE, 'User and department associations added by Scholar module');
   }
   else {
     drupal_set_message(t('No MODS datastream found!'), 'warning');
