@@ -931,13 +931,12 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
     $mods_xml->loadXML($mods);
 
     foreach ($pids_to_associate as $pid_to_associate) {
-      $pid_to_associate = explode(':', $pid_to_associate);
-      $u1 = $mods_xml->createElement('identifier', $pid_to_associate[1]);
+      $u1 = $mods_xml->createElement('identifier', $pid_to_associate);
       $u1->setAttribute('type', 'u1');
       $mods_element = $mods_xml->getElementsByTagName('mods')->item(0);
       $mods_element->appendChild($u1);
       drupal_set_message($mods_xml->saveXML());
-      $item->add_relationship('hasResearcher', $pid_to_associate[1]);
+      $item->add_relationship('hasResearcher', $pid_to_associate);
     }
     
     foreach ($depts_to_associate as $dept_to_associate) {
