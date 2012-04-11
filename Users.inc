@@ -887,7 +887,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   
   $citation_pid = $form_state['values']['pid'];
   $existing = explode(',', $form_state['values']['existing']);
-  $dept_array = unserialize($form_state['values']['departments']);
+  $dept_array = array_filter(unserialize($form_state['values']['departments']));
   var_dump($dept_array);
   exit;
   $existing_assoc = array();
