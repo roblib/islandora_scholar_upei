@@ -736,6 +736,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   $details = new Coins($pid);
   $usernames = $details->username;
+  $departments = $details->department;
 
   $solr_url = 'http://localhost:8080/solr/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.username,mads.topic,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
@@ -809,7 +810,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     foreach ($researcher_pids as $r_pid) {
       in_array(strtolower($r_pid['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
       $rows1[] = array(
-        '#pid' => $r_pid['pid'],
+        '#pid' => $r_pid['pid'] . '~' . $r_pid['dept'],
         'fullname' => array('#value' => check_plain($r_pid['name'])),
         'cn' => array('#value' => check_plain($r_pid['cn'])),
         'dept' => array('#value' => check_plain($r_pid['dept'])),
@@ -824,7 +825,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   foreach ($users as $user) {
     in_array(strtolower($user['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
     $rows2[] = array(
-      '#pid' => 'ldap:' . $user['cn'],
+      '#pid' => 'ldap:' . $user['cn'] . '~' . $user['dept'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
       'cn' => array('#value' => check_plain($user['cn'])),
       'dept' => array('#value' => check_plain($user['dept'])),
@@ -883,14 +884,27 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#value' => implode(',', $usernames),
   );
   
+  $form['departments'] = array(
+    '#type' => 'hidden',
+    '#value' => implode(',', $departments),
+  );
+  
   return $form;
 }
 
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
   $selections = array_filter($form_state['values']['table']['selections']);
+  $selected_user = array();
+  $selected_dept = array();
+  foreach ($selections as $key => $selection) {
+    $selection_array = explode('~', $selection);
+    $selected_user[$key] = $selection_array[0];
+    $selected_dept[$key] = $selection_array[1];
+  }
   $citation_pid = $form_state['values']['pid'];
   $existing = explode(',', $form_state['values']['existing']);
+  $departments = explode(',', $form_state['values']['departments']);
   
   $existing_assoc = array();
   
@@ -898,16 +912,18 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
     $existing_assoc[] = 'ir:' . $assoc;
   }
   
-  $pids = array_keys($selections);
+  $pids = array_keys($selected_user);
 
   drupal_set_message('New ' . implode(', ', $pids));
   drupal_set_message('Old ' . implode(', ', $existing_assoc));
+  drupal_set_message('Old departments: ' . implode(', ', $departments));
+  drupal_set_message('New departments: ' . implode(', ', $selected_dept));
 
   $item = new Fedora_Item($citation_pid);
 
   $mods = $item->get_datastream_dissemination('MODS');
 
-  $pids_to_associate = array_diff($selections, $existing_assoc);
+  $pids_to_associate = array_diff($selected_user, $existing_assoc);
   
   drupal_set_message(implode(', ', $pids_to_associate));
     
