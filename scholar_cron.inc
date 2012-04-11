@@ -14,7 +14,10 @@
  */
 function scholar_cron_embargo_check() {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
-  $solr_query = 'http://localhost:8080/solr/select/?q=mods.embargo_date:[NOW-7DAY%20TO%20NOW]%20OR%20-mods.embargo_date:[*%20TO%20*]%20AND%20rels.hasModel:thesisCModel&fl=PID&rows=10000';
+  
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+
+  $solr_query = 'http://' . $solr_location . '/select/?q=mods.embargo_date:[NOW-7DAY%20TO%20NOW]%20OR%20-mods.embargo_date:[*%20TO%20*]%20AND%20rels.hasModel:thesisCModel&fl=PID&rows=10000';
   $solr_result = @file_get_contents($solr_query);
 
   if ($solr_result != NULL) {

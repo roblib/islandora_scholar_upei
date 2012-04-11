@@ -86,6 +86,8 @@ class Scholar {
     module_load_include('inc', 'scholar', 'Users');
     $path = drupal_get_path('module', 'scholar');
     drupal_add_css($path . '/scholar.css');
+    
+    $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($this->pid, "MADS");
@@ -160,7 +162,7 @@ class Scholar {
 //      $rows = unserialize($citations_cache->data);
 //    }
 //    else {
-    $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
+    $username_query = file_get_contents('http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
     if ($xml != NULL) {
       $xml = new SimpleXMLElement($username_query);
       $array = $xml->xpath('//doc');

@@ -398,22 +398,24 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username,
 }
 
 function islandora_bibilgraphy_solr_form_table($names, $type) {
+  
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   switch ($type) {
     case 'author-citations':
-      $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
+      $url = 'http://' . $solr_location . '/select?q=rels.hasModel:citation%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
       $query = file_get_contents($url);
       break;
     case 'department-citations':
-      $url = 'http://localhost:8080/solr/select?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
+      $url = 'http://' . $solr_location . '/select?q=rels.hasModel:citation%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
       $query = file_get_contents($url);
       break;
     case 'author-theses':
-      $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
+      $url = 'http://' . $solr_location . '/select?q=rels.hasModel:thesis%20AND%20mods.username:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
       $query = file_get_contents($url);
       break;
     case 'department-theses':
-      $url = 'http://localhost:8080/solr/select?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
+      $url = 'http://' . $solr_location . '/select?q=rels.hasModel:thesis%20AND%20mods.department:"' . (str_replace(array(';', ' '), array(' ', '%20'), ($names))) . '"&fl=PID,mods.title,mods.author,author&rows=10000';
       $query = file_get_contents($url);
       break;
   }
@@ -485,9 +487,12 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
  *   Where the first key is the title and the second is the authors.
  */
 function islandora_bibilgraphy_solr_form_get_title_authors($pid) {
+  
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+
   $title = $authors = 'Missing';
 
-  $solr_query = 'http://localhost:8080/solr/select/?q=PID:' . (str_replace(':', '?', ($pid))) . '&fl=dc.title,author&rows=10000';
+  $solr_query = 'http://' . $solr_location . '/select/?q=PID:' . (str_replace(':', '?', ($pid))) . '&fl=dc.title,author&rows=10000';
   $solr_result = file_get_contents($solr_query);
   $xml = new SimpleXMLElement($solr_result);
   $array = $xml->xpath('//doc');
@@ -543,6 +548,8 @@ function scholar_object_metrics_form($identifier, $type) {
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
   module_load_include('inc', 'scholar', 'Users');
   drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
+  
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   switch ($type) {
     case 'author':
@@ -555,7 +562,7 @@ function scholar_object_metrics_form($identifier, $type) {
       $query_type = 'mods.username';
       break;
   }
-  $solr_query = 'http://localhost:8080/solr/select/?q=' . $query_type . ':"' . (str_replace(';', ' ', ($identifier))) . '"&fl=PID,mods.title&rows=10000';
+  $solr_query = 'http://' . $solr_location . '/select/?q=' . $query_type . ':"' . (str_replace(';', ' ', ($identifier))) . '"&fl=PID,mods.title&rows=10000';
   $username_query = @file_get_contents($solr_query);
   if ($username_query != NULL) {
     $xml = new SimpleXMLElement($username_query);
@@ -623,8 +630,10 @@ function scholar_object_metrics_form($identifier, $type) {
 function islandora_scholar_researcher_compare_form() {
 
   $form = array();
+  
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
-  $existing_researchers_query = 'http://localhost:8080/solr/select?q=rels.hasModel:researcher&fl=mads.username&rows=10000';
+  $existing_researchers_query = 'http://' . $solr_location . '/select?q=rels.hasModel:researcher&fl=mads.username&rows=10000';
   $existing_researchers_result = @file_get_contents($existing_researchers_query);
 
   if ($existing_researchers_result != NULL) {
@@ -641,9 +650,7 @@ function islandora_scholar_researcher_compare_form() {
     }
   }
 
-//  var_dump(array_unique($existing_researchers));
-
-  $citation_researchers_query = 'http://localhost:8080/solr/select?q=rels.hasModel:citation&fl=mods.username&rows=10000';
+  $citation_researchers_query = 'http://' . $solr_location . '/select?q=rels.hasModel:citation&fl=mods.username&rows=10000';
   $citation_researchers_result = @file_get_contents($citation_researchers_query);
 
   if ($citation_researchers_result != NULL) {
@@ -718,6 +725,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   module_load_include('inc', 'scholar', 'UsersClass');
 
   $csl = variable_get('scholar_default_csl', 'default');
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   $pid = html_entity_decode($pid);
 
@@ -733,7 +741,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $usernames = $details->username;
   $departments = $details->department;
 
-  $solr_url = 'http://localhost:8080/solr/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.username,mads.topic,&rows=10000';
+  $solr_url = 'http://' . $solr_location . '/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.username,mads.topic,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
   if ($solr_query != NULL) {
     $solr_xml = new SimpleXMLElement($solr_query);

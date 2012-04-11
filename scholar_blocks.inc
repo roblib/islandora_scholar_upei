@@ -56,7 +56,10 @@ function scholar_recent_items($form_state) {
 }
 
 function scholar_total_records($form_state) {
-  $query = @file_get_contents('http://localhost:8080/solr/select/?q=PID:ir*%20AND%20rels.hasModel:ir\:citationCModel&start=0&rows=0&indent=on');
+
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+
+  $query = @file_get_contents('http://' . $solr_location . '/select/?q=PID:ir*%20AND%20rels.hasModel:ir\:citationCModel&start=0&rows=0&indent=on');
   if ($query != NULL) {
     $xml = new SimpleXMLElement($query);
     $number_of_records = $xml->xpath('./result[@name="response"]/@numFound');

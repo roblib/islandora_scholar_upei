@@ -16,6 +16,9 @@
 function scholar_search_form(array &$form_state) {
   drupal_add_js(drupal_get_path('module', 'scholar') . '/js/Ahah.js');
   drupal_add_css(drupal_get_path('module', 'scholar') . '/css/Search.css');
+  
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+
   $num_terms = 1;
   if (isset($form_state['values'])) {
     $values = $form_state['values'];
@@ -97,7 +100,7 @@ function scholar_search_form(array &$form_state) {
   }
 
   $researchers = array();
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.family,mads.given&rows=10000');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=mads.family,mads.given&rows=10000');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   foreach ($array as $arr) {
@@ -219,12 +222,13 @@ function browse_by_department() {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
   module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
   $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
   $inclusionlist = file_get_contents($filename);
   $inclusionlist = fix_encoding($inclusionlist);
   $inclusionlist = explode(",", $inclusionlist);
   $ingnore_roles_less_than = 0;
   
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:researcherCModel&fl=mads.topic&rows=500');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=mads.topic&rows=500');
   
   $xml = new SimpleXMLElement($result);
   
@@ -276,7 +280,9 @@ function browse_by_department() {
  */
 function scholar_rss_feed($researcher) {
   
-  $query_url = 'http://localhost:8080/solr/select?q=mods.username:' . $researcher . '&wt=xslt&tr=example_rss.xsl';
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+
+  $query_url = 'http://' . $solr_location . '/select?q=mods.username:' . $researcher . '&wt=xslt&tr=example_rss.xsl';
   $result = file_get_contents($query_url);
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
   print $result;
