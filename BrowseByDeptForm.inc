@@ -15,59 +15,61 @@ function scholar_browse_by_dept_form() {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
   module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
 
-  $result = file_get_contents('http://localhost:8080/solr/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier&rows=500&sort=mads.identifier_sort+asc');
+  $solr_location = variable_get('islandora_solr_search_block_url', 'http://localhost:8080/solr');
+
+  $result = file_get_contents($solr_location . '/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier&rows=500&sort=mads.identifier_sort+asc');
   $xml = new SimpleXMLElement($result);
   $depts = array_unique($xml->xpath('//doc/arr/str'));
 
   foreach ($depts as $dept) {
     $output = '';
     $dept_copy = (string) $dept;
-    $dept_query = $dept_title = $dept_copy;    
+    $dept_query = $dept_title = $dept_copy;
     // Added in mapping for various departments that may be represented by
     // more than one name
     if ($dept_copy == 'Pathology and Microbiology') {
       $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
     }
-    
+
     if ($dept_copy == 'School of Business') {
       $dept_copy = 'School of Business" OR mods.department_facet~~"Business';
     }
-    
+
     if ($dept_copy == 'Political Science') {
       $dept_copy = 'Political Studies" OR mods.department_facet~~"Political Science';
     }
-    
+
     if ($dept_copy == 'Sociology and Anthropology') {
       $dept_copy = 'Sociology and Anthropology" OR mods.department_facet~~"Soc Anth';
     }
-    
+
     if ($dept_copy == 'Women\'s Studies') {
       $dept_copy = 'Women\'s Studies" OR mods.department_facet~~"Womens Studies';
     }
-    
+
     if ($dept_copy == 'Pathology and Microbiology') {
       $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
     }
-    
+
     if ($dept_copy == 'Department of Biomedical Sciences') {
       $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Department of Biomedical Sciences';
     }
-    
+
     if ($dept_copy == 'Applied Human Sciences') {
       $dept_copy = 'Applied Human Sciences" OR mods.department_facet~~"Home Economics';
     }
-    
+
     if ($dept_copy == 'Biomedical Sciences') {
       $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Anatomy Physiology';
     }
-    
+
     if ($dept_copy == 'Computer Science and Information Technology') {
       $dept_copy = 'Computer Science and Information Technology" OR mods.department_facet~~"Computer Science and Info Technology';
     }
-    
+
     // Replace some of the characters that may be found in the dept names so that they don't break
     // the solr query
-    $dept_result_query = 'http://localhost:8080/solr/select/?q=mods.department_facet:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
+    $dept_result_query = $solr_location . '/select/?q=mods.department_facet:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
     $dept_result = file_get_contents($dept_result_query);
     $dept_xml = new SimpleXMLElement($dept_result);
     $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
@@ -83,7 +85,7 @@ function scholar_browse_by_dept_form() {
 
     $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
     $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
-    $query = 'http://localhost:8080/solr/select/?q=mads.topic_facet:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
+    $query = $solr_location . '/select/?q=mads.topic_facet:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
     $result = file_get_contents($query);
     $xml = new SimpleXMLElement($result);
     $array = $xml->xpath('//doc');
@@ -101,7 +103,7 @@ function scholar_browse_by_dept_form() {
       $fullname = $arr->xpath('./arr[@name="mads.fullname"]/str');
       $username = $arr->xpath('./arr[@name="mads.username"]/str');
       if ($username[0] != '') {
-        $username_query = file_get_contents('http://localhost:8080/solr/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0])))));
+        $username_query = file_get_contents($solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0])))));
         $username_xml = new SimpleXMLElement($username_query);
         $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
         $author_citations[] = $number_of_citations[0];
@@ -124,6 +126,5 @@ function scholar_browse_by_dept_form() {
     );
   }
 
-//  var_dump($form);
   return $form;
 }
