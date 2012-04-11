@@ -696,7 +696,7 @@ function islandora_scholar_associate_button_form(&$form_state, $pid = NULL) {
   $depts = $details->department;
   
   if ($users == NULL || $depts == NULL) {
-    drupal_set_message(t('This citation is missing associations to either researchers, departments or both!'), 'warning');
+    drupal_set_message(t('This citation is missing associations to either researchers, departments or both!'), 'warning', FALSE);
   }
 
   $form['associate'] = array(
