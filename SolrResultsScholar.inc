@@ -169,7 +169,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
 
     foreach ($results->response->docs as $doc) {
       $rows = array();
-      $csl = 'default';
+      $csl = variable_get('scholar_default_csl', 'default');
       $department = $person = FALSE;
       foreach ($doc as $field => $value) {
         if ($field == 'rels.isMemberOfCollection' && $value == 'ir:people') {
