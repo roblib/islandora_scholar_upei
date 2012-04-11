@@ -875,7 +875,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   $form['old_departments'] = array(
     '#type' => 'hidden',
-    '#value' => implode(',', $departments),
+    '#value' => strtolower(str_replace(' ', '_', implode(',', $departments))),
   );
   
   $form['new_departments'] = array(
