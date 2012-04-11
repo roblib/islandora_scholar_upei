@@ -869,5 +869,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 }
 
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
-  
+  $selections = $form_state['values']['table']['selections'];
+  drupal_set_message(implode(', ', $selections));
 }
