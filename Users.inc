@@ -780,11 +780,10 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $users[$i]['mail'] = $list[$i]['mail'][0];
       $users[$i]['dept'] = implode(', ', $ldap_groups);
       $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
-      $dept_array['ldap:' . $cn] = implode(',', $ldap_groups);
+      $dept_array['ldap:' . $cn] = str_replace(' ', '_', implode(',', $ldap_groups));
     }
 
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
-    var_dump($researcher_keys);
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), t('Associated'), ''),
       '#theme' => THEME_BIBLIOGRAPHY_FORM_TABLE,
@@ -885,7 +884,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
   $selections = array_filter($form_state['values']['table']['selections']);
-  
   
   $citation_pid = $form_state['values']['pid'];
   $existing = explode(',', $form_state['values']['existing']);
