@@ -687,6 +687,17 @@ function islandora_scholar_researcher_compare_form() {
 }
 
 function islandora_scholar_associate_button_form(&$form_state, $pid = NULL) {
+  
+  module_load_include('inc', 'scholar', 'Coins');
+  
+  $details = new Coins($pid);
+  
+  $users = $details->username;
+  $depts = $details->department;
+  
+  if ($users == NULL || $depts == NULL) {
+    drupal_set_message(t('This citation is missing associations to either researchers, departments or both!'), 'warning');
+  }
 
   $form['associate'] = array(
     '#type' => 'submit',
