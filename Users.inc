@@ -756,7 +756,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_pids[$researcher[1]]['dept'] = (string) $researcher_dept[0]->str;
       $researcher_keys1[$researcher[1]] = $researcher_pid;
     }
-    
+
     // Run LDAP search. This takes a while and so it's cached for an hour to speed up
     // subsequent searches.
     if ($list_cache = cache_get('islandora_scholar_associate_ldap_cache_' . $pid)) {
@@ -822,7 +822,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $rows2 = &$table['rows'];
 
   foreach ($users as $user) {
-  in_array(strtolower($user['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
+    in_array(strtolower($user['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
       'fullname' => array('#value' => check_plain($user['fullname'])),
@@ -862,42 +862,56 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#value' => $name_list,
     '#prefix' => '<h3>Author list</h3>',
   );
-  
+
   $form['table'] = array(
     '#prefix' => '<h3>Potential matches</h3>',
     'table' => $table,
   );
-  
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Add associations'),
   );
-  
+
   $form['pid'] = array(
     '#type' => 'hidden',
     '#value' => $pid,
   );
-  
+
   $form['exisiting'] = array(
     '#type' => 'hidden',
     '#value' => implode(',', $usernames),
   );
-  
+
   return $form;
 }
 
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'fedora_item');
   $selections = array_filter($form_state['values']['table']['selections']);
   $citation_pid = $form_state['values']['pid'];
   $existing_assoc = explode(',', $form_state['values']['existing']);
   drupal_set_message(implode(', ', $selections));
-  
+
   $pids = array_keys($selections);
 
   drupal_set_message(implode(', ', $pids));
+
+  $item = new Fedora_Item($citation_pid);
+
+  $mods = $item->get_datastream_dissemination('MODS');
+
+  $pids_to_associate = array_diff($selections, $existing_assoc);
   
-  var_dump($selections);
-  var_dump($existing_assoc);
+  drupal_set_message(implode(', ', $pids_to_associate));
   
-//  drupal_goto('fedora/repository/' . $citation_pid);
+  if ($mods != NULL) {
+    $mods_xml = new DOMDocument();
+    $mods_xml->loadXML($mods);
+  }
+  else {
+    drupal_set_message(t('No MODS datastream found!'), 'warning');
+  }
+
+  drupal_goto('fedora/repository/' . $citation_pid);
 }
