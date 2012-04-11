@@ -901,7 +901,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $pids = array_keys($selections);
 
   drupal_set_message('New ' . implode(', ', $pids));
-  drupal_set_message('Old ' . $form_state['values']['existing']);
+  drupal_set_message('Old ' . implode(', ', $existing_assoc));
 
   $item = new Fedora_Item($citation_pid);
 
