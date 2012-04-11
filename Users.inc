@@ -905,6 +905,11 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   
   drupal_set_message(implode(', ', $pids_to_associate));
   
+  $existing_type = gettype($existing_assoc);
+  $new_type = gettype($selections);
+  
+  drupal_set_message($existing_type . ' -- ' . $new_type);
+  
   if ($mods != NULL) {
     $mods_xml = new DOMDocument();
     $mods_xml->loadXML($mods);
