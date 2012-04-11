@@ -810,7 +810,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     foreach ($researcher_pids as $r_pid) {
       in_array(strtolower($r_pid['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
       $rows1[] = array(
-        '#pid' => $r_pid['pid'] . '/' . str_replace(' ', '_', $r_pid['dept']),
+        '#pid' => $r_pid['pid'] . str_replace(' ', '_', $r_pid['dept']),
         'fullname' => array('#value' => check_plain($r_pid['name'])),
         'cn' => array('#value' => check_plain($r_pid['cn'])),
         'dept' => array('#value' => check_plain($r_pid['dept'])),
@@ -825,7 +825,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   foreach ($users as $user) {
     in_array(strtolower($user['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
     $rows2[] = array(
-      '#pid' => 'ldap:' . $user['cn'] . '/' . str_replace(' ', '_', $user['dept']),
+      '#pid' => 'ldap:' . $user['cn'] . str_replace(' ', '_', $user['dept']),
       'fullname' => array('#value' => check_plain($user['fullname'])),
       'cn' => array('#value' => check_plain($user['cn'])),
       'dept' => array('#value' => check_plain($user['dept'])),
