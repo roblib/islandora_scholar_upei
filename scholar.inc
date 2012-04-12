@@ -812,8 +812,8 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     if ($dsid == 'EMBARGO') {
       if (array_key_exists('POLICY', $ds_array)) {
         $policy_details = $object->get_datastream_info('POLICY');
-        drupal_set_message('Policy details: ' . $policy_details->label);
-        switch ($policy_details->label) {
+        drupal_set_message('Policy details: ' . $policy_details->datastream->label);
+        switch ($policy_details->datastream->label) {
           case ('Embargo Policy - Supp'):
             $result1 = $object->purge_datastream('POLICY');
             $result = $object->add_datastream_from_file($path . '/xacml/both-embargo.xml', 'POLICY', 'Embargo policy - Both');
@@ -846,7 +846,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     }
     if ($dsid == 'REMOVE_EMBARGO') {
       $policy_details = $object->get_datastream_info('POLICY');
-      switch ($policy_details->label) {
+      switch ($policy_details->datastream->label) {
         case 'Embargo Policy - Supp':
           $result = $object->purge_datastream('POLICY');
           break;
