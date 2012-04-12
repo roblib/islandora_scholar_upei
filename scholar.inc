@@ -814,18 +814,18 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
         $policy_details = $object->get_datastream_info('POLICY');
         drupal_set_message('Policy details: ' . $policy_details->datastream->label);
         switch ($policy_details->datastream->label) {
-          case ('Embargo Policy - Supp'):
+          case 'Embargo Policy - Supp':
             $result1 = $object->purge_datastream('POLICY');
             $result = $object->add_datastream_from_file($path . '/xacml/both-embargo.xml', 'POLICY', 'Embargo policy - Both');
             break;
-          case ('Embargo Policy - Doc'):
+          case 'Embargo Policy - Doc':
             drupal_set_message(t('Document embargo already exists!'), 'warning');
             break;
-          case ('Embargo Policy - Both'):
+          case 'Embargo Policy - Both':
             drupal_set_message(t('Document embargo already exists!'), 'warning');
             break;
           default:
-            drupal_set_message(t('Unknown policy datastream, unabel to add!'), 'warning');
+            drupal_set_message(t('Unknown policy datastream, unable to add!'), 'warning');
         }
       }
       else {
