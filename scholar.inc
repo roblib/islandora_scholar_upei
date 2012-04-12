@@ -86,7 +86,7 @@ class Scholar {
     module_load_include('inc', 'scholar', 'Users');
     $path = drupal_get_path('module', 'scholar');
     drupal_add_css($path . '/scholar.css');
-    
+
     $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
     $collectionHelper = new CollectionClass();
@@ -156,7 +156,7 @@ class Scholar {
       '#title' => t('Citations'),
       '#weight' => 1,
     );
-    
+
     $pids = array();
 //    if ($citations_cache = cache_get('islandora_scholar_citation_cache')) {
 //      $rows = unserialize($citations_cache->data);
@@ -202,7 +202,7 @@ class Scholar {
     $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $username, $username, 'author-citations'),
     );
-    
+
     $tabset['first_tab']['tabs']['theses'] = array(
       '#type' => 'tabpage',
       '#title' => t('Theses'),
@@ -513,15 +513,32 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
  * @return string 
  */
 function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
+  module_load_include('inc', 'fedora_repository', 'fedora_item');
+
   $form = array();
 
-  $form['supp_embargo'] = array(
-    '#id' => 'supp_embargo',
-    '#type' => 'submit',
-    '#prefix' => '<p>',
-    '#suffix' => '</p>',
-    '#value' => t('Embargo supplemental information'),
-  );
+  $object = new Fedora_Item($pid);
+
+  $policy_details = $object->get_datastream_info('POLICY');
+
+  if ($policy_details == 'Embargo Policy - Doc') {
+    $form['supp_embargo'] = array(
+      '#id' => 'supp_embargo',
+      '#type' => 'submit',
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+      '#value' => t('Embargo supplemental information'),
+    );
+  }
+  else {
+    $form['supp_embargo_del'] = array(
+      '#id' => 'supp_embargo_del',
+      '#type' => 'submit',
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+      '#value' => t('Remove supplemental information embargo'),
+    );
+  }
 
   $form['supp_delete'] = array(
     '#id' => 'supp_delete',
@@ -548,7 +565,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
-  
+
   switch ($form_state['clicked_button']['#id']) {
     case 'supp_delete':
       $object->purge_datastream('ZIP');
@@ -586,6 +603,9 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
       $info = $object->get_datastream_info('POLICY');
       var_dump($info);
       exit;
+      break;
+    case 'supp_embargo_del':
+      
       break;
   }
 }
@@ -683,11 +703,21 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
         );
       }
       else {
-        $form['remove_embargo'] = array(
-          '#type' => 'submit',
-          '#name' => 'remove_embargo',
-          '#value' => t('Remove embargo'),
-        );
+        $policy_details = $object->get_datastream_info('POLICY');
+        if ($policy_details == 'Embargo Policy - Doc') {
+          $form['remove_embargo'] = array(
+            '#type' => 'submit',
+            '#name' => 'remove_embargo',
+            '#value' => t('Remove embargo'),
+          );
+        }
+        else {
+          $form['embargo'] = array(
+            '#type' => 'submit',
+            '#name' => 'embargo',
+            '#value' => t('Embargo documents'),
+          );
+        }
       }
     }
   }
@@ -789,12 +819,33 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
       }
     }
     if ($dsid == 'REMOVE_EMBARGO') {
-      $result = $object->purge_datastream('POLICY');
+      $policy_details = $object->get_datastream_info('POLICY');
+      switch ($policy_details->label) {
+        case 'Embargo Policy - Supp':
+          $result = $object->purge_datastream('POLICY');
+          break;
+        case 'Embargo Policy - Doc':
+          drupal_set_message(t('Embargo is only set for the document, not removed!'), 'warning');
+          $result = TRUE;
+          break;
+        case 'Embargo Policy - Both':
+          $result = $object->purge_datastream('POLICY');
+          $result1 = $object->add_datastream_from_file($path . '/xacml/supplemental-embargo.xml', 'POLICY', 'Embargo policy - Doc');
+          break;
+        default:
+          drupal_set_message(t('Unknown policy datastream, unable to remove!'), 'warning');
+      }
       if ($result != NULL) {
         drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)));
       }
       else {
         drupal_set_message(t('There was an error trying to remove the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
+      }
+      if ($result1 != NULL) {
+        drupal_set_message(t('Supplemental information embargo policy for object \'@pid\' added', array('@pid' => $pid)));
+      }
+      else {
+        drupal_set_message(t('An error occurred adding the new policy datastream!'), 'warning');
       }
     }
   }
@@ -980,10 +1031,10 @@ function islandora_scholar_build_citation($pid, $type) {
   if (stripos((string) $genre[0], 'book') !== FALSE) {
     $type = 'book';
   }
-  
+
 //    Get MODS datastream and pull the ISSN from there.
 
-  $csl = variable_get('scholar_default_csl', 'default'); 
+  $csl = variable_get('scholar_default_csl', 'default');
   $item = new Fedora_Item($pid);
   $ds_array = $item->get_datastreams_list_as_array();
 
