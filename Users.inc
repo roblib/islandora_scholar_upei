@@ -671,16 +671,8 @@ function islandora_scholar_researcher_compare_form() {
 
   $diff = array_diff(array_unique($citation_researchers), array_unique($existing_researchers));
 
-  $diff_list = '<ul>';
-
-  foreach ($diff as $d) {
-    $diff_list .= '<li>' . $d . '</li>';
-  }
-
-  $diff_list .= '</ul>';
-
   $form['list'] = array(
-    '#value' => $diff_list,
+    '#value' => theme_item_list($diff),
   );
 
   return $form;
@@ -862,14 +854,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $citation .= $bibliography->render();
 
   $names = $details->full_names;
-
-//  $name_list = '<ul>';
-//
-//  foreach ($names as $name) {
-//    $name_list .= '<li>' . $name . '</li>';
-//  }
-//
-//  $name_list .= '</ul>';
 
   $form['citation'] = array(
     '#value' => $citation,
