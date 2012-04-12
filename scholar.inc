@@ -704,7 +704,8 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       }
       else {
         $policy_details = $object->get_datastream_info('POLICY');
-        if ($policy_details == 'Embargo Policy - Doc') {
+        var_dump($policy_details->label);
+        if ($policy_details->label == 'Embargo Policy - Doc') {
           $form['remove_embargo'] = array(
             '#type' => 'submit',
             '#name' => 'remove_embargo',
@@ -811,6 +812,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     if ($dsid == 'EMBARGO') {
       if (array_key_exists('POLICY', $ds_array)) {
         $policy_details = $object->get_datastream_info('POLICY');
+        drupal_set_message('Policy details: ' . $policy_details->label);
         switch ($policy_details->label) {
           case ('Embargo Policy - Supp'):
             $result1 = $object->purge_datastream('POLICY');
