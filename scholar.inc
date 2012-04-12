@@ -515,8 +515,6 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
 function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
 
-  $path = drupal_get_path('module', 'scholar');
-
   $form = array();
 
   $object = new Fedora_Item($pid);
@@ -582,6 +580,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
   $ds_array = $object->get_datastreams_list_as_array();
+  $path = drupal_get_path('module', 'scholar');
 
   switch ($form_state['clicked_button']['#id']) {
     case 'supp_delete':
