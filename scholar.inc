@@ -844,6 +844,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
       }
       else {
         $result = $object->add_datastream_from_file($path . '/xacml/document-embargo.xml', 'POLICY', 'Embargo policy - Doc');
+        $result1 = TRUE;
       }
       if ($result1 != NULL) {
         drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)));
