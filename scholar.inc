@@ -520,11 +520,11 @@ function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
   $object = new Fedora_Item($pid);
 
   $ds_array = $object->get_datastreams_list_as_array();
-
+  var_dump($ds_array);
   if (array_key_exists('POLICY', $ds_array)) {
 
     $policy_details = $object->get_datastream_info('POLICY');
-
+    var_dump($policy_details->datastream->label);
     if ($policy_details->datastream->label == 'Embargo Policy - Doc') {
       $form['supp_embargo'] = array(
         '#id' => 'supp_embargo',
@@ -615,7 +615,6 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
     case 'supp_embargo':
       drupal_set_message('Embargo!');
       $info = $object->get_datastream_info('POLICY');
-      var_dump($info);
       exit;
       break;
     case 'supp_embargo_del':
