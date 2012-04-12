@@ -847,11 +847,11 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     if ($dsid == 'REMOVE_EMBARGO') {
       $policy_details = $object->get_datastream_info('POLICY');
       switch ($policy_details->datastream->label) {
-        case 'Embargo policy - Supp':
+        case 'Embargo policy - Doc':
           $result = $object->purge_datastream('POLICY');
           break;
-        case 'Embargo policy - Doc':
-          drupal_set_message(t('Embargo is only set for the document, not removed!'), 'warning');
+        case 'Embargo policy - Supp':
+          drupal_set_message(t('Embargo is only set for the supplemental information, not removed!'), 'warning');
           $result = TRUE;
           break;
         case 'Embargo policy - Both':
