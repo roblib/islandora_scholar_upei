@@ -856,7 +856,8 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
           break;
         case 'Embargo policy - Both':
           $result = $object->purge_datastream('POLICY');
-          $result1 = $object->add_datastream_from_file($path . '/xacml/supplemental-embargo.xml', 'POLICY', 'Embargo policy - Doc');
+          $result1 = TRUE;
+          $result1 = $object->add_datastream_from_file($path . '/xacml/supplemental-embargo.xml', 'POLICY', 'Embargo policy - Supp');
           break;
         default:
           drupal_set_message(t('Unknown policy datastream, unable to remove!'), 'warning');
