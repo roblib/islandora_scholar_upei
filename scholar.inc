@@ -776,7 +776,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       }
       else {
         $policy_details = $object->get_datastream_info('POLICY');
-        if ($policy_details->datastream->label == 'Embargo policy - Doc') {
+        if ($policy_details->datastream->label != 'Embargo policy - Supp') {
           $form['remove_embargo'] = array(
             '#type' => 'submit',
             '#name' => 'remove_embargo',
