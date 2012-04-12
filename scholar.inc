@@ -738,6 +738,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
 
   if (array_key_exists('PDF', $ds_array)) {
 
+    $pdf_content .= "<div><iframe src=\"http://docs.google.com/viewer?url=" . $base_url . '/fedora/repository/' . $pid . '/PDF/preview.pdf' . "&embedded=TRUE\" style=\"width:600px; height:500px;\" frameborder=\"0\"></iframe></div>";
     $pdf_content = l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
 
     if ($track != FALSE) {
@@ -746,8 +747,6 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       $pdf_content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
     }
     
-    $pdf_content .= "<div><iframe src=\"http://docs.google.com/viewer?url=" . $base_url . '/fedora/repository/' . $pid . '/PDF/preview.pdf' . "&embedded=TRUE\" style=\"width:600px; height:500px;\" frameborder=\"0\"></iframe></div>";
-
     $form['pdf_info'] = array(
       '#value' => $pdf_content,
     );
