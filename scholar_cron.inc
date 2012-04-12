@@ -31,7 +31,7 @@ function scholar_cron_embargo_check() {
       $item = new Fedora_Item($pid);
       $ds_array = $item->get_datastreams_list_as_array();
       foreach ($ds_array as $key => $ds) {
-        if ($key == 'POLICY' && $ds['label'] == 'Embargo policy') {
+        if ($key == 'POLICY' && in_array($ds['label'], array('Embargo policy - Doc', 'Embargo policy - Supp', 'Embargo policy - Both'))) {
           $purge_status = $item->purge_datastream('POLICY');
           if ($purge_status != NULL) {
             drupal_set_message(t('Embargo policy removed for @pid', array('@pid' => $pid)));

@@ -696,6 +696,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
   module_load_include('inc', 'scholar', 'tracking/scholar_tracking');
 
   global $user;
+  global $base_url;
 
   $form = array();
 
@@ -744,6 +745,8 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       $pdf_content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
       $pdf_content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
     }
+    
+    $pdf_content .= "<iframe src=\"http://docs.google.com/viewer?url=" . $base_url . '/fedora/repository/' . $this->pid . '/PDF/preview.pdf' . "&embedded=TRUE\" style=\"width:600px; height:500px;\" frameborder=\"0\"></iframe>";
 
     $form['pdf_info'] = array(
       '#value' => $pdf_content,
