@@ -741,7 +741,8 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   $path = drupal_get_path('module', 'scholar');
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
-
+  $ds_array = $object->get_datastreams_list_as_array();
+  
   switch ($form_state['clicked_button']['#name']) {
     case 'obj_delete':
       $dsid = 'OBJ';
@@ -767,8 +768,6 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     }
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
-
-    $ds_array = $object->get_datastreams_list_as_array();
 
     if (!array_key_exists('PDF', $ds_array) && !array_key_exists('OBJ', $ds_array)) {
 
