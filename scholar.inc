@@ -780,7 +780,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   }
   else {
     if ($dsid == 'EMBARGO') {
-      $result = $object->add_datastream_from_file($path . '/xacml/document-embargo.xml', 'POLICY', 'Embargo policy');
+      $result = $object->add_datastream_from_file($path . '/xacml/document-embargo.xml', 'POLICY', 'Embargo policy - Doc');
       if ($result != NULL) {
         drupal_set_message(t('Embargo policy for object \'@pid\' added!', array('@pid' => $pid)));
       }
