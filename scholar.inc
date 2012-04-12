@@ -519,24 +519,38 @@ function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
 
   $object = new Fedora_Item($pid);
 
-  $policy_details = $object->get_datastream_info('POLICY');
+  $ds_array = $object->get_datastreams_list_as_array();
 
-  if ($policy_details == 'Embargo Policy - Doc') {
+  if (array_key_exists('POLICY', $ds_array)) {
+
+    $policy_details = $object->get_datastream_info('POLICY');
+
+    if ($policy_details == 'Embargo Policy - Doc') {
+      $form['supp_embargo'] = array(
+        '#id' => 'supp_embargo',
+        '#type' => 'submit',
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+        '#value' => t('Embargo supplemental information'),
+      );
+    }
+    else {
+      $form['supp_embargo_del'] = array(
+        '#id' => 'supp_embargo_del',
+        '#type' => 'submit',
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
+        '#value' => t('Remove supplemental information embargo'),
+      );
+    }
+  }
+  else {
     $form['supp_embargo'] = array(
       '#id' => 'supp_embargo',
       '#type' => 'submit',
       '#prefix' => '<p>',
       '#suffix' => '</p>',
       '#value' => t('Embargo supplemental information'),
-    );
-  }
-  else {
-    $form['supp_embargo_del'] = array(
-      '#id' => 'supp_embargo_del',
-      '#type' => 'submit',
-      '#prefix' => '<p>',
-      '#suffix' => '</p>',
-      '#value' => t('Remove supplemental information embargo'),
     );
   }
 
@@ -743,7 +757,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
   $ds_array = $object->get_datastreams_list_as_array();
-  
+
   switch ($form_state['clicked_button']['#name']) {
     case 'obj_delete':
       $dsid = 'OBJ';
