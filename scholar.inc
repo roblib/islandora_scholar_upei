@@ -622,7 +622,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
             $result1 = $object->purge_datastream('POLICY');
             $result = $object->add_datastream_from_file($path . '/xacml/both-embargo.xml', 'POLICY', 'Embargo policy - Both');
             if ($result1 != NULL) {
-              drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)));
+              drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)), 'status');
             }
             else {
               drupal_set_message(t('There was an error trying to remove the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
@@ -642,7 +642,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
         $result = $object->add_datastream_from_file($path . '/xacml/supplemental-embargo.xml', 'POLICY', 'Embargo policy - Supp');
       }
       if ($result != NULL) {
-        drupal_set_message(t('Embargo policy for object \'@pid\' added!', array('@pid' => $pid)));
+        drupal_set_message(t('Embargo policy for object \'@pid\' added!', array('@pid' => $pid)), 'status');
       }
       else {
         drupal_set_message(t('There was an error trying to add the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
@@ -663,7 +663,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
           $result1 = TRUE;
           $result1 = $object->add_datastream_from_file($path . '/xacml/document-embargo.xml', 'POLICY', 'Embargo policy - Doc');
           if ($result1 != NULL) {
-            drupal_set_message(t('Document embargo policy for object \'@pid\' added', array('@pid' => $pid)));
+            drupal_set_message(t('Document embargo policy for object \'@pid\' added', array('@pid' => $pid)), 'status');
           }
           else {
             drupal_set_message(t('An error occurred adding the new policy datastream!'), 'warning');
@@ -673,7 +673,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
           drupal_set_message(t('Unknown policy datastream, unable to remove!'), 'warning');
       }
       if ($result != NULL) {
-        drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)));
+        drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)), 'status');
       }
       else {
         drupal_set_message(t('There was an error trying to remove the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
@@ -891,7 +891,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
             $result1 = $object->purge_datastream('POLICY');
             $result = $object->add_datastream_from_file($path . '/xacml/both-embargo.xml', 'POLICY', 'Embargo policy - Both');
             if ($result1 != NULL) {
-              drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)));
+              drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)), 'status');
             }
             else {
               drupal_set_message(t('There was an error trying to remove the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
@@ -911,7 +911,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
         $result = $object->add_datastream_from_file($path . '/xacml/document-embargo.xml', 'POLICY', 'Embargo policy - Doc');
       }
       if ($result != NULL) {
-        drupal_set_message(t('Embargo policy for object \'@pid\' added!', array('@pid' => $pid)));
+        drupal_set_message(t('Embargo policy for object \'@pid\' added!', array('@pid' => $pid)), 'status');
       }
       else {
         drupal_set_message(t('There was an error trying to add the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
@@ -932,7 +932,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
           $result1 = TRUE;
           $result1 = $object->add_datastream_from_file($path . '/xacml/supplemental-embargo.xml', 'POLICY', 'Embargo policy - Supp');
           if ($result1 != NULL) {
-            drupal_set_message(t('Supplemental information embargo policy for object \'@pid\' added', array('@pid' => $pid)));
+            drupal_set_message(t('Supplemental information embargo policy for object \'@pid\' added', array('@pid' => $pid)), 'status');
           }
           else {
             drupal_set_message(t('An error occurred adding the new policy datastream!'), 'warning');
@@ -942,7 +942,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
           drupal_set_message(t('Unknown policy datastream, unable to remove!'), 'warning');
       }
       if ($result != NULL) {
-        drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)));
+        drupal_set_message(t('Embargo policy for object \'@pid\' removed!', array('@pid' => $pid)), 'status');
       }
       else {
         drupal_set_message(t('There was an error trying to remove the embargo policy for object \'@pid\'!', array('@pid' => $pid)), 'error');
