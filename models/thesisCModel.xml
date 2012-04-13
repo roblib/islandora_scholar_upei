@@ -1,3 +1,4 @@
+
 <content_model xmlns="http://www.islandora.ca"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Thesis Content Model"
           xsi:schemaLocation="http://www.islandora.ca http://localhost/islandoracm.xsd">
@@ -23,7 +24,37 @@
         <type>image/jpg</type>
         <type>text/xml</type>
     </mimetypes>
-    <ingest_rules/>
+    <ingest_rules>
+        <rule>
+            <applies_to>application/msaccess</applies_to>
+            <applies_to>application/msexcel</applies_to>
+            <applies_to>application/mspowerpoint</applies_to>
+            <applies_to>application/msword</applies_to>
+            <applies_to>application/octet-stream</applies_to>
+            <applies_to>application/pdf</applies_to>
+            <applies_to>application/rtf</applies_to>
+            <applies_to>application/vnd.ms-excel.sheet.macroEnabled.12</applies_to>
+            <applies_to>application/vnd.ms-excel</applies_to>
+            <applies_to>application/vnd.ms-powerpoint.presentation.macroEnabled.12</applies_to>
+            <applies_to>application/vnd.ms-powerpoint.slideshow.macroEnabled.12</applies_to>
+            <applies_to>application/vnd.ms-powerpoint</applies_to>
+            <applies_to>application/vnd.ms-project</applies_to>
+            <applies_to>application/vnd.ms-word.document.macroEnabled.12</applies_to>
+            <applies_to>application/vnd.openxmlformats-officedocument.wordprocessingml.document</applies_to>
+            <applies_to>application/vnd.openxmlformats-officedocument.presentationml.presentation</applies_to>
+            <applies_to>application/vnd.openxmlformats-officedocument.presentationml.slideshow</applies_to>
+            <applies_to>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</applies_to>
+            <applies_to>image/jpg</applies_to>
+            <applies_to>text/xml</applies_to>
+            <ingest_methods>
+                <ingest_method class="Scholar" dsid="OBJ"
+                file="scholar.inc" method="create_embargo"
+                modified_files_ext="" module="scholar">
+                    <parameters/>
+                </ingest_method>
+            </ingest_methods>
+        </rule>    
+    </ingest_rules>
     <datastreams>
         <datastream dsid="TN"/>
         <datastream dsid="MODS">

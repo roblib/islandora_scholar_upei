@@ -23,7 +23,7 @@ class Scholar {
       drupal_set_message(t('Embargo date: @embargo_date', array('@embargo_date' => $embargo_date)));
     }
     else {
-      drupal_set_message(t('No file specified!'), 'warning');
+      drupal_set_message(t('No file specified, embargo could not be added!'), 'warning');
     }
   }
 
