@@ -620,6 +620,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
             drupal_set_message(t('Supplemental information embargo already exists!'), 'warning');
             break;
           case 'Embargo policy - Both':
+          case 'POLICY':
             drupal_set_message(t('Supplemental information embargo already exists!'), 'warning');
             break;
           default:
@@ -647,6 +648,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
           $result = TRUE;
           break;
         case 'Embargo policy - Both':
+        case 'POLICY':  
           $result = $object->purge_datastream('POLICY');
           $result1 = TRUE;
           $result1 = $object->add_datastream_from_file($path . '/xacml/document-embargo.xml', 'POLICY', 'Embargo policy - Doc');
@@ -766,7 +768,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       }
       else {
         $policy_details = $object->get_datastream_info('POLICY');
-        var_dump($policy_details);
+
         if ($policy_details->datastream->label != 'Embargo policy - Supp') {
           $form['remove_embargo'] = array(
             '#type' => 'submit',
@@ -890,6 +892,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
             drupal_set_message(t('Document embargo already exists!'), 'warning');
             break;
           case 'Embargo policy - Both':
+          case 'POLICY':  
             drupal_set_message(t('Document embargo already exists!'), 'warning');
             break;
           default:
@@ -917,6 +920,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
           $result = TRUE;
           break;
         case 'Embargo policy - Both':
+        case 'POLICY':  
           $result = $object->purge_datastream('POLICY');
           $result1 = TRUE;
           $result1 = $object->add_datastream_from_file($path . '/xacml/supplemental-embargo.xml', 'POLICY', 'Embargo policy - Supp');
