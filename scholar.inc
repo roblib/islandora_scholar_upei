@@ -16,14 +16,17 @@ class Scholar {
   }
 
   function create_embargo($parameterArray = NULL, $dsid, $file, $file_ext) {
-    $pid = $this->pid;
-    if ($file != NULL) {
-      $xml = new SimpleXMLElement($file);
-      $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
-      drupal_set_message(t('Embargo date: @embargo_date', array('@embargo_date' => $embargo_date)));
+    $module_path = drupal_get_path('module', 'scholar');
+    
+    $filename = $module_path . '/xacml/both-embargo.xml';
+    
+    if (file_exists($filename)) {
+    $_SESSION['fedora_ingest_files']["$dsid"] = $filename;
+      return TRUE;
     }
     else {
-      drupal_set_message(t('No file specified, embargo could not be added!'), 'warning');
+      drupal_set_message(t('File \'@filename\' does not exist!', array('@filename' => $filename)), 'error');
+      return FALSE;
     }
   }
 
