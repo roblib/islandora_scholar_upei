@@ -30,12 +30,12 @@ function scholar_cron_embargo_check() {
     $pids = array();
     foreach ($array as $arr) {
       $pid = (string) $arr[0]->str;
+      drupal_set_message(t('PID: @pid', array('@pid' => $pid)));
       $pids[] = $pid;
       $item = new Fedora_Item($pid);
       $ds_array = $item->get_datastreams_list_as_array();
       foreach ($ds_array as $key => $ds) {
         if ($key == 'POLICY') {
-          drupal_set_message(t('PID: @pid', array('@pid' => $pid)));
           $policy_details = $item->get_datastream_info('POLICY');
           drupal_set_message(t('Policy label: @label', array('@label' => $policy_details->datastream->label)));
           switch ($policy_details->datastream->label) {
@@ -68,12 +68,12 @@ function scholar_cron_embargo_check() {
     $pids = array();
     foreach ($array as $arr) {
       $pid = (string) $arr[0]->str;
+      drupal_set_message(t('PID: @pid', array('@pid' => $pid)));
       $pids[] = $pid;
       $item = new Fedora_Item($pid);
       $ds_array = $item->get_datastreams_list_as_array();
       foreach ($ds_array as $key => $ds) {
         if ($key == 'POLICY') {
-          drupal_set_message(t('PID: @pid', array('@pid' => $pid)));
           $policy_details = $item->get_datastream_info('POLICY');
           drupal_set_message(t('Policy label: @label', array('@label' => $policy_details->datastream->label)));
           switch ($policy_details->datastream->label) {
