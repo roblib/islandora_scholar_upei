@@ -424,7 +424,7 @@ function scholar_required_fedora_objects() {
         ),
         array(
           'pid' => 'ir:thesisCModel',
-          'label' => 'Islandora Scholar Citation Content Model',
+          'label' => 'Islandora Scholar Thesis Content Model',
           'dsid' => 'ISLANDORACM',
           'datastream_file' => "$module_path/models/thesisCModel.xml",
           'cmodel' => 'fedora-system:ContentModel-3.0',

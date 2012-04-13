@@ -15,7 +15,7 @@ class Scholar {
     }
   }
 
-  function create_embargo($parameterArray = NULL, $dsid, $file, $file_ext) {
+  function createEmbargo($parameterArray = NULL, $dsid, $file, $file_ext) {
     $module_path = drupal_get_path('module', 'scholar');
 
     $filename = $module_path . '/xacml/both-embargo.xml';
