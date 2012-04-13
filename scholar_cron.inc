@@ -35,7 +35,9 @@ function scholar_cron_embargo_check() {
       $ds_array = $item->get_datastreams_list_as_array();
       foreach ($ds_array as $key => $ds) {
         if ($key == 'POLICY') {
+          drupal_set_message(t('PID: @pid', array('@pid' => $pid)));
           $policy_details = $item->get_datastream_info('POLICY');
+          drupal_set_message(t('Policy label: @label', array('@label' => $policy_details->datastream->label)));
           switch ($policy_details->datastream->label) {
             case 'POLICY':
             case 'Embargo policy - Both':
