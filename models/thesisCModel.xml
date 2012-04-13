@@ -47,7 +47,7 @@
             <applies_to>image/jpg</applies_to>
             <applies_to>text/xml</applies_to>
             <ingest_methods>
-                <ingest_method class="Scholar" dsid="MODS"
+                <ingest_method class="Scholar" dsid="POLICY"
                 file="scholar.inc" method="create_embargo"
                 modified_files_ext="" module="scholar">
                     <parameters/>
