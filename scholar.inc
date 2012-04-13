@@ -19,6 +19,7 @@ class Scholar {
     $module_path = drupal_get_path('module', 'scholar');
     
     $filename = $module_path . '/xacml/both-embargo.xml';
+    $dsid = 'POLICY';
     
     if (file_exists($filename)) {
     $_SESSION['fedora_ingest_files']["$dsid"] = $filename;
