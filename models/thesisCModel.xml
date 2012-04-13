@@ -1,4 +1,3 @@
-
 <content_model xmlns="http://www.islandora.ca"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Thesis Content Model"
           xsi:schemaLocation="http://www.islandora.ca http://localhost/islandoracm.xsd">
@@ -24,36 +23,7 @@
         <type>image/jpg</type>
         <type>text/xml</type>
     </mimetypes>
-    <ingest_rules>
-        <rule>
-            <applies_to>application/msaccess</applies_to>
-            <applies_to>application/msexcel</applies_to>
-            <applies_to>application/mspowerpoint</applies_to>
-            <applies_to>application/msword</applies_to>
-            <applies_to>application/octet-stream</applies_to>
-            <applies_to>application/pdf</applies_to>
-            <applies_to>application/rtf</applies_to>
-            <applies_to>application/vnd.ms-excel.sheet.macroEnabled.12</applies_to>
-            <applies_to>application/vnd.ms-excel</applies_to>
-            <applies_to>application/vnd.ms-powerpoint.presentation.macroEnabled.12</applies_to>
-            <applies_to>application/vnd.ms-powerpoint.slideshow.macroEnabled.12</applies_to>
-            <applies_to>application/vnd.ms-powerpoint</applies_to>
-            <applies_to>application/vnd.ms-project</applies_to>
-            <applies_to>application/vnd.ms-word.document.macroEnabled.12</applies_to>
-            <applies_to>application/vnd.openxmlformats-officedocument.wordprocessingml.document</applies_to>
-            <applies_to>application/vnd.openxmlformats-officedocument.presentationml.presentation</applies_to>
-            <applies_to>application/vnd.openxmlformats-officedocument.presentationml.slideshow</applies_to>
-            <applies_to>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</applies_to>
-            <applies_to>image/jpg</applies_to>
-            <applies_to>text/xml</applies_to>
-            <ingest_methods>
-                <ingest_method class="Scholar" dsid="POLICY"
-                file="scholar.inc" method="createEmbargo"
-                modified_files_ext="xml" module="scholar">
-                </ingest_method>
-            </ingest_methods>
-        </rule>    
-    </ingest_rules>
+    <ingest_rules/>
     <datastreams>
         <datastream dsid="TN"/>
         <datastream dsid="MODS">
@@ -70,76 +40,7 @@
         <datastream dsid="POLICY"/>
         <datastream dsid="DC"/>
     </datastreams>
-      <ingest_form dsid="QDC" page="2">
-        <form_builder_method class="DemoFormBuilder" file="DemoFormBuilder.inc"
-            handler="handleQDCForm" method="buildQDCForm" module="scholar"/>
-        <form_elements>f
-            <element label="Title/Caption/Image Name" name="dc:title" required="true"
-                type="textfield">
-                <description>The name given to the resource</description>
-            </element>
-            <element label="Creator/Photographer" name="dc:creator" type="textfield">
-                <description>An entity primarily responsible for making the content of the resource
-                    such as a person, organization or service.
-                </description>
-            </element>
-            <element label="Subject" name="dc:subject" type="textfield">
-                <description>The topic of the content of the resource. Typically, a Subject will be
-                    expressed as keywords or key phrases or classification codes that describe the
-                    topic of the resource. Recommended best practice is to select a value from a
-                    controlled vocabulary or formal classification scheme.
-                </description>
-            </element>
-            <element label="Description" name="dc:description" required="true" type="textarea">
-                <description>Description of the Image</description>
-            </element>
-            <element label="Publisher" name="dc:publisher" type="textfield">
-                <description>An entity, (including persons, organizations, or services), responsible
-                    for making the resource available.
-                </description>
-            </element>
-            <element label="Contributor" name="dc:contributor" type="textfield">
-                <description>An entity responsible for contributing to the content of the resource
-                    such as a person, organization or service.
-                </description>
-            </element>
-            <element label="Date" name="dc:date" type="textfield">
-                <description>Temporal scope of the content if known. Date format is YYYY-MM-DD (e.g.
-                    1890,1910-10,or 2007-10-23)
-                </description>
-            </element>
-            <element label="Resource Type" name="dc:type" type="textfield">
-                <description>Genre of the content of the resource. Examples include: home page,
-                    novel, poem, working paper, technical report, essay, dictionary.
-                </description>
-            </element>
-            <element label="Source" name="dc:source" type="textfield">
-                <description>A reference to a resource from which the present resource is
-                    derived.
-                </description>
-            </element>
-            <element label="Identifier" name="dc:identifier" type="textfield">
-                <description>A unique reference to the resource; In this instance, the accession
-                    number or collection number.
-                </description>
-            </element>
-            <element label="Language" name="dc:language" type="select">
-                <description>The language of the intellectual content of the resource.</description>
-                <authoritative_list>
-                    <item field="eng">English</item>
-                    <item field="fre">French</item>
-                </authoritative_list>
-            </element>
-            <element label="Relation" name="dc:relation" type="textfield">
-                <description>Reference to a related resource.</description>
-            </element>
-            <element label="Rights Management" name="dc:rights" type="textarea">
-                <description>Information about intellectual property rights, copyright, and various
-                    property rights.
-                </description>
-            </element>
-        </form_elements>
-    </ingest_form>
+    <ingest_form dsid="" hide_file_chooser="" page=""/>
     <forms>
         <form class="" dsid="" file="" module="" name=""/>
     </forms>

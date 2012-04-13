@@ -475,6 +475,10 @@ function scholar_required_fedora_objects() {
               'dsid' => 'COLLECTION_POLICY',
               'datastream_file' => "$module_path/xml/THESIS-COLLECTION POLICY.xml",
             ),
+            array(
+              'dsid' => 'CHILD_SECURITY',
+              'datastream_file' => "$module_path/xacml/both-embargo.xml",
+            ),
           ),
         ),
         array(

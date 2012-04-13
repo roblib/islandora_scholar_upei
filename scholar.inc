@@ -15,22 +15,6 @@ class Scholar {
     }
   }
 
-  function createEmbargo($parameterArray = NULL, $dsid, $file, $file_ext) {
-    $module_path = drupal_get_path('module', 'scholar');
-
-    $filename = $module_path . '/xacml/both-embargo.xml';
-
-    if (file_exists($filename)) {
-      $_SESSION['fedora_ingest_files']["$dsid"] = $filename;
-      drupal_set_message(t('Embargo added to object \'@pid\'.', array('@pid' => $pid)));
-      return TRUE;
-    }
-    else {
-      drupal_set_message(t('File \'@filename\' does not exist!', array('@filename' => $filename)), 'error');
-      return FALSE;
-    }
-  }
-
   /**
    * Build up the elements to show a basic citation. This currently
    * calls another function but customisation can be added in
@@ -782,6 +766,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       }
       else {
         $policy_details = $object->get_datastream_info('POLICY');
+        var_dump($policy_details);
         if ($policy_details->datastream->label != 'Embargo policy - Supp') {
           $form['remove_embargo'] = array(
             '#type' => 'submit',
