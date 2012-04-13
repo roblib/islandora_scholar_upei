@@ -17,12 +17,12 @@ class Scholar {
 
   function create_embargo($parameterArray = NULL, $dsid, $file, $file_ext) {
     $module_path = drupal_get_path('module', 'scholar');
-    
+
     $filename = $module_path . '/xacml/both-embargo.xml';
-    $dsid = 'POLICY';
-    
+
     if (file_exists($filename)) {
-    $_SESSION['fedora_ingest_files']["$dsid"] = $filename;
+      $_SESSION['fedora_ingest_files']["$dsid"] = $filename;
+      drupal_set_message(t('Embargo added to object \'@pid\'.', array('@pid' => $pid)));
       return TRUE;
     }
     else {
@@ -750,7 +750,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       $pdf_content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
       $pdf_content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
     }
-    
+
     $form['pdf_info'] = array(
       '#value' => $pdf_content,
     );
