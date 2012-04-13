@@ -398,23 +398,23 @@ function scholar_required_fedora_objects() {
       'module' => 'scholar',
       'title' => 'Islandora Scholar Module',
       'objects' => array(
-        array(
-          'pid' => 'ir:top',
-          'label' => 'Institutional Repository',
-          'cmodel' => 'islandora:collectionCModel',
-          'parent' => variable_get('fedora_repository_pid', 'islandora:root'),
-          'datastreams' => array(
-            array(
-              'dsid' => 'TN',
-              'datastream_file' => "$module_path/images/Crystal_Clear_filesystem_folder_grey.png",
-              'mimetype' => 'image/png',
-            ),
-            array(
-              'dsid' => 'COLLECTION_POLICY',
-              'datastream_file' => "$module_path/xml/COLLECTION-COLLECTION POLICY.xml",
-            ),
-          ),
-        ),
+//        array(
+//          'pid' => 'ir:top',
+//          'label' => 'Institutional Repository',
+//          'cmodel' => 'islandora:collectionCModel',
+//          'parent' => variable_get('fedora_repository_pid', 'islandora:root'),
+//          'datastreams' => array(
+//            array(
+//              'dsid' => 'TN',
+//              'datastream_file' => "$module_path/images/Crystal_Clear_filesystem_folder_grey.png",
+//              'mimetype' => 'image/png',
+//            ),
+//            array(
+//              'dsid' => 'COLLECTION_POLICY',
+//              'datastream_file' => "$module_path/xml/COLLECTION-COLLECTION POLICY.xml",
+//            ),
+//          ),
+//        ),
         array(
           'pid' => 'ir:citationCModel',
           'label' => 'Islandora Scholar Citation Content Model',
