@@ -284,20 +284,20 @@ class IrClass {
     $pid = $form_values['pid'];
     $fedora_item = new Fedora_Item($pid);
     $test = NULL;
-    if ("application/pdf" == $fileObject->filemime) { //do not convert to pdf
-      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'PDF');
-      if ($test) {
-        $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
-        drupal_set_message(t('Successfully added PDF file to record.'));
-        return true;
-      }
-    }
-    else {
+//    if ("application/pdf" == $fileObject->filemime) { //do not convert to pdf
+//      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'PDF');
+//      if ($test) {
+//        $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
+//        drupal_set_message(t('Successfully added PDF file to record.'));
+//        return true;
+//      }
+//    }
+//    else {
       $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
       if ($test) {
         $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
       }
-    }
+//    }
 
     if ($test) { //in ingest successfull convert to pdf and add datastream
       $xmlString = 'requestXML=<?xml version="1.0"?><submission><repository><username>' . $user->name .
