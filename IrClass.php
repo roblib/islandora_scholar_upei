@@ -284,38 +284,10 @@ class IrClass {
     $pid = $form_values['pid'];
     $fedora_item = new Fedora_Item($pid);
     $test = NULL;
-//    if ("application/pdf" == $fileObject->filemime) { //do not convert to pdf
-//      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'PDF');
-//      if ($test) {
-//        $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
-//        drupal_set_message(t('Successfully added PDF file to record.'));
-//        return true;
-//      }
-//    }
-//    else {
       $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
       if ($test) {
         $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
       }
-//    }
-
-    if ($test) { //in ingest successfull convert to pdf and add datastream
-      $xmlString = 'requestXML=<?xml version="1.0"?><submission><repository><username>' . $user->name .
-          '</username><password>' . $user->pass . '</password><host>' . variable_get('fedora_base_url', 'http://localhost:8080/fedora') .
-          '</host></repository><pids><pid>' . $form_values['pid'] . '</pid></pids><dsid>' . $form_values['version'] . '</dsid><collection>/opt/ruleengine/pdfconverter/</collection></submission>';
-// ** Let microservices deal with this now **
-//      //path to ruleengine framework
-//      $url = variable_get('scholar_jod_path', 'localhost:8080/RuleEngineServlet/RuleEngine');
-//      $returnValue = do_curl($url, 1, 1, $xmlString); //$objectHelper->doCurl($url, 1, 1, $xmlString);
-//      $test = $this->parseReturnValue($returnValue); //did add datastream succeed.
-//      drupal_set_message('' . $returnValue);
-    }
-    else {
-      drupal_set_message(t("Error adding file to IR record!  You may not have permission to modify this record."), 'error');
-      watchdog(t("SCHOLAR"), t($returnValue), null, WATCHDOG_ERROR);
-
-      return false;
-    }
     return true;
   }
 

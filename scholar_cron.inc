@@ -20,7 +20,7 @@ function scholar_cron_embargo_check() {
 
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
-  $document_solr_query = 'http://' . $solr_location . '/select/?q=mods.embargo_date:[NOW-7DAY%20TO%20NOW]%20OR%20-mods.embargo_date:[*%20TO%20*]%20AND%20rels.hasModel:thesisCModel&fl=PID&rows=10000';
+  $document_solr_query = 'http://' . $solr_location . '/select/?q=mods.embargo_date:[NOW/DAY-7DAY%20TO%20NOW/DAY]%20OR%20-mods.embargo_date:[*%20TO%20*]%20AND%20rels.hasModel:thesisCModel&fl=PID&rows=10000';
   $document_solr_result = @file_get_contents($document_solr_query);
 
   if ($document_solr_result != NULL) {
@@ -58,7 +58,7 @@ function scholar_cron_embargo_check() {
     }
   }
 
-  $supp_solr_query = 'http://' . $solr_location . '/select/?q=mods.supp_embargo_date:[NOW-7DAY%20TO%20NOW]%20OR%20-mods.supp_embargo_date:[*%20TO%20*]%20AND%20rels.hasModel:thesisCModel&fl=PID&rows=10000';
+  $supp_solr_query = 'http://' . $solr_location . '/select/?q=mods.supp_embargo_date:[NOW/DAY-7DAY%20TO%20NOW/DAY]%20OR%20-mods.supp_embargo_date:[*%20TO%20*]%20AND%20rels.hasModel:thesisCModel&fl=PID&rows=10000';
   $supp_solr_result = @file_get_contents($supp_solr_query);
 
   if ($supp_solr_result != NULL) {

@@ -834,7 +834,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
 
-    if (!array_key_exists('PDF', $ds_array) && !array_key_exists('OBJ', $ds_array)) {
+    if (($dsid == 'OBJ' && !array_key_exists('PDF', $ds_array)) || ($dsid == 'PDF' && !array_key_exists('OBJ', $ds_array))) {
 
       if ($xmlstr != NULL) {
         $mods_xml = new DOMDocument();
