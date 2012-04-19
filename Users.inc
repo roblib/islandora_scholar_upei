@@ -854,7 +854,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $citation = "<h3>Citation view</h3>";
   $citation .= $bibliography->render();
 
-  $names = $details->full_names;
+  $names = array_filter($details->full_names);
 
   $form['citation'] = array(
     '#value' => $citation,
