@@ -802,7 +802,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
       $dept_array['ldap:' . $cn] = strtolower(str_replace(' ', '_', implode(',', $ldap_groups)));
     }
-
+    var_dump($users);
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), t('Associated'), ''),
