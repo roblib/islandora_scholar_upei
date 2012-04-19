@@ -856,6 +856,8 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
 
   $filtered_names = array();
   
+  $names = $details->names;
+  
   foreach ($names as $name) {
     if ($name != ' ') {
       $filtered_names[] = $name;
