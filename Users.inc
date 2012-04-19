@@ -776,7 +776,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     }
 
     $count = $list['count'];
-    $users = array();
     for ($i = 0; $i < $count; $i++) {
 
       $cn = strtolower($list[$i]['cn'][0]);
