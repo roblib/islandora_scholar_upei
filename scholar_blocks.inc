@@ -23,7 +23,7 @@ function scholar_recent_items($form_state) {
   $entries = $result->results->result;
 
   $list = '<ul>';
-
+ 
   foreach ($entries as $entry) {
     $pid = explode('/', $entry->object['uri']);
     $object = new Fedora_Item($pid[1]);
@@ -158,7 +158,7 @@ function scholar_random_citation($form_state) {
   $rnd = rand(1, count($pids));
   $random_pid = $pids[$rnd];
 
-  $object = new Fedora_Item($pid);
+  $object = new Fedora_Item($random_pid);
   $xmlstr = $object->get_datastream_dissemination('MODS');
   if ($xmlstr) {
     $xml = new SimpleXMLElement($xmlstr);
