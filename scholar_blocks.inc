@@ -26,7 +26,6 @@ function scholar_recent_items($form_state) {
 
   foreach ($entries as $entry) {
     $pid = explode('/', $entry->object['uri']);
-    $collection_helper = new CollectionClass();
     $object = new Fedora_Item($pid[1]);
     $history = $object->get_datastream_history('DC');
     if (is_array($history)) {
@@ -111,8 +110,8 @@ function scholar_top_viewed($form_state) {
   foreach ($results as $result) {
     $pid = $result['pid'];
     $count = $result['count(*)'];
-    $collection_helper = new CollectionClass();
-    $xmlstr = $collection_helper->getStream($pid, "MODS");
+    $object = new Fedora_Item($pid);
+    $xmlstr = $object->get_datastream_dissemination('MODS');
     if ($xmlstr) {
       $xml = new SimpleXMLElement($xmlstr);
       $content .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid, array('html' => TRUE)) . ' <i>(' . number_format($count) . ')</i></li>';
@@ -159,8 +158,8 @@ function scholar_random_citation($form_state) {
   $rnd = rand(1, count($pids));
   $random_pid = $pids[$rnd];
 
-  $collection_helper = new CollectionClass();
-  $xmlstr = $collection_helper->getStream($random_pid, "MODS");
+  $object = new Fedora_Item($pid);
+  $xmlstr = $object->get_datastream_dissemination('MODS');
   if ($xmlstr) {
     $xml = new SimpleXMLElement($xmlstr);
     $given = array();
