@@ -743,8 +743,9 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $details = new Coins($pid);
   $usernames = $details->username;
   $departments = $details->department;
+  $family_names = array_filter($details->family_names);
 
-  $solr_url = 'http://' . $solr_location . '/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $details->family_names) . '&fl=PID,mads.fullname,mads.username,mads.topic,&rows=10000';
+  $solr_url = 'http://' . $solr_location . '/select?q=mads.namePart:' . implode('%20OR%20mads.namePart:', $family_names) . '&fl=PID,mads.fullname,mads.username,mads.topic,&rows=10000';
   $solr_query = @file_get_contents($solr_url);
   if ($solr_query != NULL) {
     $solr_xml = new SimpleXMLElement($solr_query);
@@ -771,7 +772,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $list = unserialize($list_cache->data);
     }
     else {
-      $list = islandora_scholar_ldap_search($details->family_names);
+      $list = islandora_scholar_ldap_search($family_names);
       cache_set('islandora_scholar_associate_ldap_cache_' . $pid, serialize($list), 'cache', time() + 3600);
     }
 
@@ -801,7 +802,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
       $researcher_keys2['ldap:' . $cn] = 'ldap:' . $cn;
       $dept_array['ldap:' . $cn] = strtolower(str_replace(' ', '_', implode(',', $ldap_groups)));
     }
-
+    var_dump($users);
     $researcher_keys = array_merge($researcher_keys1, $researcher_keys2);
     $table = array(
       '#header' => array(theme('table_select_header_cell', array(1)), t('Full name'), t('Username'), t('Department'), t('Source'), t('Associated'), ''),
@@ -831,7 +832,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $rows2 = &$table['rows'];
 
   foreach ($users as $user) {
-    var_dump($user);
     in_array(strtolower($user['cn']), $usernames) ? $user_image = '<img src="' . url('misc/watchdog-ok.png') . '"/>' : $user_image = '<img src="' . url('misc/watchdog-error.png') . '"/>';
     $rows2[] = array(
       '#pid' => 'ldap:' . $user['cn'],
@@ -893,7 +893,6 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#type' => 'hidden',
     '#value' => serialize($dept_array),
   );
-    var_dump($users);
 
   return $form;
 }
