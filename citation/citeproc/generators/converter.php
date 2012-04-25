@@ -217,6 +217,7 @@ function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
     if (!strcasecmp($interim_type, 'book')) {
       var_dump($mods);
       var_dump($type_marcgt);
+      var_dump($type_marcgt[0]);
       $host_titles = $type_marcgt[0]->xpath("../mods:relatedItem[@type='host']/mods:titleInfo/mods:title");
       if (!empty($host_titles)) {
         // This is but a chapter in a book
