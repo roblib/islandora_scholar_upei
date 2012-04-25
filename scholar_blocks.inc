@@ -34,7 +34,7 @@ function scholar_recent_items($form_state) {
     else {
       $created = $history->createDate;
     }
-    $xmlstr = $object->get_datastream('MODS');
+    $xmlstr = $object->get_datastream_dissemination('MODS');
     if ($xmlstr) {
       $xml = new SimpleXMLElement($xmlstr);
       $list .= '<li>' . l($xml->titleInfo->title, 'fedora/repository/' . $pid[1], array('html' => TRUE)) . '</li>';
