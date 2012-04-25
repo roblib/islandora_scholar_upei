@@ -18,6 +18,6 @@ function scholar_refworks_add_form($pid = NULL) {
     $ris_filename = file_directory_path() . '/ris' . $rnd . '.temp';
     Bibutils::Convert($mods_filename, 'MODS', $ris_filename, 'RIS');
     $ris = file_get_contents($ris_filename);    
-    echo url_decode(trim($ris));
+    echo str_replace("&#39;", "'", (trim($ris)));
   }
 }
