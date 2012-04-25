@@ -215,6 +215,7 @@ function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
   if (!empty($type_marcgt)) {
     $interim_type = (string) $type_marcgt[0];
     if (!strcasecmp($interim_type, 'book')) {
+      var_dump($mods);
       var_dump($type_marcgt);
       $host_titles = $type_marcgt[0]->xpath("../mods:relatedItem[@type='host']/mods:titleInfo/mods:title");
       if (!empty($host_titles)) {
