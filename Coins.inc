@@ -63,7 +63,6 @@ class Coins {
     $i = 0;
     foreach ($xml->name as $name) {
       foreach ($name->namePart as $name_part) {
-        var_dump($name_part);
         if ((string) $name_part != '') {
           if ($name_part['type'] == 'given') {
             $names[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
