@@ -97,7 +97,7 @@ function scholar_top_downloads($form_state) {
 }
 
 function scholar_top_viewed($form_state) {
-  module_load_include('inc', 'fedora_repository', 'CollectionClass');
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $query = db_query("select pid, count(*) from {islandora_scholar_page_tracking} group by pid order by count(*) DESC");
 
   while (db_fetch_array($query)) {
