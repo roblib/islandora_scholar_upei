@@ -1233,7 +1233,6 @@ function islandora_scholar_build_citation($pid, $type) {
       $rows[] = array('ISSN', $data->issn);
     }
 
-
     if ((string) $topics != NULL) {
       $rows[] = array('Subjects', rtrim($topics, ', '));
     }
