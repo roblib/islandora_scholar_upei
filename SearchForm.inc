@@ -159,7 +159,7 @@ function scholar_search_form_submit(array $form, array &$form_state) {
   $_SESSION['scholar']['search']['sort'] = $form_state['values']['sort'];
   $_SESSION['scholar']['search']['order'] = $form_state['values']['order'];
   $query = scholar_search_form_build_query($form_state);
-  $form_state['redirect'] = 'islandora/solr/search/' . urlencode($query) . '/-/dismax'; // Redirect to the search.
+  $form_state['redirect'] = 'islandora/solr/search/' . urlencode($query) . '/'; // Redirect to the search.
   }
   else {
     $query = $form_state['values']['author'];
