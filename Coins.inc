@@ -63,14 +63,16 @@ class Coins {
     $i = 0;
     foreach ($xml->name as $name) {
       foreach ($name->namePart as $name_part) {
-        if ($name_part['type'] == 'given') {
-          $names[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
-          $full_names[$i] .= (string) $name_part;
-        }
-        if ($name_part['type'] == 'family') {
-          $names[$i] .= (string) rtrim($name_part, '.');
-          $family_names[$i] = (string) rtrim($name_part, '.');
-          $full_names[$i] .= ' ' . (string) rtrim($name_part, '.');
+        if (!empty($name_part)) {
+          if ($name_part['type'] == 'given') {
+            $names[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
+            $full_names[$i] .= (string) $name_part;
+          }
+          if ($name_part['type'] == 'family') {
+            $names[$i] .= (string) rtrim($name_part, '.');
+            $family_names[$i] = (string) rtrim($name_part, '.');
+            $full_names[$i] .= ' ' . (string) rtrim($name_part, '.');
+          }
         }
       }
       $role = (string) $name->role->roleTerm;
@@ -91,7 +93,7 @@ class Coins {
     $this->authors = $authors;
     $this->contributors = $contributors;
     $this->family_names = $family_names;
-    
+
     $reverse = array();
     $i = 0;
     foreach ($xml->name as $name) {
@@ -136,28 +138,28 @@ class Coins {
 
     $abstract = $xml->xpath('//mods:abstract');
     $this->abstract = $abstract[0];
-    
+
     $topic = array();
     foreach ($xml->subject as $subject) {
       $topic[] = $subject->topic;
     }
     $this->topic = $topic;
-    
+
     $notes = array();
     foreach ($xml->note as $note) {
       $notes[] = $note;
     }
     $this->note = $note;
-    
+
     $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
     $this->embargo_date = $embargo_date[0];
-    
+
     $genre = $xml->xpath('//mods:genre');
     $this->genre = $genre;
-    
+
     $username = $xml->xpath('//mods:identifier[@type="u1"]');
     $this->username = $username;
-    
+
     $department = $xml->xpath('//mods:identifier[@type="u2"]');
     $this->department = $department;
   }
