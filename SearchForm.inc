@@ -81,6 +81,11 @@ function scholar_search_form(array &$form_state) {
           'effect' => 'fade'
         )
       ),
+      'submit' => array(
+        '#type' => 'submit',
+        '#value' => 'Search',
+        '#button' => 'search',
+      ),
     );
     if ($i > 0) {
       $term['remove'] = array(
@@ -136,11 +141,11 @@ function scholar_search_form(array &$form_state) {
           'desc' => t('Descending'),
         ),
       ),
-      'submit' => array(
-        '#type' => 'submit',
-        '#value' => 'Search',
-        '#button' => 'search',
-      )
+//      'submit' => array(
+//        '#type' => 'submit',
+//        '#value' => 'Search',
+//        '#button' => 'search',
+//      )
     ),
   );
 }
