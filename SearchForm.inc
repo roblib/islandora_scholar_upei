@@ -159,7 +159,7 @@ function scholar_search_form_submit(array $form, array &$form_state) {
   $_SESSION['scholar']['search']['sort'] = $form_state['values']['sort'];
   $_SESSION['scholar']['search']['order'] = $form_state['values']['order'];
   $query = scholar_search_form_build_query($form_state);
-  drupal_set_message($form_state['values']['terms']['field']);
+  drupal_set_message('Field: ' . $form_state['values']['terms']['field']);
   if ($form_state['values']['terms']['field'] == 'mods.subject') {
     $form_state['redirect'] = 'islandora/solr/search/' . urlencode($query) . '/-/dismax'; // Redirect to the search.    
   }
