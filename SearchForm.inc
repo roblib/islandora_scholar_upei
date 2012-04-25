@@ -71,8 +71,15 @@ function scholar_search_form(array &$form_state) {
         '#value' => 'Search',
         '#attributes' => array('style' => 'visibility:hidden;position:fixed;top:-1000px;right:-1000px;')
       ),
+       'submit' => array(
+        '#type' => 'submit',
+        '#value' => 'Search',
+        '#button' => 'search',
+      ),
       'add' => array(
         '#type' => 'button',
+        '#prefix' => '<p>',
+        '#suffix' => '</p>',
         '#value' => 'Add Field',
         '#ahah' => array(
           'path' => MENU_SCHOLAR_ADVANCED_SEARCH_ADD_FIELD,
@@ -80,11 +87,6 @@ function scholar_search_form(array &$form_state) {
           'method' => 'replace',
           'effect' => 'fade'
         )
-      ),
-      'submit' => array(
-        '#type' => 'submit',
-        '#value' => 'Search',
-        '#button' => 'search',
       ),
     );
     if ($i > 0) {
