@@ -215,12 +215,12 @@ class ScholarSolrResults extends IslandoraSolrResults {
           case 'OBJ':
             $obj = $object->get_datastream('OBJ');
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', 'fedora/repository/' . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
             break;
           case 'PDF':
             $pdf = $object->get_datastream('PDF');
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Download Fulltext', 'fedora/repository/' . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', 'fedora/repository/' . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
             break;
           default:
             $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
