@@ -200,33 +200,3 @@ function scholar_random_citation($form_state) {
 
   return $form;
 }
-
-function scholar_frontpage_search($form_state) {
-  module_load_include('module', 'islandora_solr_search', 'islandora_solr_search');
-  module_load_include('module', 'islandora_solr_search', 'extended_search_form/islandora_extended_search_form');
-
-  $tabset['first_tab'] = array(
-    '#type' => 'tabpage',
-    '#title' => t('Description'),
-  );
-
-  $tabset['first_tab']['tabs'] = array(
-    '#type' => 'tabset',
-  );
-
-  $tabset['first_tab']['tabs']['simple'] = array(
-    '#type' => 'tabpage',
-    '#title' => t('Search'),
-    '#content' => drupal_get_form('islandora_solr_simple_search_form'),
-    '#weight' => 2,
-  );
-
-  $tabset['first_tab']['tabs']['advanced'] = array(
-    '#type' => 'tabpage',
-    '#title' => t('Advanced search'),
-    '#content' => drupal_get_form('islandora_extended_search_form', $form_state),
-    '#weight' => 2,
-  );
-
-  return $tabset;
-}

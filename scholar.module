@@ -722,9 +722,6 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[5]['info'] = t('Random citation');
       $blocks[5]['cache'] = BLOCK_NO_CACHE;
       
-      $blocks[6]['info'] = t('Scholar front page search block');
-      $blocks[6]['cache'] = BLOCK_NO_CACHE;
-      
       return $blocks;
 
     case 'view':
@@ -764,12 +761,6 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
         $block['subject'] = t('Random citation');
 
         $block['content'] = drupal_get_form('scholar_random_citation');
-      }
-      elseif ($delta == 6) {
-        
-        $block['subject'] = t('Front page search block');
-
-        $block['content'] = drupal_get_form('scholar_frontpage_search');
       }
 
       return $block;
