@@ -722,6 +722,9 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[5]['info'] = t('Random citation');
       $blocks[5]['cache'] = BLOCK_NO_CACHE;
       
+      $blocks[6]['info'] = t('Scholar front page search block');
+      $blocks[6]['cache'] = BLOCK_NO_CACHE;
+      
       return $blocks;
 
     case 'view':
