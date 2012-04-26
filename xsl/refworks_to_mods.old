@@ -6,14 +6,7 @@
         <mods>
             <titleInfo>
                 <title>
-                    <xsl:variable name="title-clean">
-                        <xsl:call-template name="string-replace-all">
-                            <xsl:with-param name="text" select="//reference/t1" />
-                            <xsl:with-param name="replace" select="'&amp;#39;'" />
-                            <xsl:with-param name="by" select="'&amp;apos;'" />
-                        </xsl:call-template>
-                    </xsl:variable>
-                    <xsl:value-of select="$title-clean"/>
+                    <xsl:value-of select="//reference/t1"/>
                 </title>
                 <subTitle>
                     <xsl:value-of select="//reference/t2"/>
@@ -123,14 +116,7 @@
                 </xsl:for-each>            
             </subject>
             <abstract>
-                <xsl:variable name="abstract-clean">
-                    <xsl:call-template name="string-replace-all">
-                        <xsl:with-param name="text" select="//reference/ab" />
-                        <xsl:with-param name="replace" select="'&amp;#39;'" />
-                        <xsl:with-param name="by" select="'&amp;apos;'" />
-                    </xsl:call-template>
-                </xsl:variable>
-                <xsl:value-of select="$abstract-clean"/>
+                <xsl:value-of select="//reference/ab"/>
             </abstract>
             <xsl:if test="//reference/no/text() [normalize-space(.) ]">
                 <note>
@@ -224,7 +210,7 @@
                 <identifier type="u2">
                     <xsl:value-of select="normalize-space(substring-before($str,';'))"/>
                 </identifier>
-                <xsl:call-template name="links">
+                <xsl:call-template name="links2">
                     <xsl:with-param name="str" select="normalize-space(substring-after($str,';'))"/>
                 </xsl:call-template>
             </xsl:when>
@@ -232,27 +218,6 @@
                 <identifier type="u2">
                     <xsl:value-of select="$str"/>
                 </identifier>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-    
-    <xsl:template name="string-replace-all">
-        <xsl:param name="text" />
-        <xsl:param name="replace" />
-        <xsl:param name="by" />
-        <xsl:choose>
-            <xsl:when test="contains($text, $replace)">
-                <xsl:value-of select="substring-before($text,$replace)" />
-                <xsl:value-of select="$by" />
-                <xsl:call-template name="string-replace-all">
-                    <xsl:with-param name="text"
-                        select="substring-after($text,$replace)" />
-                    <xsl:with-param name="replace" select="$replace" />
-                    <xsl:with-param name="by" select="$by" />
-                </xsl:call-template>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="$text" />
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
