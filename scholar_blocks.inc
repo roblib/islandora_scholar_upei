@@ -224,7 +224,7 @@ function scholar_frontpage_search($form_state) {
   $tabset['first_tab']['tabs']['advanced'] = array(
     '#type' => 'tabpage',
     '#title' => t('Advanced search'),
-    '#content' => drupal_render(islandora_extended_search_form()),
+    '#content' => drupal_render(islandora_extended_search_form($form_state)),
     '#weight' => 2,
   );
 
