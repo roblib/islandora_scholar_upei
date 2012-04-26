@@ -217,14 +217,14 @@ function scholar_frontpage_search($form_state) {
   $tabset['first_tab']['tabs']['simple'] = array(
     '#type' => 'tabpage',
     '#title' => t('Search'),
-    '#content' => drupal_render(islandora_solr_simple_search_form()),
+    '#content' => drupal_get_form('islandora_solr_simple_search_form'),
     '#weight' => 2,
   );
 
   $tabset['first_tab']['tabs']['advanced'] = array(
     '#type' => 'tabpage',
     '#title' => t('Advanced search'),
-    '#content' => drupal_render(islandora_extended_search_form($form_state)),
+    '#content' => drupal_get_form('islandora_extended_search_form', $form_state),
     '#weight' => 2,
   );
 
