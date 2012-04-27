@@ -648,7 +648,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
           $result = TRUE;
           break;
         case 'Embargo policy - Both':
-        case 'POLICY':  
+        case 'POLICY':
           $result = $object->purge_datastream('POLICY');
           $result1 = TRUE;
           $result1 = $object->add_datastream_from_file($path . '/xacml/document-embargo.xml', 'POLICY', 'Embargo policy - Doc');
@@ -892,7 +892,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
             drupal_set_message(t('Document embargo already exists!'), 'warning');
             break;
           case 'Embargo policy - Both':
-          case 'POLICY':  
+          case 'POLICY':
             drupal_set_message(t('Document embargo already exists!'), 'warning');
             break;
           default:
@@ -920,7 +920,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
           $result = TRUE;
           break;
         case 'Embargo policy - Both':
-        case 'POLICY':  
+        case 'POLICY':
           $result = $object->purge_datastream('POLICY');
           $result1 = TRUE;
           $result1 = $object->add_datastream_from_file($path . '/xacml/supplemental-embargo.xml', 'POLICY', 'Embargo policy - Supp');
@@ -1083,7 +1083,7 @@ function islandora_scholar_signature_delete_form_submit($form, &$form_state) {
  * @return int 
  */
 function islandora_scholar_build_citation($pid, $type) {
-
+  
   global $base_url;
   global $base_path;
   global $user;
@@ -1101,156 +1101,9 @@ function islandora_scholar_build_citation($pid, $type) {
   drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
   drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
 
-  $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
-
-  $server_ip = $_SERVER['SERVER_ADDR'];
-
-  $tabset['first_tab'] = array(
-    '#type' => 'tabpage',
-    '#title' => t('Description'),
-  );
-
-  $tabset['first_tab']['tabs'] = array(
-    '#type' => 'tabset',
-  );
-  $object_details = islandora_scholar_get_object_profile($pid);
-
-  $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
-  $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
-
-  $path = drupal_get_path('module', 'Fedora_Repository');
-  $data = new Coins($pid);
-  $genre = $data->genre;
-  if (stripos((string) $genre[0], 'book') !== FALSE) {
-    $type = 'book';
-  }
-
-//    Get MODS datastream and pull the ISSN from there.
-
-  $csl = variable_get('scholar_default_csl', 'default');
+  $data = new Coins($pid, $type);
   $item = new Fedora_Item($pid);
   $ds_array = $item->get_datastreams_list_as_array();
-
-  $full_name = $data->topic;
-
-  $headers = array('', '');
-
-  $names = implode(', ', $data->names);
-  $authors = implode(', ', $data->authors);
-  $contributors = implode(', ', $data->contributors);
-  $topics = implode($data->topic, ', ');
-
-  if ($data->embargo_date != NULL) {
-    $embargo_date = date('r', tstamptotime((string) $data->embargo_date));
-  }
-  else {
-    $embargo_date = NULL;
-  }
-
-  $rows = array();
-
-  if ((string) $data->title != NULL) {
-    $rows[] = array('Title', $data->title);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Title', $data->title);
-  }
-
-  if ($type == 'thesis') {
-    if ($authors != NULL) {
-      $rows[] = array('Authors', rtrim($authors, ', '));
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Authors', rtrim($authors, ', '));
-    }
-    if ($contributors != NULL) {
-      $rows[] = array('Contributors', rtrim($contributors, ', '));
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Contributors', rtrim($contributors, ', '));
-    }
-  }
-  else {
-    if ($names != NULL) {
-      $rows[] = array('Authors', rtrim($names, ', '));
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Authors', rtrim($names, ', '));
-    }
-  }
-
-  if ((string) $data->abstract != NULL) {
-    $rows[] = array('Abstract', $data->abstract);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Abstract', $data->abstract);
-  }
-
-  if ($type == 'citation') {
-    if ((string) $data->journal_title != NULL) {
-      $rows[] = array('Journal', $data->journal_title);
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Journal', $data->journal_title);
-    }
-  }
-
-  if ((string) $data->date != NULL) {
-    $rows[] = array('Date', $data->date);
-  }
-  elseif (user_access('administer scholarly research')) {
-    $rows[] = array('Date', $data->date);
-  }
-
-  if ($type == 'citation') {
-    if ((string) $data->volume != NULL) {
-      $rows[] = array('Volume', $data->volume);
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Volume', $data->volume);
-    }
-
-    if ((string) $data->issue != NULL) {
-      $rows[] = array('Issue', $data->issue);
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Issue', $data->issue);
-    }
-
-    if ((string) $data->start_page != NULL) {
-      $rows[] = array('Start page', $data->start_page);
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Start page', $data->start_page);
-    }
-  }
-
-  if ($type == 'citation') {
-    if ((string) $data->issn != NULL) {
-      $rows[] = array('ISSN', $data->issn);
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('ISSN', $data->issn);
-    }
-
-    if ((string) $topics != NULL) {
-      $rows[] = array('Subjects', rtrim($topics, ', '));
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Subjects', rtrim($topics, ', '));
-    }
-
-    if ((string) $data->note != NULL) {
-      $rows[] = array('Note', $data->note);
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Note', $data->note);
-    }
-  }
-
-  if ($embargo_date != NULL) {
-    $rows[] = array('Embargo date', $embargo_date);
-  }
 
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
   foreach ($data->reverse_names as $name) {
@@ -1265,24 +1118,26 @@ function islandora_scholar_build_citation($pid, $type) {
     drupal_set_html_head('<meta name="citation_pdf_url" content="' . $base_url . '/download_ds/' . $pid . '/PDF" />');
   }
 
-  $citation = "<h3>Labelled view</h3>";
+  $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
+  $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
 
-  $citation .= theme('table', $headers, $rows);
+  $server_ip = $_SERVER['SERVER_ADDR'];
+  $object_details = islandora_scholar_get_object_profile($pid);
 
-  $style = citeproc_style($csl);
-  $bibliography = new CiteProcJSBibliography($style);
-  $mods = islandora_bibilgraphy_form_get_mods($pid);
-  if ($mods) {
-    $ref = citeproc_citation_from_mods($mods);
-    $bibliography->addCitation($ref);
-  }
-  $citation .= "<h3>Citation view</h3>";
-  $citation .= $bibliography->render();
-//  $abstract = (string) $data->abstract;
-//  if ($abstract != NULL || $abstract != '') {
-//    $citation .= '<p><b>Abstract</b></p>';
-//    $citation .= $data->abstract . '</br>';
-//  }
+  $path = drupal_get_path('module', 'Fedora_Repository');
+
+  $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
+
+  $tabset['first_tab'] = array(
+    '#type' => 'tabpage',
+    '#title' => t('Description'),
+  );
+
+  $tabset['first_tab']['tabs'] = array(
+    '#type' => 'tabset',
+  );
+
+//    Get MODS datastream and pull the ISSN from there.
 
   if (array_key_exists('ZIP', $ds_array)) {
     $ds_info = $item->get_datastream_info('ZIP');
@@ -1394,7 +1249,8 @@ function islandora_scholar_build_citation($pid, $type) {
   $tabset['first_tab']['tabs']['summary'] = array(
     '#type' => 'tabpage',
     '#title' => t('Citation'),
-    '#content' => $citation,
+//    '#content' => $citation,
+    '#content' => theme('scholar', $pid),
     '#weight' => 1,
   );
 
@@ -1524,4 +1380,27 @@ function tstamptotime($tstamp) {
   sscanf($tstamp, "%u-%u-%uT%u:%u:%uZ", $year, $month, $day, $hour, $min, $sec);
   $newtstamp = mktime($hour, $min, $sec, $month, $day, $year);
   return $newtstamp;
+}
+
+function template_preprocess_scholar(&$variables) {
+  module_load_include('inc', 'scholar', 'Coins');
+  module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
+  module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
+
+  $data = new Coins($variables['pid'], $type);
+  $table_values = $data->render_view();
+
+  $csl = variable_get('scholar_default_csl', 'default');
+  $style = citeproc_style($csl);
+  $bibliography = new CiteProcJSBibliography($style);
+  $mods = islandora_bibilgraphy_form_get_mods($variables['pid']);
+  if ($mods) {
+    $ref = citeproc_citation_from_mods($mods);
+    $bibliography->addCitation($ref);
+  }
+  $citation = $bibliography->render();
+  
+  $variables['headers'] = $table_values['headers'];
+  $variables['rows'] = $table_values['rows'];
+  $variables['citation'] = $citation;
 }

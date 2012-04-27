@@ -42,9 +42,9 @@ class Coins {
    */
   function __construct($pid) {
     $this->pid = $pid;
-    module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
-    $collectionHelper = new CollectionClass();
-    $xmlstr = $collectionHelper->getStream($this->pid, "MODS", 0);
+    module_load_include('inc', 'Fedora_Repository', 'api/fedora_item');
+    $object = new Fedora_Item($pid);
+    $xmlstr = $object->get_datastream_dissemination('MODS');
 
     if ($xmlstr == NULL || strlen($xmlstr) < 5) {
       drupal_set_message(t('No MODS datastream found!', 'warning'));
@@ -162,6 +162,161 @@ class Coins {
 
     $department = $xml->xpath('//mods:identifier[@type="u2"]');
     $this->department = $department;
+  }
+
+  function render_view() {
+
+    $headers = array('', '');
+    $rows = array();
+
+    $full_name = $this->topic;
+    if (!empty($this->names)) {
+      $names = implode(', ', $this->names);
+    }
+    else {
+      $names = t('');
+    }
+
+    if (!empty($this->authors)) {
+      $authors = implode(', ', $this->authors);
+    }
+    else {
+      $authors = t('');
+    }
+
+    if (!empty($this->contributors)) {
+      $contributors = implode(', ', $this->contributors);
+    }
+    else {
+      $contributors = t('');
+    }
+
+    if (!empty($this->topic)) {
+      $topics = implode($this->topic, ', ');
+    }
+    else {
+      $topics = t('');
+    }
+
+    $genre = $this->genre;
+    if (stripos((string) $genre[0], 'book') !== FALSE) {
+      $type = 'book';
+    }
+
+    if ($this->embargo_date != NULL) {
+      $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+    }
+    else {
+      $embargo_date = NULL;
+    }
+
+    if ((string) $this->title != NULL) {
+      $rows[] = array('Title', $this->title);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Title', $this->title);
+    }
+
+    if ($type == 'thesis') {
+      if ($authors != NULL) {
+        $rows[] = array('Authors', rtrim($authors, ', '));
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Authors', rtrim($authors, ', '));
+      }
+      if ($contributors != NULL) {
+        $rows[] = array('Contributors', rtrim($contributors, ', '));
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Contributors', rtrim($contributors, ', '));
+      }
+    }
+    else {
+      if ($names != NULL) {
+        $rows[] = array('Authors', rtrim($names, ', '));
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Authors', rtrim($names, ', '));
+      }
+    }
+
+    if ((string) $this->abstract != NULL) {
+      $rows[] = array('Abstract', $this->abstract);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Abstract', $this->abstract);
+    }
+
+    if ($type == 'citation') {
+      if ((string) $this->journal_title != NULL) {
+        $rows[] = array('Journal', $this->journal_title);
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Journal', $this->journal_title);
+      }
+    }
+
+    if ((string) $this->date != NULL) {
+      $rows[] = array('Date', $this->date);
+    }
+    elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Date', $this->date);
+    }
+
+    if ($type == 'citation') {
+      if ((string) $this->volume != NULL) {
+        $rows[] = array('Volume', $this->volume);
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Volume', $this->volume);
+      }
+
+      if ((string) $this->issue != NULL) {
+        $rows[] = array('Issue', $this->issue);
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Issue', $this->issue);
+      }
+
+      if ((string) $this->start_page != NULL) {
+        $rows[] = array('Start page', $this->start_page);
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Start page', $this->start_page);
+      }
+    }
+
+    if ($type == 'citation') {
+      if ((string) $this->issn != NULL) {
+        $rows[] = array('ISSN', $this->issn);
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('ISSN', $this->issn);
+      }
+
+      if ((string) $topics != NULL) {
+        $rows[] = array('Subjects', rtrim($topics, ', '));
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Subjects', rtrim($topics, ', '));
+      }
+
+      if ((string) $this->note != NULL) {
+        $rows[] = array('Note', $this->note);
+      }
+      elseif (user_access('administer scholarly research')) {
+        $rows[] = array('Note', $this->note);
+      }
+    }
+
+    if ($embargo_date != NULL) {
+      $rows[] = array('Embargo date', $embargo_date);
+    }
+
+    return array(
+      'headers' => $headers,
+      'rows' => $rows,
+    );
   }
 
 }

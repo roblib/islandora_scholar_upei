@@ -305,23 +305,23 @@ function scholar_menu() {
 /**
  * Implements hook_theme().
  */
-function scholar_theme() {
-  return array(
-    THEME_SCHOLAR_HOME => array(
-      'template' => 'templates/Home',
-      'file' => 'pages/Home.inc',
-    ),
-    THEME_SCHOLAR_SEARCH_ITEM => array(
-      'template' => 'templates/SearchItem',
-      'file' => 'IslandoraSolrResultsCitation.inc',
-      'arguments' => array('pid' => NULL, 'style' => NULL)
-    ),
-    THEME_SCHOLAR_SEARCH_TABLE => array(
-      'file' => 'IslandoraSolrResultsCitation.inc',
-      'arguments' => array('element' => NULL)
-    ),
-  );
-}
+//function scholar_theme() {
+//  return array(
+//    THEME_SCHOLAR_HOME => array(
+//      'template' => 'templates/Home',
+//      'file' => 'pages/Home.inc',
+//    ),
+//    THEME_SCHOLAR_SEARCH_ITEM => array(
+//      'template' => 'templates/SearchItem',
+//      'file' => 'IslandoraSolrResultsCitation.inc',
+//      'arguments' => array('pid' => NULL, 'style' => NULL)
+//    ),
+//    THEME_SCHOLAR_SEARCH_TABLE => array(
+//      'file' => 'IslandoraSolrResultsCitation.inc',
+//      'arguments' => array('element' => NULL)
+//    ),
+//  );
+//}
 
 /**
  * Valid permissions for this module
@@ -770,4 +770,17 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 function scholar_cron() {
   module_load_include('inc', 'scholar', 'scholar_cron');
   scholar_cron_embargo_check();
+}
+
+function scholar_theme() {
+  return array(
+    'scholar' => array(
+      'template' => 'templates/scholar',
+      'file' => 'scholar.inc',
+      'arguments' => array(
+        'pid' => NULL,
+        'type' => 'citation',
+      ),
+    ),
+  );
 }
