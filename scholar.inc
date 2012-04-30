@@ -1093,7 +1093,6 @@ function islandora_scholar_build_citation($pid, $type) {
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('php', 'scholar', 'IrClass');
   module_load_include('inc', 'scholar', '/citation/bibliography/CitationForm');
-  module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
   module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
   module_load_include('inc', 'scholar', 'Coins');
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
@@ -1176,19 +1175,6 @@ function islandora_scholar_build_citation($pid, $type) {
     else {
       drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
     }
-  }
-
-  if (module_exists('scholar_tracking')) {
-
-    $track = new islandora_scholar_tracking($pid);
-    $track->add_page_count();
-    $read = $track->read_page_count();
-    $citation .= '</br><div>Times viewed: ' . $read['count'] . '</div>';
-    $time_last_viewed = $read[($read['count'] - 1)];
-    if ($time_last_viewed == NULL) {
-      $time_last_viewed = 'Never';
-    }
-    $citation .= '<div>Last viewed: ' . $time_last_viewed . '</div></br>';
   }
 
   $tabset['first_tab']['tabs']['summary'] = array(
@@ -1383,6 +1369,7 @@ function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'scholar', 'Coins');
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
+  module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
 
   $data = new Coins($variables['pid'], $type);
   $table_values = $data->render_view();
@@ -1397,6 +1384,17 @@ function template_preprocess_scholar(&$variables) {
   }
   $citation = $bibliography->render();
 
+    if (module_exists('scholar_tracking')) {
+
+    $track = new islandora_scholar_tracking($pid);
+    $track->add_page_count();
+    $read = $track->read_page_count();
+    $time_last_viewed = $read[($read['count'] - 1)];
+    if ($time_last_viewed == NULL) {
+      $time_last_viewed = 'Never';
+    }
+  }
+  
   $variables['headers'] = $table_values['headers'];
   $variables['rows'] = $table_values['rows'];
   $variables['citation'] = $citation;
@@ -1408,4 +1406,6 @@ function template_preprocess_scholar(&$variables) {
   $variables['start_page'] = $data->start_page;
   $variables['title'] = $data->title;
   $variables['journal_title'] = $data->journal_title;
+  $variables['times_read'] = $read['count'];
+  $variables['time_last_viewed'] = $time_last_viewed;
 }
