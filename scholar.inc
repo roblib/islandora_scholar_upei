@@ -1379,7 +1379,7 @@ function template_preprocess_scholar(&$variables) {
 
   if (module_exists('scholar_tracking')) {
 
-    $track = new islandora_scholar_tracking($pid);
+    $track = new islandora_scholar_tracking($variables['pid']);
     $track->add_page_count();
     $read = $track->read_page_count();
     $time_last_viewed = $read[($read['count'] - 1)];
