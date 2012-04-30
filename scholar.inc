@@ -1136,7 +1136,7 @@ function islandora_scholar_build_citation($pid, $type) {
   );
 
 //    Get MODS datastream and pull the ISSN from there.
-
+  var_dump($type);
   $tabset['first_tab']['tabs']['summary'] = array(
     '#type' => 'tabpage',
     '#title' => t('Citation'),
