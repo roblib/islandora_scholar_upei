@@ -570,6 +570,7 @@ function scholar_object_metrics_form($identifier, $type) {
     $array = array_filter($array);
 //  $title = $xml->xpath("//doc/arr['mods.title']");
 //  var_dump($title[0]->str);
+    var_dump($array);
     $rows = array();
     if (!empty($array)) {
       if (module_exists('scholar_tracking')) {

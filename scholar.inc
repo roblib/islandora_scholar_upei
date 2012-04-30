@@ -3,7 +3,7 @@
 /**
  * @file
  *
- * Provides the functions to process and view chemical structure files.
+ * Provides the functions to process and view scholarly citations.
  */
 class Scholar {
 
@@ -200,7 +200,6 @@ class Scholar {
     $tabset['first_tab']['tabs']['theses']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $username, $username, 'author-theses'),
     );
-
 
     $tabset['first_tab']['tabs']['metrics'] = array(
       '#type' => 'tabpage',
