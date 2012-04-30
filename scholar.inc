@@ -1141,7 +1141,7 @@ function islandora_scholar_build_citation($pid, $type) {
     '#type' => 'tabpage',
     '#title' => t('Citation'),
 //    '#content' => $citation,
-    '#content' => theme('scholar', $pid),
+    '#content' => theme('scholar', $pid, $type),
     '#weight' => 1,
   );
 
