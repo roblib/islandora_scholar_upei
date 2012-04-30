@@ -1410,8 +1410,6 @@ function template_preprocess_scholar(&$variables, $hook) {
     }
   }
 
-  drupal_set_message('Hook: ' . $hook);
-
   $variables = array(
     'headers' => $table_values['headers'],
     'rows' => $table_values['rows'],
