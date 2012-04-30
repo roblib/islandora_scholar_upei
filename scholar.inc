@@ -1083,7 +1083,7 @@ function islandora_scholar_signature_delete_form_submit($form, &$form_state) {
  * @return int 
  */
 function islandora_scholar_build_citation($pid, $type) {
-  
+
   global $base_url;
   global $base_path;
   global $user;
@@ -1121,7 +1121,6 @@ function islandora_scholar_build_citation($pid, $type) {
   $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
   $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
 
-  $server_ip = $_SERVER['SERVER_ADDR'];
   $object_details = islandora_scholar_get_object_profile($pid);
 
   $path = drupal_get_path('module', 'Fedora_Repository');
@@ -1192,14 +1191,26 @@ function islandora_scholar_build_citation($pid, $type) {
     $citation .= '<div>Last viewed: ' . $time_last_viewed . '</div></br>';
   }
 
-  $refworks_link = '<A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//' . $server_ip . '/refworks_entry/' . urlencode($pid) . '" target="RefWorksMain">Export to RefWorks</A>';
+  $tabset['first_tab']['tabs']['summary'] = array(
+    '#type' => 'tabpage',
+    '#title' => t('Citation'),
+//    '#content' => $citation,
+    '#content' => theme('scholar', $pid),
+    '#weight' => 1,
+  );
 
-  $citation .= '<div class="scholar_bibliography_add_form">' . drupal_get_form('islandora_bibliography_citation_form', $pid) . '</div>';
-
-  $citation .= '<div class="scholar_refworks_link">' . $refworks_link . '</div>';
+  $tabset['first_tab']['tabs']['summary']['citation_button'] = array(
+    '#prefix' => '<div class="scholar_bibliography_add_form">',
+    '#suffix' => '</div>',
+    '#value' => drupal_get_form('islandora_bibliography_citation_form', $pid),
+  );
 
   if (user_access('add scholarly research') == TRUE) {
-    $citation .= '<div>' . drupal_get_form('islandora_scholar_associate_button_form', $pid) . '</div>';
+    $tabset['first_tab']['tabs']['summary']['associate_button'] = array(
+      '#prefix' => '<div class="scholar_associate_button">',
+      '#suffix' => '</div>',
+      '#value' => drupal_get_form('islandora_scholar_associate_button_form', $pid),
+    );
   }
 
   //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
@@ -1239,20 +1250,6 @@ function islandora_scholar_build_citation($pid, $type) {
       '#weight' => 2,
     );
   }
-
-  $coins_title = '&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.issn=' . $data->issn . '&amp;rft.date=' . $data->date . '&amp;rft.volume=' . $data->volume . '&amp;rft.issue=' . $data->issue . '&amp;rft.spage=' . $data->start_page . '&amp;rft.atitle=' . $data->title . '&amp;rft.jtitle=' . $data->journal_title;
-
-  $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->journal_title;
-
-  $citation .= '<div class="scholar_coins_title"><span>  <br /><span class="Z3988" title="' . $coins_title . '"></span></div><div class="scholar_coins_url"><br/><A HREF="' . $coins_url . '">UPEI Users Only: Check for Full Text</A></span><br /></div>';
-
-  $tabset['first_tab']['tabs']['summary'] = array(
-    '#type' => 'tabpage',
-    '#title' => t('Citation'),
-//    '#content' => $citation,
-    '#content' => theme('scholar', $pid),
-    '#weight' => 1,
-  );
 
   if (user_access('add scholarly research') == TRUE) {
     if (array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
@@ -1399,8 +1396,16 @@ function template_preprocess_scholar(&$variables) {
     $bibliography->addCitation($ref);
   }
   $citation = $bibliography->render();
-  
+
   $variables['headers'] = $table_values['headers'];
   $variables['rows'] = $table_values['rows'];
   $variables['citation'] = $citation;
+  $variables['server_ip'] = $_SERVER['SERVER_ADDR'];
+  $variables['date'] = $data->date;
+  $variables['issn'] = $data->issn;
+  $variables['volume'] = $data->volume;
+  $variables['issue'] = $data->issue;
+  $variables['start_page'] = $data->start_page;
+  $variables['title'] = $data->title;
+  $variables['journal_title'] = $data->journal_title;
 }

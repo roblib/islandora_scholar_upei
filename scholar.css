@@ -54,6 +54,12 @@ root {
     margin-top: 23px;
 }
 
+.scholar_associate_button {
+    float: left;
+    margin-right: 15px;
+    margin-top: 23px;
+}
+
 .scholar_bibliography_add_form {
     float: left;
     margin-right: 15px;
@@ -75,4 +81,8 @@ root {
 .scholar_metrics_table {
     height: 300px;
     overflow-y: auto;
+}
+
+.scholar_citation_table {
+    border-bottom: 1px;
 }
