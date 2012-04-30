@@ -593,7 +593,7 @@ function scholar_object_metrics_form($identifier, $type) {
           if ($time_last_viewed == NULL) {
             $time_last_viewed = 'Never';
           }
-          $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
+          $rows[] = array(l($title . ' - ' . $pid, 'fedora/repository/' . $pid, array('html' => TRUE)), t('@read', array('@read' => $read['count'])), $time_last_viewed);
         }
         else {
           $rows[] = array(l($title, 'fedora/repository/' . $pid, array('html' => TRUE)));
