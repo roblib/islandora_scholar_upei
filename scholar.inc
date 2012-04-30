@@ -1358,7 +1358,7 @@ function tstamptotime($tstamp) {
   return $newtstamp;
 }
 
-function template_preprocess_scholar(&$variables, $hook) {
+function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'scholar', 'Coins');
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
