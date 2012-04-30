@@ -782,5 +782,12 @@ function scholar_theme() {
         'type' => 'citation',
       ),
     ),
+    'supplemental' => array(
+      'template' => 'templates/supplemental',
+      'file' => 'scholar.inc',
+      'arguments' => array(
+        'pid' => NULL,
+      ),
+    ),
   );
 }

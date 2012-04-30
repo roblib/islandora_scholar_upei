@@ -1137,46 +1137,6 @@ function islandora_scholar_build_citation($pid, $type) {
 
 //    Get MODS datastream and pull the ISSN from there.
 
-  if (array_key_exists('ZIP', $ds_array)) {
-    $ds_info = $item->get_datastream_info('ZIP');
-    $citation .= '</br><b>Supplemental information</b></br>';
-    $description = $ds_array['ZIP']['label'];
-    $citation .= '<p>' . 'Name: ' . l($description, 'download_ds/' . $pid . '/ZIP') . '</br>';
-    $citation .= t('Size: @size bytes', array('@size' => $ds_info->datastream->size)) . '</br>';
-
-    $supp_array = islandora_scholar_zip_mods_to_array($mods);
-
-    if ($supp_array) {
-
-      $citation .= t('Total: @files', array('@files' => $supp_array['files']));
-
-      $header = array('Filename', 'Date', 'Size (bytes)');
-      $rows = array();
-      for ($i = 0; $i < count($supp_array); $i++) {
-        $rows[] = $supp_array[$i];
-      }
-
-      $supp_table = theme('table', $header, $rows);
-
-      $supp_content = $supp_table;
-
-      $supp_fieldset['fieldset'] = array(
-        '#type' => 'fieldset',
-        '#title' => t('Details'),
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-      );
-      $supp_fieldset['fieldset']['content'] = array(
-        '#value' => $supp_content,
-      );
-
-      $citation .= drupal_render($supp_fieldset);
-    }
-    else {
-      drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
-    }
-  }
-
   $tabset['first_tab']['tabs']['summary'] = array(
     '#type' => 'tabpage',
     '#title' => t('Citation'),
@@ -1184,6 +1144,34 @@ function islandora_scholar_build_citation($pid, $type) {
     '#content' => theme('scholar', $pid),
     '#weight' => 1,
   );
+
+  if (array_key_exists('ZIP', $ds_array)) {
+    $ds_info = $item->get_datastream_info('ZIP');
+    $description = $ds_array['ZIP']['label'];
+    $mods = islandora_bibilgraphy_form_get_mods($pid);
+    $supp_array = islandora_scholar_zip_mods_to_array($mods);
+
+    if ($supp_array) {
+
+      $tabset['first_tab']['tabs']['summary']['supplemental_info'] = array(
+        '#type' => 'fieldset',
+        '#prefix' => '<div id="clear-block">',
+        '#suffix' => '</div>',
+        '#title' => t('Details'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      );
+
+      $tabset['first_tab']['tabs']['summary']['supplemental_info']['info'] = array(
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+        '#value' => theme('supplemental', $pid),
+      );
+    }
+    else {
+      drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
+    }
+  }
 
   $tabset['first_tab']['tabs']['summary']['citation_button'] = array(
     '#prefix' => '<div class="scholar_bibliography_add_form">',
@@ -1280,6 +1268,11 @@ function islandora_scholar_build_citation($pid, $type) {
 
     if (array_key_exists('ZIP', $ds_array)) {
 
+      if (module_exists('scholar_tracking')) {
+
+        $track = new islandora_scholar_tracking($pid);
+      }
+
       $content = drupal_get_form('islandora_scholar_supp_info_delete_form', $pid);
 
       if (module_exists('scholar_tracking')) {
@@ -1365,7 +1358,8 @@ function tstamptotime($tstamp) {
   return $newtstamp;
 }
 
-function template_preprocess_scholar(&$variables) {
+function template_preprocess_scholar(&$variables, $hook) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'scholar', 'Coins');
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
@@ -1384,7 +1378,7 @@ function template_preprocess_scholar(&$variables) {
   }
   $citation = $bibliography->render();
 
-    if (module_exists('scholar_tracking')) {
+  if (module_exists('scholar_tracking')) {
 
     $track = new islandora_scholar_tracking($pid);
     $track->add_page_count();
@@ -1394,18 +1388,80 @@ function template_preprocess_scholar(&$variables) {
       $time_last_viewed = 'Never';
     }
   }
-  
-  $variables['headers'] = $table_values['headers'];
-  $variables['rows'] = $table_values['rows'];
-  $variables['citation'] = $citation;
-  $variables['server_ip'] = $_SERVER['SERVER_ADDR'];
-  $variables['date'] = $data->date;
-  $variables['issn'] = $data->issn;
-  $variables['volume'] = $data->volume;
-  $variables['issue'] = $data->issue;
-  $variables['start_page'] = $data->start_page;
-  $variables['title'] = $data->title;
-  $variables['journal_title'] = $data->journal_title;
-  $variables['times_read'] = $read['count'];
-  $variables['time_last_viewed'] = $time_last_viewed;
+
+  $item = new Fedora_Item($pid);
+  $ds_array = $item->get_datastreams_list_as_array();
+
+  if (array_key_exists('ZIP', $ds_array)) {
+    $ds_info = $item->get_datastream_info('ZIP');
+    $description = $ds_array['ZIP']['label'];
+
+    $supp_array = islandora_scholar_zip_mods_to_array($mods);
+    var_dump($mods);
+    if ($supp_array) {
+      $supp_header = array('Filename', 'Date', 'Size (bytes)');
+      $supp_rows = array();
+      for ($i = 0; $i < count($supp_array); $i++) {
+        $supp_rows[] = $supp_array[$i];
+      }
+    }
+    else {
+      drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
+    }
+  }
+
+  drupal_set_message('Hook: ' . $hook);
+
+  $variables = array(
+    'headers' => $table_values['headers'],
+    'rows' => $table_values['rows'],
+    'citation' => $citation,
+    'server_ip' => $_SERVER['SERVER_ADDR'],
+    'date' => $data->date,
+    'issn' => $data->issn,
+    'volume' => $data->volume,
+    'issue' => $data->issue,
+    'start_page' => $data->start_page,
+    'title' => $data->title,
+    'journal_title' => $data->journal_title,
+    'times_read' => $read['count'],
+    'time_last_viewed' => $time_last_viewed,
+    'ds_array' => $ds_array,
+  );
+}
+
+function template_preprocess_supplemental(&$variables) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+
+  $item = new Fedora_Item($variables['pid']);
+  $ds_array = $item->get_datastreams_list_as_array();
+
+  if (array_key_exists('ZIP', $ds_array)) {
+    $ds_info = $item->get_datastream_info('ZIP');
+    $description = $ds_array['ZIP']['label'];
+    $mods = islandora_bibilgraphy_form_get_mods($variables['pid']);
+
+    $supp_array = islandora_scholar_zip_mods_to_array($mods);
+    if ($supp_array) {
+      $supp_header = array('Filename', 'Date', 'Size (bytes)');
+      $supp_rows = array();
+      for ($i = 0; $i < count($supp_array); $i++) {
+        if ($supp_array[$i]) {
+        $supp_rows[] = $supp_array[$i];
+        }
+      }
+    }
+    else {
+      drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
+    }
+  }
+
+  $variables = array(
+    'ds_array' => $ds_array,
+    'zip_description' => $description,
+    'zip_size' => $ds_info->datastream->size,
+    'zip_array' => $supp_array,
+    'supp_header' => $supp_header,
+    'supp_rows' => $supp_rows,
+  );
 }
