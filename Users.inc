@@ -565,13 +565,11 @@ function scholar_object_metrics_form($identifier, $type) {
   $username_query = @file_get_contents($solr_query);
   if ($username_query != NULL) {
     $xml = new SimpleXMLElement($username_query);
-    $array = $xml->xpath('//doc');
-    $array = array_filter($array);
-//  $title = $xml->xpath("//doc/arr['mods.title']");
-//  var_dump($title[0]->str);
-    var_dump($array);
+    $citations_array = $xml->xpath('//doc');
+    $citations_array = array_filter($citations_array);
+
     $rows = array();
-    if (!empty($array)) {
+    if (!empty($citations_array)) {
       if (module_exists('scholar_tracking')) {
         module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
         $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
@@ -579,19 +577,15 @@ function scholar_object_metrics_form($identifier, $type) {
       else {
         $header = array(t('Title'));
       }
-      $no_of_rows = count($array);
+      $no_of_rows = count($citations_array);
       $range = $offset + $items_per_page;
       if ($range > $no_of_rows) {
         $range = $offset + ($no_of_rows - $offset);
       }
-      foreach ($array as $arr) {
-        $pid = (string) $arr->str;
+      foreach ($citations_array as $citation) {
+        $pid = (string) $citation->str;
         $pids[] = $pid;
-        $title = $arr->arr->str;
-//      $object = new CollectionClass();
-//      $pid_xml_str = $object->getStream($pid, "MODS");
-//      $pid_xml = new SimpleXMLElement($pid_xml_str);
-//      $title = $pid_xml->titleInfo->title;
+        $title = $citation->arr->str;
         if (module_exists('scholar_tracking')) {
           $track = new islandora_scholar_tracking($pid);
           $read = $track->read_page_count();
