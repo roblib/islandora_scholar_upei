@@ -1364,7 +1364,7 @@ function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
-
+  var_dump($variables['type']);
   $data = new Coins($variables['pid'], $variables['type']);
   $table_values = $data->render_view();
 
