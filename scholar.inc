@@ -1389,7 +1389,7 @@ function template_preprocess_scholar(&$variables, $hook) {
     }
   }
 
-  $item = new Fedora_Item($pid);
+  $item = new Fedora_Item($variables['pid']);
   $ds_array = $item->get_datastreams_list_as_array();
 
   if (array_key_exists('ZIP', $ds_array)) {
