@@ -33,6 +33,7 @@ class Coins {
   public $full_names = NULL;
   public $username = NULL;
   public $department = NULL;
+  public $type = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -40,8 +41,9 @@ class Coins {
    * The PID of the object that you want to extract the MODS data from
    * @return type 
    */
-  function __construct($pid) {
+  function __construct($pid, $type = 'citation') {
     $this->pid = $pid;
+    $this->type = $type;
     module_load_include('inc', 'Fedora_Repository', 'api/fedora_item');
     $object = new Fedora_Item($pid);
     $xmlstr = $object->get_datastream_dissemination('MODS');
@@ -201,6 +203,9 @@ class Coins {
     $genre = $this->genre;
     if (stripos((string) $genre[0], 'book') !== FALSE) {
       $type = 'book';
+    }
+    else {
+      $type = $this->type;
     }
 
     if ($this->embargo_date != NULL) {
