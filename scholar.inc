@@ -1397,7 +1397,6 @@ function template_preprocess_scholar(&$variables, $hook) {
     $description = $ds_array['ZIP']['label'];
 
     $supp_array = islandora_scholar_zip_mods_to_array($mods);
-    var_dump($mods);
     if ($supp_array) {
       $supp_header = array('Filename', 'Date', 'Size (bytes)');
       $supp_rows = array();
