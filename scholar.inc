@@ -1136,7 +1136,7 @@ function islandora_scholar_build_citation($pid, $type) {
   );
 
 //    Get MODS datastream and pull the ISSN from there.
-  var_dump($type);
+
   $tabset['first_tab']['tabs']['summary'] = array(
     '#type' => 'tabpage',
     '#title' => t('Citation'),
@@ -1364,7 +1364,7 @@ function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
-  var_dump($variables['type']);
+
   $data = new Coins($variables['pid'], $variables['type']);
   $table_values = $data->render_view();
 
