@@ -227,6 +227,12 @@ class ScholarSolrResults extends IslandoraSolrResults {
             $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
             break;
         }
+        
+        $supp_result = NULL;
+        
+        if (array_key_exists('ZIP', $ds_array)) {
+          $supp_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Supplemental information', 'fedora/repository/' . $doc->PID . '/ZIP/ZIP', array('html' => TRUE)) . '</div>';
+        }
 
         $abstract_snippet = 600;
         if (strlen($data->abstract) > $abstract_snippet) {
@@ -241,7 +247,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
         $related = '<div class="scholar_search_related">' . l('<img src="' . $base_url . '/' . $path . '/images/reload.png"/> Related content', 'islandora/solr/search/' . str_replace(' ', ' OR ', $dc_title), array('html' => TRUE)) . '</div>';
 //        $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $related;
-        $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark;
+        $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $supp_result;
         
         $row++;
       }
