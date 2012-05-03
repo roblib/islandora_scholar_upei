@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 ?>
+<?php
+header('X-Frame-Options: GOFORIT'); 
+?>
 <div id="clear-block">
 
   <h3><?php print t('Labelled view'); ?></h3>
