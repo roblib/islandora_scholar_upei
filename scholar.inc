@@ -1095,7 +1095,7 @@ function islandora_scholar_build_citation($pid, $type) {
   $data = new Coins($pid, $type);
   $item = new Fedora_Item($pid);
   $ds_array = $item->get_datastreams_list_as_array();
-  drupal_set_header('X-Frame-Options: GOFORIT');
+  drupal_set_html_head('X-Frame-Options: GOFORIT');
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
   foreach ($data->reverse_names as $name) {
     drupal_set_html_head('<meta name="citation_author" content="' . $name . '" />');
