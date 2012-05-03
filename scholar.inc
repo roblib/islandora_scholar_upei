@@ -729,9 +729,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
     $pdf_content .= l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
 
     if ($track != FALSE) {
-      $ds_count_pdf = $track->read_ds_count('PDF');
-      $pdf_content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
-      $pdf_content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
+      $pdf_content .= theme('tracking', $pid, 'PDF');
     }
 
     $form['pdf_info'] = array(
