@@ -705,9 +705,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
       $obj_content = l(t('Download document'), 'download_ds/' . $pid . '/OBJ') . '</br>';
 
       if ($track != FALSE) {
-        $ds_count_doc = $track->read_ds_count('OBJ');
-        $obj_content .= 'File has been downloaded ' . $ds_count_doc['count'] . ' times';
-        $obj_content .= '<div>Last downloaded: ' . $ds_count_doc[($ds_count_doc['count'] - 1)] . '</div></br>';
+        $obj_content .= theme('tracking', $pid, 'OBJ');
       }
 
       $form['obj_info'] = array(
@@ -1029,10 +1027,7 @@ function islandora_scholar_signature_delete_form(&$form_state, $pid) {
   $content = l(t('Signature file'), 'download_ds/' . $pid . '/SIGNATURE');
 
   if (module_exists('scholar_tracking')) {
-    $track = new islandora_scholar_tracking($pid);
-    $read = $track->read_ds_count('SIGNATURE');
-    $content .= '</br><div>Times downloaded: ' . $read['count'] . '</div>';
-    $content .= '<div>Last downloaded: ' . $read[($read['count'] - 1)] . '</div></br>';
+    $content .= theme('tracking', $pid, 'SIGNATURE');
   }
 
   $form['content'] = array(
@@ -1247,11 +1242,11 @@ function islandora_scholar_build_citation($pid, $type) {
         '#weight' => 6,
       );
 
-//      if (module_exists('scholar_tracking')) {
+      if (module_exists('scholar_tracking')) {
         $tabset['first_tab']['tabs']['supplementary']['tracking'] = array(
-          '#value' => theme('tracking', $pid),
+          '#value' => theme('tracking', $pid, 'ZIP'),
         );
-//      }
+      }
     }
     else {
       $tabset['first_tab']['tabs']['supplementary'] = array(
@@ -1464,7 +1459,7 @@ function template_preprocess_tracking(&$variables) {
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
 
   $track = new islandora_scholar_tracking($variables['pid']);
-  $ds_count = $track->read_ds_count('ZIP');
+  $ds_count = $track->read_ds_count($variables['dsid']);
   $tracking_date = $ds_count[($ds_count['count'] - 1)];
   if (!$tracking_date) {
     $tracking_date = 'Never';

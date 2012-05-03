@@ -794,6 +794,7 @@ function scholar_theme() {
       'file' => 'scholar.inc',
       'arguments' => array(
         'pid' => NULL,
+        'dsid' => NULL,
       ),
     ),
   );
