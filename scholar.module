@@ -789,5 +789,12 @@ function scholar_theme() {
         'pid' => NULL,
       ),
     ),
+    'tracking' => array(
+      'template' => 'templates/tracking',
+      'file' => 'scholar.inc',
+      'arguments' => array(
+        'pid' => NULL,
+      ),
+    ),
   );
 }

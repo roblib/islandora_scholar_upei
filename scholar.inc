@@ -1117,13 +1117,10 @@ function islandora_scholar_build_citation($pid, $type) {
   }
 
   $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
-  $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
 
   $object_details = islandora_scholar_get_object_profile($pid);
 
   $path = drupal_get_path('module', 'Fedora_Repository');
-
-  $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
 
   $tabset['first_tab'] = array(
     '#type' => 'tabpage',
@@ -1192,34 +1189,10 @@ function islandora_scholar_build_citation($pid, $type) {
 
   if (user_is_logged_in() && $data->issn != NULL) {
 
-    if ($romeo_cache = cache_get('islandora_scholar_romeo_cache_' . $data->issn)) {
-      $romeo = unserialize($romeo_cache->data);
-    }
-    else {
-      $issn_url = file_get_contents($url . $data->issn . $api_key);
-      try {
-        $proc = new XsltProcessor();
-      } catch (Exception $e) {
-        drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
-        return;
-      }
-      $xsl = new DOMDocument();
-      $xsl->load($path . '/xsl/romeo.xsl');
-      $input = new DOMDocument();
-      if ($issn_url != NULL) {
-        $input->loadXML(trim($issn_url));
-        $xsl = $proc->importStylesheet($xsl);
-        $newdom = $proc->transformToDoc($input);
-        $romeo = $newdom->saveXML();
-        $cache_time = variable_get('scholar_romeo_cache_time', '2');
-        cache_set('islandora_scholar_romeo_cache_' . $data->issn, serialize($romeo), 'cache', time() + ($cache_time * 86400));
-      }
-    }
-
     $tabset['first_tab']['tabs']['romeo'] = array(
       '#type' => 'tabpage',
       '#title' => t('RoMEO'),
-      '#content' => $romeo,
+      '#content' => scholar_get_romeo($data->issn),
       '#weight' => 2,
     );
   }
@@ -1267,25 +1240,18 @@ function islandora_scholar_build_citation($pid, $type) {
 
     if (array_key_exists('ZIP', $ds_array)) {
 
-      if (module_exists('scholar_tracking')) {
-
-        $track = new islandora_scholar_tracking($pid);
-      }
-
-      $content = drupal_get_form('islandora_scholar_supp_info_delete_form', $pid);
-
-      if (module_exists('scholar_tracking')) {
-        $ds_count = $track->read_ds_count('ZIP');
-        $content .= 'File has been downloaded ' . $ds_count['count'] . ' times';
-        $content .= '<div>Last downloaded: ' . $ds_count[($ds_count['count'] - 1)] . '</div></br>';
-      }
-
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
         '#title' => t('Supplemental information'),
-        '#content' => $content,
+        '#content' => drupal_get_form('islandora_scholar_supp_info_delete_form', $pid),
         '#weight' => 6,
       );
+
+//      if (module_exists('scholar_tracking')) {
+        $tabset['first_tab']['tabs']['supplementary']['tracking'] = array(
+          '#value' => theme('tracking', $pid),
+        );
+//      }
     }
     else {
       $tabset['first_tab']['tabs']['supplementary'] = array(
@@ -1355,6 +1321,38 @@ function tstamptotime($tstamp) {
   sscanf($tstamp, "%u-%u-%uT%u:%u:%uZ", $year, $month, $day, $hour, $min, $sec);
   $newtstamp = mktime($hour, $min, $sec, $month, $day, $year);
   return $newtstamp;
+}
+
+function scholar_get_romeo($issn) {
+
+  $path = drupal_get_path('module', 'Fedora_Repository');
+  $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
+  $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
+
+  if ($romeo_cache = cache_get('islandora_scholar_romeo_cache_' . $issn)) {
+    $romeo = unserialize($romeo_cache->data);
+  }
+  else {
+    $issn_url = file_get_contents($url . $issn . $api_key);
+    try {
+      $proc = new XsltProcessor();
+    } catch (Exception $e) {
+      drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
+      return;
+    }
+    $xsl = new DOMDocument();
+    $xsl->load($path . '/xsl/romeo.xsl');
+    $input = new DOMDocument();
+    if ($issn_url != NULL) {
+      $input->loadXML(trim($issn_url));
+      $xsl = $proc->importStylesheet($xsl);
+      $newdom = $proc->transformToDoc($input);
+      $romeo = $newdom->saveXML();
+      $cache_time = variable_get('scholar_romeo_cache_time', '2');
+      cache_set('islandora_scholar_romeo_cache_' . $issn, serialize($romeo), 'cache', time() + ($cache_time * 86400));
+    }
+  }
+  return $romeo;
 }
 
 function template_preprocess_scholar(&$variables) {
@@ -1443,7 +1441,7 @@ function template_preprocess_supplemental(&$variables) {
       $supp_rows = array();
       for ($i = 0; $i < count($supp_array); $i++) {
         if ($supp_array[$i]) {
-        $supp_rows[] = $supp_array[$i];
+          $supp_rows[] = $supp_array[$i];
         }
       }
     }
@@ -1459,5 +1457,20 @@ function template_preprocess_supplemental(&$variables) {
     'zip_array' => $supp_array,
     'supp_header' => $supp_header,
     'supp_rows' => $supp_rows,
+  );
+}
+
+function template_preprocess_tracking(&$variables) {
+  module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
+
+  $track = new islandora_scholar_tracking($variables['pid']);
+  $ds_count = $track->read_ds_count('ZIP');
+  $tracking_date = $ds_count[($ds_count['count'] - 1)];
+  if (!$tracking_date) {
+    $tracking_date = 'Never';
+  }
+  $variables = array(
+    'tracking_count' => $ds_count['count'],
+    'tracking_date' => $tracking_date,
   );
 }
