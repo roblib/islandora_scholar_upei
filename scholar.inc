@@ -1095,7 +1095,7 @@ function islandora_scholar_build_citation($pid, $type) {
   $data = new Coins($pid, $type);
   $item = new Fedora_Item($pid);
   $ds_array = $item->get_datastreams_list_as_array();
-  drupal_set_header('X-Frame-Options SAMEORIGIN, GOFORIT');
+
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
   foreach ($data->reverse_names as $name) {
     drupal_set_html_head('<meta name="citation_author" content="' . $name . '" />');
@@ -1124,12 +1124,9 @@ function islandora_scholar_build_citation($pid, $type) {
     '#type' => 'tabset',
   );
 
-//    Get MODS datastream and pull the ISSN from there.
-
   $tabset['first_tab']['tabs']['summary'] = array(
     '#type' => 'tabpage',
     '#title' => t('Citation'),
-//    '#content' => $citation,
     '#content' => theme('scholar', $pid, $type),
     '#weight' => 1,
   );
@@ -1255,7 +1252,7 @@ function islandora_scholar_build_citation($pid, $type) {
       );
     }
   }
-
+var_dump($_SESSION);
   return $tabset;
 }
 
@@ -1272,7 +1269,6 @@ function islandora_scholar_zip_mods_to_array($mods) {
   if ($supp_note == NULL) {
     return FALSE;
   }
-  $citation .= '<pre>' . str_replace(',', "</br>", $supp_note) . '</pre></br>';
   $supp_array = explode(',', $supp_note);
   $supp_no = count($supp_array);
   $filtered_array = array();
@@ -1291,16 +1287,23 @@ function islandora_scholar_zip_mods_to_array($mods) {
   return $filtered_array;
 }
 
+/**
+ * 
+ * @param type $pid
+ * @return type 
+ */
 function islandora_scholar_get_object_profile($pid) {
   $url = 'http://localhost:8080/fedora/objects/' . $pid . '?format=xml';
   $result = file_get_contents($url);
   if ($result != NULL) {
     $result_xml = new SimpleXMLElement($result);
-    $details['owner'] = $result_xml->objOwnerId;
-    $details['label'] = $result_xml->objLabel;
-    $details['created'] = $result_xml->objCreateDate;
-    $details['modified'] = $result_xml->objLastModDate;
-    $details['status'] = $result_xml->objState;
+    $details = array(
+      'owner' => $result_xml->objOwnerId,
+      'label' => $result_xml->objLabel,
+      'created' => $result_xml->objCreateDate,
+      'modified' => $result_xml->objLastModDate,
+      'status' => $result_xml->objState,
+    );
     return $details;
   }
   else {
@@ -1316,6 +1319,14 @@ function tstamptotime($tstamp) {
   return $newtstamp;
 }
 
+/**
+ * Provides the HTML for displaying RoMEo information about a citation.
+ * 
+ * @param type $issn
+ *   ISSN of the citation. Usually pulled from the Refworks or MODS record
+ * @return type 
+ *   HTML which can be displayed in a drupal form
+ */
 function scholar_get_romeo($issn) {
 
   $path = drupal_get_path('module', 'Fedora_Repository');
@@ -1348,6 +1359,11 @@ function scholar_get_romeo($issn) {
   return $romeo;
 }
 
+/**
+ * Preprocess function for displaying the citations
+ * 
+ * @param type $variables 
+ */
 function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'scholar', 'Coins');
@@ -1417,6 +1433,11 @@ function template_preprocess_scholar(&$variables) {
   );
 }
 
+/**
+ * Preprocess function for displaying information about the stored supplemental info
+ * 
+ * @param type $variables 
+ */
 function template_preprocess_supplemental(&$variables) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
 
@@ -1453,6 +1474,11 @@ function template_preprocess_supplemental(&$variables) {
   );
 }
 
+/**
+ * Preprocessor function for displaying the scholar tracking details
+ * 
+ * @param type $variables 
+ */
 function template_preprocess_tracking(&$variables) {
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
 
