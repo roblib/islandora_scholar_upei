@@ -1173,10 +1173,6 @@ function islandora_scholar_build_citation($pid, $type) {
     );
   }
 
-  //    Get XML directly from ROMEO building the URL from the ISSN found in the Refworks DS.
-  //    Only get the ROMEO data if an ISSN exists and the user is authenticated.
-  //    Store 
-
   if (user_is_logged_in() && $data->issn != NULL) {
 
     $tabset['first_tab']['tabs']['romeo'] = array(
@@ -1252,45 +1248,57 @@ function islandora_scholar_build_citation($pid, $type) {
       );
     }
   }
-var_dump($_SESSION);
+//  var_dump($_SESSION);
   return $tabset;
 }
 
 /**
  * Function to process the information about the supplemental information contained 
  * within the ZIP file so it can be added to the citation view
+ * 
  * @param type $mods
- * @return type 
+ * MODS record from the Fedora object
+ * @return type
+ * Array of values that can be easily displayed in a table
  */
 function islandora_scholar_zip_mods_to_array($mods) {
 
   $xpath = new DOMXPath($mods);
-  $supp_note = $xpath->query("//*[@type='supplement']")->item(0)->nodeValue;
-  if ($supp_note == NULL) {
+  $supplemental_note = $xpath->query("//*[@type='supplement']")->item(0)->nodeValue;
+  if ($supplemental_note == NULL) {
     return FALSE;
   }
-  $supp_array = explode(',', $supp_note);
-  $supp_no = count($supp_array);
-  $filtered_array = array();
-  $info_array = explode('  ', trim($supp_array[($supp_no - 1)]));
-  $filtered_array['size'] = $info_array[0];
-  $filtered_array['files'] = trim($info_array[(count($info_array) - 1)]);
+  $supplemental_array = explode(',', $supplemental_note);
+  $supplemental_no = count($supplemental_array);
+  $info_array = explode('  ', trim($supplemental_array[($supplemental_no - 1)]));
+  $filtered_array = array(
+    'size' => $info_array[0],
+    'files' => trim($info_array[(count($info_array) - 1)])
+  );
   $line_array = array();
   $j = 0;
-  for ($i = 3; $i < ($supp_no - 2); $i++) {
-    $line_array[$j] = explode('  ', trim($supp_array[$i]));
-    $filtered_array[$j]['name'] = $line_array[$j][2];
-    $filtered_array[$j]['date'] = $line_array[$j][1];
-    $filtered_array[$j]['size'] = $line_array[$j][0];
+  for ($i = 3; $i < ($supplemental_no - 2); $i++) {
+    $line_array[$j] = explode('  ', trim($supplemental_array[$i]));
+    $filtered_array[$j] = array(
+      'name' => $line_array[$j][2],
+      'date' => $line_array[$j][1],
+      'size' => $line_array[$j][0],
+    );
     $j++;
   }
   return $filtered_array;
 }
 
 /**
+ * Function that returns an array with details about a specific object
+ * This isn't possible with the current Islandora API
+ * 
+ * @todo Work this into the Fedora API
  * 
  * @param type $pid
- * @return type 
+ * PID of the object
+ * @return type
+ * Array containing details about the Fedora object
  */
 function islandora_scholar_get_object_profile($pid) {
   $url = 'http://localhost:8080/fedora/objects/' . $pid . '?format=xml';
@@ -1337,7 +1345,7 @@ function scholar_get_romeo($issn) {
     $romeo = unserialize($romeo_cache->data);
   }
   else {
-    $issn_url = file_get_contents($url . $issn . $api_key);
+    $romeo_url = file_get_contents($url . $issn . $api_key);
     try {
       $proc = new XsltProcessor();
     } catch (Exception $e) {
@@ -1347,8 +1355,8 @@ function scholar_get_romeo($issn) {
     $xsl = new DOMDocument();
     $xsl->load($path . '/xsl/romeo.xsl');
     $input = new DOMDocument();
-    if ($issn_url != NULL) {
-      $input->loadXML(trim($issn_url));
+    if ($romeo_url != NULL) {
+      $input->loadXML(trim($romeo_url));
       $xsl = $proc->importStylesheet($xsl);
       $newdom = $proc->transformToDoc($input);
       $romeo = $newdom->saveXML();
