@@ -1355,7 +1355,7 @@ function scholar_get_romeo($issn) {
     $xsl = new DOMDocument();
     $xsl->load($path . '/xsl/romeo.xsl');
     $input = new DOMDocument();
-    if ($romeo_url != NULL) {
+    if ($romeo_url) {
       $input->loadXML(trim($romeo_url));
       $xsl = $proc->importStylesheet($xsl);
       $newdom = $proc->transformToDoc($input);
@@ -1379,8 +1379,8 @@ function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
 
-  $data = new Coins($variables['pid'], $variables['type']);
-  $table_values = $data->render_view();
+  $data = new Coins($variables['pid']);
+  $table_values = $data->render_view($variables['type']);
 
   $csl = variable_get('scholar_default_csl', 'default');
   $style = citeproc_style($csl);

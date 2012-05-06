@@ -6,7 +6,8 @@
  */
 
 /**
- * Class to parse relevant data from MODS to create the COINS URL
+ * Class to parse relevant data from MODS, initially used to 
+ * construct the COINS url but has found use elsewhere.
  */
 class Coins {
 
@@ -37,13 +38,14 @@ class Coins {
 
   /**
    * Create the object properties from the MODS datastream
+   * 
    * @param type $pid 
    * The PID of the object that you want to extract the MODS data from
+   * 
    * @return type 
    */
-  function __construct($pid, $type = 'citation') {
+  function __construct($pid) {
     $this->pid = $pid;
-    $this->type = $type;
     module_load_include('inc', 'Fedora_Repository', 'api/fedora_item');
     $object = new Fedora_Item($pid);
     $xmlstr = $object->get_datastream_dissemination('MODS');
@@ -166,7 +168,19 @@ class Coins {
     $this->department = $department;
   }
 
-  function render_view() {
+  /**
+   * Function to return citation details in a table-ready form
+   * 
+   * @param string $type
+   * Type of reference that is being used. Default value is citation but 
+   * thesis and book are also valid. This parameter will change the values
+   * that are returned when the render_view function is called
+   * 
+   * @return type 
+   * An array containing the headers and rows ready to put into a table describing
+   * the reference
+   */
+  function render_view($type = 'citation') {
 
     $headers = array('', '');
     $rows = array();
@@ -203,9 +217,6 @@ class Coins {
     $genre = $this->genre;
     if (stripos((string) $genre[0], 'book') !== FALSE) {
       $type = 'book';
-    }
-    else {
-      $type = $this->type;
     }
 
     if ($this->embargo_date != NULL) {
