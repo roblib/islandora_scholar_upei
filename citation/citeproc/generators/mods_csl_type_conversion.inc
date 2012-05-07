@@ -144,6 +144,7 @@ $_ir_citation_bibutils_noauth_csl_terms = array(
 );
 
 function marcgt_to_csl($term) {
+  drupal_set_message('Marcgt');
   global $_ir_citation_marcgt_csl_terms;
   if ( !empty( $_ir_citation_marcgt_csl_terms[$term] )) {
     return $_ir_citation_marcgt_csl_terms[$term];
@@ -154,6 +155,7 @@ function marcgt_to_csl($term) {
 }
 
 function zotero_to_csl($term) {
+  drupal_set_message('Zotero');
   global $_ir_citation_zotero_local_csl_terms;
   if ( !empty( $_ir_citation_zotero_local_csl_terms[$term] )) {
     return $_ir_citation_zotero_local_csl_terms[$term];
@@ -164,6 +166,7 @@ function zotero_to_csl($term) {
 }
 
 function bibutils_to_csl($term) {
+  drupal_set_message('Bibutils');
   global $_ir_citation_bibutils_noauth_csl_terms;
   if ( !empty( $_ir_citation_bibutils_noauth_csl_terms[$term] )) {
     return $_ir_citation_bibutils_noauth_csl_terms[$term];
