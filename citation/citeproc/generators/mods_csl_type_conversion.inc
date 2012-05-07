@@ -174,6 +174,7 @@ function bibutils_to_csl($term) {
 }
 
 function mods_genre_to_csl_type($term) {
+  var_dump('mods_genre_to_csl_type');
   var_dump($term);
   $marcgt = marcgt_to_csl($term);
   if ( !empty( $marcgt )) 
