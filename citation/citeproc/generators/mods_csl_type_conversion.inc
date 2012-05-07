@@ -178,14 +178,20 @@ function mods_genre_to_csl_type($term) {
   var_dump($term);
   $marcgt = marcgt_to_csl($term);
   if ( !empty( $marcgt )) 
+    var_dump ('marcgt');
+  var_dump($marcgt);
     return $marcgt;
 
   $zotero = zotero_to_csl($term);
   if ( !empty( $zotero ))
+    var_dump ('zotero');
+  var_dump($zotero);
     return $zotero;
 
   $bibutils = bibutils_to_csl($term);
   if ( !empty( $bibutils ))
+    var_dump ('bibutils');
+  var_dump($bibutils);
     return $bibutils;
  return FALSE;
 }
