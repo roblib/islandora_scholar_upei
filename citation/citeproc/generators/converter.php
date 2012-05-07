@@ -60,7 +60,9 @@ function convert_mods_to_citeproc_jsons($mods) {
     'number-pmid' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="pmid"]'),
     'number-pmcid' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="pmcid"]'),
     'number-nihmsid' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="nihmsid"]'),
-    'type' => convert_mods_to_citeproc_json_type($mods)), $names, $dates
+//    'type' => convert_mods_to_citeproc_json_type($mods)
+    'type' => "article-journal",
+    ), $names, $dates
   );
   return $output;
 }
