@@ -721,12 +721,14 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
     if (empty($csl_data['type'])) {
 
     $types_local_auth = $xml->xpath("//*[local-name() = 'genre'/text()");
-    $csl_data['type'] = mods_genre_to_csl_type($types_local_auth);
-//    while (empty($csl_data['type']) && list( $num, $type ) = each($types_local_auth)) {
-//      $interim_type = (string) $type;
-//      $csl_data['type'] = mods_genre_to_csl_type($types_local_auth);
-//    }
+    while (empty($csl_data['type']) && list( $num, $type ) = each($types_local_auth)) {
+      $interim_type = (string) $type;
+      $csl_data['type'] = mods_genre_to_csl_type($types_local_auth);
+    }
   }
+
+  $csl_data['type'] = "article-journal";
+
   
   // NAME(s) -- Another Biggie
   // There are a number of name-type vars which may be populated.
