@@ -657,6 +657,9 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
   if (!empty($urls)) {
     $csl_data['URL'] = (string) $urls[0];
   }
+  
+     $types_local_auth = $xml->xpath("//mods:genre/text()");
+    $csl_data['type'] = mods_genre_to_csl_type($types_local_auth);
 
 
   // TYPE -- this is a big one.
@@ -729,8 +732,6 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
     }
   }
   
-  drupal_set_message('Genre: ' . $csl_data['type']);
-
   // NAME(s) -- Another Biggie
   // There are a number of name-type vars which may be populated.
   // We will concern ourselves with the following:
