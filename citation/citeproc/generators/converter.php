@@ -718,6 +718,7 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
       $csl_data['type'] = mods_genre_to_csl_type($interim_type);
     }
   }
+  drupal_set_message('Genre: ' . $csl_data['type']);
 
   // NAME(s) -- Another Biggie
   // There are a number of name-type vars which may be populated.
