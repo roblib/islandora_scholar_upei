@@ -145,6 +145,7 @@ $_ir_citation_bibutils_noauth_csl_terms = array(
 
 function marcgt_to_csl($term) {
   global $_ir_citation_marcgt_csl_terms;
+  var_dump($_ir_citation_marcgt_csl_terms);
   var_dump('marcgt_to_csl');
   var_dump($term);
   var_dump( $_ir_citation_marcgt_csl_terms[$term]);
