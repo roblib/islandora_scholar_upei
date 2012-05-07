@@ -251,6 +251,15 @@ function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
       $output = mods_genre_to_csl_type($interim_type);
     }
   }
+
+  if (empty($output)) {
+    $types_local_auth = $mods->xpath("//mods:genre");
+    while (empty($output) && list( $num, $type ) = each($types_local_auth)) {
+      $interim_type = (string) $type;
+      $output = mods_genre_to_csl_type($interim_type);
+    }
+  }
+
   return $output;
 }
 
@@ -717,8 +726,8 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
       $csl_data['type'] = mods_genre_to_csl_type($interim_type);
     }
   }
-  
-    if (empty($csl_data['type'])) {
+
+  if (empty($csl_data['type'])) {
 
     $types_local_auth = $xml->xpath("//*[local-name() = 'genre'/text()");
     while (empty($csl_data['type']) && list( $num, $type ) = each($types_local_auth)) {
@@ -729,7 +738,7 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
 
   $csl_data['type'] = "article-journal";
 
-  
+
   // NAME(s) -- Another Biggie
   // There are a number of name-type vars which may be populated.
   // We will concern ourselves with the following:
