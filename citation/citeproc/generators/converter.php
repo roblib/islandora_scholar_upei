@@ -723,6 +723,7 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
 
     $types_local_auth = $xml->xpath("//mods:genre/text()");
     drupal_set_message('Genre xpath: ' . $types_local_auth);
+    var_dump($types_local_auth);
     while (empty($csl_data['type']) && list( $num, $type ) = each($types_local_auth)) {
       $interim_type = (string) $type;
       $csl_data['type'] = mods_genre_to_csl_type($interim_type);
