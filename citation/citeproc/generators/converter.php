@@ -254,7 +254,7 @@ function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
   }
 
   if (empty($output)) {
-    $types_local_auth = $mods->xpath("//mods:genre");
+    $types_local_auth = $mods->xpath("//genre");
     while (empty($output) && list( $num, $type ) = each($types_local_auth)) {
       $interim_type = (string) $type;
       $output = mods_genre_to_csl_type($interim_type);
