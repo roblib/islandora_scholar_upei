@@ -197,7 +197,6 @@ function convert_mods_to_citeproc_json_page(SimpleXMLElement $mods) {
  *   The type property for the Citation.
  */
 function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
-//  var_dump($mods);
   /**
    * @auth='marcgt' -- marcgt should be the preferred authority
    * @auth='local'  -- actually better at differentiating some types
@@ -258,9 +257,7 @@ function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
     $types = $mods->xpath("//mods:genre");
     foreach ($types as $type) {
       $interim_type = (string) $type;
-      var_dump($interim_type);
       $interim_output = mods_genre_to_csl_type($interim_type);
-      var_dump($interim_output);
       if ($interim_output) {
         $output = $interim_output;
       }

@@ -297,10 +297,6 @@ function ir_citation_marcgt_csl_terms($term) {
 
 function marcgt_to_csl($term) {
   global $_ir_citation_marcgt_csl_terms;
-  var_dump($_ir_citation_marcgt_csl_terms);
-  var_dump('marcgt_to_csl');
-  var_dump($term);
-  var_dump($_ir_citation_marcgt_csl_terms);
   if (!empty($_ir_citation_marcgt_csl_terms[$term])) {
     return $_ir_citation_marcgt_csl_terms[$term];
   }
@@ -330,25 +326,16 @@ function bibutils_to_csl($term) {
 }
 
 function mods_genre_to_csl_type($term) {
-  var_dump('mods_genre_to_csl_type');
-  var_dump($term);
 //  $marcgt = marcgt_to_csl($term);
   $marcgt = ir_citation_marcgt_csl_terms($term);
   if (!empty($marcgt))
-    var_dump('marcgt');
-  var_dump($marcgt);
   return $marcgt;
 
   $zotero = zotero_to_csl($term);
   if (!empty($zotero))
-    var_dump('zotero');
-  var_dump($zotero);
   return $zotero;
 
   $bibutils = bibutils_to_csl($term);
-  if (!empty($bibutils))
-    var_dump('bibutils');
-  var_dump($bibutils);
   return $bibutils;
   return FALSE;
 }

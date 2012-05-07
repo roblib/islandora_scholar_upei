@@ -11,7 +11,6 @@ function citeproc_item_from_mods(DOMDocument $mods) {
   module_load_include('php', 'citeproc', 'generators/converter');
   $item = new CiteProcJSItem();
   $raw = convert_mods_to_citeproc_jsons($mods->saveXML());
-  var_dump($raw);
   $item->set($raw);
   return $item;
 }
