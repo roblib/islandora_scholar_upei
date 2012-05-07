@@ -60,8 +60,7 @@ function convert_mods_to_citeproc_jsons($mods) {
     'number-pmid' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="pmid"]'),
     'number-pmcid' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="pmcid"]'),
     'number-nihmsid' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="nihmsid"]'),
-//    'type' => convert_mods_to_citeproc_json_type($mods)
-    'type' => "article-journal",
+    'type' => convert_mods_to_citeproc_json_type($mods)
     ), $names, $dates
   );
   return $output;
@@ -198,7 +197,7 @@ function convert_mods_to_citeproc_json_page(SimpleXMLElement $mods) {
  *   The type property for the Citation.
  */
 function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
-  var_dump($mods);
+//  var_dump($mods);
   /**
    * @auth='marcgt' -- marcgt should be the preferred authority
    * @auth='local'  -- actually better at differentiating some types
@@ -257,6 +256,7 @@ function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
 
   if (empty($output)) {
     $types = $mods->xpath("//mods:genre");
+    var_dump($types);
     foreach ($types as $type) {
       $interim_type = (string) $type;
       $interim_output = mods_genre_to_csl_type($interim_type);
