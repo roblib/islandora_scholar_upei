@@ -265,7 +265,7 @@ function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
       }
     }
   }
-
+  var_dump($output);
   return $output;
 }
 
