@@ -657,10 +657,6 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
   if (!empty($urls)) {
     $csl_data['URL'] = (string) $urls[0];
   }
-  
-     $types_local_auth = $xml->xpath("//mods:genre/text()");
-    $csl_data['type'] = mods_genre_to_csl_type($types_local_auth);
-
 
   // TYPE -- this is a big one.
   //    @auth='marcgt' -- marcgt should be the preferred authority
@@ -724,7 +720,7 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
   
     if (empty($csl_data['type'])) {
 
-    $types_local_auth = $xml->xpath("//mods:genre/text()");
+    $types_local_auth = $xml->xpath("//*[local-name() = 'genre'/text()");
     $csl_data['type'] = mods_genre_to_csl_type($types_local_auth);
     while (empty($csl_data['type']) && list( $num, $type ) = each($types_local_auth)) {
       $interim_type = (string) $type;
