@@ -256,16 +256,16 @@ function convert_mods_to_citeproc_json_type(SimpleXMLElement $mods) {
 
   if (empty($output)) {
     $types = $mods->xpath("//mods:genre");
-    var_dump($types);
     foreach ($types as $type) {
       $interim_type = (string) $type;
+      var_dump($interim_type);
       $interim_output = mods_genre_to_csl_type($interim_type);
+      var_dump($interim_output);
       if ($interim_output) {
         $output = $interim_output;
       }
     }
   }
-  var_dump($output);
   return $output;
 }
 
