@@ -718,6 +718,16 @@ function convert_mods_to_citeproc_json($mods, $item_id) {
       $csl_data['type'] = mods_genre_to_csl_type($interim_type);
     }
   }
+  
+    if (empty($csl_data['type'])) {
+
+    $types_local_auth = $xml->xpath("//mods:genre/text()");
+    while (empty($csl_data['type']) && list( $num, $type ) = each($types_local_auth)) {
+      $interim_type = (string) $type;
+      $csl_data['type'] = mods_genre_to_csl_type($interim_type);
+    }
+  }
+  
   drupal_set_message('Genre: ' . $csl_data['type']);
 
   // NAME(s) -- Another Biggie
