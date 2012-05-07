@@ -175,17 +175,14 @@ function bibutils_to_csl($term) {
 
 function mods_genre_to_csl_type($term) {
   $marcgt = marcgt_to_csl($term);
-  drupal_set_message('Genre-marc: ' . $marcgt);
   if ( !empty( $marcgt )) 
     return $marcgt;
 
   $zotero = zotero_to_csl($term);
-  drupal_set_message('Genre-zot: ' . $zotero);
   if ( !empty( $zotero ))
     return $zotero;
 
   $bibutils = bibutils_to_csl($term);
-  drupal_set_message('Genre-bib: ' . $bibutils);
   if ( !empty( $bibutils ))
     return $bibutils;
  return FALSE;
