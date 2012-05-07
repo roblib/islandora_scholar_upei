@@ -62,6 +62,7 @@ function convert_mods_to_citeproc_jsons($mods) {
     'number-nihmsid' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="nihmsid"]'),
     'type' => convert_mods_to_citeproc_json_type($mods)), $names, $dates
   );
+  drupal_set_message('Genre: ' . $output['genre']);
   return $output;
 }
 
