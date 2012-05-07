@@ -148,7 +148,7 @@ function marcgt_to_csl($term) {
   var_dump($_ir_citation_marcgt_csl_terms);
   var_dump('marcgt_to_csl');
   var_dump($term);
-  var_dump( $_ir_citation_marcgt_csl_terms[$term]);
+  var_dump( $_ir_citation_marcgt_csl_terms);
   if ( !empty( $_ir_citation_marcgt_csl_terms[$term] )) {
     return $_ir_citation_marcgt_csl_terms[$term];
   }
