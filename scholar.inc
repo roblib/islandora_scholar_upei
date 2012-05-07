@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @file
- *
  * Provides the functions to process and view scholarly citations.
+ * 
+ * @file
+ * @author Richard Wincewicz
  */
 class Scholar {
 
@@ -18,7 +19,8 @@ class Scholar {
   /**
    * Build up the elements to show a basic citation. This currently
    * calls another function but customisation can be added in
-   * @return type 
+   * 
+   * @return array 
    */
   function showCitation() {
     $pid = $this->pid;
@@ -29,15 +31,16 @@ class Scholar {
   /**
    * Build up the elements to show a thesis. This uses the citation build function
    * as well as adding in some extra customisation such as the signature datastream
-   * @return string 
+   * 
+   * @return array
    */
   function showThesis() {
     $pid = $this->pid;
     $item = new Fedora_Item($pid);
-    $ds_array = $item->get_datastreams_list_as_array();
+    $datastream_array = $item->get_datastreams_list_as_array();
     $tabset = islandora_scholar_build_citation($pid, 'thesis');
 
-    if (array_key_exists('SIGNATURE', $ds_array)) {
+    if (array_key_exists('SIGNATURE', $datastream_array)) {
 
       $tabset['first_tab']['tabs']['signature'] = array(
         '#type' => 'tabpage',
@@ -506,9 +509,9 @@ function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
 
   $object = new Fedora_Item($pid);
 
-  $ds_array = $object->get_datastreams_list_as_array();
+  $datastream_array = $object->get_datastreams_list_as_array();
 
-  if (array_key_exists('POLICY', $ds_array)) {
+  if (array_key_exists('POLICY', $datastream_array)) {
 
     $policy_details = $object->get_datastream_info('POLICY');
 
@@ -566,7 +569,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
-  $ds_array = $object->get_datastreams_list_as_array();
+  $datastream_array = $object->get_datastreams_list_as_array();
   $path = drupal_get_path('module', 'scholar');
 
   switch ($form_state['clicked_button']['#id']) {
@@ -602,7 +605,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
       break;
 
     case 'supp_embargo':
-      if (array_key_exists('POLICY', $ds_array)) {
+      if (array_key_exists('POLICY', $datastream_array)) {
         $policy_details = $object->get_datastream_info('POLICY');
         switch ($policy_details->datastream->label) {
           case 'Embargo policy - Doc':
@@ -690,7 +693,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
   $form = array();
 
   $object = new Fedora_Item($pid);
-  $ds_array = $object->get_datastreams_list_as_array();
+  $datastream_array = $object->get_datastreams_list_as_array();
   if (module_exists('scholar_tracking')) {
     $track = new islandora_scholar_tracking($pid);
   }
@@ -699,7 +702,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
   }
   $object_details = islandora_scholar_get_object_profile($pid);
 
-  if (array_key_exists('OBJ', $ds_array)) {
+  if (array_key_exists('OBJ', $datastream_array)) {
     if ($user->name === $object_details['owner'] || user_access('administer scholarly research')) {
 
       $obj_content = l(t('Download document'), 'download_ds/' . $pid . '/OBJ') . '</br>';
@@ -723,7 +726,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
     }
   }
 
-  if (array_key_exists('PDF', $ds_array)) {
+  if (array_key_exists('PDF', $datastream_array)) {
 
     $pdf_content = "<div><iframe src=\"http://docs.google.com/viewer?url=" . $base_url . '/fedora/repository/' . $pid . '/PDF/preview.pdf' . "&embedded=TRUE\" style=\"width:600px; height:500px;\" frameborder=\"0\"></iframe></div>";
     $pdf_content .= l(t('Download PDF'), 'download_ds/' . $pid . '/PDF') . '</br>';
@@ -752,9 +755,9 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
     );
   }
 
-  if (array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array)) {
+  if (array_key_exists('PDF', $datastream_array) || array_key_exists('OBJ', $datastream_array)) {
     if (user_access('administer scholarly research') || $user->name === $object_details['owner']) {
-      if (!array_key_exists('POLICY', $ds_array)) {
+      if (!array_key_exists('POLICY', $datastream_array)) {
         $form['embargo'] = array(
           '#type' => 'submit',
           '#name' => 'embargo',
@@ -801,7 +804,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   $path = drupal_get_path('module', 'scholar');
   $pid = $form_state['values']['pid'];
   $object = new Fedora_Item($pid);
-  $ds_array = $object->get_datastreams_list_as_array();
+  $datastream_array = $object->get_datastreams_list_as_array();
 
   switch ($form_state['clicked_button']['#name']) {
     case 'obj_delete':
@@ -829,7 +832,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
     $collectionHelper = new CollectionClass();
     $xmlstr = $collectionHelper->getStream($pid, "MODS", 0);
 
-    if (($dsid == 'OBJ' && !array_key_exists('PDF', $ds_array)) || ($dsid == 'PDF' && !array_key_exists('OBJ', $ds_array))) {
+    if (($dsid == 'OBJ' && !array_key_exists('PDF', $datastream_array)) || ($dsid == 'PDF' && !array_key_exists('OBJ', $datastream_array))) {
 
       if ($xmlstr != NULL) {
         $mods_xml = new DOMDocument();
@@ -869,7 +872,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   }
   else {
     if ($dsid == 'EMBARGO') {
-      if (array_key_exists('POLICY', $ds_array)) {
+      if (array_key_exists('POLICY', $datastream_array)) {
         $policy_details = $object->get_datastream_info('POLICY');
         drupal_set_message('Policy details: ' . $policy_details->datastream->label);
         switch ($policy_details->datastream->label) {
@@ -1094,7 +1097,7 @@ function islandora_scholar_build_citation($pid, $type) {
 
   $data = new Coins($pid, $type);
   $item = new Fedora_Item($pid);
-  $ds_array = $item->get_datastreams_list_as_array();
+  $datastream_array = $item->get_datastreams_list_as_array();
 
   drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
   foreach ($data->reverse_names as $name) {
@@ -1105,7 +1108,7 @@ function islandora_scholar_build_citation($pid, $type) {
   drupal_set_html_head('<meta name="citation_volume" content="' . $data->volume . '" />');
   drupal_set_html_head('<meta name="citation_issue" content="' . $data->issue . '" />');
   drupal_set_html_head('<meta name="citation_firstpage" content="' . $data->start_page . '" />');
-  if (array_key_exists('PDF', $ds_array)) {
+  if (array_key_exists('PDF', $datastream_array)) {
     drupal_set_html_head('<meta name="citation_pdf_url" content="' . $base_url . '/download_ds/' . $pid . '/PDF" />');
   }
 
@@ -1131,9 +1134,9 @@ function islandora_scholar_build_citation($pid, $type) {
     '#weight' => 1,
   );
 
-  if (array_key_exists('ZIP', $ds_array)) {
-    $ds_info = $item->get_datastream_info('ZIP');
-    $description = $ds_array['ZIP']['label'];
+  if (array_key_exists('ZIP', $datastream_array)) {
+    $datastream_info = $item->get_datastream_info('ZIP');
+    $description = $datastream_array['ZIP']['label'];
     $mods = islandora_bibilgraphy_form_get_mods($pid);
     $supp_array = islandora_scholar_zip_mods_to_array($mods);
 
@@ -1184,7 +1187,7 @@ function islandora_scholar_build_citation($pid, $type) {
   }
 
   if (user_access('add scholarly research') == TRUE) {
-    if (array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
+    if (array_key_exists('OBJ', $datastream_array) == FALSE && array_key_exists('PDF', $datastream_array) == FALSE) {
 
       $tabset['first_tab']['tabs']['upload'] = array(
         '#type' => 'tabpage',
@@ -1204,7 +1207,7 @@ function islandora_scholar_build_citation($pid, $type) {
   }
   else {
 
-    if (array_key_exists('OBJ', $ds_array) == FALSE && array_key_exists('PDF', $ds_array) == FALSE) {
+    if (array_key_exists('OBJ', $datastream_array) == FALSE && array_key_exists('PDF', $datastream_array) == FALSE) {
       $tabset['first_tab']['tabs']['pdf'] = array(
         '#type' => 'tabpage',
         '#title' => t('Document'),
@@ -1224,7 +1227,7 @@ function islandora_scholar_build_citation($pid, $type) {
 
   if (user_access('administer scholarly research')) {
 
-    if (array_key_exists('ZIP', $ds_array)) {
+    if (array_key_exists('ZIP', $datastream_array)) {
 
       $tabset['first_tab']['tabs']['supplementary'] = array(
         '#type' => 'tabpage',
@@ -1258,6 +1261,7 @@ function islandora_scholar_build_citation($pid, $type) {
  * 
  * @param type $mods
  * MODS record from the Fedora object
+ * 
  * @return type
  * Array of values that can be easily displayed in a table
  */
@@ -1295,15 +1299,16 @@ function islandora_scholar_zip_mods_to_array($mods) {
  * 
  * @todo Work this into the Fedora API
  * 
- * @param type $pid
+ * @param string $pid
  * PID of the object
- * @return type
+ * 
+ * @return array
  * Array containing details about the Fedora object
  */
 function islandora_scholar_get_object_profile($pid) {
   $url = 'http://localhost:8080/fedora/objects/' . $pid . '?format=xml';
   $result = file_get_contents($url);
-  if ($result != NULL) {
+  if ($result) {
     $result_xml = new SimpleXMLElement($result);
     $details = array(
       'owner' => $result_xml->objOwnerId,
@@ -1315,6 +1320,7 @@ function islandora_scholar_get_object_profile($pid) {
     return $details;
   }
   else {
+    drupal_set_message(t('Could not find details for object @pid!', array('@pid' => $pid)), 'warning');
     return NULL;
   }
 }
@@ -1328,26 +1334,27 @@ function tstamptotime($tstamp) {
 }
 
 /**
- * Provides the HTML for displaying RoMEo information about a citation.
+ * Provides the HTML for displaying RoMEO information about a citation.
  * 
- * @param type $issn
+ * @param string $issn
  *   ISSN of the citation. Usually pulled from the Refworks or MODS record
- * @return type 
+ * 
+ * @return string 
  *   HTML which can be displayed in a drupal form
  */
 function scholar_get_romeo($issn) {
 
   $path = drupal_get_path('module', 'Fedora_Repository');
-  $url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
+  $base_url = variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn=');
   $api_key = '&ak=' . variable_get('scholar_romeo_key', '');
 
   if ($romeo_cache = cache_get('islandora_scholar_romeo_cache_' . $issn)) {
     $romeo = unserialize($romeo_cache->data);
   }
   else {
-    $romeo_url = file_get_contents($url . $issn . $api_key);
+    $romeo_url = file_get_contents($base_url . $issn . $api_key);
     try {
-      $proc = new XsltProcessor();
+      $processor = new XsltProcessor();
     } catch (Exception $e) {
       drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
       return;
@@ -1357,11 +1364,15 @@ function scholar_get_romeo($issn) {
     $input = new DOMDocument();
     if ($romeo_url) {
       $input->loadXML(trim($romeo_url));
-      $xsl = $proc->importStylesheet($xsl);
-      $newdom = $proc->transformToDoc($input);
-      $romeo = $newdom->saveXML();
+      $xsl = $processor->importStylesheet($xsl);
+      $xml_output = $processor->transformToDoc($input);
+      $romeo = $xml_output->saveXML();
       $cache_time = variable_get('scholar_romeo_cache_time', '2');
       cache_set('islandora_scholar_romeo_cache_' . $issn, serialize($romeo), 'cache', time() + ($cache_time * 86400));
+    }
+    else {
+      drupal_set_message(t('Could not retrieve RoMEO information for ISSN: @issn!', array('@issn' => $issn)), 'warning');
+      return NULL;
     }
   }
   return $romeo;
@@ -1370,7 +1381,7 @@ function scholar_get_romeo($issn) {
 /**
  * Preprocess function for displaying the citations
  * 
- * @param type $variables 
+ * @param array $variables 
  */
 function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
@@ -1404,11 +1415,11 @@ function template_preprocess_scholar(&$variables) {
   }
 
   $item = new Fedora_Item($variables['pid']);
-  $ds_array = $item->get_datastreams_list_as_array();
+  $datastream_array = $item->get_datastreams_list_as_array();
 
-  if (array_key_exists('ZIP', $ds_array)) {
-    $ds_info = $item->get_datastream_info('ZIP');
-    $description = $ds_array['ZIP']['label'];
+  if (array_key_exists('ZIP', $datastream_array)) {
+    $datastream_info = $item->get_datastream_info('ZIP');
+    $description = $datastream_array['ZIP']['label'];
 
     $supp_array = islandora_scholar_zip_mods_to_array($mods);
     if ($supp_array) {
@@ -1437,7 +1448,7 @@ function template_preprocess_scholar(&$variables) {
     'journal_title' => $data->journal_title,
     'times_read' => $read['count'],
     'time_last_viewed' => $time_last_viewed,
-    'ds_array' => $ds_array,
+    'datastream_array' => $datastream_array,
   );
 }
 
@@ -1450,11 +1461,11 @@ function template_preprocess_supplemental(&$variables) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
 
   $item = new Fedora_Item($variables['pid']);
-  $ds_array = $item->get_datastreams_list_as_array();
+  $datastream_array = $item->get_datastreams_list_as_array();
 
-  if (array_key_exists('ZIP', $ds_array)) {
-    $ds_info = $item->get_datastream_info('ZIP');
-    $description = $ds_array['ZIP']['label'];
+  if (array_key_exists('ZIP', $datastream_array)) {
+    $datastream_info = $item->get_datastream_info('ZIP');
+    $description = $datastream_array['ZIP']['label'];
     $mods = islandora_bibilgraphy_form_get_mods($variables['pid']);
 
     $supp_array = islandora_scholar_zip_mods_to_array($mods);
@@ -1473,9 +1484,9 @@ function template_preprocess_supplemental(&$variables) {
   }
 
   $variables = array(
-    'ds_array' => $ds_array,
+    'datastream_array' => $datastream_array,
     'zip_description' => $description,
-    'zip_size' => $ds_info->datastream->size,
+    'zip_size' => $datastream_info->datastream->size,
     'zip_array' => $supp_array,
     'supp_header' => $supp_header,
     'supp_rows' => $supp_rows,
