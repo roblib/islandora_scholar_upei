@@ -1,6 +1,7 @@
 <?php
+
 /**
- *@file
+ * @file
  *  This is a mapping for translation from mods to json.
  */
 $_ir_citation_marcgt_csl_terms = array(
@@ -143,13 +144,164 @@ $_ir_citation_bibutils_noauth_csl_terms = array(
   "unpublished" => NULL,
 );
 
+function ir_citation_marcgt_csl_terms($term) {
+  $input = array(
+    "article",
+    "issue",
+    "journal",
+    "periodical",
+    "newspaper",
+    "autobiography",
+    "biography",
+    "fiction",
+    "history",
+    "hymnal",
+    "multivolume monograph",
+    "novel",
+    "book",
+    "index",
+    "dictionary",
+    "encyclopedia",
+    "chart",
+    "graphic",
+    "picture",
+    "technical drawing",
+    "interview",
+    "legal case and case notes",
+    "legislation",
+    "atlas",
+    "globe",
+    "map",
+    "motion picture",
+    "videorecording",
+    "conference publication",
+    "patent",
+    "letter",
+    "technical report",
+    "discography",
+    "speech",
+    "thesis",
+    "treaty",
+    "online system or service",
+    "web site",
+  );
+
+  $output = array(
+    "article",
+    "article",
+    "article-journal",
+    "article-journal",
+    "article-newspaper",
+    "book",
+    "book",
+    "book",
+    "book",
+    "book",
+    "book",
+    "book",
+    "book",
+    "entry",
+    "entry-dictionary",
+    "entry-encyclopedia",
+    "figure",
+    "graphic",
+    "graphic",
+    "graphic",
+    "interview",
+    "legal_case",
+    "legislation",
+    "map",
+    "map",
+    "map",
+    "motion_picture",
+    "motion_picture",
+    "paper-conference",
+    "patent",
+    "personal_communication",
+    "report",
+    "song",
+    "speech",
+    "thesis",
+    "treaty",
+    "webpage",
+    "webpage",
+  );
+
+  $input2 = array(
+    "abstract or summary",
+    "art original",
+    "art reproduction",
+    "bibliography",
+    "calendar",
+    "catalog",
+    "comic or graphic novel",
+    "comic strip",
+    "database",
+    "diorama",
+    "directory",
+    "drama",
+    "essay",
+    "festschrift",
+    "filmography",
+    "filmstrip",
+    "finding aid",
+    "flash card",
+    "folktale",
+    "font",
+    "game",
+    "government publication",
+    "handbook",
+    "humor, satire",
+    "instruction",
+    "kit",
+    "language instruction",
+    "law report or digest",
+    "legal article",
+    "loose-leaf",
+    "memoir",
+    "microscope slide",
+    "model",
+    "numeric data",
+    "offprint",
+    "poetry",
+    "programmed text",
+    "realia",
+    "rehearsal",
+    "remote sensing image",
+    "reporting",
+    "review" => 'review',
+    "script",
+    "series",
+    "short story",
+    "slide",
+    "sound",
+    "standard or specification",
+    "statistics",
+    "survey of literature",
+    "toy",
+    "transparency",
+    "yearbook",
+  );
+
+  if (in_array($term, $input)) {
+    $output_value = str_replace($input, $output, $term);
+  }
+  elseif (in_array($term, $input2)) {
+    $output_value = NULL;
+  }
+  else {
+    $output_value = FALSE;
+  }
+  return $output_value;
+}
+
 function marcgt_to_csl($term) {
   global $_ir_citation_marcgt_csl_terms;
   var_dump($_ir_citation_marcgt_csl_terms);
   var_dump('marcgt_to_csl');
   var_dump($term);
-  var_dump( $_ir_citation_marcgt_csl_terms);
-  if ( !empty( $_ir_citation_marcgt_csl_terms[$term] )) {
+  var_dump($_ir_citation_marcgt_csl_terms);
+  if (!empty($_ir_citation_marcgt_csl_terms[$term])) {
     return $_ir_citation_marcgt_csl_terms[$term];
   }
   else {
@@ -159,7 +311,7 @@ function marcgt_to_csl($term) {
 
 function zotero_to_csl($term) {
   global $_ir_citation_zotero_local_csl_terms;
-  if ( !empty( $_ir_citation_zotero_local_csl_terms[$term] )) {
+  if (!empty($_ir_citation_zotero_local_csl_terms[$term])) {
     return $_ir_citation_zotero_local_csl_terms[$term];
   }
   else {
@@ -169,7 +321,7 @@ function zotero_to_csl($term) {
 
 function bibutils_to_csl($term) {
   global $_ir_citation_bibutils_noauth_csl_terms;
-  if ( !empty( $_ir_citation_bibutils_noauth_csl_terms[$term] )) {
+  if (!empty($_ir_citation_bibutils_noauth_csl_terms[$term])) {
     return $_ir_citation_bibutils_noauth_csl_terms[$term];
   }
   else {
@@ -180,22 +332,23 @@ function bibutils_to_csl($term) {
 function mods_genre_to_csl_type($term) {
   var_dump('mods_genre_to_csl_type');
   var_dump($term);
-  $marcgt = marcgt_to_csl($term);
-  if ( !empty( $marcgt )) 
-    var_dump ('marcgt');
+//  $marcgt = marcgt_to_csl($term);
+  $marcgt = ir_citation_marcgt_csl_terms($term);
+  if (!empty($marcgt))
+    var_dump('marcgt');
   var_dump($marcgt);
-    return $marcgt;
+  return $marcgt;
 
   $zotero = zotero_to_csl($term);
-  if ( !empty( $zotero ))
-    var_dump ('zotero');
+  if (!empty($zotero))
+    var_dump('zotero');
   var_dump($zotero);
-    return $zotero;
+  return $zotero;
 
   $bibutils = bibutils_to_csl($term);
-  if ( !empty( $bibutils ))
-    var_dump ('bibutils');
+  if (!empty($bibutils))
+    var_dump('bibutils');
   var_dump($bibutils);
-    return $bibutils;
- return FALSE;
+  return $bibutils;
+  return FALSE;
 }
