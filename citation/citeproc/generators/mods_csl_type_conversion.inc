@@ -174,7 +174,7 @@ function bibutils_to_csl($term) {
 }
 
 function mods_genre_to_csl_type($term) {
-  drupal_set_message('Genre: ' . $term);
+  var_dump($term);
   $marcgt = marcgt_to_csl($term);
   if ( !empty( $marcgt )) 
     return $marcgt;
