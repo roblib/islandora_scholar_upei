@@ -164,7 +164,7 @@ function islandora_scholar_browse_by_author_form() {
     }
   }
 
-  $headers = array();
+  $headers = array(t('Family name'), t('Given name'));
   
   $form['author'] = array(
     '#value' => theme('table', $headers, $users),
