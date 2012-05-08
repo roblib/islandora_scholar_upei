@@ -140,7 +140,7 @@ function islandora_scholar_browse_by_author_form() {
   
    $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
-  $output = '<ul>';
+  $rows = array();
   $users = array();
   $array = array_filter($array);
   foreach ($array as $arr) {
@@ -160,14 +160,14 @@ function islandora_scholar_browse_by_author_form() {
   asort($users);
   foreach ($users as $key => $user) {
     if ($citations[$key] > 0) {
-      $output .= $link[$key] . $user . '</a><i> (' . (string) $citations[$key] . ')</i></li>';
+      $rows[] = array($link[$key] . $user . '</a><i> (' . (string) $citations[$key] . ')</i></li>');
     }
   }
 
-  $output .= '</ul>';
-
+  $headers = array();
+  
   $form['author'] = array(
-    '#value' => $output,
+    '#value' => theme('table', $headers, $rows),
   );
 
   return $form;
