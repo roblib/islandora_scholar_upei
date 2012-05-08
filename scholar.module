@@ -193,16 +193,6 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['browse_authors'] = array(
-    'title' => t('Browse Authors'),
-    'file' => 'BrowseByUserForm.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('scholar_browse_by_user_form'),
-    'access callback' => 'user_access',
-    'access arguments' => array('access content'),
-    'type' => MENU_NORMAL_ITEM,
-  );
-  
   $items['browse_authors/%'] = array(
     'title' => t('Browse Authors'),
     'file' => 'BrowseByUserForm.inc',
@@ -213,6 +203,16 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  $items['browse_authors2'] = array(
+    'title' => t('Browse Authors2'),
+    'file' => 'BrowseByUserForm.inc',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_scholar_browse_by_author_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
   $items['browse_authors2/%'] = array(
     'title' => t('Browse Authors2'),
     'file' => 'BrowseByUserForm.inc',
