@@ -157,7 +157,6 @@ function islandora_scholar_browse_by_author_form() {
     $users[] = array($family[0], $given[0]);
     $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
   }
-  asort($users);
   foreach ($users as $key => $user) {
     if ($citations[$key] > 0) {
       $rows[] = array($link[$key] . $user . '</a><i> (' . (string) $citations[$key] . ')</i>');
