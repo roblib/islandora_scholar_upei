@@ -44,7 +44,7 @@ function islandora_bibliography_form(array &$form_state) {
           '#submit' => array('islandora_bibliography_form_remove')
         ),
         'step_2' => array(
-          '#value' => t('Step 2: Preview or export the formatted citations'),
+          '#value' => t('Step 2: Export the formatted citations'),
           '#prefix' => '<h3>',
           '#suffix' => '</h3>'
         ),
@@ -203,7 +203,7 @@ function islandora_bibliography_form_preview(array $form, array &$form_state) {
     drupal_set_message(t('No citations were selected!'), 'warning');
   }
   $output .= l(t('Return to the Bibliography.'), 'bibliography');
-  print theme('page', $output, FALSE);
+  print $output;
   exit();
 }
 
