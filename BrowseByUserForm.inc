@@ -154,8 +154,8 @@ function islandora_scholar_browse_by_author_form() {
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
       $citations[] = $number_of_citations[0];
     }
-    $users[] = $family[0] . ', ' . $given[0];
-    $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
+    $users[$family[0]] = array($family[0], $given[0]);
+    $link[$family[0]] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
   }
   asort($users);
   foreach ($users as $key => $user) {
