@@ -183,6 +183,7 @@ function islandora_bibliography_form_remove_citation_submit(array $form, array &
  */
 function islandora_bibliography_form_preview(array $form, array &$form_state) {
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
+  module_load_include('php', 'citeproc', 'generators/converter');
   drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
   $selections = $form_state['values']['table']['selections'];
   $style = citeproc_style($form_state['values']['style']);
