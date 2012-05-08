@@ -212,7 +212,7 @@ HTML;
     drupal_set_message(t('No citations were selected!'), 'warning');
   }
   $output .= l(t('Return to the Bibliography.'), 'bibliography');
-  print theme('page', $output, FALSE);
+  print $output;
   exit();
 }
 
