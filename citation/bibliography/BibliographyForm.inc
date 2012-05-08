@@ -195,6 +195,10 @@ function islandora_bibliography_form_preview(array $form, array &$form_state) {
 <script type='text/javascript; e4x=1' src='/sites/default/modules/islandora_scholar_upei/citation/citeproc/lib/citeproc-js/xmle4x.js'></script><link type="text/css" rel="stylesheet" media="all" href="/sites/default/modules/islandora_scholar_upei/citation/bibliography/css/bibliography.css?3" />
 <link type="text/css" rel="stylesheet" media="all" href="/sites/default/modules/islandora_scholar_upei/citation/bibliography/css/export.css?3" />
 <link type="text/css" rel="stylesheet" media="all" href="/sites/default/modules/islandora_scholar_upei/citation/citeproc/css/citeproc.css?3" />
+<script type="text/javascript" src="/sites/default/modules/islandora_scholar_upei/citation/citeproc/lib/citeproc-js/xmldom.js?3"></script>
+<script type="text/javascript" src="/sites/default/modules/islandora_scholar_upei/citation/citeproc/lib/citeproc-js/citeproc.js?3"></script>
+<script type="text/javascript" src="/sites/default/modules/islandora_scholar_upei/citation/citeproc/js/loadsys.js?3"></script>
+<script type="text/javascript" src="/sites/default/modules/islandora_scholar_upei/citation/citeproc/js/runcites.js?3"></script>
 </head>
 HTML;
   
@@ -212,7 +216,7 @@ HTML;
     drupal_set_message(t('No citations were selected!'), 'warning');
   }
   $output .= l(t('Return to the Bibliography.'), 'bibliography');
-  print theme('page', $output, FALSE);
+  print $output;
   exit();
 }
 
