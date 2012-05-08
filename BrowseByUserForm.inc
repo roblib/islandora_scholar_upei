@@ -138,7 +138,7 @@ function islandora_scholar_browse_by_author_form() {
 
   $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic&rows=10000&sort=mads.family_sort+asc');
   
-   $xml = new SimpleXMLElement($result);
+  $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $rows = array();
   $users = array();
@@ -165,6 +165,15 @@ function islandora_scholar_browse_by_author_form() {
   }
 
   $headers = array(t('Name'), t('Department'));
+  
+  $form['search'] = array(
+    '#type' => 'textfield',
+  );
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Search'),
+  );
   
   $form['author'] = array(
     '#value' => theme('table', $headers, $users),
