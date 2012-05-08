@@ -191,6 +191,14 @@ function islandora_bibliography_form_preview(array $form, array &$form_state) {
   $selections = array_keys($selections);
   
   $output = <<<HTML
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <title>My List | Scholar test</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head> 
 <script type='text/javascript; e4x=1' src='/sites/default/modules/islandora_scholar_upei/citation/citeproc/lib/citeproc-js/xmle4x.js'></script>
 <link rel="shortcut icon" href="/misc/favicon.ico" type="image/x-icon" />
@@ -278,7 +286,7 @@ HTML;
     drupal_set_message(t('No citations were selected!'), 'warning');
   }
   $output .= l(t('Return to the Bibliography.'), 'bibliography');
-  $output .= '</body>';
+  $output .= '</body></html>';
   print $output;
   exit();
 }
