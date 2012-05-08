@@ -53,6 +53,7 @@ function islandora_bibliography_form(array &$form_state) {
           '#type' => 'select',
           '#length' => 50,
           '#options' => array(
+            'HTML' => 'HTML',
             'RTF' => 'RTF',
             'PDF' => 'PDF',
             'RIS' => 'RIS',
@@ -63,12 +64,12 @@ function islandora_bibliography_form(array &$form_state) {
           '#type' => 'select',
           '#options' => $styles
         ),
-          'preview' => array(
-          '#type' => 'submit',
-          '#prefix' => '</br>',
-          '#value' => t('Preview Selected'),
-          '#submit' => array('islandora_bibliography_form_preview')
-        ),
+//          'preview' => array(
+//          '#type' => 'submit',
+//          '#prefix' => '</br>',
+//          '#value' => t('Preview Selected'),
+//          '#submit' => array('islandora_bibliography_form_preview')
+//        ),
         'export' => array(
           '#type' => 'submit',
           '#action' => 'export',
@@ -149,8 +150,7 @@ function islandora_bibilgraphy_form_get_title_authors($pid) {
     $title = implode(' ', $mods->xpath('/mods:mods/mods:titleInfo/mods:title'));
     $authors = implode(', ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "author"]/../mods:namePart[@type="family"]'));
     if ($authors == '') {
-    $authors = implode(', ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "aut"]/../mods:namePart[@type="family"]'));
-      
+      $authors = implode(', ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "aut"]/../mods:namePart[@type="family"]'));
     }
   }
   return array($title, $authors);
@@ -168,7 +168,7 @@ function islandora_bibliography_form_remove_citation_submit(array $form, array &
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   $selections = $form_state['values']['table']['selections'];
   foreach ($selections as $pid) {
-  Bibliography::RemoveCitation($pid);
+    Bibliography::RemoveCitation($pid);
   }
   drupal_set_message(t('Removed Citation(s)'));
 }
@@ -196,12 +196,12 @@ function islandora_bibliography_form_preview(array $form, array &$form_state) {
       $bibliography->addCitation($citation);
     }
   }
-  if (isset ($selections[0])) {
+  if (isset($selections[0])) {
     $output = $bibliography->render();
-    } 
-    else {
-      drupal_set_message(t('No citations were selected!'), 'warning');
-    }
+  }
+  else {
+    drupal_set_message(t('No citations were selected!'), 'warning');
+  }
   $output .= l(t('Return to the Bibliography.'), 'bibliography');
   print theme('page', $output, FALSE);
   exit();
@@ -231,9 +231,14 @@ function islandora_bibliography_form_export(array $form, array &$form_state) {
   module_load_include('inc', 'citation_exporter', 'Batch');
   $selections = array_filter($form_state['values']['table']['selections']);
   if ($selections != NULL) {
-  $pids = array_keys($selections);
-  citation_exporter_batch_export($pids, $form_state['values']['style'], $form_state['values']['format']);
-  batch_process();
+    $pids = array_keys($selections);
+    if ($form_state['values']['format'] == 'HTML') {
+      islandora_bibliography_form_preview($form, $form_state);
+    }
+    else {
+      citation_exporter_batch_export($pids, $form_state['values']['style'], $form_state['values']['format']);
+      batch_process();
+    }
   }
   else {
     drupal_set_message(t('No citations were selected!'), 'warning');
