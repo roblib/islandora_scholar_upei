@@ -167,7 +167,7 @@ function islandora_scholar_browse_by_author_form() {
   $headers = array();
   
   $form['author'] = array(
-    '#value' => theme('table', $users, $rows),
+    '#value' => theme('table', $headers, $users),
   );
 
   return $form;
