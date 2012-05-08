@@ -136,7 +136,7 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
 function islandora_scholar_browse_by_author_form() {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
-  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family_sort+asc');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic&rows=10000&sort=mads.family_sort+asc');
   
    $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
@@ -147,6 +147,7 @@ function islandora_scholar_browse_by_author_form() {
     $family = $arr->xpath('./arr[@name="mads.family"]/str');
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
     $username = $arr->xpath('./arr[@name="mads.username"]/str');
+    $department = $arr->xpath('./arr[@name="mads.topic"]/str');
     if ($username[0] != '') {
       $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
       $username_query = file_get_contents($username_str);
@@ -154,7 +155,7 @@ function islandora_scholar_browse_by_author_form() {
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
       $citations[] = $number_of_citations[0];
     }
-    $users[] = array($family[0], $given[0]);
+    $users[] = array($given[0] . ' ' . $family[0], $department);
     $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
   }
   foreach ($users as $key => $user) {
@@ -163,7 +164,7 @@ function islandora_scholar_browse_by_author_form() {
     }
   }
 
-  $headers = array(t('Family name'), t('Given name'));
+  $headers = array(t('Name'), t('Department'));
   
   $form['author'] = array(
     '#value' => theme('table', $headers, $users),
