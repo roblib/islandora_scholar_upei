@@ -133,7 +133,7 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
   return $form;
 }
 
-function islandora_scholar_browse_by_author_form($form, &$form_state, $search = NULL) {
+function islandora_scholar_browse_by_author_form($search = NULL) {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   if ($search == NULL) {
