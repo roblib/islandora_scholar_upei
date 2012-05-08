@@ -254,15 +254,15 @@ function islandora_bibliography_form_preview(array $form, array &$form_state) {
 <script type="text/javascript" src="/sites/all/themes/vretheme/js/hoverIntent.js?3"></script>
 HTML;
  
-//    foreach ($selections as $pid) {
-//    $mods = islandora_bibilgraphy_form_get_mods($pid);
-//    if ($mods) {
-//      $citation = citeproc_citation_from_mods($mods);
-//      $bibliography->addCitation($citation);
-//    }
-//  }
+    foreach ($selections as $pid) {
+    $mods = islandora_bibilgraphy_form_get_mods($pid);
+    if ($mods) {
+      $citation = citeproc_citation_from_mods($mods);
+      $bibliography->addCitation($citation);
+    }
+  }
   
-//      $item_id = $bibliography->getID();
+      $item_id = $bibliography->getID();
   
   $output .= '
 <script type="text/javascript">
