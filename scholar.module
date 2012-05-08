@@ -213,16 +213,6 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   
-  $items['scholar_author_search/%'] = array(
-    'title' => t('Browse Authors2'),
-    'file' => 'BrowseByUserForm.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_scholar_browse_by_author_search_form', 1),
-    'access callback' => 'user_access',
-    'access arguments' => array('access content'),
-    'type' => MENU_NORMAL_ITEM,
-  );
-  
   $items['browse_users_dept/%'] = array(
     'title' => t('Browse Users by Dept'),
     'file' => 'BrowseByUserForm.inc',
