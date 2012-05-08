@@ -187,8 +187,8 @@ function islandora_scholar_browse_by_author_form($form, $search = NULL) {
   return $form;
 }
 
-function islandora_scholar_browse_by_author_form_submit(&$form_state) {
+function islandora_scholar_browse_by_author_form_submit($form, &$form_state) {
 
 //  drupal_goto('/browse_authors2/' . $form_state['values']['search']);
-  drupal_set_message('URL: ' . $form_state['values']['search']);
+//  drupal_set_message('URL: ' . $form_state['values']['search']);
 }
