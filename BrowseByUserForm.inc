@@ -15,9 +15,9 @@
  */
 function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   drupal_add_css('scholar.css');
-  
+
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
-  
+
   $researchers = array();
   $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
   $list = '';
@@ -52,7 +52,7 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
       $username_query = file_get_contents($username_str);
       $username_xml = new SimpleXMLElement($username_query);
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
-        $citations[] = $number_of_citations[0];
+      $citations[] = $number_of_citations[0];
     }
     $users[] = $family[0] . ', ' . $given[0];
     $link[] = '<li><a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
@@ -75,7 +75,7 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
 
 function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Library') {
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
-  
+
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier&rows=500&sort=mads.identifier_sort+asc');
@@ -114,7 +114,7 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
       $username_query = file_get_contents('http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0])))));
       $username_xml = new SimpleXMLElement($username_query);
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
-        $citations[] = " (" . (string) $number_of_citations[0] . ")";
+      $citations[] = " (" . (string) $number_of_citations[0] . ")";
     }
     $users[] = $family[0] . ', ' . $given[0];
     $link[] = '<li><a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
@@ -122,6 +122,46 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
   asort($users);
   foreach ($users as $key => $user) {
     $output .= $link[$key] . $user . '</a><i>' . $citations[$key] . '</i></li>';
+  }
+
+  $output .= '</ul>';
+
+  $form['author'] = array(
+    '#value' => $output,
+  );
+
+  return $form;
+}
+
+function islandora_scholar_browse_by_author_form() {
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family_sort+asc');
+  
+   $xml = new SimpleXMLElement($result);
+  $array = $xml->xpath('//doc');
+  $output = '<ul>';
+  $users = array();
+  $array = array_filter($array);
+  foreach ($array as $arr) {
+    $family = $arr->xpath('./arr[@name="mads.family"]/str');
+    $given = $arr->xpath('./arr[@name="mads.given"]/str');
+    $username = $arr->xpath('./arr[@name="mads.username"]/str');
+    if ($username[0] != '') {
+      $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
+      $username_query = file_get_contents($username_str);
+      $username_xml = new SimpleXMLElement($username_query);
+      $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
+      $citations[] = $number_of_citations[0];
+    }
+    $users[] = $family[0] . ', ' . $given[0];
+    $link[] = '<li><a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
+  }
+  asort($users);
+  foreach ($users as $key => $user) {
+    if ($citations[$key] > 0) {
+      $output .= $link[$key] . $user . '</a><i> (' . (string) $citations[$key] . ')</i></li>';
+    }
   }
 
   $output .= '</ul>';
