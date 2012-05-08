@@ -203,7 +203,7 @@ function islandora_bibliography_form_preview(array $form, array &$form_state) {
     drupal_set_message(t('No citations were selected!'), 'warning');
   }
   $output .= l(t('Return to the Bibliography.'), 'bibliography');
-  print $output;
+  print theme('page', $output, FALSE);
   exit();
 }
 
