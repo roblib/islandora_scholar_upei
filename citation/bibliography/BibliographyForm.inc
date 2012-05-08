@@ -261,7 +261,7 @@ HTML;
     }
   }
   
-      $item_id = $bibliography->getID();
+//      $item_id = $bibliography->getID();
   
   $output .= '
 <script type="text/javascript">
