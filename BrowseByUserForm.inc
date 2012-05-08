@@ -183,11 +183,15 @@ function islandora_scholar_browse_by_author_form() {
 }
 
 function islandora_scholar_browse_by_author_form_submit($form, &$form_state) {
-  $search = $form_state['values']['search'];
   
+  drupal_goto('/scholar_author_search/' . $form_state['values']['search']);
+}
+
+function islandora_scholar_browse_by_author_search_form($search) {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
-  $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.topic:' . $search . '&fq=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic&rows=10000&sort=mads.family_sort+asc');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.topic:' . $search . '&fq=rels.hasModel:researcher&rows=10000&sort=mads.family_sort+asc');
   
   var_dump($result);
+  
 }
