@@ -216,8 +216,8 @@ function scholar_menu() {
   $items['browse_authors2/%'] = array(
     'title' => t('Browse Authors2'),
     'file' => 'BrowseByUserForm.inc',
-    'page callback' => 'islandora_scholar_browse_by_author_form',
-    'page arguments' => array(1),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('islandora_scholar_browse_by_author_form', 1),
     'access callback' => 'user_access',
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
