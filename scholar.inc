@@ -1435,6 +1435,7 @@ function template_preprocess_scholar(&$variables) {
   }
 
   $variables = array(
+    'pid' => $variables['pid'],
     'headers' => $table_values['headers'],
     'rows' => $table_values['rows'],
     'citation' => $citation,
