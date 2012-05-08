@@ -190,8 +190,49 @@ function islandora_scholar_browse_by_author_form_submit($form, &$form_state) {
 function islandora_scholar_browse_by_author_search_form($form, $search) {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
-  $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.topic:' . $search . '&fq=rels.hasModel:researcher&rows=10000&sort=mads.family_sort+asc');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.topic:' . $search . '&fq=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic&rows=10000&sort=mads.family_sort+asc');
   
-  var_dump($result);
+  $xml = new SimpleXMLElement($result);
+  $array = $xml->xpath('//doc');
+  $rows = array();
+  $users = array();
+  $array = array_filter($array);
+  foreach ($array as $arr) {
+    $family = $arr->xpath('./arr[@name="mads.family"]/str');
+    $given = $arr->xpath('./arr[@name="mads.given"]/str');
+    $username = $arr->xpath('./arr[@name="mads.username"]/str');
+    $department = $arr->xpath('./arr[@name="mads.topic"]/str');
+    if ($username[0] != '') {
+      $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
+      $username_query = file_get_contents($username_str);
+      $username_xml = new SimpleXMLElement($username_query);
+      $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
+      $citations[] = $number_of_citations[0];
+    }
+    $users[] = array('<a href=/fedora/repository/ir:' . strtolower($username[0]) . '>' . $given[0] . ' ' . $family[0] . '</a>', $department[0]);
+    $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
+  }
+  foreach ($users as $key => $user) {
+    if ($citations[$key] > 0) {
+      $rows[] = array($link[$key] . $user . '</a><i> (' . (string) $citations[$key] . ')</i>');
+    }
+  }
+
+  $headers = array(t('Name'), t('Department'));
+  
+  $form['search'] = array(
+    '#type' => 'textfield',
+  );
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Search'),
+  );
+  
+  $form['author'] = array(
+    '#value' => theme('table', $headers, $users),
+  );
+
+  return $form;
   
 }
