@@ -237,7 +237,13 @@ function islandora_scholar_ldap_add_user($user) {
       }
       $depts = array_unique($depts);
       foreach ($depts as $dept) {
-        $item->add_relationship('hasDepartment', $dept);
+        $dept_pid = 'ir:' . strtolower($dept);
+        if (Fedora_Item::fedora_item_exists($dept_pid)) {
+          $item->add_relationship('hasDepartment', $dept_pid);
+        }
+        else {
+          drupal_set_message(t('Could not find department object @dept_pid to associate!', array('@dept_pid' => $dept_pid)), 'warning');
+        }
       }
     }
     $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
@@ -398,7 +404,7 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username,
 }
 
 function islandora_bibilgraphy_solr_form_table($names, $type) {
-  
+
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   switch ($type) {
@@ -487,7 +493,7 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
  *   Where the first key is the title and the second is the authors.
  */
 function islandora_bibilgraphy_solr_form_get_title_authors($pid) {
-  
+
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   $title = $authors = 'Missing';
@@ -547,7 +553,7 @@ function scholar_object_metrics_form($identifier, $type) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'scholar', 'Users');
   drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
-  
+
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   switch ($type) {
@@ -625,7 +631,7 @@ function scholar_object_metrics_form($identifier, $type) {
 function islandora_scholar_researcher_compare_form() {
 
   $form = array();
-  
+
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   $existing_researchers_query = 'http://' . $solr_location . '/select?q=rels.hasModel:researcher&fl=mads.username&rows=10000';
@@ -674,14 +680,14 @@ function islandora_scholar_researcher_compare_form() {
 }
 
 function islandora_scholar_associate_button_form(&$form_state, $pid = NULL) {
-  
+
   module_load_include('inc', 'scholar', 'Coins');
-  
+
   $details = new Coins($pid);
-  
+
   $users = $details->username;
   $depts = $details->department;
-  
+
   if ($users == NULL || $depts == NULL) {
     drupal_set_message(t('This citation is missing associations to either researchers, departments or both!'), 'warning', FALSE);
   }
@@ -850,7 +856,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
   $citation .= $bibliography->render();
 
   $filtered_names = array();
-  
+
   $names = $details->names;
 
   foreach ($names as $name) {
@@ -891,7 +897,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
     '#type' => 'hidden',
     '#value' => str_replace(' ', '_', implode(',', array_unique($departments))),
   );
-  
+
   $form['new_departments'] = array(
     '#type' => 'hidden',
     '#value' => serialize($dept_array),
@@ -910,7 +916,7 @@ function islandora_scholar_associate_citation_form(&$form_state, $pid) {
  */
 function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
-  
+
   $selections = array_filter($form_state['values']['table']['selections']);
   $citation_pid = $form_state['values']['pid'];
   $existing = explode(',', $form_state['values']['existing']);
@@ -918,9 +924,9 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
   $departments = explode(',', $form_state['values']['old_departments']);
 
   $pids = array_keys($selections);
-  
+
   $new_pids = array();
-  
+
   foreach ($pids as $pid) {
     $pid_array = explode(':', $pid);
     $new_pids[] = $pid_array[1];
@@ -954,7 +960,7 @@ function islandora_scholar_associate_citation_form_submit($form, &$form_state) {
       $mods_element->appendChild($u1);
       $item->add_relationship('hasResearcher', $pid_to_associate);
     }
-    
+
     foreach ($depts_to_associate as $dept_to_associate) {
       $u2 = $mods_xml->createElement('identifier', $dept_to_associate);
       $u2->setAttribute('type', 'u2');
