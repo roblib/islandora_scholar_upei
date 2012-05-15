@@ -1134,12 +1134,6 @@ function islandora_scholar_build_citation($pid, $type) {
     '#weight' => 1,
   );
 
-  if (array_key_exists('ZIP', $datastream_array)) {
-    $datastream_info = $item->get_datastream_info('ZIP');
-    $description = $datastream_array['ZIP']['label'];
-    $mods = islandora_bibilgraphy_form_get_mods($pid);
-    $supp_array = islandora_scholar_zip_mods_to_array($mods);
-
   $tabset['first_tab']['tabs']['summary']['citation_button'] = array(
     '#prefix' => '<div class="scholar_bibliography_add_form">',
     '#suffix' => '</div>',
@@ -1153,6 +1147,13 @@ function islandora_scholar_build_citation($pid, $type) {
       '#value' => drupal_get_form('islandora_scholar_associate_button_form', $pid),
     );
   }
+  
+  if (array_key_exists('ZIP', $datastream_array)) {
+    $datastream_info = $item->get_datastream_info('ZIP');
+    $description = $datastream_array['ZIP']['label'];
+    $mods = islandora_bibilgraphy_form_get_mods($pid);
+    $supp_array = islandora_scholar_zip_mods_to_array($mods);
+
   if ($supp_array) {
 
       $tabset['first_tab']['tabs']['summary']['supplemental_info'] = array(
@@ -1160,7 +1161,7 @@ function islandora_scholar_build_citation($pid, $type) {
         '#prefix' => '<div class="scholar_supplemental_table">',
         '#suffix' => '</div>',
         '#title' => t('Details'),
-        '#weight' => 1,
+        '#weight' => -1,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       );
