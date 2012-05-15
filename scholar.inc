@@ -1140,13 +1140,27 @@ function islandora_scholar_build_citation($pid, $type) {
     $mods = islandora_bibilgraphy_form_get_mods($pid);
     $supp_array = islandora_scholar_zip_mods_to_array($mods);
 
-    if ($supp_array) {
+  $tabset['first_tab']['tabs']['summary']['citation_button'] = array(
+    '#prefix' => '<div class="scholar_bibliography_add_form">',
+    '#suffix' => '</div>',
+    '#value' => drupal_get_form('islandora_bibliography_citation_form', $pid),
+  );
+
+  if (user_access('add scholarly research') == TRUE) {
+    $tabset['first_tab']['tabs']['summary']['associate_button'] = array(
+      '#prefix' => '<div class="scholar_associate_button">',
+      '#suffix' => '</div>',
+      '#value' => drupal_get_form('islandora_scholar_associate_button_form', $pid),
+    );
+  }
+  if ($supp_array) {
 
       $tabset['first_tab']['tabs']['summary']['supplemental_info'] = array(
         '#type' => 'fieldset',
-        '#prefix' => '<div id="clear-block">',
+        '#prefix' => '<div class="scholar_supplemental_table">',
         '#suffix' => '</div>',
         '#title' => t('Details'),
+        '#weight' => -1,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       );
@@ -1161,21 +1175,7 @@ function islandora_scholar_build_citation($pid, $type) {
       drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
     }
   }
-
-  $tabset['first_tab']['tabs']['summary']['citation_button'] = array(
-    '#prefix' => '<div class="scholar_bibliography_add_form">',
-    '#suffix' => '</div>',
-    '#value' => drupal_get_form('islandora_bibliography_citation_form', $pid),
-  );
-
-  if (user_access('add scholarly research') == TRUE) {
-    $tabset['first_tab']['tabs']['summary']['associate_button'] = array(
-      '#prefix' => '<div class="scholar_associate_button">',
-      '#suffix' => '</div>',
-      '#value' => drupal_get_form('islandora_scholar_associate_button_form', $pid),
-    );
-  }
-
+  
   if (user_is_logged_in() && $data->issn != NULL) {
 
     $tabset['first_tab']['tabs']['romeo'] = array(
