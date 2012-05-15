@@ -95,7 +95,8 @@ class CiteProcJSBibliography {
   public function toJSON() {
     $data = array(
       'id' => $this->id,
-      'style' => $this->style->getID(),
+      //'style' => $this->style->getID(),
+      'style' => ($this->style) ? $this->style->getID() : NULL,
       'abbreviation' => isset($this->abbreviation) ? $this->abbreviation->getID() : NULL,
       'items' => array()
     );
