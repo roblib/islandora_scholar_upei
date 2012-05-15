@@ -1160,7 +1160,7 @@ function islandora_scholar_build_citation($pid, $type) {
         '#prefix' => '<div class="scholar_supplemental_table">',
         '#suffix' => '</div>',
         '#title' => t('Details'),
-        '#weight' => -1,
+        '#weight' => 1,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       );
