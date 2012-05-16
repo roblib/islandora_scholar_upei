@@ -157,9 +157,6 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $phone_number = $arr->xpath('./arr[@name="mads.phone"]/str');
     $email = $arr->xpath('./arr[@name="mads.email"]/str');
     $field_of_activity = $arr->xpath('./arr[@name="mads.fieldOfActivity"]/str');
-    if ($field_of_activity) {
-    var_dump($field_of_activity);
-    }
     if ($username[0] != '') {
       $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
       $username_query = file_get_contents($username_str);
@@ -167,7 +164,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
       $citations[] = $number_of_citations[0];
     }
-    $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone_number[0], theme('item_list', $field_of_activity));
+    $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone_number[0], theme('item_list', $field_of_activity), t('@citations citations', array('@citations' => $citations)));
   }
 
   $headers = array(t('Name'), t('Department'), t('Email'), t('Phone Number'), t('Research Interests'), t('Citations'));
