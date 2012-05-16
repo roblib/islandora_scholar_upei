@@ -156,7 +156,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $department_link = strtolower(str_replace(' ', '_', $department[0]));
     $phone_number = $arr->xpath('./arr[@name="mads.phone"]/str');
     $email = $arr->xpath('./arr[@name="mads.email"]/str');
-    $field_of_activity = $arr->xpath('./arr[@name="mads.fieldOfActivity"]');
+    $field_of_activity = $arr->xpath('./arr[@name="mads.fieldOfActivity"]/str');
     if ($field_of_activity) {
     var_dump($field_of_activity);
     }
@@ -167,7 +167,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
       $citations[] = $number_of_citations[0];
     }
-    $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone[0]);
+    $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone_number[0], theme('item_list', $field_of_activity));
   }
 
   $headers = array(t('Name'), t('Department'), t('Email'), t('Phone Number'), t('Research Interests'), t('Citations'));
