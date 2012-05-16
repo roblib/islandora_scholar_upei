@@ -137,10 +137,10 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   if ($search == NULL) {
-    $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic,mads.email&rows=10000&sort=mads.family_sort+asc');    
+    $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic,mads.email,mads.phone,mads.fieldOfActivity&rows=10000&sort=mads.family_sort+asc');    
   }
   else {
-    $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.topic:' . $search . '&fq=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic,mads.email&rows=10000&sort=mads.family_sort+asc');
+    $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.topic:' . $search . '&fq=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic,mads.email,mads.phone,mads.fieldOfActivity&rows=10000&sort=mads.family_sort+asc');
   }
 
   $xml = new SimpleXMLElement($result);
@@ -156,6 +156,8 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $department_link = strtolower(str_replace(' ', '_', $department[0]));
     $phone_number = $arr->xpath('./arr[@name="mads.phone"]/str');
     $email = $arr->xpath('./arr[@name="mads.email"]/str');
+    $field_of_activity = $arr->xpath('./arr[@name="mads.fieldOfActivity"');
+    var_dump($field_of_activity);
     if ($username[0] != '') {
       $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
       $username_query = file_get_contents($username_str);
@@ -166,7 +168,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone[0]);
   }
 
-  $headers = array(t('Name'), t('Department'), t('Email'), t('Phone Number'));
+  $headers = array(t('Name'), t('Department'), t('Email'), t('Phone Number'), t('Research Interests'), t('Citations'));
 
   $form['search'] = array(
     '#type' => 'textfield',
