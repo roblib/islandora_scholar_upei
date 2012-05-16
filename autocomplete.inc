@@ -66,8 +66,10 @@ function islandora_scholar_get_values($query, $results) {
     $values = $researcher->arr[0]->str;
     if ($values) {
       foreach ($values as $value) {
-        $value = (string) $value;
-        $list[$value] = $value;
+        if (strlen($value) > 1) {
+          $value = (string) $value;
+          $list[$value] = $value;
+        }
       }
     }
   }
