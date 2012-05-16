@@ -119,17 +119,6 @@ function scholar_add_ir_datastream_form_submit($form, &$form_state) {
   $ir->addStreamFormSubmit($form_state['values']['form_id'], $form_state['values']);
 }
 
-function scholar_quick_search_form_submit($form, &$form_state) {
-  $quick_search_form = new IrClass();
-  return $quick_search_form->quick_search_form_submit($form_state['values']);
-}
-
-function scholar_create_roles_for_users() {
-  $irClass = new IrClass();
-  $irClass->get_and_create_roles();
-  return 'created roles and associated users.';
-}
-
 /*
  * defines the list of paths and hooks/callbacks for the scholar module
  */
@@ -319,29 +308,6 @@ function scholar_menu() {
   
   return $items;
 }
-
-// end function ir_menu
-
-/**
- * Implements hook_theme().
- */
-//function scholar_theme() {
-//  return array(
-//    THEME_SCHOLAR_HOME => array(
-//      'template' => 'templates/Home',
-//      'file' => 'pages/Home.inc',
-//    ),
-//    THEME_SCHOLAR_SEARCH_ITEM => array(
-//      'template' => 'templates/SearchItem',
-//      'file' => 'IslandoraSolrResultsCitation.inc',
-//      'arguments' => array('pid' => NULL, 'style' => NULL)
-//    ),
-//    THEME_SCHOLAR_SEARCH_TABLE => array(
-//      'file' => 'IslandoraSolrResultsCitation.inc',
-//      'arguments' => array('element' => NULL)
-//    ),
-//  );
-//}
 
 /**
  * Valid permissions for this module

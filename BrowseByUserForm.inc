@@ -153,6 +153,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
     $username = $arr->xpath('./arr[@name="mads.username"]/str');
     $department = $arr->xpath('./arr[@name="mads.topic"]/str');
+    $email = $arr->xpath('./arr[@name="mads.email"]/str');
     if ($username[0] != '') {
       $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
       $username_query = file_get_contents($username_str);
@@ -160,7 +161,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
       $citations[] = $number_of_citations[0];
     }
-    $users[] = array('<a href=/fedora/repository/ir:' . strtolower($username[0]) . '>' . $given[0] . ' ' . $family[0] . '</a>', $department[0]);
+    $users[] = array('<a href=/fedora/repository/ir:' . strtolower($username[0]) . '>' . $given[0] . ' ' . $family[0] . '</a>', $department[0], $email[0]);
     $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
   }
   foreach ($users as $key => $user) {
@@ -169,7 +170,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     }
   }
 
-  $headers = array(t('Name'), t('Department'));
+  $headers = array(t('Name'), t('Department'), t('Email'));
 
   $form['search'] = array(
     '#type' => 'textfield',
