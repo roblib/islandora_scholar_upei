@@ -157,7 +157,9 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $phone_number = $arr->xpath('./arr[@name="mads.phone"]/str');
     $email = $arr->xpath('./arr[@name="mads.email"]/str');
     $field_of_activity = $arr->xpath('./arr[@name="mads.fieldOfActivity"');
+    if ($field_of_activity) {
     var_dump($field_of_activity);
+    }
     if ($username[0] != '') {
       $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
       $username_query = file_get_contents($username_str);
