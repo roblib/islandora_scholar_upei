@@ -145,7 +145,6 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
 
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
-  $rows = array();
   $users = array();
   $array = array_filter($array);
   foreach ($array as $arr) {
@@ -162,7 +161,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
       $username_query = file_get_contents($username_str);
       $username_xml = new SimpleXMLElement($username_query);
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
-      $citations[] = $number_of_citations[0];
+      $citations = $number_of_citations[0];
     }
     $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone_number[0], theme('item_list', $field_of_activity), t('@citations citations', array('@citations' => $citations)));
   }
