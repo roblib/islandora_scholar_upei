@@ -158,7 +158,7 @@ function scholar_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholar_admin_settings'),
     'access callback' => 'user_access',
-    'access arguments' => array('access content'),
+    'access arguments' => array('administer scholar settingst'),
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -321,6 +321,7 @@ function scholar_perm() {
     'migrate content',
     'refworks entry',
     'manage tracking',
+    'administer scholar settings',
   );
 }
 
