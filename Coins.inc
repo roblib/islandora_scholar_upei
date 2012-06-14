@@ -247,7 +247,7 @@ class Coins {
       elseif (user_access('administer scholarly research')) {
         $rows[] = array('Contributors', rtrim($contributors, ', '));
       }
-      $rows[] = array('URL', l('http://' . $base_url . '/download_ds/' . $this->pid . '/PDF', 'http://' . $base_url . '/download_ds/' . $this->pid . '/PDF'));
+      $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
     }
     else {
       if ($names != NULL) {
