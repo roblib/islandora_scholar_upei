@@ -11,6 +11,12 @@ function scholar_admin_settings() {
     '#type' => 'fieldset',
     '#title' => t('RoMEO settings'),
   );
+  
+  $form['romeo']['scholar_romeo_check'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Display RoMEO information',
+    '#default_value' => variable_get('scholar_romeo_check', 1),
+  );
 
   $form['romeo']['scholar_romeo_url'] = array(
     '#type' => 'textfield',

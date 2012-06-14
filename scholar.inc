@@ -1177,7 +1177,7 @@ function islandora_scholar_build_citation($pid, $type) {
     }
   }
   
-  if (user_is_logged_in() && $data->issn != NULL) {
+  if (user_is_logged_in() && $data->issn != NULL && variable_get('scholar_romeo_check', 1) == 1) {
 
     $tabset['first_tab']['tabs']['romeo'] = array(
       '#type' => 'tabpage',
