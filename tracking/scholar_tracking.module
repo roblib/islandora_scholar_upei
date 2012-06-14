@@ -7,17 +7,6 @@ function scholar_tracking_menu() {
 
   $items = array();
 
-  $items['scholar_tracking'] = array(
-    'title' => 'Page view tracking',
-    'description' => 'Tracking page views and downloads',
-    'file' => 'scholar_tracking.inc',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('islandora_scholar_tracking_admin_form'),
-    'access callback' => 'user_access',
-    'access arguments' => array('manage tracking'), // Use something fedora specific.
-    'type' => MENU_NORMAL_ITEM,
-  );
-
   $items['download_ds/%/%'] = array(
     'title' => t('Download datastream'),
     'page callback' => 'drupal_get_form',
@@ -101,17 +90,28 @@ function system_mime_type_extension($type) {
 }
 
 function scholar_tracking_admin_settings() {
+  module_load_include('inc', 'scholar_tracking', 'scholar_tracking.admin');
   $form = array();
 
   $form['tracking'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Tracking'),
+    '#title' => t('Omit IPs'),
+    '#description' => t('Add IP addresses that you want to omit from the tracking'),
   );
 
   $form['tracking']['scholar_tracking_ip_list'] = array(
     '#type' => 'textarea',
     '#description' => t('Add IPs separated by spaces'),
     '#default_value' => variable_get('scholar_tracking_ip_list', 'localhost 127.0.0.1'),
+  );
+  
+  $form['clear'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Clear values'),
+  );
+  
+  $form['clear']['options'] = array(
+    '#value' => drupal_get_form('islandora_scholar_tracking_admin_form'),
   );
 
   return system_settings_form($form);
