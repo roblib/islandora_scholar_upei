@@ -22,7 +22,7 @@ function islandora_autocomplete($content_model = '', $index_field = '', $string 
     $results = islandora_scholar_get_values($content_model, $index_field);
   }
   else {
-    $query = $content_model . '%20AND%20' . $index_field . ':' . str_replace(' ', '%20', strtolower($string)) . '*';
+    $query = $content_model . '%20AND%20' . $index_field . ':' . str_replace(' ', '%20AND%20mads.namePart:', strtolower($string)) . '*';
     $results = islandora_scholar_get_values($query, $index_field);
   }
   if ($results == 'None') {
