@@ -253,7 +253,7 @@ class Coins {
         $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
       }
       else {
-        $rows[] = array('URL', l($fedora_url . '/fedora/repository' . $this->pid . '/PDF/PDF', $fedora_url . '/fedora/repository' . $this->pid . '/PDF/PDF'));
+        $rows[] = array('URL', l($base_url . '/fedora/repository' . $this->pid . '/PDF/PDF', $base_url . '/fedora/repository' . $this->pid . '/PDF/PDF'));
       }
     }
     else {
