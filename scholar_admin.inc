@@ -21,7 +21,7 @@ function scholar_admin_settings() {
   $form['romeo']['scholar_romeo_url'] = array(
     '#type' => 'textfield',
     '#title' => 'RoMEO API URL',
-    '#default_value' => variable_get('scholar_romeo_url', ''),
+    '#default_value' => variable_get('scholar_romeo_url', 'http://www.sherpa.ac.uk/romeo/api29.php?issn='),
     '#size' => 50,
   );
 
