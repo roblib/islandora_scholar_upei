@@ -49,13 +49,13 @@ function islandora_scholar_get_values($query, $results) {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   if (is_array($results)) {
-    $result_string = implode(',', $results);
-    $query = file_get_contents('http://' . $solr_location . '/select?q=rels.hasModel:' . $query . '&fl=' . $result_string);
+    $result_string = trim(implode(',', $results));
+    $solr_query = file_get_contents('http://' . $solr_location . '/select?q=rels.hasModel:' . $query . '&fl=' . $result_string);
   }
   else {
-    $query = file_get_contents('http://' . $solr_location . '/select?q=rels.hasModel:' . $query . '&fl=' . $results);
+    $solr_query = file_get_contents('http://' . $solr_location . '/select?q=rels.hasModel:' . $query . '&fl=' . trim($results));
   }
-  $result = new SimpleXMLElement($query);
+  $result = new SimpleXMLElement($solr_query);
   $number = $result->xpath('./result[@name="response"]/@numFound');
   if ((int) $number[0]['numFound'] < 1) {
     return 'None';
