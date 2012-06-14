@@ -18,8 +18,10 @@
 
   <?php print $citation ?>
 
+  <?php if (module_exists('scholar_tracking')): ?>
   </br><div>Times viewed: <?php print $times_read ?></div>
   <div>Last viewed: <?php print $time_last_viewed ?></div></br>  
+  <?php endif; ?>
   
   <div class="scholar_refworks_link"> <A href="http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=http%3A//<?php print $server_ip ?>/refworks_entry/<?php print urlencode($pid) ?>" target="RefWorksMain">Export to RefWorks</A></div>
 
