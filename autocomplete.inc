@@ -49,11 +49,11 @@ function islandora_scholar_get_values($query, $results) {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   if (is_array($results)) {
-    $result_string = trim(implode(',', $results));
+    $result_string = str_replace(' ', '%20', implode(',', $results));
     $solr_query = file_get_contents('http://' . $solr_location . '/select?q=rels.hasModel:' . $query . '&fl=' . $result_string);
   }
   else {
-    $solr_query = file_get_contents('http://' . $solr_location . '/select?q=rels.hasModel:' . $query . '&fl=' . trim($results));
+    $solr_query = file_get_contents('http://' . $solr_location . '/select?q=rels.hasModel:' . $query . '&fl=' . str_replace(' ', '%20', $results));
   }
   $result = new SimpleXMLElement($solr_query);
   $number = $result->xpath('./result[@name="response"]/@numFound');
