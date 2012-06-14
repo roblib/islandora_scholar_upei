@@ -1307,7 +1307,8 @@ function islandora_scholar_zip_mods_to_array($mods) {
  * Array containing details about the Fedora object
  */
 function islandora_scholar_get_object_profile($pid) {
-  $url = 'http://localhost:8080/fedora/objects/' . $pid . '?format=xml';
+  $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
+  $url = $fedora_url . '/objects/' . $pid . '?format=xml';
   $result = file_get_contents($url);
   if ($result) {
     $result_xml = new SimpleXMLElement($result);
