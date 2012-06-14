@@ -18,12 +18,6 @@ define('THEME_SCHOLAR_OVERVIEW_PANEL_CITATION', 'scholar_overview_panel_citation
 
 module_load_include('php', 'scholar', 'IrClass');
 
-function scholar_custom_search($type, $query, $showForm=1, $orderBy=0, &$userArray=NULL) {
-  module_load_include('php', 'scholar', 'IRSearchClass');
-  $searchClass = new IRSearchClass();
-  return $searchClass->quickSearch($type, $query, $showForm, $orderBy, $userArray);
-}
-
 function scholar_edit_refworks($pid) {
   return drupal_get_form('scholar_edit_refworks_form', $pid);
 }
