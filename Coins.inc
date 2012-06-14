@@ -181,6 +181,7 @@ class Coins {
    * the reference
    */
   function render_view($type = 'citation') {
+    global $base_url;
 
     $headers = array('', '');
     $rows = array();
@@ -246,7 +247,7 @@ class Coins {
       elseif (user_access('administer scholarly research')) {
         $rows[] = array('Contributors', rtrim($contributors, ', '));
       }
-      $rows[] = array('URL', l('http://' . $_SERVER['SERVER_ADDR'] . '/download_ds/' . $this->pid . '/PDF', 'http://' . $_SERVER['SERVER_ADDR'] . '/download_ds/' . $this->pid . '/PDF'));
+      $rows[] = array('URL', l('http://' . $base_url . '/download_ds/' . $this->pid . '/PDF', 'http://' . $base_url . '/download_ds/' . $this->pid . '/PDF'));
     }
     else {
       if ($names != NULL) {

@@ -1391,6 +1391,8 @@ function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
+  
+  global $base_url;
 
   $data = new Coins($variables['pid']);
   $table_values = $data->render_view($variables['type']);
@@ -1442,6 +1444,7 @@ function template_preprocess_scholar(&$variables) {
     'rows' => $table_values['rows'],
     'citation' => $citation,
     'server_ip' => $_SERVER['SERVER_ADDR'],
+    'base_url' => $base_url,
     'date' => $data->date,
     'issn' => $data->issn,
     'volume' => $data->volume,
