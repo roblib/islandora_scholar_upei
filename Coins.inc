@@ -182,6 +182,8 @@ class Coins {
    */
   function render_view($type = 'citation') {
     global $base_url;
+    
+    $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
 
     $headers = array('', '');
     $rows = array();
@@ -247,7 +249,12 @@ class Coins {
       elseif (user_access('administer scholarly research')) {
         $rows[] = array('Contributors', rtrim($contributors, ', '));
       }
-      $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
+      if (module_exists('scholar_tracking')) {
+        $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
+      }
+      else {
+        $rows[] = array('URL', l($fedora_url . '/objects/' . $this->pid . '/datastreams/PDF/content', $fedora_url . '/objects/' . $this->pid . '/datastreams/PDF/content'));
+      }
     }
     else {
       if ($names != NULL) {
