@@ -127,15 +127,6 @@ function scholar_menu() {
 
   $items = array();
 
-  $items[MENU_SCHOLAR_HOME] = array(
-    'title' => t('Advanced Search'),
-    'file' => 'pages/Home.inc',
-    'page callback' => 'scholar_home',
-    'access callback' => 'user_access',
-    'access arguments' => array('access content'),
-    'type' => MENU_NORMAL_ITEM,
-  );
-
   $items[MENU_SCHOLAR_ADVANCED_SEARCH_ADD_FIELD] = array(
     'file' => 'SearchForm.inc',
     'page callback' => 'scholar_search_advanced_add_field',
