@@ -15,6 +15,7 @@ class UsersClass {
   public $uid = NULL;
   public $fullname = NULL;
   public $groupmembership = NULL;
+  public $telephonenumber = NULL;
 
   /**
    * Given a user this populates the object with details
@@ -32,7 +33,7 @@ class UsersClass {
 
     $filter = "(&(objectClass=person)(uid=*)(cn=$user))";
 
-    $sr = ldap_search($ds, $basedn, $filter, array('uid', 'cn', 'fullname', 'mail', 'groupmembership', 'givenname', 'sn'));
+    $sr = ldap_search($ds, $basedn, $filter, array('uid', 'cn', 'fullname', 'mail', 'groupmembership', 'givenname', 'sn', 'telephonenumber'));
 
     $list = ldap_get_entries($ds, $sr);
     $this->uid = $list[0]['uid'][0];
@@ -42,6 +43,7 @@ class UsersClass {
     $this->groupmembership = $list[0]['groupmembership'];
     $this->givenname = $list[0]['givenname'][0];
     $this->familyname = $list[0]['sn'][0];
+    $this->telephonenumber = $list[0]['telephonenumber']['0'];
   }
 
   /**
@@ -78,23 +80,6 @@ class UsersClass {
     $inclusionlist = fix_encoding($inclusionlist);
     $inclusionlist = explode(",", $inclusionlist);
 
-    $related = $dom->createElement("related");
-    $related->setAttribute("type", "other");
-    $mads->appendChild($related);
-
-    if (isset($this->groupmembership)) {
-      foreach ($this->groupmembership as $group) {
-        $dept = strtok($group, ',');
-        $dept = ltrim($dept, 'cn=');
-        $dept = islandora_scholar_convert_dept($dept);
-        if (strlen($dept) > 1) {
-          $topic = $dom->createElement("topic", $dept);
-          $topic->setAttribute("authority", "department");
-          $related->appendChild($topic);
-        }
-      }
-    }
-
     $u1 = $dom->createElement("identifier", $this->cn);
     $u1->setAttribute("type", "u1");
     $mads->appendChild($u1);
@@ -102,8 +87,29 @@ class UsersClass {
     $affiliation = $dom->createElement("affiliation");
     $mads->appendChild($affiliation);
 
+    if (isset($this->groupmembership)) {
+      foreach ($this->groupmembership as $group) {
+        $dept = strtok($group, ',');
+        $dept = ltrim($dept, 'cn=');
+        $dept = islandora_scholar_convert_dept($dept);
+        if (strlen($dept) > 1) {
+          $topic = $dom->createElement("organization", $dept);
+          $affiliation->appendChild($topic);
+        }
+      }
+    }
+
+    if (isset($this->telephonenumber)) {
+      $telephonenumber = $dom->createElement('phone', $this->telephonenumber);
+      $affiliation->appendChild($telephonenumber);
+    }
+
     $email = $dom->createElement("email", str_replace('groupwise.', '', $this->mail));
     $affiliation->appendChild($email);
+    $position = $dom->createElement('position');
+    $affiliation->appendChild($position);
+    $date_valid = $dom->createElement('dateValid');
+    $affiliation->appendChild($date_valid);
 
 //    $xml = $dom->saveXML();
 
@@ -182,12 +188,12 @@ function islandora_scholar_convert_dept($dept) {
     'Blood',
     'School_of_School of Business',
   );
-  
+
   $replace = array(
     'Robertson Library',
     'Biomedical Sciences',
     'Biology',
-    'School of Business',//Is this correct?
+    'School of Business', //Is this correct?
     'Chemistry',
     'Classics',
     'Companion Animals',
@@ -198,7 +204,7 @@ function islandora_scholar_convert_dept($dept) {
     'English',
     'Health Management',
     'History',
-    'Applied Human Sciences',//Change
+    'Applied Human Sciences', //Change
     'Island Studies',
     'Mathematics and Statistics',
     'Modern Languages',
@@ -213,9 +219,9 @@ function islandora_scholar_convert_dept($dept) {
     'Sociology and Anthropology',
     'Women\'s Studies',
     'Blood',
-    'School_of_Business', 
-    );//Not sure about this one
-  
+    'School_of_Business',
+  ); //Not sure about this one
+
   $dept = str_replace($find, $replace, $dept);
   if (in_array($dept, $replace)) {
     $new_dept = $dept;
