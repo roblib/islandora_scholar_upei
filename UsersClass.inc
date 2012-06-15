@@ -93,14 +93,22 @@ class UsersClass {
         $dept = ltrim($dept, 'cn=');
         $dept = islandora_scholar_convert_dept($dept);
         if (strlen($dept) > 1) {
-          $topic = $dom->createElement("organization", $dept);
-          $affiliation->appendChild($topic);
+          $organisation = $dom->createElement("organization", $dept);
+          $affiliation->appendChild($organisation);
         }
       }
+    }
+    else {
+      $organisation = $dom->createElement("organization");
+      $affiliation->appendChild($organisation);
     }
 
     if (isset($this->telephonenumber)) {
       $telephonenumber = $dom->createElement('phone', $this->telephonenumber);
+      $affiliation->appendChild($telephonenumber);
+    }
+    else {
+      $telephonenumber = $dom->createElement('phone');
       $affiliation->appendChild($telephonenumber);
     }
 
