@@ -137,10 +137,10 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   if ($search == NULL) {
-    $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic,mads.email,mads.phone,mads.fieldOfActivity&rows=10000&sort=mads.family_sort+asc');    
+    $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.organization,mads.email,mads.phone,mads.fieldOfActivity&rows=10000&sort=mads.family_sort+asc');    
   }
   else {
-    $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.topic:' . $search . '&fq=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.topic,mads.email,mads.phone,mads.fieldOfActivity&rows=10000&sort=mads.family_sort+asc');
+    $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.organization:' . $search . '&fq=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.organization,mads.email,mads.phone,mads.fieldOfActivity&rows=10000&sort=mads.family_sort+asc');
   }
 
   $xml = new SimpleXMLElement($result);
