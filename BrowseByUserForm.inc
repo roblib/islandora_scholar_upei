@@ -151,7 +151,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $family = $arr->xpath('./arr[@name="mads.family"]/str');
     $given = $arr->xpath('./arr[@name="mads.given"]/str');
     $username = $arr->xpath('./arr[@name="mads.username"]/str');
-    $department = $arr->xpath('./arr[@name="mads.topic"]/str');
+    $department = $arr->xpath('./arr[@name="mads.organization"]/str');
     $department_link = strtolower(str_replace(' ', '_', $department[0]));
     $phone_number = $arr->xpath('./arr[@name="mads.phone"]/str');
     $email = $arr->xpath('./arr[@name="mads.email"]/str');
