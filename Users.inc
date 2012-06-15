@@ -552,7 +552,7 @@ function scholar_object_metrics_form($identifier, $type) {
   global $user;
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'scholar', 'Users');
-  drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
+  drupal_add_css(drupal_get_path('module', 'scholar') . '/css/scholar.css');
 
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 

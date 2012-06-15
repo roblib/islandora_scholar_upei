@@ -14,7 +14,7 @@
  * @return array
  */
 function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
-  drupal_add_css('scholar.css');
+  drupal_add_css('css/scholar.css');
 
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 

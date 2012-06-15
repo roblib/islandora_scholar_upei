@@ -76,7 +76,7 @@ class Scholar {
     module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
     module_load_include('inc', 'scholar', 'Users');
     $path = drupal_get_path('module', 'scholar');
-    drupal_add_css($path . '/scholar.css');
+    drupal_add_css($path . '/css/scholar.css');
 
     $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
@@ -234,7 +234,7 @@ class Scholar {
     module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
     module_load_include('inc', 'scholar', 'Users');
     $path = drupal_get_path('module', 'scholar');
-    drupal_add_css($path . '/scholar.css');
+    drupal_add_css($path . '/css/scholar.css');
 
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
@@ -1093,7 +1093,7 @@ function islandora_scholar_build_citation($pid, $type) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   module_load_include('inc', 'scholar', 'Users');
   drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
-  drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
+  drupal_add_css(drupal_get_path('module', 'scholar') . '/css/scholar.css');
 
   $data = new Coins($pid, $type);
   $item = new Fedora_Item($pid);

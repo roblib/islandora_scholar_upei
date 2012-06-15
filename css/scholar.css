@@ -1,0 +1,99 @@
+/* 
+    Document   : scholar
+    Created on : Dec 3, 2011, 5:51:49 PM
+    Author     : rwincewicz
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+.scholar_search_title {
+    font-size: medium;
+}
+
+.scholar_search_citation {
+    margin-bottom: 10px;
+}
+
+.scholar_search_bookmark {
+    float: left;
+    margin-right: 8px;
+}
+
+.scholar_search_bookmark_text {
+    float: left;
+    margin-top: 5px;
+    margin-right: 10px;
+}
+
+.scholar_search_related {
+    float: left;
+    margin-right: 20px;
+}
+
+.scholar_pdf {
+    float: left;
+    margin-right: 15px;
+}
+
+.scholar_user_letters {
+    font-size: large;
+}
+
+.scholar_refworks_link {
+    float: left;
+    margin-right: 15px;
+    margin-top: 23px;
+}
+
+.scholar_associate_button {
+    float: left;
+    margin-right: 15px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    clear: right;
+}
+
+.scholar_bibliography_add_form {
+    float: left;
+    margin-right: 15px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    clear: left;
+}
+
+.scholar_coins_title {
+    float: left;
+    margin-right: 15px;
+    margin-top: 5px;
+}
+
+.scholar_coins_url {
+    margin-top: 5px;
+}
+
+.scholar_metrics_table {
+    height: 300px;
+    overflow-y: auto;
+}
+
+.scholar_citation_table {
+    border-bottom: 1px;
+}
+
+.scholar_supplemental_table {
+    clear: both;
+    padding-top: 5px;
+}
+
+.scholar_refworks_link {
+    float: left;
+}

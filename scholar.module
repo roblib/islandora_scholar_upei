@@ -139,7 +139,7 @@ function scholar_menu() {
 
   $items['admin/settings/scholar'] = array(
     'title' => t('Islandora Scholar Settings'),
-    'file' => 'scholar_admin.inc',
+    'file' => 'includes/scholar.admin.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholar_admin_settings'),
     'access callback' => 'user_access',
@@ -250,7 +250,7 @@ function scholar_menu() {
   $items['refworks_migrate'] = array(
     'title' => 'Refworks migrate',
     'description' => 'Migrate content from refworks',
-    'file' => 'scholar_migrate.inc',
+    'file' => 'includes/scholar.migrate.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholar_migrate_refworks_form'),
     'access callback' => 'user_access',
@@ -672,7 +672,7 @@ function scholar_islandora_solr_primary_display() {
 }
 
 function scholar_block($op = 'list', $delta = 0, $edit = array()) {
-  module_load_include('inc', 'scholar', 'scholar_blocks');
+  module_load_include('inc', 'scholar', 'includes/scholar.blocks');
   switch ($op) {
 
     case 'list':
@@ -740,7 +740,7 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 function scholar_cron() {
-  module_load_include('inc', 'scholar', 'scholar_cron');
+  module_load_include('inc', 'scholar', 'includes/scholar.cron');
   scholar_cron_embargo_check();
 }
 

@@ -137,7 +137,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
     module_load_include('inc', 'scholar', 'Coins');
     module_load_include('inc', 'islandora_bibliography', 'Bibliography');
     drupal_add_css(drupal_get_path('module', 'islandora_bibliography') . '/css/export.css');
-    drupal_add_css(drupal_get_path('module', 'scholar') . '/scholar.css');
+    drupal_add_css(drupal_get_path('module', 'scholar') . '/css/scholar.css');
 
     static $path;
 
