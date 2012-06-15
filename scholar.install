@@ -11,6 +11,7 @@ define('ISLANDORA_SCHOLAR_CHAPTER_FORM_NAME', 'Islandora Scholar Book Chapter Fo
 define('ISLANDORA_SCHOLAR_CONFERENCE_FORM_NAME', 'Islandora Scholar Conference Paper Form');
 define('ISLANDORA_SCHOLAR_MADS_FORM_NAME', 'Islandora Scholar MADS Form');
 define('ISLANDORA_SCHOLAR_MADS_DEPT_FORM_NAME', 'Islandora Scholar MADS Dept Form');
+define('ISLANDORA_SCHOLAR_SIGNATURE_PROJECT_FORM', 'Islandora Scholar Signature Project Form');
 
 /**
  * Implementation of hook_install
@@ -56,6 +57,11 @@ function scholar_install() {
     $definition->load($module_path . '/forms/MADS_dept_form.xml');
     XMLFormDatabase::Create(ISLANDORA_SCHOLAR_MADS_DEPT_FORM_NAME, $definition);
   }
+  if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_SIGNATURE_PROJECT_FORM)) {
+    $definition = new DOMDocument();
+    $definition->load($module_path . '/forms/signature_project_form.xml');
+    XMLFormDatabase::Create(ISLANDORA_SCHOLAR_SIGNATURE_PROJECT_FORM, $definition);
+  }
   // Associates the form with the content model
   $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Journal Form'));
   if (!$result) {
@@ -73,6 +79,17 @@ function scholar_install() {
     $object = new stdClass();
     $object->content_model = 'ir:thesisCModel';
     $object->form_name = 'Islandora Scholar Thesis Form';
+    $object->dsid = 'MODS';
+    $object->title_field = "['titleInfo']['title']";
+    $object->transform = 'mods_to_dc.xsl';
+    $result = drupal_write_record('islandora_content_model_forms', $object);
+  }
+  
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:thesisCModel', 'Islandora Scholar Signature Project Form'));
+  if (!$result) {
+    $object = new stdClass();
+    $object->content_model = 'ir:thesisCModel';
+    $object->form_name = 'Islandora Scholar Signature Project Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
     $object->transform = 'mods_to_dc.xsl';
