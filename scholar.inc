@@ -89,7 +89,7 @@ class Scholar {
       $names = $xml->authority->name->namePart;
       $fullname = $names[0] . ' ' . $names[1];
 
-      foreach ($xml->related->topic as $dept) {
+      foreach ($xml->affiliation->organization as $dept) {
         $depts[] = str_replace('_', ' ', (string) $dept);
       }
 
