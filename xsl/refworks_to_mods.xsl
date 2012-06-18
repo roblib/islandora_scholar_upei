@@ -211,7 +211,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <identifier type="u1">
-                    <xsl:value-of select="$str"/>
+                    <xsl:value-of select="normalize-space($str)"/>
                 </identifier>
             </xsl:otherwise>
         </xsl:choose>
@@ -230,7 +230,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <identifier type="u2">
-                    <xsl:value-of select="$str"/>
+                    <xsl:value-of select="normalize-space($str)"/>
                 </identifier>
             </xsl:otherwise>
         </xsl:choose>
