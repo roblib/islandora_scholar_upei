@@ -136,7 +136,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       }
       $rel2 = $object->get_relationships('hasDepartment');
       if ($rel2 == NULL) {
-        foreach ($u2 as $department) {
+        foreach ($u2_array as $department) {
           $object->add_relationship('hasDepartment', str_replace(' ', '_', trim($department)));
         }
       }
