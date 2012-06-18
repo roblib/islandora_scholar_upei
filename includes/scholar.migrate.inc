@@ -111,8 +111,16 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       else {
         $u1_array = explode(';', $u1->item(0)->nodeValue);
       }
-      $u2 = $input->getElementsByTagName('u2')->item(0)->nodeValue;
-      $u2 = explode(';', $u2);
+      $u2 = $input->getElementsByTagName('u2');
+      $u2_array = array();
+      if ($u2->length > 1) {
+        foreach ($u2 as $u) {
+          $u2_array[] = $u->nodeValue;
+        }
+      }
+      else {
+        $u2_array = explode(';', $u2->item(0)->nodeValue);
+      }
       $object->add_datastream_from_string($xml, 'MODS', 'MODS datastream', 'text/xml', 'X');
       // Check if the relationships for u1 and u2 exist
       // If they don't they create them in the RELS-EXT
