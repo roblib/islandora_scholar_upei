@@ -105,7 +105,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       $u1_array = array();
       if ($u1->length > 1) {
         foreach ($u1 as $u) {
-          $u1_array[] = $u->item(0)->nodeValue;
+          $u1_array[] = $u->nodeValue;
         }
       }
       else {
