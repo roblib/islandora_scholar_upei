@@ -100,11 +100,17 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       $xslt->importStylesheet($xsl);
       $output = $xslt->transformToDoc($input);
       $xml = (string) $output->saveXML();
-//      drupal_set_message('Before: ' . $xml);
       $xml = str_replace(array('&#39;', '&#039;', '&apos;', '&amp;#39;', '&amp;#039;', '&amp;apos;'), "'", $xml);
-//      drupal_set_message('After: ' . $xml);
-      $u1 = $input->getElementsByTagName('u1')->item(0)->nodeValue;
-      $u1 = explode(';', $u1);
+      $u1 = $input->getElementsByTagName('u1');
+      $u1_array = array();
+      if ($u1->length > 1) {
+        foreach ($u1 as $u) {
+          $u1_array[] = $u->item(0)->nodeValue;
+        }
+      }
+      else {
+        $u1_array = explode(';', $u1->item(0)->nodeValue);
+      }
       $u2 = $input->getElementsByTagName('u2')->item(0)->nodeValue;
       $u2 = explode(';', $u2);
       $object->add_datastream_from_string($xml, 'MODS', 'MODS datastream', 'text/xml', 'X');
@@ -113,7 +119,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       // TODO: create exist_relationship function to use elsewhere
       $rel1 = $object->get_relationships('hasResearcher');
       if ($rel1 == NULL) {
-        foreach ($u1 as $researcher) {
+        foreach ($u1_array as $researcher) {
           $object->add_relationship('hasResearcher', str_replace(' ', '_', trim($researcher)));
         }
       }
