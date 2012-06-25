@@ -168,7 +168,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
 //      }
     }
     else {
-      drupal_set_message('Not adding new collection');
+      drupal_set_message('Not adding new collection - ' . $model_edit_test);
     }
   }
 }
