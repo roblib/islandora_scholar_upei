@@ -430,6 +430,10 @@ function scholar_required_fedora_objects() {
               'dsid' => 'COLLECTION_POLICY',
               'datastream_file' => "$module_path/xml/CITATION-COLLECTION POLICY.xml",
             ),
+            array(
+              'dsid' => 'COLLECTION_VIEW',
+              'datastream_file' => "$module_path/xsl/citation_collection_view.xsl",
+            ),
           ),
         ),
         array(
