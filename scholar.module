@@ -343,10 +343,10 @@ function scholar_required_fedora_objects() {
     XMLFormDatabase::Create(ISLANDORA_SCHOLAR_THESIS_FORM_NAME, $definition);
   }
   // Associates the form with the content model
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Journal Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:citationCModel', 'Islandora Scholar Journal Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:citationCModel';
+    $object->content_model = 'islandora:citationCModel';
     $object->form_name = 'Islandora Scholar Journal Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
@@ -354,10 +354,10 @@ function scholar_required_fedora_objects() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
 
-  $result2 = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:researcherCModel', 'Islandora Scholar MADS Form'));
+  $result2 = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:researcherCModel', 'Islandora Scholar MADS Form'));
   if (!$result2) {
     $object2 = new stdClass();
-    $object2->content_model = 'ir:researcherCModel';
+    $object2->content_model = 'islandora:researcherCModel';
     $object2->form_name = 'Islandora Scholar MADS Form';
     $object2->dsid = 'MADS';
     $object2->title_field = "['titleInfo']['title']";
@@ -388,35 +388,35 @@ function scholar_required_fedora_objects() {
           ),
         ),
         array(
-          'pid' => 'ir:citationCModel',
+          'pid' => 'islandora:citationCModel',
           'label' => 'Islandora Scholar Citation Content Model',
           'dsid' => 'ISLANDORACM',
           'datastream_file' => "$module_path/models/citationCModel.xml",
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
-          'pid' => 'ir:thesisCModel',
+          'pid' => 'islandora:thesisCModel',
           'label' => 'Islandora Scholar Thesis Content Model',
           'dsid' => 'ISLANDORACM',
           'datastream_file' => "$module_path/models/thesisCModel.xml",
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
-          'pid' => 'ir:researcherCModel',
+          'pid' => 'islandora:researcherCModel',
           'label' => 'Islandora Scholar Authority Content Model',
           'dsid' => 'ISLANDORACM',
           'datastream_file' => "$module_path/models/researcherCModel.xml",
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
-          'pid' => 'ir:departmentCModel',
+          'pid' => 'islandora:departmentCModel',
           'label' => 'Islandora Scholar Department Content Model',
           'dsid' => 'ISLANDORACM',
           'datastream_file' => "$module_path/models/departmentCModel.xml",
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
-          'pid' => 'ir:citationCollection',
+          'pid' => 'islandora:citationCollection',
           'label' => 'Citation Collection',
           'cmodel' => 'islandora:collectionCModel',
           'parent' => 'ir:scholar',
@@ -481,7 +481,7 @@ function scholar_required_fedora_objects() {
 
 function scholar_form_fedora_repository_ingest_form_alter(array &$form, array &$form_state) {
   if ($form_state['storage']['step'] == 1 && isset($form['indicator'])) {
-    $models = array('ir:citationCModel/ISLANDORACM');
+    $models = array('islandora:citationCModel/ISLANDORACM');
     $show_bulk_ingest = FALSE;
     foreach ($form['indicator']['models']['#options'] as $model => $label) {
       if (array_search($model, $models) !== FALSE) {

@@ -154,7 +154,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
     if ($model_test[0]['object'] == 'islandora:refworksCModel') {
 //      $model_result = $object->purge_relationship('hasModel', 'islandora:refworksCModel');
 //      if ($model_result) {
-        $object->add_relationship('hasModel', 'ir:citationCModel', FEDORA_MODEL_URI);
+        $object->add_relationship('hasModel', 'islandora:citationCModel', FEDORA_MODEL_URI);
         $model_edit_test = TRUE;
 //      }
     }

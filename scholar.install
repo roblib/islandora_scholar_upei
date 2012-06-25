@@ -63,10 +63,10 @@ function scholar_install() {
     XMLFormDatabase::Create(ISLANDORA_SCHOLAR_SIGNATURE_PROJECT_FORM, $definition);
   }
   // Associates the form with the content model
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Journal Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:citationCModel', 'Islandora Scholar Journal Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:citationCModel';
+    $object->content_model = 'islandora:citationCModel';
     $object->form_name = 'Islandora Scholar Journal Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
@@ -74,10 +74,10 @@ function scholar_install() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
 
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:thesisCModel', 'Islandora Scholar Thesis Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:thesisCModel', 'Islandora Scholar Thesis Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:thesisCModel';
+    $object->content_model = 'islandora:thesisCModel';
     $object->form_name = 'Islandora Scholar Thesis Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
@@ -85,10 +85,10 @@ function scholar_install() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
   
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:thesisCModel', 'Islandora Scholar Signature Project Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:thesisCModel', 'Islandora Scholar Signature Project Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:thesisCModel';
+    $object->content_model = 'islandora:thesisCModel';
     $object->form_name = 'Islandora Scholar Signature Project Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
@@ -96,10 +96,10 @@ function scholar_install() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
   
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Book Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:citationCModel', 'Islandora Scholar Book Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:citationCModel';
+    $object->content_model = 'islandora:citationCModel';
     $object->form_name = 'Islandora Scholar Book Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
@@ -107,10 +107,10 @@ function scholar_install() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
   
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Book Chapter Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:citationCModel', 'Islandora Scholar Book Chapter Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:citationCModel';
+    $object->content_model = 'islandora:citationCModel';
     $object->form_name = 'Islandora Scholar Book Chapter Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
@@ -118,10 +118,10 @@ function scholar_install() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
   
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:citationCModel', 'Islandora Scholar Book Conference Paper Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:citationCModel', 'Islandora Scholar Book Conference Paper Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:citationCModel';
+    $object->content_model = 'islandora:citationCModel';
     $object->form_name = 'Islandora Scholar Book Conference Paper Form';
     $object->dsid = 'MODS';
     $object->title_field = "['titleInfo']['title']";
@@ -129,10 +129,10 @@ function scholar_install() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
   
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:researcherCModel', 'Islandora Scholar MADS Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:researcherCModel', 'Islandora Scholar MADS Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:researcherCModel';
+    $object->content_model = 'islandora:researcherCModel';
     $object->form_name = 'Islandora Scholar MADS Form';
     $object->dsid = 'MADS';
     $object->title_field = "['titleInfo']['title']";
@@ -140,10 +140,10 @@ function scholar_install() {
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
   
-  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'ir:departmentCModel', 'Islandora Scholar MADS Dept Form'));
+  $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:departmentCModel', 'Islandora Scholar MADS Dept Form'));
   if (!$result) {
     $object = new stdClass();
-    $object->content_model = 'ir:departmentCModel';
+    $object->content_model = 'islandora:departmentCModel';
     $object->form_name = 'Islandora Scholar MADS Dept Form';
     $object->dsid = 'MADS';
     $object->title_field = "['titleInfo']['title']";
