@@ -374,7 +374,7 @@ function scholar_required_fedora_objects() {
           'pid' => 'ir:scholar',
           'label' => 'Institutional Repository',
           'cmodel' => 'islandora:collectionCModel',
-          'parent' => variable_get('fedora_repository_pid', 'islandora:root'),
+//          'parent' => variable_get('fedora_repository_pid', 'islandora:root'),
           'datastreams' => array(
             array(
               'dsid' => 'TN',
