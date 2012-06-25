@@ -158,6 +158,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
 //      }
     }
     if ($model_edit_test) {
+      drupal_set_message('Adding new collection');
 //      $collection_test = $object->get_relationships('fedora:isMemberOfCollection');
 //      if ($collection_test[0]['object'] == 'ir:collection') {
 //        $collection_result = $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
@@ -165,6 +166,9 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
           $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
 //        }
 //      }
+    }
+    else {
+      drupal_set_message('Not adding new collection');
     }
   }
 }
