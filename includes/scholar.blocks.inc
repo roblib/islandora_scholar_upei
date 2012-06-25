@@ -8,7 +8,7 @@ function scholar_recent_items($form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   module_load_include('inc', 'Fedora_Repository', 'CollectionClass');
-  $query_string = 'select $object $modified from <#ri> where $object <fedora-model:hasModel> <info:fedora/ir:citationCModel> and $object <fedora-view:lastModifiedDate> $modified and $modified <mulgara:after> \'2010-02-22T12:54:59.265Z\'^^<xml-schema:dateTime> in <#xsd> order by $modified desc';
+  $query_string = 'select $object $modified from <#ri> where $object <fedora-model:hasModel> <info:fedora/islandora:citationCModel> and $object <fedora-view:lastModifiedDate> $modified and $modified <mulgara:after> \'2010-02-22T12:54:59.265Z\'^^<xml-schema:dateTime> in <#xsd> order by $modified desc';
   $query_string = htmlentities(urlencode($query_string));
   $content = '';
   $url = variable_get('fedora_repository_url', 'http://localhost:8080/fedora/risearch');
@@ -58,7 +58,7 @@ function scholar_total_records($form_state) {
 
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
-  $query = @file_get_contents('http://' . $solr_location . '/select/?q=PID:ir*%20AND%20rels.hasModel:ir\:citationCModel&start=0&rows=0&indent=on');
+  $query = @file_get_contents('http://' . $solr_location . '/select/?q=PID:ir*%20AND%20rels.hasModel:islandora\:citationCModel&start=0&rows=0&indent=on');
   if ($query != NULL) {
     $xml = new SimpleXMLElement($query);
     $number_of_records = $xml->xpath('./result[@name="response"]/@numFound');
@@ -135,7 +135,7 @@ function scholar_random_citation($form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
   module_load_include('inc', 'fedora_repository', 'CollectionClass');
 
-  $query_string = 'select $object from <#ri> where $object <fedora-model:hasModel> <info:fedora/ir:citationCModel>';
+  $query_string = 'select $object from <#ri> where $object <fedora-model:hasModel> <info:fedora/islandora:citationCModel>';
   $query_string = htmlentities(urlencode($query_string));
   $result = '';
   $url = variable_get('fedora_repository_url', 'http://localhost:8080/fedora/risearch');
