@@ -158,13 +158,13 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
 //      }
     }
     if ($model_edit_test) {
-      $collection_test = $object->get_relationships('fedora:isMemberOfCollection');
-      if ($collection_test[0]['object'] == 'ir:collection') {
+//      $collection_test = $object->get_relationships('fedora:isMemberOfCollection');
+//      if ($collection_test[0]['object'] == 'ir:collection') {
 //        $collection_result = $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
 //        if ($collection_result) {
           $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
 //        }
-      }
+//      }
     }
   }
 }
