@@ -1,4 +1,4 @@
-<content_model name="chem_content_model" xmlns="http://www.islandora.ca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.islandora.ca http://localhost/islandoracm.xsd">
+<content_model name="scholar_citation_content_model" xmlns="http://www.islandora.ca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.islandora.ca http://localhost/islandoracm.xsd">
     <mimetypes>
         <type>text/xml</type>
         <type>text/plain</type>
@@ -12,8 +12,6 @@
       file="scholar.inc" method="showCitation" 
       module="scholar"/>
         </datastream>
-        <datastream dsid="INPUT"></datastream>
-        <datastream dsid="CODE"></datastream>
     </datastreams>
     <ingest_form dsid="QDC" page="2">
         <form_builder_method class="DemoFormBuilder" file="DemoFormBuilder.inc"
