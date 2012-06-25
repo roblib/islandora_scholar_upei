@@ -416,7 +416,7 @@ function scholar_required_fedora_objects() {
           'cmodel' => 'fedora-system:ContentModel-3.0',
         ),
         array(
-          'pid' => 'islandora:citationCollection',
+          'pid' => 'ir:citationCollection',
           'label' => 'Citation Collection',
           'cmodel' => 'islandora:collectionCModel',
           'parent' => 'ir:scholar',
