@@ -85,7 +85,7 @@ function scholar_browse_by_dept_form() {
 
     $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
     $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
-    $query = 'http://' . $solr_location . '/select/?q=mads.topic_facet:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
+    $query = 'http://' . $solr_location . '/select/?q=mads.organization:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
     $result = @file_get_contents($query);
 //    var_dump($query);
     if ($result) {
