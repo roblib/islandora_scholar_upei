@@ -47,7 +47,7 @@ class BibliographyDatabase {
     $record->uid = (int) $uid;
     $record->pid = $pid;
     $result = drupal_write_record(self::table, $record);
-    drupal_set_message('Result: ' . $result);
+    drupal_set_message('Add Result: ' . $result);
     return $result;
   }
 
