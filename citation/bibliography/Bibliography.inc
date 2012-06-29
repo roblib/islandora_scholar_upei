@@ -57,6 +57,7 @@ class Bibliography {
     if ($item->exists()) {
       module_load_include('inc', 'fedora_repository', 'ContentModel');
       $content_model = ContentModel::loadFromObject($pid);
+      drupal_set_message('Content model: ' . $content_model->pid);
       if (in_array($content_model->pid, array('islandora:refworksCModel', 'islandora:citationCModel'))) {
         return $content_model->pid;
       }
