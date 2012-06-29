@@ -96,6 +96,7 @@ class Bibliography {
       drupal_set_message('Add result: ' . $return);
       return $return;
     }
+    drupal_set_message(t('This object is not a citation!'), 'warning');
     return FALSE;
   }
 
