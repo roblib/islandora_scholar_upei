@@ -55,10 +55,14 @@ function islandora_bibliography_citation_form_submit(array $form, array &$form_s
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   $action = $form_state['clicked_button']['#action'];
   $pid = $form_state['clicked_button']['#pid'];
-  ($action == 'add') ?
-          Bibliography::AddCitation($pid) :
-          Bibliography::RemoveCitation($pid);
+  if ($action == 'add') {
+          $return = Bibliography::AddCitation($pid);
+  }
+  else {
+          $return = Bibliography::RemoveCitation($pid);
+  }
   $redirect = $form_state['clicked_button']['#redirect'];
+  drupal_set_message('Return: ' . $return);
   drupal_goto($redirect);
 }
 
