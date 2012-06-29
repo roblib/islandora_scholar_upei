@@ -14,7 +14,6 @@
 function scholar_browse_by_dept_form() {
   
   global $base_url;
-  var_dump($base_url);
   
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
   module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
@@ -96,7 +95,7 @@ function scholar_browse_by_dept_form() {
       $xml = new SimpleXMLElement($result);
       $array = $xml->xpath('//doc');
       $output = '<ul>';
-      $output .= l(t('Search all authors'), $base_url . 'islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
+      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
       $users = array();
       $user = '';
       $key = '';
@@ -115,7 +114,7 @@ function scholar_browse_by_dept_form() {
           $author_citations[] = $number_of_citations[0];
         }
         $users[] = $family[0] . ', ' . $given[0];
-        $link[] = '<a href=/islandora/solr/search/mods.username:"' . $username[0] . '">';
+        $link[] = '<a href=' . $base_url . '/islandora/solr/search/mods.username:"' . $username[0] . '">';
       }
       asort($users);
       foreach ($users as $key => $user) {
@@ -127,7 +126,7 @@ function scholar_browse_by_dept_form() {
     }
     else {
       $output = '<ul>';
-      $output .= l(t('Search all authors'), $base_url . 'islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
+      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
       $output .= '</ul>';
     }
 
