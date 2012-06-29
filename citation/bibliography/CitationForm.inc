@@ -23,7 +23,7 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
   return array(
-    '#action' => $base_url . '/bibliography/citation',
+    '#action' => 'bibliography/citation',
     'pid' => array(
       '#type' => 'hidden',
       '#value' => $pid
@@ -37,7 +37,7 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
       '#value' => $stored ? t('Remove from Bibliography') : t('Add to Bibliography'),
       '#action' => $stored ? 'remove' : 'add',
       '#pid' => $pid,
-      '#redirect' => $base_url . 'fedora/repository/' . $pid,
+      '#redirect' => 'fedora/repository/' . $pid,
     )
   );
 }
@@ -83,7 +83,7 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
   drupal_set_message('Redirect: ' . $redirect);
     $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20', '%2522', '%3A', '%2520', '%252C'), array(':', '', '', '', ' ', '"', ':', ' ', ','), $redirect);
   return array(
-    '#action' => $base_url . '/bibliography/citation/search',
+    '#action' => 'bibliography/citation/search',
     'pid' => array(
       '#type' => 'hidden',
       '#value' => $pid
