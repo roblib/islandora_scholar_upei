@@ -23,7 +23,7 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
   return array(
-    '#action' => 'bibliography/citation',
+    '#action' => $base_url . '/bibliography/citation',
     'pid' => array(
       '#type' => 'hidden',
       '#value' => $pid
@@ -37,7 +37,7 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
       '#value' => $stored ? t('Remove from Bibliography') : t('Add to Bibliography'),
       '#action' => $stored ? 'remove' : 'add',
       '#pid' => $pid,
-      '#redirect' => $base_url . 'fedora/repository/' . $pid,
+      '#redirect' => $base_url . '/fedora/repository/' . $pid,
     )
   );
 }
