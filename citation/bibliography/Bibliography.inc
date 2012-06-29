@@ -92,7 +92,9 @@ class Bibliography {
   public static function AddCitation($pid, $uid = NULL) {
     if (self::IsCitation($pid) && !self::Exists($pid)) {
       $uid = self::GetUID($uid);
-      return call_user_func(array(self::GetSource($uid), 'AddCitation'), $pid, $uid);
+      $return = call_user_func(array(self::GetSource($uid), 'AddCitation'), $pid, $uid);
+      drupal_set_message('Add result: ' . $return);
+      return $return;
     }
     return FALSE;
   }
