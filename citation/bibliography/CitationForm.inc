@@ -62,7 +62,7 @@ function islandora_bibliography_citation_form_submit(array $form, array &$form_s
           $return = Bibliography::RemoveCitation($pid);
   }
   $redirect = $form_state['clicked_button']['#redirect'];
-  drupal_set_message('Return: ' . $return);
+  drupal_set_message('Return: ' . (string) $return);
   drupal_goto($redirect);
 }
 
