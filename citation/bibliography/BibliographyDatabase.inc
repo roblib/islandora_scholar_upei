@@ -46,7 +46,7 @@ class BibliographyDatabase {
     $record = new stdClass();
     $record->uid = (int) $uid;
     $record->pid = $pid;
-    return drupal_write_record(self::table, $record) !== FALSE;
+    return drupal_write_record(self::table, $record);
   }
 
   /**
