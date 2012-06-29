@@ -116,7 +116,7 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
 function islandora_bibliography_citation_search_form_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   $action = $form_state['clicked_button']['#action'];
-  $pid = $form_state['clicked_button']['#pid'];
+  $pid = $form_state['clicked_button']['#post']['pid'];
   drupal_set_message('Pid clicked: ' . $pid);
   drupal_set_message('Form: ' . json_encode($form_state));
   ($action == 'add') ?
