@@ -82,7 +82,7 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
   $redirect = ($_SESSION['search_url']);
     $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20', '%2522', '%3A', '%2520', '%252C'), array(':', '', '', '', ' ', '"', ':', ' ', ','), $redirect);
   return array(
-    '#action' => '/bibliography/citation/search',
+    '#action' => $base_url . '/bibliography/citation/search',
     'pid' => array(
       '#type' => 'hidden',
       '#value' => $pid
