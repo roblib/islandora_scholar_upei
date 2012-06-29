@@ -21,7 +21,6 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
   global $base_url;
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
-  drupal_set_message('Pid: ' . $pid);
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
   return array(
     '#action' => $base_url . '/bibliography/citation',
@@ -58,14 +57,12 @@ function islandora_bibliography_citation_form_submit(array $form, array &$form_s
   drupal_set_message('Action: ' . $action);
   drupal_set_message('Pid2: ' . $pid);
   if ($action == 'add') {
-    drupal_set_message('Action - add');
           $return = Bibliography::AddCitation($pid);
   }
   else {
           $return = Bibliography::RemoveCitation($pid);
   }
   $redirect = $form_state['clicked_button']['#redirect'];
-  drupal_set_message('Return: ' . (string) $return);
   drupal_goto($redirect);
 }
 

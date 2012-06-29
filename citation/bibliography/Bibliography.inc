@@ -57,7 +57,6 @@ class Bibliography {
     if ($item->exists()) {
       module_load_include('inc', 'fedora_repository', 'ContentModel');
       $content_model = ContentModel::loadFromObject($pid);
-      drupal_set_message('Content model: ' . $content_model->pid);
       if (in_array($content_model->pid, array('islandora:refworksCModel', 'islandora:citationCModel'))) {
         return $content_model->pid;
       }
@@ -96,7 +95,6 @@ class Bibliography {
     if (self::IsCitation($pid) && !self::Exists($pid)) {
       $uid = self::GetUID($uid);
       $return = call_user_func(array(self::GetSource($uid), 'AddCitation'), $pid, $uid);
-      drupal_set_message('Add result: ' . $return);
       return $return;
     }
     drupal_set_message(t('This object is not a citation!'), 'warning');
