@@ -3,6 +3,7 @@
 /**
  * @file
  */
+
 /**
  * Constants
  */
@@ -31,32 +32,6 @@ function scholar_edit_refworks_form($form_state, $pid) {
 function scholar_edit_refworks_form_submit($form, &$form_state) {
   $irClass = new IrClass();
   $form_state['redirect'] = $irClass->updateRefworksMetaData($form_state['values']);
-}
-
-function scholar_advanced_search() {
-  return drupal_get_form('scholar_advanced_search_form');
-}
-
-function theme_scholar_advanced_search_form($form) {
-  $advanced_search_form = new IrClass();
-  return $advanced_search_form->theme_advanced_search_form($form);
-}
-
-function scholar_advanced_search_form_submit($form, &$form_state) {
-  $advanced_search_form = new IrClass();
-  return $advanced_search_form->process_advanced_search_form($form_state['values']);
-}
-
-function scholar_advanced_search_form() {
-  $advanced_search_form = new IrClass();
-  return $advanced_search_form->advanced_search_form();
-}
-
-function scholar_full_record($pid) {
-  $irClass = new IrClass();
-  $output = $irClass->show_full_record($pid);
-
-  return $output;
 }
 
 function scholar_by_name($type, $query) {
@@ -98,11 +73,6 @@ function scholar_role($type, $query) {
   return $output . $results;
 }
 
-function scholar_quick_search_form() {
-  $quick_search_form = new IrClass();
-  return $quick_search_form->quick_search_form();
-}
-
 function scholar_add_ir_datastream_form($form_state, $pid) {
   $datastream_form = new IrClass();
   return $datastream_form->build_add_datastream_form($pid);
@@ -139,11 +109,12 @@ function scholar_menu() {
 
   $items['admin/settings/scholar'] = array(
     'title' => t('Islandora Scholar Settings'),
+    'description' => t('Configure Islandora Scholar settings.'),
     'file' => 'includes/scholar.admin.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholar_admin_settings'),
     'access callback' => 'user_access',
-    'access arguments' => array('administer scholar settingst'),
+    'access arguments' => array('administer scholar settings'),
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -220,7 +191,7 @@ function scholar_menu() {
   $items['islandora_autocomplete/%/%/%'] = array(
     'title' => 'Auto Complete',
     'description' => 'Islandora autocomplete',
-    'file' => 'autocomplete.inc',
+    'file' => 'includes/scholar.autocomplete.inc',
     'page callback' => 'islandora_autocomplete',
     'page arguments' => array(1, 2, 3),
     'access arguments' => array('view fedora collection'), // Use something fedora specific.
@@ -230,7 +201,7 @@ function scholar_menu() {
   $items['islandora_autocomplete/%/%'] = array(
     'title' => 'Auto Complete',
     'description' => 'Islandora autocomplete',
-    'file' => 'autocomplete.inc',
+    'file' => 'includes/scholar.autocomplete.inc',
     'page callback' => 'islandora_autocomplete',
     'page arguments' => array(1, 2),
     'access arguments' => array('view fedora collection'), // Use something fedora specific.
