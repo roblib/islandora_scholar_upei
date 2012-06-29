@@ -242,7 +242,6 @@ class ScholarSolrResults extends IslandoraSolrResults {
         else {
           $abstract = $data->abstract;
         }
-        var_dump($doc->PID);
         $bibliography_text = Bibliography::Exists($doc->PID) ? 'Remove from Bibliography' : 'Add to Bibliography';
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID, array('html' => TRUE)) . '</div>';
         $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';

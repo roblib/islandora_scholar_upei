@@ -80,7 +80,6 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
   global $base_url;
   $path = drupal_get_path('module', 'scholar');
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
-  drupal_set_message('Pid: ' . $pid);  
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
   $redirect = ($base_url . substr($_SESSION['search_url'], strpos($_SESSION['search_url'], '/islandora/')));
     $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20', '%2522', '%3A', '%2520', '%252C'), array(':', '', '', '', ' ', '"', ':', ' ', ','), $redirect);
@@ -117,8 +116,6 @@ function islandora_bibliography_citation_search_form_submit(array $form, array &
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   $action = $form_state['clicked_button']['#action'];
   $pid = $form_state['clicked_button']['#post']['pid'];
-  drupal_set_message('Pid clicked: ' . $pid);
-  drupal_set_message('Form: ' . json_encode($form_state));
   ($action == 'add') ?
           Bibliography::AddCitation($pid) :
           Bibliography::RemoveCitation($pid);
