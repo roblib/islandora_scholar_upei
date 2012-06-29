@@ -37,7 +37,7 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
       '#value' => $stored ? t('Remove from Bibliography') : t('Add to Bibliography'),
       '#action' => $stored ? 'remove' : 'add',
       '#pid' => $pid,
-      '#redirect' => 'fedora/repository/' . $pid,
+      '#redirect' => $base_url . 'fedora/repository/' . $pid,
     )
   );
 }
