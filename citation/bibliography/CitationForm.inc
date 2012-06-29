@@ -21,6 +21,7 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
   global $base_url;
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
+  drupal_set_message('Pid: ' . $pid);
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
   return array(
     '#action' => $base_url . '/bibliography/citation',
