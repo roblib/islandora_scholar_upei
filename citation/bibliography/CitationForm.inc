@@ -58,6 +58,7 @@ function islandora_bibliography_citation_form_submit(array $form, array &$form_s
   drupal_set_message('Action: ' . $action);
   drupal_set_message('Pid2: ' . $pid);
   if ($action == 'add') {
+    drupal_set_message('Action - add');
           $return = Bibliography::AddCitation($pid);
   }
   else {
