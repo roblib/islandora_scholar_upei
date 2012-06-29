@@ -62,6 +62,7 @@ class Bibliography {
         return $content_model->pid;
       }
     }
+    drupal_set_message(t('This object is not a citation!'), 'warning');
     return FALSE;
   }
 
@@ -98,7 +99,7 @@ class Bibliography {
       $return = call_user_func(array(self::GetSource($uid), 'AddCitation'), $pid, $uid);
       return $return;
     }
-    drupal_set_message(t('This object is not a citation!'), 'warning');
+    drupal_set_message(t('This object cannot be added!'), 'warning');
     return FALSE;
   }
 
