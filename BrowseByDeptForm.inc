@@ -14,6 +14,7 @@
 function scholar_browse_by_dept_form() {
   
   global $base_url;
+  var_dump($base_url);
   
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
   module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrQueryProcessor');
