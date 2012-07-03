@@ -153,10 +153,8 @@ class ScholarSolrResults extends IslandoraSolrResults {
       $keys = array_keys($fields);
       if (count($keys) > 0) {
         foreach ($highlight->$keys[0] as $body) {
-          //drupal_set_message("$keys[0]  $body");
         }
       }
-      //drupal_set_message($highlight->$keys[0]);
     }
 
     global $base_url;
@@ -213,12 +211,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
 
         switch ($check) {
           case 'OBJ':
-//            $obj = $object->get_datastream('OBJ');
             $download_img = $base_url . '/' . $path . '/images/download.png';
             $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', 'fedora/repository/' . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
             break;
           case 'PDF':
-//            $pdf = $object->get_datastream('PDF');
             $download_img = $base_url . '/' . $path . '/images/download.png';
             $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', 'fedora/repository/' . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
             break;
@@ -246,7 +242,6 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID, array('html' => TRUE)) . '</div>';
         $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
         $related = '<div class="scholar_search_related">' . l('<img src="' . $base_url . '/' . $path . '/images/reload.png"/> Related content', 'islandora/solr/search/' . str_replace(' ', ' OR ', $dc_title), array('html' => TRUE)) . '</div>';
-//        $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $pdf_result . $bookmark . $related;
         $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $bookmark . $pdf_result . $supp_result;
         
         $row++;
@@ -361,7 +356,6 @@ class ScholarSolrResults extends IslandoraSolrResults {
 
       $output .= theme('fieldset', $fieldset_r);
     }
-//    $_SESSION['search_url'] = $_SERVER['REQUEST_URI'];
     $_SESSION['search_url'] = request_uri();
     return implode('', $items);
   }
