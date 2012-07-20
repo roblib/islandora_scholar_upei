@@ -46,6 +46,13 @@ function islandora_scholar_ldap_search($query) {
   $ldap_port = variable_get('scholar_ldap_port', '389');
   $ds = ldap_connect($ldap_host, $ldap_port) or die("Could not connect to ldap host!");
 
+  $bind_rdn = variable_get('scholar_ldap_bind_user', NULL);
+  $bind_password = variable_get('scholar_ldap_bind_pass', NULL);
+  
+  if (!$bind = ldap_bind($ds, $bind_rdn, $bind_password)) {
+    drupal_set_message(t('Could not bind to LDAP server at @ldap_host', array('@ldap_host' => $ldap_host)), 'error');
+  }
+  
   $basedn = variable_get('scholar_ldap_basedn', '');
 
   if (is_array($query)) {

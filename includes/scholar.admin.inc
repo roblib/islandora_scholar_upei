@@ -62,6 +62,18 @@ function scholar_admin_settings() {
     '#title' => t('Base DN'),
     '#default_value' => variable_get('scholar_ldap_basedn', ''),
   );
+  
+  $form['ldap']['scholar_ldap_bind_user'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Bind user'),
+    '#default_value' => variable_get('scholar_ldap_bind_user', ''),
+  );
+  
+  $form['ldap']['scholar_ldap_bind_pass'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Bind password'),
+    '#default_value' => variable_get('scholar_ldap_bind_pass', ''),
+  );
 
   $form['jodconverter'] = array(
     '#type' => 'fieldset',
