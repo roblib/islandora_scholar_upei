@@ -75,10 +75,10 @@ class UsersClass {
     $family->setAttribute("type", "family");
     $name->appendChild($family);
 
-    $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
-    $inclusionlist = file_get_contents($filename);
-    $inclusionlist = fix_encoding($inclusionlist);
-    $inclusionlist = explode(",", $inclusionlist);
+//    $filename = drupal_get_path('module', 'scholar') . '/inclusionList.txt';
+//    $inclusionlist = file_get_contents($filename);
+//    $inclusionlist = fix_encoding($inclusionlist);
+//    $inclusionlist = explode(",", $inclusionlist);
 
     $u1 = $dom->createElement("identifier", $this->cn);
     $u1->setAttribute("type", "u1");
