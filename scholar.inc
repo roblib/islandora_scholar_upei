@@ -153,6 +153,7 @@ class Scholar {
 //      $rows = unserialize($citations_cache->data);
 //    }
 //    else {
+    if ($username) {
     $username_query = file_get_contents('http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
     if ($xml != NULL) {
       $xml = new SimpleXMLElement($username_query);
@@ -175,6 +176,10 @@ class Scholar {
       else {
         $rows = NULL;
       }
+    }
+    else {
+      $rows = NULL;
+    }
     }
     else {
       $rows = NULL;
