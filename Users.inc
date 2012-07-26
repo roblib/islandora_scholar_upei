@@ -444,6 +444,7 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       $author_array = array();
       $pid = (string) $arr->str;
       $pids[] = $pid;
+      var_dump($arr);
       if ($arr->arr[0]['name'] == 'author' || $arr->arr[0]['name'] == 'mods.author') {
         foreach ($arr->arr[0] as $author) {
           $author_array[] = str_replace(',', ', ', $author);
@@ -453,8 +454,7 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       else {
         $authors[$pid] = t('Missing');
       }
-      if ($arr->arr[0]['name'] == 'mods.title') {
-        var_dump($arr);
+      if ($arr->arr[1]['name'] == 'mods.title') {
         $titles[$pid] = ($arr->arr[1]->str[1]);
       }
       else {
