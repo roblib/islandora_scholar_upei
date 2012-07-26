@@ -202,7 +202,7 @@ function islandora_scholar_ldap_add_user($user) {
   $check = $details->check_user();
   if ($check !== TRUE) {
     $collection_pid = 'ir:people';
-    $content_model_pid = 'ir:researcherCModel';
+    $content_model_pid = 'islandora:researcherCModel';
     $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
     $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
 
@@ -284,7 +284,7 @@ function scholar_batch_user_add($users, $max, &$context) {
       $check = $details->check_user();
       if ($check !== TRUE) {
         $collection_pid = 'ir:people';
-        $content_model_pid = 'ir:researcherCModel';
+        $content_model_pid = 'islandora:researcherCModel';
         $transform = drupal_get_path('module', 'scholar') . '/xsl/mads_to_dc.xsl';
         $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
 
