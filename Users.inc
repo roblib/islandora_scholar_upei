@@ -253,9 +253,13 @@ function islandora_scholar_ldap_add_user($user) {
         }
       }
     }
-    $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
-    $item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
-    // TODO: add thumbnail external reference 
+    $object = new FedoraObject($pid);
+    $ds_array = $object->get_datastreams();
+    if (!array_key_exists('TN', $ds_array)) {
+      $thumbnail = drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
+      $item->add_datastream_from_file($thumbnail, 'TN', 'Thumbnail');
+      // TODO: add thumbnail external reference
+    }
   }
 }
 
