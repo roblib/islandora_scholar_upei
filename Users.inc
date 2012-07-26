@@ -48,11 +48,11 @@ function islandora_scholar_ldap_search($query) {
 
   $bind_rdn = variable_get('scholar_ldap_bind_user', NULL);
   $bind_password = variable_get('scholar_ldap_bind_pass', NULL);
-  
+
   if (!$bind = ldap_bind($ds, $bind_rdn, $bind_password)) {
     drupal_set_message(t('Could not bind to LDAP server at @ldap_host', array('@ldap_host' => $ldap_host)), 'error');
   }
-  
+
   $basedn = variable_get('scholar_ldap_basedn', '');
 
   if (is_array($query)) {
@@ -444,21 +444,22 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       $author_array = array();
       $pid = (string) $arr->str;
       $pids[] = $pid;
-      var_dump($arr);
-      if ($arr->arr[0]['name'] == 'author' || $arr->arr[0]['name'] == 'mods.author') {
-        foreach ($arr->arr[0] as $author) {
-          $author_array[] = str_replace(',', ', ', $author);
+      foreach ($arr as $line) {
+        if ($line['name'] == 'author' || $line['name'] == 'mods.author') {
+          foreach ($line as $author) {
+            $author_array[] = str_replace(',', ', ', $author);
+          }
+          $authors[$pid] = implode('; ', $author_array);
         }
-        $authors[$pid] = implode('; ', $author_array);
-      }
-      else {
-        $authors[$pid] = t('Missing');
-      }
-      if ($arr->arr[2]['name'] == 'mods.title') {
-        $titles[$pid] = ($arr->arr[2]->str[1]);
-      }
-      else {
-        $titles[$pid] = t('Missing');
+        else {
+          $authors[$pid] = t('Missing');
+        }
+        if ($line['name'] == 'mods.title') {
+          $titles[$pid] = ($line->str[1]);
+        }
+        else {
+          $titles[$pid] = t('Missing');
+        }
       }
     }
     $table = array(
