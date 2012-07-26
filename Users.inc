@@ -446,11 +446,13 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       $pids[] = $pid;
       foreach ($arr as $line) {
         if ($line['name'] == 'author' || $line['name'] == 'mods.author') {
-          foreach ($line as $author) {
+          foreach ($line as $author_list) {
+            foreach ($author_list as $author) {
             var_dump($author);
             $author_array[] = str_replace(',', ', ', $author);
           }
           $authors[$pid] = implode('; ', $author_array);
+        }
         }
         else {
           $authors[$pid] = t('Missing');
