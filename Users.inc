@@ -454,8 +454,8 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       else {
         $authors[$pid] = t('Missing');
       }
-      if ($arr->arr[1]['name'] == 'mods.title') {
-        $titles[$pid] = ($arr->arr[1]->str[1]);
+      if ($arr->arr[2]['name'] == 'mods.title') {
+        $titles[$pid] = ($arr->arr[2]->str[1]);
       }
       else {
         $titles[$pid] = t('Missing');
