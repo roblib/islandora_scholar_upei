@@ -447,15 +447,17 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       foreach ($arr as $line) {
         if ($line['name'] == 'author') {
           foreach ($line as $author) {
-            var_dump((string) $author[0]);
             $author_array[] = str_replace(',', ', ', (string) $author[0]);
           }
           $authors[$pid] = implode('; ', $author_array);
         }
-        if ($line['name'] == 'mods.title') {
-          $titles[$pid] = ($line->str[1]);
+        if (empty($authors[$pid])) {
+          $authors[$pid] = t('Missing');
         }
-        else {
+        if ($line['name'] == 'mods.title') {
+          $titles[$pid] = ($line->str[0]);
+        }
+        if (empty($titles[$pid])) {
           $titles[$pid] = t('Missing');
         }
       }
