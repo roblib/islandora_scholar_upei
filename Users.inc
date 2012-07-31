@@ -383,6 +383,7 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username,
         '#type' => 'select',
         '#length' => 50,
         '#options' => array(
+          'HTML' => 'HTML',
           'RTF' => 'RTF',
           'PDF' => 'PDF',
           'RIS' => 'RIS',
@@ -393,12 +394,12 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username,
         '#type' => 'select',
         '#options' => $styles
       ),
-      'preview' => array(
-        '#type' => 'submit',
-        '#prefix' => '</br>',
-        '#value' => t('Preview Selected'),
-        '#submit' => array('scholar_author_bibliography_form_preview')
-      ),
+//      'preview' => array(
+//        '#type' => 'submit',
+//        '#prefix' => '</br>',
+//        '#value' => t('Preview Selected'),
+//        '#submit' => array('scholar_author_bibliography_form_preview')
+//      ),
       'export' => array(
         '#type' => 'submit',
         '#action' => 'export',
