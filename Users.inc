@@ -336,7 +336,7 @@ function scholar_batch_user_add_finished($success, $results, $operations) {
   }
 }
 
-function scholar_author_bibliography_form(array &$form_state, $names, $username, $type) {
+function scholar_author_bibliography_form(array &$form_state, $names, $username, $type, $return_pid) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   module_load_include('inc', 'islandora_bibliography', 'BibliographyForm');
   module_load_include('inc', 'citation_exporter', 'Batch');
@@ -410,6 +410,10 @@ function scholar_author_bibliography_form(array &$form_state, $names, $username,
       'username' => array(
         '#type' => 'hidden',
         '#value' => $username,
+      ),
+      'return_pid' => array(
+        '#type' => 'hidden',
+        '#value' => $return_pid,
       ),
     );
   }
