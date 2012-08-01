@@ -203,7 +203,12 @@ function islandora_bibliography_form_preview(array $form, array &$form_state) {
   else {
     drupal_set_message(t('No citations were selected!'), 'warning');
   }
-  $output .= l(t('Return to the Bibliography.'), 'bibliography');
+  if ($form_state['values']['return_pid']) {
+    $output .= l(t('Return'), 'fedora/repository/' . $form_state['values']['return_pid']);    
+  }
+  else {
+    $output .= l(t('Return to the Bibliography.'), 'bibliography');
+  }
   print theme('page', $output, FALSE);
   exit();
 }
