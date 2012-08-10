@@ -201,7 +201,7 @@ function scholar_cron_citations_update() {
         $dept_copy = 'Computer Science and Information Technology" OR mods.department_facet~~"Computer Science and Info Technology';
       }
 
-      $dept_str = 'http://' . $solr_location . '/select/?q=mods.department_facet:"' . (str_replace(array(';', '_', ' ', '&', '~~'), array(' ', '%20', '%20', '?', ':'), $dept_copy)) . '"';
+      $dept_str = 'http://' . $solr_location . '/select/?q=mods.department_facet:"' . (str_replace(array(';', ' ', '&', '~~'), array(' ', '%20', '?', ':'), $dept_copy)) . '"';
       drupal_set_message('Query: ' . $dept_str);
       $dept_query = file_get_contents($dept_str);
       $dept_xml = new SimpleXMLElement($dept_query);
