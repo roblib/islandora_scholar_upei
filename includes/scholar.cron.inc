@@ -202,6 +202,7 @@ function scholar_cron_citations_update() {
       }
 
       $dept_str = 'http://' . $solr_location . '/select/?q=mods.department_facet:"' . (str_replace(array(';', '_', ' ', '&', '~~'), array(' ', '%20', '%20', '?', ':'), $dept_copy)) . '"';
+      drupal_set_message('Query: ' . $dept_str);
       $dept_query = file_get_contents($dept_str);
       $dept_xml = new SimpleXMLElement($dept_query);
       $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
