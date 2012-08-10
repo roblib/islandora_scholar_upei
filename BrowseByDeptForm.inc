@@ -36,6 +36,15 @@ function scholar_browse_by_dept_form() {
       '#collapsed' => TRUE,
     );
     
+    $dept_query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_researcher_citation_counts WHERE department = '%s'", $dept);
+    
+    $researchers = array();
+    
+    while ($researcher = db_fetch_array($dept_query)) {
+      $researchers[] = $researcher;
+    }
+    var_dump($researchers);
+    
     $query = 'http://' . $solr_location . '/select/?q=mads.organization:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
     $result = @file_get_contents($query);
 //    var_dump($query);
