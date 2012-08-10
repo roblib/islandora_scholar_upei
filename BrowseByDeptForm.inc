@@ -37,6 +37,44 @@ function scholar_browse_by_dept_form() {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
+    
+    $dept_copy = $dept_title;
+    
+    if ($dept_copy == 'Pathology and Microbiology') {
+        $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
+      }
+
+      if ($dept_copy == 'School of Business') {
+        $dept_copy = 'School of Business" OR mods.department_facet~~"Business';
+      }
+
+      if ($dept_copy == 'Political Science') {
+        $dept_copy = 'Political Studies" OR mods.department_facet~~"Political Science';
+      }
+
+      if ($dept_copy == 'Sociology and Anthropology') {
+        $dept_copy = 'Sociology and Anthropology" OR mods.department_facet~~"Soc Anth';
+      }
+
+      if ($dept_copy == 'Women\'s Studies') {
+        $dept_copy = 'Women\'s Studies" OR mods.department_facet~~"Womens Studies';
+      }
+
+      if ($dept_copy == 'Department of Biomedical Sciences') {
+        $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Department of Biomedical Sciences';
+      }
+
+      if ($dept_copy == 'Applied Human Sciences') {
+        $dept_copy = 'Applied Human Sciences" OR mods.department_facet~~"Home Economics';
+      }
+
+      if ($dept_copy == 'Biomedical Sciences') {
+        $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Anatomy Physiology';
+      }
+
+      if ($dept_copy == 'Computer Science and Information Technology') {
+        $dept_copy = 'Computer Science and Information Technology" OR mods.department_facet~~"Computer Science and Info Technology';
+      }
 
     $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
     $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
