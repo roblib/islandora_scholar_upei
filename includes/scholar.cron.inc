@@ -193,6 +193,7 @@ function scholar_cron_citations_update() {
       }
 
       if ($dept_copy == 'Biomedical Sciences') {
+        drupal_set_message('BMS');
         $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Anatomy Physiology';
       }
 
