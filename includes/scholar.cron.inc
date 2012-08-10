@@ -157,6 +157,7 @@ function scholar_cron_citations_update() {
   $result_dept = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier_sort&rows=10000');
   $xml_dept = new SimpleXMLElement($result_dept);
   $array_dept = $xml_dept->xpath('//doc');
+  var_dump($array_dept);
   $array_dept = array_filter($array_dept);
   foreach ($array_dept as $arr_dept) {
     drupal_set_message('Dept: ' . $arr_dept);    
