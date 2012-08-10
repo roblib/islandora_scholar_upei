@@ -48,7 +48,7 @@ function scholar_browse_by_dept_form() {
       $output = '<ul>';
       $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
       foreach ($researchers as $res) {
-        $output .= l(t('@researcher (@citations)', array('@researcher' => $researcher['full_name'], '@citations' => $researcher['citation_count']), 'test'));
+        $output .= l(t('@researcher (@citations)', array('@researcher' => $researcher['full_name'], '@citations' => $researcher['citation_count'])), 'test');
       }
       $output .= '</ul>';
     }
