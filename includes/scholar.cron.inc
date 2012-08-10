@@ -163,7 +163,6 @@ function scholar_cron_citations_update() {
     if ($dept[0] != '') {
       $dept_copy = str_replace('_', ' ', $dept[0]);
       $dept = str_replace(array(' - ', ' ', '\'', ',', ':'), array('_', '_', '', '', ''), trim(strtolower($dept[0])));
-      drupal_set_message('Dept: ' . $dept_copy);
       if ($dept_copy == 'Pathology and Microbiology') {
         $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
       }
@@ -193,7 +192,6 @@ function scholar_cron_citations_update() {
       }
 
       if ($dept_copy == 'Biomedical Sciences') {
-        drupal_set_message('BMS');
         $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Anatomy Physiology';
       }
 
