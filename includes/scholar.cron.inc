@@ -165,7 +165,8 @@ function scholar_cron_citations_update() {
       $dept_copy = $dept;      
       $dept = strtolower($dept_array[1]);
 
-      if ($dept_copy == 'pathology and microbiology') {
+      if ($dept_copy == 'Pathology and Microbiology') {
+        drupal_set_message(t('Path micro'));
         $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
       }
 
