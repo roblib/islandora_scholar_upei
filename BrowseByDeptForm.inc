@@ -43,12 +43,12 @@ function scholar_browse_by_dept_form() {
     while ($researcher = db_fetch_array($dept_query)) {
       $researchers[] = $researcher;
     }
-    var_dump($researchers);
+//    var_dump($researchers);
     if ($researchers) {
       $output = '<ul>';
       $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
       foreach ($researchers as $res) {
-        $output .= l(t('@researcher (@citations)', array('@researcher' => $researcher['full_name'], '@citations' => $researcher['citation_count'])));
+        $output .= l(t('@researcher (@citations)', array('@researcher' => $researcher['full_name'], '@citations' => $researcher['citation_count']), 'test'));
       }
       $output .= '</ul>';
     }
