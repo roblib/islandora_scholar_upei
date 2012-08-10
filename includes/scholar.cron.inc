@@ -163,7 +163,7 @@ function scholar_cron_citations_update() {
     if ($dept[0] != '') {
       $dept_copy = str_replace('_', ' ', $dept[0]);
       $dept = str_replace(array(' - ', ' ', '\'', ',', ':'), array('_', '_', '', '', ''), trim(strtolower($dept[0])));
-
+      drupal_set_message('Dept: ' . $dept_copy);
       if ($dept_copy == 'Pathology and Microbiology') {
         $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
       }
@@ -184,7 +184,7 @@ function scholar_cron_citations_update() {
         $dept_copy = 'Women\'s Studies" OR mods.department_facet~~"Womens Studies';
       }
 
-      if ($dept_copy == 'Department of Biomedical Sciences' || $dept_copy == 'Biomedical Sciences') {
+      if ($dept_copy == 'Department of Biomedical Sciences') {
         $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Department of Biomedical Sciences';
       }
 
