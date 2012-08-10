@@ -172,6 +172,12 @@ function scholar_schema() {
           'length' => 64,
           'not null' => TRUE,
         ),
+        'type' => array(
+          'description' => t('Type of object'),
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+        ),        
         'citation_count' => array(
           'description' => t('Number of citations'),
           'type' => 'int',
@@ -182,6 +188,7 @@ function scholar_schema() {
       'primary key' => array('id'),
       'indexes' => array(
         'pid' => array('pid'),
+        'type' => array('type'),
       ),
     );
   }

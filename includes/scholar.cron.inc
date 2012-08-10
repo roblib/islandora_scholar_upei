@@ -146,10 +146,10 @@ function scholar_cron_citations_update() {
       $citations = (string) $number_of_citations[0];
       $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_citation_counts} WHERE pid = '%s'", $username));
       if ($query) {
-        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d' WHERE pid = '%s'", $citations, $username);
+        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d', type = '%s' WHERE pid = '%s'", $citations, 'researcher', $username);
       }
       else {
-        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,citation_count) VALUES ('%s', '%d')", $username, $citations);
+        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,type,citation_count) VALUES ('%s', '%s', '%d')", $username, 'researcher', $citations);
       }
     }
   }
@@ -207,10 +207,10 @@ function scholar_cron_citations_update() {
       $dept = substr($dept, 0, 60);
       $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_citation_counts} WHERE pid = '%s'", $dept));
       if ($query) {
-        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d' WHERE pid = '%s'", $citations, $dept);
+        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d', type = '%s' WHERE pid = '%s'", $citations, 'department', $dept);
       }
       else {
-        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,citation_count) VALUES ('%s', '%d')", $dept, $citations);
+        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,type,citation_count) VALUES ('%s', '%s', '%d')", $dept, 'department', $citations);
       }
     }
   }
