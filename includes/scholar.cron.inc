@@ -154,52 +154,51 @@ function scholar_cron_citations_update() {
     }
   }
 
-  $result_dept = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:departmentCModel&fl=dc.identifier&rows=10000');
+  $result_dept = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier_sort&rows=10000');
   $xml_dept = new SimpleXMLElement($result_dept);
   $array_dept = $xml_dept->xpath('//doc');
   $array_dept = array_filter($array_dept);
   foreach ($array_dept as $arr_dept) {
-    $dept = $arr_dept->xpath('./arr[@name="dc.identifier"]/str');
+    $dept = $arr_dept->xpath('./arr[@name="mads.identifier_sort"]/str');
     if ($dept[0] != '') {
-      $dept_array = explode(':', (string) $dept[0]);
-      $dept_copy = str_replace('_', ' ', $dept_array[1]);
-      $dept = strtolower($dept_array[1]);
+      $dept_copy = str_replace('_', ' ', $dept[0]);
+      $dept = strtolower($dept[0]);
       drupal_set_message('Dept: ' . $dept_copy);
 
-      if ($dept_copy == 'pathology and microbiology') {
+      if ($dept_copy == 'Pathology and Microbiology') {
         $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
       }
 
-      if ($dept_copy == 'school of business') {
-        $dept_copy = 'school of business" OR mods.department_facet~~"business';
+      if ($dept_copy == 'School of Business') {
+        $dept_copy = 'School of Business" OR mods.department_facet~~"Business';
       }
 
-      if ($dept_copy == 'political science') {
-        $dept_copy = 'political studies" OR mods.department_facet~~"political science';
+      if ($dept_copy == 'Political Science') {
+        $dept_copy = 'Political Studies" OR mods.department_facet~~"Political Science';
       }
 
-      if ($dept_copy == 'sociology and anthropology') {
-        $dept_copy = 'sociology and anthropology" OR mods.department_facet~~"soc anth';
+      if ($dept_copy == 'Sociology and Anthropology') {
+        $dept_copy = 'Sociology and Anthropology" OR mods.department_facet~~"Soc Anth';
       }
 
-      if ($dept_copy == 'women\'s studies') {
-        $dept_copy = 'women\'s studies" OR mods.department_facet~~"womens studies';
+      if ($dept_copy == 'Women\'s Studies') {
+        $dept_copy = 'Women\'s Studies" OR mods.department_facet~~"Womens Studies';
       }
 
-      if ($dept_copy == 'department of biomedical sciences') {
-        $dept_copy = 'biomedical sciences" OR mods.department_facet~~"department of biomedical sciences';
+      if ($dept_copy == 'Department of Biomedical Sciences') {
+        $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Department of Biomedical Sciences';
       }
 
-      if ($dept_copy == 'applied human sciences') {
-        $dept_copy = 'applied human sciences" OR mods.department_facet~~"home economics';
+      if ($dept_copy == 'Applied Human Sciences') {
+        $dept_copy = 'Applied Human Sciences" OR mods.department_facet~~"Home Economics';
       }
 
-      if ($dept_copy == 'biomedical sciences') {
-        $dept_copy = 'biomedical sciences" OR mods.department_facet~~"anatomy physiology';
+      if ($dept_copy == 'Biomedical Sciences') {
+        $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Anatomy Physiology';
       }
 
-      if ($dept_copy == 'computer science and information technology') {
-        $dept_copy = 'computer science and information technology" OR mods.department_facet~~"computer science and info technology';
+      if ($dept_copy == 'Computer Science and Information Technology') {
+        $dept_copy = 'Computer Science and Information Technology" OR mods.department_facet~~"Computer Science and Info Technology';
       }
 
       $dept_str = 'http://' . $solr_location . '/select/?q=mods.department_facet:"' . (str_replace(array(';', '_', ' ', '&', '~~'), array(' ', '%20', '%20', '?', ':'), $dept_copy)) . '"';
