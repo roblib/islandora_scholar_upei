@@ -159,7 +159,7 @@ function scholar_install() {
 function scholar_schema() {
   $result = @db_result(db_query("SELECT pid FROM {islandora_scholar_citation_counts}"));
   if (!$result) {
-    $schema['islandora_scholar_citation_counts'] = array(
+    $schema['islandora_scholar_dept_citation_counts'] = array(
       'description' => t('This table is used to store the citation counts for fedora objects'),
       'fields' => array(
         'id' => array(
@@ -176,12 +176,43 @@ function scholar_schema() {
           'description' => t('Full name'),
           'type' => 'varchar',
           'length' => 128,
+        ),     
+        'citation_count' => array(
+          'description' => t('Number of citations'),
+          'type' => 'int',
+          'length' => 64,
+          'not null' => TRUE,
         ),
-        'type' => array(
-          'description' => t('Type of object'),
+      ),
+      'primary key' => array('id'),
+      'indexes' => array(
+        'pid' => array('pid'),
+      ),
+    );
+  }
+  
+  $schema['islandora_scholar_researcher_citation_counts'] = array(
+      'description' => t('This table is used to store the citation counts for fedora objects'),
+      'fields' => array(
+        'id' => array(
+          'type' => 'serial',
+          'not null' => TRUE,
+        ),
+        'pid' => array(
+          'description' => t('PID of the object'),
           'type' => 'varchar',
           'length' => 64,
           'not null' => TRUE,
+        ),
+        'full_name' => array(
+          'description' => t('Full name'),
+          'type' => 'varchar',
+          'length' => 128,
+        ),   
+        'department' => array(
+          'description' => t('Department'),
+          'type' => 'varchar',
+          'length' => 64,
         ),        
         'citation_count' => array(
           'description' => t('Number of citations'),
@@ -193,10 +224,9 @@ function scholar_schema() {
       'primary key' => array('id'),
       'indexes' => array(
         'pid' => array('pid'),
-        'type' => array('type'),
+        'department' => array('department'),
       ),
     );
-  }
   return $schema;
 }
 

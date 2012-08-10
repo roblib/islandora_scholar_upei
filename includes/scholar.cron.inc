@@ -130,7 +130,7 @@ function scholar_cron_embargo_check() {
 
 function scholar_cron_citations_update() {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
-  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=dc.identifier,mads.given,mads.family&rows=10000');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=dc.identifier,mads.given,mads.family,mads.organization&rows=10000');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $array = array_filter($array);
@@ -138,6 +138,8 @@ function scholar_cron_citations_update() {
     $username = $arr->xpath('./arr[@name="dc.identifier"]/str');
     $given_name = $arr->xpath('./arr[@name="mads.given"]/str');
     $family_name = $arr->xpath('./arr[@name="mads.family"]/str');
+    $dept = $arr->xpath('./arr[@name="mads.organization"]/str');
+    $dept = $dept[0];
     $fullname = $family_name[0] . ', ' . $given_name[0];
     if ($username[0] != '') {
       $username_array = explode(':', (string) $username[0]);
@@ -147,12 +149,12 @@ function scholar_cron_citations_update() {
       $username_xml = new SimpleXMLElement($username_query);
       $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
       $citations = (string) $number_of_citations[0];
-      $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_citation_counts} WHERE pid = '%s'", $username));
+      $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_researcher_citation_counts} WHERE pid = '%s'", $username));
       if ($query) {
-        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d', type = '%s', full_name = '%s' WHERE pid = '%s'", $citations, 'researcher', $fullname, $username);
+        $result = db_query("UPDATE {islandora_scholar_researcher_citation_counts} SET citation_count = '%d', full_name = '%s', department = '%s' WHERE pid = '%s'", $citations, $fullname, $dept, $username);
       }
       else {
-        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,full_name,type,citation_count) VALUES ('%s', '%s', '%s', '%d')", $username, $fullname, 'researcher', $citations);
+        $result = db_query("INSERT INTO {islandora_scholar_researcher_citation_counts} (pid,full_name,department,citation_count) VALUES ('%s', '%s', '%s', '%d')", $username, $fullname, $dept, $citations);
       }
     }
   }
@@ -209,12 +211,12 @@ function scholar_cron_citations_update() {
       $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
       $citations = (string) $number_of_citations[0];
       $dept = substr($dept, 0, 60);
-      $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_citation_counts} WHERE pid = '%s'", $dept));
+      $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_dept_citation_counts} WHERE pid = '%s'", $dept));
       if ($query) {
-        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d', type = '%s', full_name = '%s' WHERE pid = '%s'", $citations, 'department', $full_dept, $dept);
+        $result = db_query("UPDATE {islandora_scholar_dept_citation_counts} SET citation_count = '%d', full_name = '%s' WHERE pid = '%s'", $citations, $full_dept, $dept);
       }
       else {
-        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,full_name,type,citation_count) VALUES ('%s', '%s', '%s', '%d')", $dept, $full_dept, 'department', $citations);
+        $result = db_query("INSERT INTO {islandora_scholar_dept_citation_counts} (pid,full_name,citation_count) VALUES ('%s', '%s', '%d')", $dept, $full_dept, $citations);
       }
     }
   }
