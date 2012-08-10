@@ -138,7 +138,7 @@ function scholar_cron_citations_update() {
     $username = $arr->xpath('./arr[@name="dc.identifier"]/str');
     $given_name = $arr->xpath('./arr[@name="mads.given"]/str');
     $family_name = $arr->xpath('./arr[@name="mads.family"]/str');
-    $fullname = $family_name . ', ' . $given_name;
+    $fullname = $family_name[0] . ', ' . $given_name[0];
     if ($username[0] != '') {
       $username_array = explode(':', (string) $username[0]);
       $username = strtolower($username_array[1]);
