@@ -87,7 +87,7 @@ function scholar_browse_by_dept_form() {
       $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . (str_replace(array(';', ' ', '&', '~~'), array(' ', '%20', '?', ':'), $dept_copy)) . '"');
       foreach ($researchers as $res) {
         $output .= '</br>';
-        $output .= l(t('@researcher (@citations)', array('@researcher' => $res['full_name'], '@citations' => $res['citation_count'])), 'test');
+        $output .= l(t('@researcher (@citations)', array('@researcher' => $res['full_name'], '@citations' => $res['citation_count'])), $base_url . '/islandora/solr/search/mods.username:' . $res['pid']);
       }
       $output .= '</ul>';
     }
