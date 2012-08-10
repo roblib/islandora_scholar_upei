@@ -12,20 +12,20 @@
  * @return string 
  */
 function scholar_browse_by_dept_form() {
-  
+
   global $base_url;
-  
+
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
 
   $form = array();
   $depts = array();
-  
+
   $query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_dept_citation_counts}");
-  
+
   while ($dept = db_fetch_array($query)) {
     $depts[] = $dept;
   }
-  
+
   foreach ($depts as $dept) {
     $output = '';
     $dept_title = $dept['full_name'];
@@ -35,24 +35,21 @@ function scholar_browse_by_dept_form() {
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
-    
+
     $dept_query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_researcher_citation_counts WHERE department = '%s'", $dept);
-    
+
     $researchers = array();
-    
+
     while ($researcher = db_fetch_array($dept_query)) {
       $researchers[] = $researcher;
     }
     var_dump($researchers);
-    if ($result) {
-     
+    if ($researchers) {
       $output = '<ul>';
       $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
-  
-      foreach($researchers as $res) {
+      foreach ($researchers as $res) {
         $output .= l(t('@researcher (@citations)', array('@researcher' => $researcher['full_name'], '@citations' => $researcher['citation_count'])));
       }
-      
       $output .= '</ul>';
     }
     else {
