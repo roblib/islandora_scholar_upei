@@ -17,7 +17,9 @@ function scholar_browse_by_dept_form() {
   
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
 
-  $depts = db_fetch_array(db_query("SELECT pid,citation_count from {islandora_scholar_citation_counts} WHERE type = 'department'"));
+  $depts = array();
+  
+  while ($depts[] = db_fetch_array(db_query("SELECT pid,citation_count from {islandora_scholar_citation_counts} WHERE type = 'department'")));
 
   var_dump($depts);
   
