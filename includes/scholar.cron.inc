@@ -184,7 +184,7 @@ function scholar_cron_citations_update() {
         $dept_copy = 'Women\'s Studies" OR mods.department_facet~~"Womens Studies';
       }
 
-      if ($dept_copy == 'Department of Biomedical Sciences') {
+      if ($dept_copy == 'Department of Biomedical Sciences' || $dept_copy == 'Biomedical Sciences') {
         $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Department of Biomedical Sciences';
       }
 
