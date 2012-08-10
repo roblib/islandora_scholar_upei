@@ -166,7 +166,7 @@ function scholar_cron_citations_update() {
       $dept_copy = $dept;
 
       if ($dept_copy == 'pathology and microbiology') {
-        $dept_copy = 'path micro" OR mods.department_facet~~"pathology and microbiology';
+        $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
       }
 
       if ($dept_copy == 'school of business') {
