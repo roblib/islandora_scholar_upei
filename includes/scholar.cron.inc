@@ -130,7 +130,7 @@ function scholar_cron_embargo_check() {
 
 function scholar_cron_citations_update() {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
-  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel%&fl=dc.identifier&rows=10000');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=dc.identifier&rows=10000');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $array = array_filter($array);
@@ -154,7 +154,7 @@ function scholar_cron_citations_update() {
     }
   }
   
-  $result_dept = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:departmentCModel%&fl=dc.identifier&rows=10000');
+  $result_dept = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:departmentCModel&fl=dc.identifier&rows=10000');
   $xml_dept = new SimpleXMLElement($result_dept);
   $array_dept = $xml_dept->xpath('//doc');
   $array_dept = array_filter($array_dept);
