@@ -157,11 +157,13 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $email = $arr->xpath('./arr[@name="mads.email"]/str');
     $field_of_activity = $arr->xpath('./arr[@name="mads.fieldOfActivity"]/str');
     if ($username[0] != '') {
-      $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
-      $username_query = file_get_contents($username_str);
-      $username_xml = new SimpleXMLElement($username_query);
-      $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
-      $citations = $number_of_citations[0];
+//      $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username[0]))));
+//      $username_query = file_get_contents($username_str);
+//      $username_xml = new SimpleXMLElement($username_query);
+//      $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
+//      $citations = $number_of_citations[0];
+      $citation_query = db_fetch_array(db_query("SELECT citation_count FROM {islandora_scholar_researcher_citation_counts} WHERE pid = '%s'", $username[0]));
+      var_dump($citation_query);
     }
     $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone_number[0], theme('item_list', $field_of_activity), t('@citations citations', array('@citations' => $citations)));
   }
