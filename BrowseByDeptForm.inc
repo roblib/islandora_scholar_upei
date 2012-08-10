@@ -17,6 +17,7 @@ function scholar_browse_by_dept_form() {
   
   module_load_include('inc', 'Fedora_Repository', 'api/fedora_utils');
 
+  $form = array();
   $depts = array();
   
   $query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_citation_counts} WHERE type = 'department'");
@@ -29,19 +30,10 @@ function scholar_browse_by_dept_form() {
   
   foreach ($depts as $dept) {
     $output = '';
-    
-    // Replace some of the characters that may be found in the dept names so that they don't break
-    // the solr query
-    $dept_result_query = 'http://' . $solr_location . '/select/?q=mods.department_facet:"' . (str_replace(array(' ', ":", '&', '~~'), array('%20', '?', '?', ':'), ($dept_copy))) . '"';
-    $dept_result = file_get_contents($dept_result_query);
-    $dept_xml = new SimpleXMLElement($dept_result);
-    $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
-    $citations = " (" . (string) $number_of_citations[0] . ")";
-    $dept_link = str_replace(' ', '%20', $dept_copy);
-
+    $dept_title = $dept['full_name'];
     $form[$dept_title] = array(
       '#type' => 'fieldset',
-      '#title' => t('@dept_title @citations', array('@dept_title' => $dept_title, '@citations' => $citations)),
+      '#title' => t('@dept_title @citations', array('@dept_title' => $dept_title, '@citations' => $dept['citation_count'])),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
     );
