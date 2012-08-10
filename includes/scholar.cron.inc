@@ -202,11 +202,11 @@ function scholar_cron_citations_update() {
       }
 
       $dept_str = 'http://' . $solr_location . '/select/?q=mods.department_facet:"' . (str_replace(array(';', ' ', '&', '~~'), array(' ', '%20', '?', ':'), $dept_copy)) . '"';
-      drupal_set_message('Query: ' . $dept_str);
       $dept_query = file_get_contents($dept_str);
       $dept_xml = new SimpleXMLElement($dept_query);
       $number_of_citations = $dept_xml->xpath('./result[@name="response"]/@numFound');
       $citations = (string) $number_of_citations[0];
+      $dept = substr($dept, 0, 60);
       $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_citation_counts} WHERE pid = '%s'", $dept));
       if ($query) {
         $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d' WHERE pid = '%s'", $citations, $dept);
