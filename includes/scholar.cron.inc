@@ -157,14 +157,12 @@ function scholar_cron_citations_update() {
   $result_dept = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:departmentCModel&fl=mads.identifier_sort&rows=10000');
   $xml_dept = new SimpleXMLElement($result_dept);
   $array_dept = $xml_dept->xpath('//doc');
-  var_dump($array_dept);
   $array_dept = array_filter($array_dept);
   foreach ($array_dept as $arr_dept) {
-    drupal_set_message('Dept: ' . $arr_dept->str);    
     $dept = $arr_dept->str;
     if ($dept[0] != '') {
       $dept_copy = str_replace('_', ' ', $dept[0]);
-      $dept = str_replace(array(' - ', ' ', '\'', ','), array('_', '_', '', ''), strtolower($dept[0]));
+      $dept = str_replace(array(' - ', ' ', '\'', ',', ':'), array('_', '_', '', '', ''), trim(strtolower($dept[0])));
 
       if ($dept_copy == 'Pathology and Microbiology') {
         $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
