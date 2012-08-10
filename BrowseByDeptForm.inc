@@ -25,8 +25,6 @@ function scholar_browse_by_dept_form() {
   while ($dept = db_fetch_array($query)) {
     $depts[] = $dept;
   }
-
-  var_dump($depts);
   
   foreach ($depts as $dept) {
     $output = '';

@@ -130,12 +130,15 @@ function scholar_cron_embargo_check() {
 
 function scholar_cron_citations_update() {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
-  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=dc.identifier&rows=10000');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=dc.identifier,mads.given,mads.family&rows=10000');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $array = array_filter($array);
   foreach ($array as $arr) {
     $username = $arr->xpath('./arr[@name="dc.identifier"]/str');
+    $given_name = $arr->xpath('./arr[@name="mads.given"]/str');
+    $family_name = $arr->xpath('./arr[@name="mads.family"]/str');
+    $fullname = $family_name . ', ' . $given_name;
     if ($username[0] != '') {
       $username_array = explode(':', (string) $username[0]);
       $username = strtolower($username_array[1]);
@@ -146,10 +149,10 @@ function scholar_cron_citations_update() {
       $citations = (string) $number_of_citations[0];
       $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_citation_counts} WHERE pid = '%s'", $username));
       if ($query) {
-        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d', type = '%s' WHERE pid = '%s'", $citations, 'researcher', $username);
+        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d', type = '%s', full_name = '%s' WHERE pid = '%s'", $citations, 'researcher', $fullname, $username);
       }
       else {
-        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,type,citation_count) VALUES ('%s', '%s', '%d')", $username, 'researcher', $citations);
+        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,full_name,type,citation_count) VALUES ('%s', '%s', '%s', '%d')", $username, $fullname, 'researcher', $citations);
       }
     }
   }
