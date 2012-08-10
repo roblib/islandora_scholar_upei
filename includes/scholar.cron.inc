@@ -164,7 +164,7 @@ function scholar_cron_citations_update() {
     $dept = $arr_dept->str;
     if ($dept[0] != '') {
       $dept_copy = str_replace('_', ' ', $dept[0]);
-      $dept = strtolower($dept[0]);
+      $dept = str_replace(array(' - ', ' ', '\'', ','), array('_', '_', '', ''), strtolower($dept[0]));
 
       if ($dept_copy == 'Pathology and Microbiology') {
         $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
