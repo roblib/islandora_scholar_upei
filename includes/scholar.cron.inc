@@ -141,7 +141,6 @@ function scholar_cron_citations_update() {
     if ($username[0] != '') {
       $username_array = explode(':', (string) $username[0]);
       $username = strtolower($username_array[1]);
-      var_dump($username);
       $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', $username));
       $username_query = file_get_contents($username_str);
       $username_xml = new SimpleXMLElement($username_query);
