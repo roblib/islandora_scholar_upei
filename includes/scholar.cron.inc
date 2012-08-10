@@ -162,11 +162,11 @@ function scholar_cron_citations_update() {
     $dept = $arr_dept->xpath('./arr[@name="dc.identifier"]/str');
     if ($dept[0] != '') {
       $dept_array = explode(':', (string) $dept[0]);
-      $dept_copy = $dept_array[1];      
+      $dept_copy = str_replace('_', ' ', $dept_array[1]);
       $dept = strtolower($dept_array[1]);
       drupal_set_message('Dept: ' . $dept_copy);
 
-      if ($dept_copy == 'Pathology and Microbiology') {
+      if ($dept_copy == 'pathology and microbiology') {
         $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
       }
 
