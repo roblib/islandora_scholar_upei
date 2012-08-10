@@ -38,6 +38,44 @@ function scholar_browse_by_dept_form() {
 
     $dept_query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_researcher_citation_counts} WHERE department = '%s' ORDER BY full_name ASC", $dept_title);
 
+    $dept_copy = $dept_title;
+    
+      if ($dept_copy == 'Pathology and Microbiology') {
+        $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
+      }
+
+      if ($dept_copy == 'School of Business') {
+        $dept_copy = 'School of Business" OR mods.department_facet~~"Business';
+      }
+
+      if ($dept_copy == 'Political Science') {
+        $dept_copy = 'Political Studies" OR mods.department_facet~~"Political Science';
+      }
+
+      if ($dept_copy == 'Sociology and Anthropology') {
+        $dept_copy = 'Sociology and Anthropology" OR mods.department_facet~~"Soc Anth';
+      }
+
+      if ($dept_copy == 'Women\'s Studies') {
+        $dept_copy = 'Women\'s Studies" OR mods.department_facet~~"Womens Studies';
+      }
+
+      if ($dept_copy == 'Department of Biomedical Sciences') {
+        $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Department of Biomedical Sciences';
+      }
+
+      if ($dept_copy == 'Applied Human Sciences') {
+        $dept_copy = 'Applied Human Sciences" OR mods.department_facet~~"Home Economics';
+      }
+
+      if ($dept_copy == 'Biomedical Sciences') {
+        $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Anatomy Physiology';
+      }
+
+      if ($dept_copy == 'Computer Science and Information Technology') {
+        $dept_copy = 'Computer Science and Information Technology" OR mods.department_facet~~"Computer Science and Info Technology';
+      }
+    
     $researchers = array();
 
     while ($researcher = db_fetch_array($dept_query)) {
@@ -46,7 +84,7 @@ function scholar_browse_by_dept_form() {
 //    var_dump($researchers);
     if ($researchers) {
       $output = '<ul>';
-      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . $dept_title . '"');
+      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . (str_replace(array(';', ' ', '&', '~~'), array(' ', '%20', '?', ':'), $dept_copy)) . '"');
       foreach ($researchers as $res) {
         $output .= '</br>';
         $output .= l(t('@researcher (@citations)', array('@researcher' => $res['full_name'], '@citations' => $res['citation_count'])), 'test');
@@ -55,7 +93,7 @@ function scholar_browse_by_dept_form() {
     }
     else {
       $output = '<ul>';
-      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . $dept_title . '"');
+      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . (str_replace(array(';', ' ', '&', '~~'), array(' ', '%20', '?', ':'), $dept_copy)) . '"');
       $output .= '</ul>';
     }
 
