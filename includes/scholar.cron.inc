@@ -127,3 +127,33 @@ function scholar_cron_embargo_check() {
     }
   }
 }
+
+function scholar_cron_citations_update() {
+  $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel%20OR%20rels.hasModel:departmentCModel&fl=dc.identifier&rows=10000');
+  $xml = new SimpleXMLElement($result);
+  $array = $xml->xpath('//doc');
+  $output = '<ul>';
+  $users = array();
+  $array = array_filter($array);
+  foreach ($array as $arr) {
+    $username = $arr->xpath('./arr[@name="dc.identifier"]/str');
+    if ($username[0] != '') {
+      $username_array = explode(':', (string) $username[0]);
+      $username = strtolower($username_array[1]);
+      var_dump($username);
+      $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', $username));
+      $username_query = file_get_contents($username_str);
+      $username_xml = new SimpleXMLElement($username_query);
+      $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
+      $citations = (string) $number_of_citations[0];
+      $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_citation_counts} WHERE pid = '%s'", $username));
+      if ($query) {
+        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d' WHERE pid = '%s'", $citations, $username);
+      }
+      else {
+        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,citation_count) VALUES ('%s', '%d')", $username, $citations);
+      }
+    }
+  }
+}

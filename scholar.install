@@ -150,6 +150,42 @@ function scholar_install() {
     $object->transform = 'dept_mads_to_dc.xsl';
     $result = drupal_write_record('islandora_content_model_forms', $object);
   }
+  
+  if (drupal_install_schema('scholar')) {
+    drupal_set_message(t('Database tables created!'));
+  }
+}
+
+function scholar_schema() {
+  $result = @db_result(db_query("SELECT pid FROM {islandora_scholar_citation_counts}"));
+  if (!$result) {
+    $schema['islandora_scholar_citation_counts'] = array(
+      'description' => t('This table is used to store the citation counts for fedora objects'),
+      'fields' => array(
+        'id' => array(
+          'type' => 'serial',
+          'not null' => TRUE,
+        ),
+        'pid' => array(
+          'description' => t('PID of the object'),
+          'type' => 'varchar',
+          'length' => 64,
+          'not null' => TRUE,
+        ),
+        'citation_count' => array(
+          'description' => t('Number of citations'),
+          'type' => 'int',
+          'length' => 64,
+          'not null' => TRUE,
+        ),
+      ),
+      'primary key' => array('id'),
+      'indexes' => array(
+        'pid' => array('pid'),
+      ),
+    );
+  }
+  return $schema;
 }
 
 /**

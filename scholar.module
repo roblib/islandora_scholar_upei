@@ -282,8 +282,7 @@ function scholar_perm() {
 }
 
 function scholar_uninstall() {
-
-  return TRUE; // there isn't really anything to uninstall
+  return drupal_uninstall_schema('scholar');
 }
 
 // end function scholar_uninstall
@@ -717,6 +716,7 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 function scholar_cron() {
   module_load_include('inc', 'scholar', 'includes/scholar.cron');
   scholar_cron_embargo_check();
+  scholar_cron_citations_update();
 }
 
 function scholar_theme() {
