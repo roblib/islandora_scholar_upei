@@ -19,7 +19,9 @@ function scholar_browse_by_dept_form() {
 
   $depts = array();
   
-  while ($dept = db_fetch_array(db_query("SELECT pid,citation_count from {islandora_scholar_citation_counts} WHERE type = 'department'"))) {
+  $query = db_query("SELECT pid,citation_count from {islandora_scholar_citation_counts} WHERE type = 'department'");
+  
+  while ($dept = db_fetch_array($query)) {
     $depts[] = $dept;
   }
 
