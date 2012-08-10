@@ -161,6 +161,7 @@ function scholar_cron_citations_update() {
   foreach ($array_dept as $arr_dept) {
     $dept = $arr_dept->str;
     if ($dept[0] != '') {
+      $full_dept = $dept[0];
       $dept_copy = str_replace('_', ' ', $dept[0]);
       $dept = str_replace(array(' - ', ' ', '\'', ',', ':'), array('_', '_', '', '', ''), trim(strtolower($dept[0])));
       if ($dept_copy == 'Pathology and Microbiology') {
@@ -207,10 +208,10 @@ function scholar_cron_citations_update() {
       $dept = substr($dept, 0, 60);
       $query = db_fetch_array(db_query("SELECT id FROM {islandora_scholar_citation_counts} WHERE pid = '%s'", $dept));
       if ($query) {
-        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d', type = '%s' WHERE pid = '%s'", $citations, 'department', $dept);
+        $result = db_query("UPDATE {islandora_scholar_citation_counts} SET citation_count = '%d', type = '%s', full_name = '%s' WHERE pid = '%s'", $citations, 'department', $full_dept, $dept);
       }
       else {
-        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,type,citation_count) VALUES ('%s', '%s', '%d')", $dept, 'department', $citations);
+        $result = db_query("INSERT INTO {islandora_scholar_citation_counts} (pid,full_name,type,citation_count) VALUES ('%s', '%s', '%s', '%d')", $dept, $full_dept, 'department', $citations);
       }
     }
   }

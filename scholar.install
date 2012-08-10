@@ -172,6 +172,11 @@ function scholar_schema() {
           'length' => 64,
           'not null' => TRUE,
         ),
+        'full_name' => array(
+          'description' => t('Full name'),
+          'type' => 'varchar',
+          'length' => 128,
+        ),
         'type' => array(
           'description' => t('Type of object'),
           'type' => 'varchar',
