@@ -36,7 +36,7 @@ function scholar_browse_by_dept_form() {
       '#collapsed' => TRUE,
     );
 
-    $dept_query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_researcher_citation_counts WHERE department = '%s' ORDER BY full_name ASC", $dept);
+    $dept_query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_researcher_citation_counts} WHERE department = '%s' ORDER BY full_name ASC", $dept_title);
 
     $researchers = array();
 
@@ -46,7 +46,7 @@ function scholar_browse_by_dept_form() {
 //    var_dump($researchers);
     if ($researchers) {
       $output = '<ul>';
-      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
+      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . $dept_title . '"');
       foreach ($researchers as $res) {
         $output .= '</br>';
         $output .= l(t('@researcher (@citations)', array('@researcher' => $res['full_name'], '@citations' => $res['citation_count'])), 'test');
@@ -55,7 +55,7 @@ function scholar_browse_by_dept_form() {
     }
     else {
       $output = '<ul>';
-      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . str_replace('~~', ':', $dept_copy) . '"');
+      $output .= l(t('Search all authors'), $base_url . '/islandora/solr/search/mods.department_facet:"' . $dept_title . '"');
       $output .= '</ul>';
     }
 
