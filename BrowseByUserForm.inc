@@ -163,7 +163,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
 //      $number_of_citations = $username_xml->xpath('./result[@name="response"]/@numFound');
 //      $citations = $number_of_citations[0];
       $citation_query = db_fetch_array(db_query("SELECT citation_count FROM {islandora_scholar_researcher_citation_counts} WHERE pid = '%s'", $username[0]));
-      var_dump($citation_query);
+      $citations = $citation_query['citation_count'];
     }
     $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone_number[0], theme('item_list', $field_of_activity), t('@citations citations', array('@citations' => $citations)));
   }
