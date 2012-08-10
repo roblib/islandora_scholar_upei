@@ -162,7 +162,7 @@ function scholar_cron_citations_update() {
     $dept = $arr_dept->xpath('./arr[@name="dc.identifier"]/str');
     if ($dept[0] != '') {
       $dept_array = explode(':', (string) $dept[0]);
-      $dept_copy = $dept;      
+      $dept_copy = $dept_array[1];      
       $dept = strtolower($dept_array[1]);
       drupal_set_message('Dept: ' . $dept_copy);
 
