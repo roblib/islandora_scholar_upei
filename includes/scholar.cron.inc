@@ -160,7 +160,7 @@ function scholar_cron_citations_update() {
   var_dump($array_dept);
   $array_dept = array_filter($array_dept);
   foreach ($array_dept as $arr_dept) {
-    drupal_set_message('Dept: ' . $arr_dept);    
+    drupal_set_message('Dept: ' . (string) $arr_dept);    
     $dept = $arr_dept->xpath('./arr[@name="mads.identifier_sort"]/str');
     if ($dept[0] != '') {
       $dept_copy = str_replace('_', ' ', $dept[0]);
