@@ -182,7 +182,9 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
   }
   else {
     $form['emtpy'] = array(
-      '#value' => '</br>' . t('No results were found!'),
+      '#value' => t('No results were found!'),
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
     );
   }
 
