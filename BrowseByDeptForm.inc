@@ -20,7 +20,7 @@ function scholar_browse_by_dept_form() {
   $form = array();
   $depts = array();
   
-  $query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_citation_counts} WHERE type = 'department'");
+  $query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_dept_citation_counts}");
   
   while ($dept = db_fetch_array($query)) {
     $depts[] = $dept;
@@ -36,46 +36,6 @@ function scholar_browse_by_dept_form() {
       '#collapsed' => TRUE,
     );
     
-    $dept_copy = $dept_title;
-    
-    if ($dept_copy == 'Pathology and Microbiology') {
-        $dept_copy = 'Path Micro" OR mods.department_facet~~"Pathology and Microbiology';
-      }
-
-      if ($dept_copy == 'School of Business') {
-        $dept_copy = 'School of Business" OR mods.department_facet~~"Business';
-      }
-
-      if ($dept_copy == 'Political Science') {
-        $dept_copy = 'Political Studies" OR mods.department_facet~~"Political Science';
-      }
-
-      if ($dept_copy == 'Sociology and Anthropology') {
-        $dept_copy = 'Sociology and Anthropology" OR mods.department_facet~~"Soc Anth';
-      }
-
-      if ($dept_copy == 'Women\'s Studies') {
-        $dept_copy = 'Women\'s Studies" OR mods.department_facet~~"Womens Studies';
-      }
-
-      if ($dept_copy == 'Department of Biomedical Sciences') {
-        $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Department of Biomedical Sciences';
-      }
-
-      if ($dept_copy == 'Applied Human Sciences') {
-        $dept_copy = 'Applied Human Sciences" OR mods.department_facet~~"Home Economics';
-      }
-
-      if ($dept_copy == 'Biomedical Sciences') {
-        $dept_copy = 'Biomedical Sciences" OR mods.department_facet~~"Anatomy Physiology';
-      }
-
-      if ($dept_copy == 'Computer Science and Information Technology') {
-        $dept_copy = 'Computer Science and Information Technology" OR mods.department_facet~~"Computer Science and Info Technology';
-      }
-
-    $dept_copy = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_copy);
-    $dept_query = str_replace(array(' ', '&', ':'), array('%20', '%26', '%3A'), $dept_query);
     $query = 'http://' . $solr_location . '/select/?q=mads.organization:"' . $dept_query . '"&fl=mads.family,mads.given,mads.fullname,mads.username&rows=10000&sort=mads.family_sort+asc';
     $result = @file_get_contents($query);
 //    var_dump($query);
