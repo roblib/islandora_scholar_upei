@@ -443,15 +443,15 @@ function convert_mods_to_citeproc_json_name_role(SimpleXMLElement $name, array $
  */
 function convert_mods_to_citeproc_json_dates(SimpleXMLElement $mods) {
   $output = array();
-  $date_captured = convert_mods_to_citeproc_json_query($mods, "/mods:mods/mods:originInfo/mods:dateCaptured");
+  $date_captured = convert_mods_to_citeproc_json_query($mods, "//mods:originInfo/mods:dateCaptured");
   if (!empty($date_captured)) {
     $output['accessed']['raw'] = $date_captured;
   }
-  $date_issued = convert_mods_to_citeproc_json_query($mods, "/mods:mods/mods:originInfo/mods:dateIssued");
+  $date_issued = convert_mods_to_citeproc_json_query($mods, "//mods:originInfo/mods:dateIssued");
   if (!empty($date_issued)) {
     $output['issued']['raw'] = $date_issued;
   }
-  $date_created = convert_mods_to_citeproc_json_query($mods, "/mods:mods/mods:originInfo/mods:dateCreated");
+  $date_created = convert_mods_to_citeproc_json_query($mods, "//mods:originInfo/mods:dateCreated");
   if (!empty($date_created) && empty($output['issued'])) {
     $output['issued']['raw'] = $date_created;
   }

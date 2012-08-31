@@ -39,23 +39,24 @@ class Scholar {
     $item = new Fedora_Item($pid);
     $datastream_array = $item->get_datastreams_list_as_array();
     $tabset = islandora_scholar_build_citation($pid, 'thesis');
+    if (user_access('view signature tab')) {
+      if (array_key_exists('SIGNATURE', $datastream_array)) {
 
-    if (array_key_exists('SIGNATURE', $datastream_array)) {
-
-      $tabset['first_tab']['tabs']['signature'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('Signature'),
-        '#content' => drupal_get_form('islandora_scholar_signature_delete_form', $pid),
-        '#weight' => 4,
-      );
-    }
-    else {
-      $tabset['first_tab']['tabs']['signature'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('Signature'),
-        '#content' => drupal_get_form('islandora_scholar_signature_form', $pid),
-        '#weight' => 4,
-      );
+        $tabset['first_tab']['tabs']['signature'] = array(
+          '#type' => 'tabpage',
+          '#title' => t('Signature'),
+          '#content' => drupal_get_form('islandora_scholar_signature_delete_form', $pid),
+          '#weight' => 4,
+        );
+      }
+      else {
+        $tabset['first_tab']['tabs']['signature'] = array(
+          '#type' => 'tabpage',
+          '#title' => t('Signature'),
+          '#content' => drupal_get_form('islandora_scholar_signature_form', $pid),
+          '#weight' => 4,
+        );
+      }
     }
 
     return $tabset;
@@ -154,32 +155,32 @@ class Scholar {
 //    }
 //    else {
     if ($username) {
-    $username_query = file_get_contents('http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
-    if ($xml != NULL) {
-      $xml = new SimpleXMLElement($username_query);
-      $array = $xml->xpath('//doc');
-      $array = array_filter($array);
+      $username_query = file_get_contents('http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
+      if ($xml != NULL) {
+        $xml = new SimpleXMLElement($username_query);
+        $array = $xml->xpath('//doc');
+        $array = array_filter($array);
 
-      $rows = array();
-      if (!empty($array)) {
-        if (module_exists('scholar_tracking')) {
-          $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+        $rows = array();
+        if (!empty($array)) {
+          if (module_exists('scholar_tracking')) {
+            $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
+          }
+          else {
+            $header = array(t('Title'));
+          }
+          foreach ($array as $arr) {
+            $pid = (string) $arr->str;
+            $pids[] = $pid;
+          }
         }
         else {
-          $header = array(t('Title'));
-        }
-        foreach ($array as $arr) {
-          $pid = (string) $arr->str;
-          $pids[] = $pid;
+          $rows = NULL;
         }
       }
       else {
         $rows = NULL;
       }
-    }
-    else {
-      $rows = NULL;
-    }
     }
     else {
       $rows = NULL;
@@ -1152,14 +1153,14 @@ function islandora_scholar_build_citation($pid, $type) {
       '#value' => drupal_get_form('islandora_scholar_associate_button_form', $pid),
     );
   }
-  
+
   if (array_key_exists('ZIP', $datastream_array)) {
     $datastream_info = $item->get_datastream_info('ZIP');
     $description = $datastream_array['ZIP']['label'];
     $mods = islandora_bibilgraphy_form_get_mods($pid);
     $supp_array = islandora_scholar_zip_mods_to_array($mods);
 
-  if ($supp_array) {
+    if ($supp_array) {
 
       $tabset['first_tab']['tabs']['summary']['supplemental_info'] = array(
         '#type' => 'fieldset',
@@ -1181,7 +1182,7 @@ function islandora_scholar_build_citation($pid, $type) {
       drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
     }
   }
-  
+
   if (user_is_logged_in() && $data->issn != NULL && variable_get('scholar_romeo_check', 1) == 1) {
 
     $tabset['first_tab']['tabs']['romeo'] = array(
@@ -1396,7 +1397,7 @@ function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
-  
+
   global $base_url;
 
   $data = new Coins($variables['pid']);

@@ -271,6 +271,8 @@ function scholar_menu() {
  */
 function scholar_perm() {
   return array(
+    'view signature tab',
+    'add scholarly research',
     'view scholarly research',
     'administer scholarly research',
     'add users',
