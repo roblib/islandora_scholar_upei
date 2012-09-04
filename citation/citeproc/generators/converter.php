@@ -312,6 +312,7 @@ function convert_mods_to_citeproc_json_names(SimpleXMLElement $mods) {
         'composer' => 'composer',
         'original' => 'original-author',
         'recipient' => 'recipient',
+        'Thesis advisor' => 'thesis advisor',
         'author' => 'author'
       )
     ),
