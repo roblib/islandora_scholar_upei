@@ -201,25 +201,29 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $ds_array = $object->get_datastreams_list_as_array();
         $pdf_check = array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array);
         $check = '';
-        if (array_key_exists('OBJ', $ds_array)) {
+        $data = new Coins($doc->PID);
+        if (array_key_exists('OBJ', $ds_array) && $data->status == 'FULL_TEXT_AVAILABLE') {//check status in case ds exists but is embargoed
           $check = 'OBJ';
         }
-        if (array_key_exists('PDF', $ds_array)) {
+        if (array_key_exists('PDF', $ds_array) && $data->status == 'FULL_TEXT_AVAILABLE') {
           $check = 'PDF';
         }
-        $data = new Coins($doc->PID);
-
+        $url_frag = 'fedora/repository/' . $doc->pid;
+        if (module_exists('scholar_tracking')) {
+          $url_frag=   'download_ds/' . $doc->pid ;
+        }
+        
         switch ($check) {
           case 'OBJ':
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', 'fedora/repository/' . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
             break;
           case 'PDF':
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', 'fedora/repository/' . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
             break;
           default:
-            $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->sub_title;
+            $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->journal_title;
             $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
             break;
         }

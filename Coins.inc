@@ -35,6 +35,7 @@ class Coins {
   public $username = NULL;
   public $department = NULL;
   public $type = NULL;
+  public $status = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -97,6 +98,16 @@ class Coins {
     $this->authors = $authors;
     $this->contributors = $contributors;
     $this->family_names = $family_names;
+
+    $form =  $xml->physicalDescription->form;
+    if(!empty($form)){
+      foreach ($xml->physicalDescription->form as $form) {
+        if ($form['authority'] == 'local' && (string) $form != 'NO_OBJ') {
+         $this->status = 'FULL_TEXT_AVAILABLE';
+        }
+      }
+    }
+
 
     $reverse = array();
     $i = 0;
@@ -182,7 +193,7 @@ class Coins {
    */
   function render_view($type = 'citation') {
     global $base_url;
-    
+
     $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
 
     $headers = array('', '');
@@ -250,7 +261,9 @@ class Coins {
         $rows[] = array('Contributors', rtrim($contributors, ', '));
       }
       if (module_exists('scholar_tracking')) {
-        $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
+        if ($this->status == 'FULL_TEXT_AVAILABLE') { //check to see if the full text is available before we provide a URL
+          $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
+        }
       }
       else {
         $rows[] = array('URL', l($base_url . '/fedora/repository/' . $this->pid . '/PDF/PDF', $base_url . '/fedora/repository/' . $this->pid . '/PDF/PDF'));
