@@ -3,7 +3,6 @@
 /**
  * @file
  */
-
 /**
  * Constants
  */
@@ -157,7 +156,7 @@ function scholar_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
   );
-  
+
   $items['browse_authors2/%'] = array(
     'title' => t('Browse Authors2'),
     'file' => 'BrowseByUserForm.inc',
@@ -167,7 +166,7 @@ function scholar_menu() {
     'access arguments' => array('access content'),
     'type' => MENU_NORMAL_ITEM,
   );
-  
+
   $items['browse_users_dept/%'] = array(
     'title' => t('Browse Users by Dept'),
     'file' => 'BrowseByUserForm.inc',
@@ -239,8 +238,8 @@ function scholar_menu() {
     'access arguments' => array('refworks entry'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
-  
-    $items['users_suggest'] = array(
+
+  $items['users_suggest'] = array(
     'title' => 'Users suggest',
     'description' => 'Migrate content from refworks',
     'file' => 'Users.inc',
@@ -250,8 +249,8 @@ function scholar_menu() {
     'access arguments' => array('migrate content'), // Use something fedora specific.
     'type' => MENU_NORMAL_ITEM,
   );
-    
-    $items['scholar_associate/%'] = array(
+
+  $items['scholar_associate/%'] = array(
     'title' => 'Associate citation',
     'description' => 'Associate citation with researcher and department',
     'file' => 'Users.inc',
@@ -261,7 +260,7 @@ function scholar_menu() {
     'access arguments' => array('migrate content'), // Use something fedora specific.
     'type' => MENU_CALLBACK,
   );
-  
+
   return $items;
 }
 
@@ -470,6 +469,27 @@ function scholar_form_fedora_repository_ingest_form_alter(array &$form, array &$
       $form['#validate'] = array('scholar_bulk_ingest_form_validate');
     }
   }
+  //add a handler so we can update the rels-ext
+  $form['#submit'][] = 'scholar_auto_associate';
+}
+
+function scholar_auto_associate(&$form, &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
+  $item = new Fedora_Item($form_state['values']['pid']);
+  if (!empty($form_state['values']['identifier_u1_tags'])) {
+    foreach ($form_state['values']['identifier_u1_tags'] as $user) {
+      // add a rels relationship
+      //add_relationship($relationship, $object, $namespaceURI = RELS_EXT_URI, $literal_value = RELS_TYPE_URI) {
+      $item->add_relationship('fedora:hasReseacher',$user['identifier_u1'], 'info:fedora/fedora-system:def/relations-external#');
+    }
+  }
+  if (!empty($form_state['values']['identifier_u2_tags'])) {
+    foreach ($form_state['values']['identifier_u2_tags'] as $department) {
+      // add a rels relationship
+      $value = str_replace(' ', '_', $department['identifier_u2']);
+      $item->add_relationship('fedora:hasDepartment',$value, 'info:fedora/fedora-system:def/relations-external#');
+    }
+  }
 }
 
 /**
@@ -666,10 +686,10 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 
       $blocks[4]['info'] = t('Top viewed citations');
       $blocks[4]['cache'] = BLOCK_NO_CACHE;
-      
+
       $blocks[5]['info'] = t('Random citation');
       $blocks[5]['cache'] = BLOCK_NO_CACHE;
-      
+
       return $blocks;
 
     case 'view':
