@@ -480,7 +480,7 @@ function scholar_auto_associate(&$form, &$form_state) {
     foreach ($form_state['values']['identifier_u1_tags'] as $user) {
       // add a rels relationship
       //add_relationship($relationship, $object, $namespaceURI = RELS_EXT_URI, $literal_value = RELS_TYPE_URI) {
-      $item->add_relationship('fedora:hasReseacher',$user['identifier_u1'], 'info:fedora/fedora-system:def/relations-external#');
+      $item->add_relationship('fedora:hasResearcher',$user['identifier_u1'], 'info:fedora/fedora-system:def/relations-external#');
     }
   }
   if (!empty($form_state['values']['identifier_u2_tags'])) {
