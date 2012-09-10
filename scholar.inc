@@ -1212,7 +1212,7 @@ function islandora_scholar_build_citation($pid, $type) {
       );
     }
   }
-  else {
+ /** else {
 
     if (array_key_exists('OBJ', $datastream_array) == FALSE && array_key_exists('PDF', $datastream_array) == FALSE) {
       $tabset['first_tab']['tabs']['pdf'] = array(
@@ -1230,7 +1230,7 @@ function islandora_scholar_build_citation($pid, $type) {
         '#weight' => 3,
       );
     }
-  }
+  }*/
 
   if (user_access('administer scholarly research')) {
 
