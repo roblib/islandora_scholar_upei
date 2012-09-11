@@ -128,7 +128,7 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
       $rel1 = $object->get_relationships('hasResearcher');
       if ($rel1 == NULL) {
         foreach ($u1_array as $researcher) {
-          $object->add_relationship('fedora:hasResearcher', str_replace(' ', '_', trim($researcher)), 'info:fedora/fedora-system:def/relations-external#');
+          $object->add_relationship('hasResearcher', str_replace(' ', '_', trim($researcher)), 'info:fedora/fedora-system:def/relations-external#');
         }
       }
       else {
