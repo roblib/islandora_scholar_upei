@@ -63,10 +63,10 @@ function scholar_migrate_refworks_form() {
   $table = scholar_migrate_refworks_table();
 
   if ($table != FALSE) {
-  
-  $form['table'] = array(
-    'table' => $table,
-  );
+
+    $form['table'] = array(
+      'table' => $table,
+    );
 
     $form['submit'] = array(
       '#type' => 'submit',
@@ -150,20 +150,30 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
     // Ensure that the previous edit has completed before starting
     // the next to prevent errors due to the object being locked
     $model_edit_test = '';
-    $model_test = $object->get_models();
-    if ($model_test[0]['object'] == 'islandora:refworksCModel') {
-//      $model_result = $object->purge_relationship('hasModel', 'islandora:refworksCModel');
-//      if ($model_result) {
-        $object->add_relationship('hasModel', 'islandora:citationCModel', FEDORA_MODEL_URI);
-        $model_edit_test = TRUE;
-//      }
+    $model_test = $object->get_rdf_relationships();
+    $arr = $model_test['fedora-model:hasModel'];
+    $update_model = FALSE;
+    $update_collection = FALSE;
+    if (!empty($arr)) {
+      if (in_array('islandora:refworksCModel', $arr) && !in_array('islandora:citationCModel', $arr)) {
+        $update_model = TRUE;
+      }
+    }
+    if ($update_model) {
+      //      $model_result = $object->purge_relationship('hasModel', 'islandora:refworksCModel');
+      //      if ($model_result) {
+      $object->add_relationship('hasModel', 'islandora:citationCModel', FEDORA_MODEL_URI);
+      //assuming we are part of the citation collection since we are coming from refworks.
+      //$object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
+      $model_edit_test = TRUE;
+      //      }
     }
     if ($model_edit_test) {
 //      $collection_test = $object->get_relationships('fedora:isMemberOfCollection');
 //      if ($collection_test[0]['object'] == 'ir:collection') {
 //        $collection_result = $object->purge_relationship('fedora:isMemberOfCollection', 'ir:collection');
 //        if ($collection_result) {
-          $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
+      $object->add_relationship('fedora:isMemberOfCollection', 'ir:citationCollection');
 //        }
 //      }
     }
