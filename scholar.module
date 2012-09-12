@@ -178,7 +178,7 @@ function scholar_menu() {
   );
 
   $items['browse_dept'] = array(
-    'title' => t('Browse Departments'),
+    'title' => t('Browse Organizations'),
     'file' => 'BrowseByDeptForm.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('scholar_browse_by_dept_form'),

@@ -20,7 +20,7 @@ function scholar_browse_by_dept_form() {
   $form = array();
   $depts = array();
 
-  $query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_dept_citation_counts} ORDER BY full_name ASC");
+  $query = db_query("SELECT pid,full_name,citation_count from {islandora_scholar_dept_citation_counts} WHERE citation_count > 0 ORDER BY full_name ASC");
 
   while ($dept = db_fetch_array($query)) {
     $depts[] = $dept;
