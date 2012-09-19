@@ -45,8 +45,8 @@ class ScholarSolrResults extends IslandoraSolrResults {
     $headers = variable_get('scholar_solr_node_for_header', 'Institutional Repository Collection ~ 8');
     $arr = islandora_build_substitution_list($headers);
     //load a node as a header for the search results in case we have canned searches we would like to explain
-    $node_id = $arr[$solrQueryProcessor->internalSolrParams['f'][0]];
-    if ($solrQueryProcessor->solrQuery = " " && !empty($node_id)) {
+    $node_id = $arr[$solrQueryProcessor->solrQuery];
+    if (!empty($node_id)) {
       $output .= '<div id="islandora_search_header">';
       $node = node_load($node_id);
       $output .= $node->body;
