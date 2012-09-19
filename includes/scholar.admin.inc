@@ -112,6 +112,18 @@ function scholar_admin_settings() {
     '#default_value' => variable_get('scholar_default_csl', 'default'),
   );
   
+   $form['scholar_solr'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Solr settings'),
+  );
+  
+  $form['scholar_solr']['scholar_solr_node_for_header'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Nodes and Values for search header config'),
+    '#default_value' => variable_get('scholar_solr_node_for_header', 'Institutional Repository Collection ~ 8'),
+    '#description' => 'Enter a search filter and a node id ie. Institutional Repository Collection ~ 8 each entry should be on its own line'
+  );
+  
   return system_settings_form($form);
 }
 

@@ -325,6 +325,33 @@ function bibutils_to_csl($term) {
   }
 }
 
+function local_to_csl($term) {
+  $term = strtolower(trim($term));
+  switch ($term) {
+    case 'journal article':
+    case 'journal, electronic':
+    case 'newspaper article':
+    case 'magazine article':
+    case '':
+      return 'article-journal';
+    case 'book chapter':
+    case 'book section':
+    case 'book, section':
+      return 'chapter';
+    case 'book, whole':
+      return 'book';
+    case 'conference proceedings':
+      return 'paper-conference';
+    case 'dissertation/thesis':
+    case 'signature project':
+      return 'thesis';
+    case 'web page':
+      return 'webpage';
+    default:
+      return false;
+  }
+}
+
 function mods_genre_to_csl_type($term) {
 //  $marcgt = marcgt_to_csl($term);
   $marcgt = ir_citation_marcgt_csl_terms($term);
@@ -336,6 +363,11 @@ function mods_genre_to_csl_type($term) {
   return $zotero;
 
   $bibutils = bibutils_to_csl($term);
-  return $bibutils;
+  if (!empty($bibutils))
+    return $bibutils;
+  $local = local_to_csl($term);
+  if(!empty($local))
+    return $local;
+  
   return FALSE;
 }

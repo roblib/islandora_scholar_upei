@@ -48,9 +48,10 @@ function convert_mods_to_citeproc_jsons($mods) {
     'event' => convert_mods_to_citeproc_json_event($mods),
     'event-place' => convert_mods_to_citeproc_json_event_place($mods),
     'genre' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:relatedItem[@type="host"]/mods:genre'),
+    
     'ISBN' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="isbn"]'),
-    'volume' => (int) convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:part/mods:detail[@type="volume"]/mods:number'),
-    'issue' => (int) convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:part/mods:detail[@type="issue"]/mods:number'),
+    'volume' => (int) convert_mods_to_citeproc_json_query($mods, '//mods:part/mods:detail[@type="volume"]/mods:number'),
+    'issue' => (int) convert_mods_to_citeproc_json_query($mods, '//mods:part/mods:detail[@type="issue"]/mods:number'),
     'note' => convert_mods_to_citeproc_json_note($mods),
     'number' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:relatedItem[@type="series"]/mods:titleInfo/mods:partNumber'),
     'page' => convert_mods_to_citeproc_json_page($mods),
@@ -65,6 +66,7 @@ function convert_mods_to_citeproc_jsons($mods) {
   );
   return $output;
 }
+
 
 /**
  * Gets the title property for the Citation.

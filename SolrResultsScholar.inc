@@ -41,6 +41,17 @@ class ScholarSolrResults extends IslandoraSolrResults {
     $apacheSolrResult = $solrQueryProcessor->solrResult;
     $total = (int) $apacheSolrResult->response->numFound;
     $end = min(($solrQueryProcessor->solrLimit + $solrQueryProcessor->solrStart), $total);
+    $title = "";
+    $headers = variable_get('scholar_solr_node_for_header', 'Institutional Repository Collection ~ 8');
+    $arr = islandora_build_substitution_list($headers);
+    //load a node as a header for the search results in case we have canned searches we would like to explain
+    $node_id = $arr[$solrQueryProcessor->internalSolrParams['f'][0]];
+    if ($solrQueryProcessor->solrQuery = " " && !empty($node_id)) {
+      $output .= '<div id="islandora_search_header">';
+      $node = node_load($node_id);
+      $output .= $node->body;
+      $output .= '</div>';
+    }
 
     // Check for empty resultset
     if ($total === 0) {
@@ -117,6 +128,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
      * Also, perhaps there's no difference between primary and secondary profiles?
      */
 
+
     $output .= $this->printResultsScholar($solrQueryProcessor->solrResult);
 
     // Render Drupal pager (bottom of search results)
@@ -153,6 +165,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
       $keys = array_keys($fields);
       if (count($keys) > 0) {
         foreach ($highlight->$keys[0] as $body) {
+          
         }
       }
     }
@@ -210,9 +223,9 @@ class ScholarSolrResults extends IslandoraSolrResults {
         }
         $url_frag = 'fedora/repository/' . $doc->pid;
         if (module_exists('scholar_tracking')) {
-          $url_frag=   'download_ds/' . $doc->pid ;
+          $url_frag = 'download_ds/' . $doc->pid;
         }
-        
+
         switch ($check) {
           case 'OBJ':
             $download_img = $base_url . '/' . $path . '/images/download.png';
@@ -227,9 +240,9 @@ class ScholarSolrResults extends IslandoraSolrResults {
             $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
             break;
         }
-        
+
         $supp_result = NULL;
-        
+
         if (array_key_exists('ZIP', $ds_array)) {
           $supp_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Supplemental information', 'fedora/repository/' . $doc->PID . '/ZIP/ZIP', array('html' => TRUE)) . '</div>';
         }
@@ -247,15 +260,15 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
         $related = '<div class="scholar_search_related">' . l('<img src="' . $base_url . '/' . $path . '/images/reload.png"/> Related content', 'islandora/solr/search/' . str_replace(' ', ' OR ', $dc_title), array('html' => TRUE)) . '</div>';
         $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $bookmark . $pdf_result . $supp_result;
-        
+
         $row++;
       }
       elseif ($person) {
         $image_path = $base_path . drupal_get_path('module', 'scholar') . '/images/gnome_stock_person.png';
         $rows[][] = '<img src="' . $image_path . '"/>';
         foreach ($doc as $field => $value) {
-            $person_result_fields = array('mads.fullname', 'mads.topic');
-            if (in_array($field, $person_result_fields)) {
+          $person_result_fields = array('mads.fullname', 'mads.topic');
+          if (in_array($field, $person_result_fields)) {
             if ($limitResults && empty($this->resultFieldArray[$field])) {
               continue;
             }
@@ -273,7 +286,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
               $rows[$row][] = ucfirst(ltrim($value[0]));
             }
             elseif ($field == 'mads.fullname' && $value != NULL) {
-              $l = l($value, 'fedora/repository/' . $doc->PID) . '</BR>';              
+              $l = l($value, 'fedora/repository/' . $doc->PID) . '</BR>';
               $rows[$row][] = $l;
             }
             elseif ($field == 'mads.topic' && is_array($value)) {
@@ -290,8 +303,8 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $image_path = $base_path . drupal_get_path('module', 'scholar') . '/images/gnome_stock_dept.png';
         $rows[][] = '<img src="' . $image_path . '"/>';
         foreach ($doc as $field => $value) {
-            $person_result_fields = array('mads.identifier');
-            if (in_array($field, $person_result_fields)) {
+          $person_result_fields = array('mads.identifier');
+          if (in_array($field, $person_result_fields)) {
             if ($limitResults && empty($this->resultFieldArray[$field])) {
               continue;
             }
@@ -309,7 +322,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
               $rows[$row][] = ucfirst(ltrim($value[0]));
             }
             elseif ($field == 'mads.identifier' && $value != NULL) {
-              $l = l($value, 'fedora/repository/' . $doc->PID) . '</BR>';              
+              $l = l($value, 'fedora/repository/' . $doc->PID) . '</BR>';
               $rows[$row][] = $l;
             }
             else {
