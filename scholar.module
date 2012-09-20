@@ -283,43 +283,106 @@ function scholar_perm() {
 }
 
 /**
- * Implements hook_user().
+ * alter the user creation form.
  *
  * 
  */
-/*function scholar_user($op, &$edit, &$account, $category = NULL) {
-  module_load_include('inc', 'scholar', 'includes/scholar.user');
-  switch($op) {
-    case 'insert':
-      scholar_create_user_object($edit, $account);
-      break;
-    case 'view':
-      $arr = unserialize($account->data);
-      $pid = $arr['islandora_user_pid'];
-      $account->content['islandora_user_pid'] = array(
-        '#title' => t('My Repository Project'),
-        '#value' => l(t('Project'), 'fedora/repository/' . $pid),
-        '#class' => 'islandora_user_pid',
-        '#type' => 'user_profile_item'
-      );
-      $account->content['islandora_unmodified_objects'] = array(
-        '#title' => t(''),
-        '#value' => scholar_get_user_objects(),
-        '#class' => 'islandora_unmodified_list',
-        '#type' => 'user_profile_item'
-      );
-      break;
-  }
-}*/
-
-function scholar_form_user_register_alter(&$form, &$form_state){
+function scholar_form_user_register_alter(&$form, &$form_state) {
+  $form['scholar'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Scholar'),
+    '#weight' => 5,
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+  $form['scholar']['given_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Given Name'),
+    '#maxlength' => '128',
+      //'#required' => TRUE,
+  );
+  $form['scholar']['family_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Family Name'),
+    '#maxlength' => '128',
+      //'#required' => TRUE,
+  );
+  $form['scholar']['display_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Display Name'),
+    '#maxlength' => '128',
+    // '#required' => TRUE,
+    '#description' => 'Enter the name as you would like to see it displayed.  ie. John Doe'
+  );
+  $form['scholar']['date'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Date'),
+    '#maxlength' => '128',
+    //'#required' => TRUE,
+    '#description' => t('Birth date - death date'),
+  );
+  $form['scholar']['department'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Department'),
+    '#maxlength' => '128',
+      //'#required' => TRUE,
+  );
+  $form['scholar']['position'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Position'),
+    '#maxlength' => '128',
+      //'#required' => TRUE,
+  );
+  $form['scholar']['phone'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Phone'),
+    '#maxlength' => '128',
+      //'#required' => TRUE,
+  );
+  $form['scholar']['start_date'] = array(
+    '#type' => 'date',
+    '#title' => t('Start Date at UPEI'),
+    '#required' => TRUE,
+  );
+  $form['scholar']['end_date'] = array(
+    '#type' => 'date',
+    '#title' => t('End Date at UPEI'),
+      //'#required' => TRUE,
+  );
+  $form['scholar']['scholar_status'] = array(
+    '#type' => 'select',
+    '#title' => t('Status'),
+    '#options' => array(
+      'Current' => t('Current'),
+      'Retired' => t('Retired'),
+      'Other' => t('Other'),
+    ),
+  );
+  $form['scholar']['notes'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Notes'),
+    '#maxlength' => '128',
+      //'#required' => TRUE,
+  );
+  $form['scholar']['url'] = array(
+    '#type' => 'textfield',
+    '#title' => t('URL'),
+    '#maxlength' => '255',
+      //'#required' => TRUE,
+  );
+  //$form['#validate'][] = 'scholar_add_user_to_fedora_validate';
   $form['#submit'][] = 'scholar_add_user_to_fedora';
-  
 }
 
-function scholar_add_user_to_fedora(&$form, &$forms_state){
-  $test = $form;
+//function scholar_add_user_to_fedora_validate(&$form, &$form_state) {
+ 
+//}
+
+function scholar_add_user_to_fedora(&$form, &$form_state) {
+  module_load_include('inc', 'scholar', 'includes/scholar.user');
+  scholar_create_user_object($form, $form_state);
 }
+
 function scholar_uninstall() {
   return drupal_uninstall_schema('scholar');
 }
