@@ -1,5 +1,0 @@
-[tracemonkey]
-command: /home/bennett/src/jslibs/Linux_32_opt/jshost -u
-
-[rhino]
-command: java -client -jar ./rhino/js-1.7R2.jar -opt 8
