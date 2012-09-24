@@ -312,7 +312,8 @@ function scholar_form_user_register_alter(&$form, &$form_state) {
     '#title' => t('Display Name'),
     '#maxlength' => '128',
     // '#required' => TRUE,
-    '#description' => 'Enter the name as you would like to see it displayed.  ie. John Doe'
+    '#description' => 'Enter the name as you would like to see it displayed.  ie. John Doe.  If this field is blank then no Authority object will be created in the repository.
+      A drupal user will still be created.'
   );
   $form['scholar']['date'] = array(
     '#type' => 'textfield',
@@ -328,10 +329,20 @@ function scholar_form_user_register_alter(&$form, &$form_state) {
       //'#required' => TRUE,
   );
   $form['scholar']['position'] = array(
-    '#type' => 'textfield',
+    '#type' => 'select',
     '#title' => t('Position'),
     '#maxlength' => '128',
       //'#required' => TRUE,
+    '#options' => array(
+      'EmeritusFaculty' => t('Emeritus Faculty'),
+      'Emeritis Librarian' => t('Emeritus Librarian'),
+      'Faculty Member' => t('Faculty Member'),
+      'Librarian' => t('Librarian'),
+      'NonAcademic' => t('Non Academic'),
+      'Postdoc' => t('Postdoc'),
+      'GraduateStudent' => t('Graduate Student'),
+      'UndergraduateStudent' => t('Under Graduate Student'),
+    ),
   );
   $form['scholar']['phone'] = array(
     '#type' => 'textfield',
