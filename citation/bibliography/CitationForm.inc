@@ -34,7 +34,7 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
     ),
     'action' => array(
       '#type' => 'submit',
-      '#value' => $stored ? t('Remove from Bibliography') : t('Add to Bibliography'),
+      '#value' => $stored ? t('Remove from My List') : t('Add to My List'),
       '#action' => $stored ? 'remove' : 'add',
       '#pid' => $pid,
       '#redirect' => $base_url . '/fedora/repository/' . $pid,
@@ -96,7 +96,7 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
     'action' => array(
       '#type' => 'image_button',
       '#src' => $stored ? $path . '/images/bookmarks_list_remove2.png' : $path . '/images/bookmarks_list_add.png',
-      '#value' => $stored ? t('Remove from Bibliography') : t('Add to Bibliography'),
+      '#value' => $stored ? t('Remove from My List') : t('Add to My List'),
       '#action' => $stored ? 'remove' : 'add',
       '#pid' => $pid,
       '#redirect' => $redirect,

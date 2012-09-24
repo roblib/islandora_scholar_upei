@@ -375,7 +375,6 @@ function scholar_form_user_register_alter(&$form, &$form_state) {
 }
 
 //function scholar_add_user_to_fedora_validate(&$form, &$form_state) {
- 
 //}
 
 function scholar_add_user_to_fedora(&$form, &$form_state) {
@@ -791,6 +790,9 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[5]['info'] = t('Random citation');
       $blocks[5]['cache'] = BLOCK_NO_CACHE;
 
+      //$blocks[6]['info'] = t('Scholar Scrape');
+      //$blocks[6]['cache'] = BLOCK_NO_CACHE;
+
       return $blocks;
 
     case 'view':
@@ -831,6 +833,12 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
 
         $block['content'] = drupal_get_form('scholar_random_citation');
       }
+      /* elseif ($delta == 6) {
+
+        $block['subject'] = t('Scholar Scrape');
+
+        $block['content'] = scholar_scrape_get_content();
+        } */
 
       return $block;
   }
@@ -840,6 +848,48 @@ function scholar_cron() {
   module_load_include('inc', 'scholar', 'includes/scholar.cron');
   scholar_cron_embargo_check();
   scholar_cron_citations_update();
+}
+
+/**
+ * 
+ */
+function scholar_form_islandora_extended_search_form_alter(&$form, &$form_state) {
+  module_load_include('inc', 'scholar', 'includes/scholar.query');
+   $query = 'select $object $title
+    from <#ri>
+    where $object <info:fedora/fedora-system:def/model#label> $title
+    and $object <fedora-rels-ext:isMemberOfCollection> <info:fedora/ir:scholar>';
+  $options = islandora_scholar_query($query, TRUE);
+  $options['aaaa'] = 'Any';
+  ksort($options);
+  
+  $form['collections'] = array(
+    '#type' => 'select',
+    '#title' => t('Collection'),
+    '#options' => $options,
+    '#weight' => -10,
+  );
+  //we are overriding the orginal handler so we can append to the query
+  $form['#submit'][0] = 'islandora_scholar_handle_search';
+}
+
+/**
+ * get a list of collections to display in a dropdown. 
+ */
+function islandora_scholar_handle_search(&$form, &$form_state) {
+  $_SESSION['islandora_extended_search']['values'] = $form_state['values'];
+  //$_SESSION['islandora_extended_search']['sort'] = $form_state['values']['sort'];
+  //$_SESSION['islandora_extended_search']['order'] = $form_state['values']['order'];
+  $query = _islandora_extended_search_form_build_query($form_state);
+  $collection = $form_state['values']['collections'] ;
+  
+  if($collection != 'aaaa'){
+    //$collection = urlencode($collection);
+    $query .= " AND collection_title:" . "\"$collection\"";
+  }
+  $form_state['redirect'] = 'islandora/solr/search/' . urlencode($query) . ''; // Redirect to the search.
+   
+
 }
 
 function scholar_theme() {

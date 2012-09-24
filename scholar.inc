@@ -1212,26 +1212,25 @@ function islandora_scholar_build_citation($pid, $type) {
       );
     }
   }
- /** else {
+  /** else {
 
     if (array_key_exists('OBJ', $datastream_array) == FALSE && array_key_exists('PDF', $datastream_array) == FALSE) {
-      $tabset['first_tab']['tabs']['pdf'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('Document'),
-        '#content' => t('No documents have been uploaded yet.'),
-        '#weight' => 3,
-      );
+    $tabset['first_tab']['tabs']['pdf'] = array(
+    '#type' => 'tabpage',
+    '#title' => t('Document'),
+    '#content' => t('No documents have been uploaded yet.'),
+    '#weight' => 3,
+    );
     }
     else {
-      $tabset['first_tab']['tabs']['pdf'] = array(
-        '#type' => 'tabpage',
-        '#title' => t('Document'),
-        '#content' => drupal_get_form('islandora_scholar_document_delete_form', $pid),
-        '#weight' => 3,
-      );
+    $tabset['first_tab']['tabs']['pdf'] = array(
+    '#type' => 'tabpage',
+    '#title' => t('Document'),
+    '#content' => drupal_get_form('islandora_scholar_document_delete_form', $pid),
+    '#weight' => 3,
+    );
     }
-  }*/
-
+    } */
   if (user_access('administer scholarly research')) {
 
     if (array_key_exists('ZIP', $datastream_array)) {
@@ -1423,9 +1422,29 @@ function template_preprocess_scholar(&$variables) {
       $time_last_viewed = 'Never';
     }
   }
-
+  $path = $path = drupal_get_path('module', 'scholar');
   $item = new Fedora_Item($variables['pid']);
   $datastream_array = $item->get_datastreams_list_as_array();
+  if (array_key_exists('OBJ', $datastream_array) && $data->status == 'FULL_TEXT_AVAILABLE') {//check status in case ds exists but is embargoed
+    $check = 'OBJ';
+  }
+  if (array_key_exists('PDF', $datastream_array) && $data->status == 'FULL_TEXT_AVAILABLE') {
+    $check = 'PDF';
+  }
+  $url_frag = 'fedora/repository/';
+  if (module_exists('scholar_tracking')) {
+    $url_frag = 'download_ds/';
+  }
+  switch ($check) {
+    case 'OBJ':
+      $download_img = $base_url . '/' . $path . '/images/download.png';
+      $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', $url_frag . $variables['pid'] . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+      break;
+    case 'PDF':
+      $download_img = $base_url . '/' . $path . '/images/download.png';
+      $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', $url_frag . $variables['pid'] . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+      break;
+  }
 
   if (array_key_exists('ZIP', $datastream_array)) {
     $datastream_info = $item->get_datastream_info('ZIP');
@@ -1461,6 +1480,8 @@ function template_preprocess_scholar(&$variables) {
     'times_read' => $read['count'],
     'time_last_viewed' => $time_last_viewed,
     'datastream_array' => $datastream_array,
+    'csl' => $csl,
+    'full_text' => $pdf_result,
   );
 }
 
