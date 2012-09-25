@@ -1,0 +1,49 @@
+/* 
+    Document   : search-resuts.css
+    Created on : Sep 25, 2012, 9:42:46 AM
+    Author     : ppound
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+
+/*
+* Inline Solr Query filter block
+*/
+
+/* Reset default styles */
+.islandora_solr_search_query_inline dt,
+.islandora_solr_search_query_inline dd {
+  padding:0;
+  margin:0;
+  display: block;
+}
+
+/* Set a min-width for terms and set inline */
+.islandora_solr_search_query_inline dt {
+  clear: left;
+  float: left;
+  min-width: 7em;
+  text-align: right;
+}
+
+/* Move definitions over a bit past term width */
+.islandora_solr_search_query_inline dd {
+  margin-left: 7.5em;
+}
+
+/* Horizontal styling for lists in definition lists */
+.islandora_solr_search_query_inline dd ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.islandora_solr_search_query_inline dd li {
+  list-style-image: none;
+  list-style-type: none;
+  margin-left: 0px;
+  white-space: nowrap;
+  float: left;
+  padding-right: 4px;
+}

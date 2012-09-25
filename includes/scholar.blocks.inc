@@ -4,6 +4,152 @@
  * @file
  */
 
+class ScholarSearchResults{
+    /**
+   * Function: currentQuery
+   *
+   * Description: Displays elements of the current solr query (with enabled filters).
+   *   
+   *
+   * @param IslandoraSolrQueryProcessor $solrQueryProcessor
+   */
+  function currentQuery($solrQueryProcessor) {
+    drupal_add_css(drupal_get_path('module', 'scholar') . '/css/searchresults.css');
+    // set path
+    $path = SOLR_SEARCH_PATH . '/' . $solrQueryProcessor->solrQuery; // $_GET['q'] didn't seem to work here
+    
+    // get date format
+    $format = variable_get('islandora_solr_facet_date_format', 'Y');
+    
+    // set output variable
+    $output = '';
+    
+    // get user provided filter parameters
+    $fq = $solrQueryProcessor->internalSolrParams['f'];
+    
+    // parameters set in url
+    $params = $solrQueryProcessor->internalSolrParams;
+
+    
+    // Get Query values
+    if (!in_array($solrQueryProcessor->solrQuery, $solrQueryProcessor->different_kinds_of_nothing)) {
+      // get query value
+      $query_value = $solrQueryProcessor->solrQuery;
+      
+      // set list variables
+      $query_list = array();
+      
+      // remove link keeps all parameters (query gets removed instead)
+      $query_minus = array();
+      $query_minus = $params;
+
+      // remove query from path
+      $path_minus = implode('/', explode('/', $path, -1)) . '/ ';
+      
+      // set attributes variable for remove link
+      $attr_minus = array();
+      // set title
+      $attr_minus['title'] = t('Remove') . ' ' . $query_value;
+      // set rel
+      $attr_minus['rel'] = 'nofollow';      
+      // set url
+      $attr_minus['href'] = url($path_minus, array('query' => $query_minus));
+      
+      // create link
+      // we're not using l() because of active classes: http://drupal.org/node/41595
+      $query_list[] = $query_value . ' <a' . drupal_attributes($attr_minus) . '>[x]</a>';
+      
+      // add wrap and list
+      $output .= '<div class="islandora_solr_search_query_inline clear-block">';
+      //TODO make this a template
+      $output .= '<dl><dt>Your Search:</dt><dd>';
+      
+      $output .= theme_item_list($query_list, NULL, "ul", array('class' => 'islandora_solr_search_query_list query_list'));
+      $output .= '</dd>';
+      // 'islandora_solr_search_query_wrap'
+      
+    } else {
+      $output .= '<div class="islandora_solr_search_query_inline clear-block">';
+      //TODO make this a template
+      $output .= '<dl><dt>Your Search:</dt><dd>';
+      
+      $output .= 'no term entered';
+      $output .= '</dd>';
+    }
+    
+    
+    // Get Filter values
+    if (!empty($fq)) {
+      
+      // set list variables
+      $filter_list = array();
+      
+      // loop over filters
+      foreach ($fq as $key => $filter) {
+
+        // check for exclude filter
+        if ($filter[0] == '-') {
+//          $symbol = '&#2260;';
+          $symbol = '&ne;';
+        }
+        else {
+          $symbol = '=';
+        }
+
+        // split the filter into field and value
+        $filter_split = explode(':', $filter, 2);
+        // trim brackets
+        $filter_split[1] = trim($filter_split[1], "\"");
+
+        // if value is date
+        if (isset($solrQueryProcessor->solrParams['facet.date']) AND in_array(ltrim($filter_split[0], '-'), $solrQueryProcessor->solrParams['facet.date'])) {
+          // split range filter string to return formatted date values
+          $filter_str = $filter_split[1];
+          $filter_str = trim($filter_str, '[');
+          $filter_str = trim($filter_str, ']');
+          $filter_array = explode(' TO ', $filter_str);
+          $filter_split[1] = format_date(strtotime(trim($filter_array[0])) + (60 * 60 * 24), 'custom', $format) . ' - ' . format_date(strtotime(trim($filter_array[1])) + (60 * 60 * 24), 'custom', $format);
+        }
+
+        // pull out filter (for exclude link)
+        $query_minus = array();
+        $f_x['f'] = array_diff($params['f'], array($filter));
+        $query_minus = array_merge($params, $f_x);
+        // resetting the filter key's order // @TODO find a cleaner way to do this.
+        if ($query_minus['f']) {
+          $query_minus['f'] = array_merge(array(), $query_minus['f']);
+        }
+        // remove 'f' if empty
+        if (empty($query_minus['f'])) {
+          unset($query_minus['f']);
+        }
+
+        // set attributes variable for remove link
+        $attr_minus = array();
+        // set title
+        $attr_minus['title'] = t('Remove') . ' ' . $filter;
+        // set rel
+        $attr_minus['rel'] = 'nofollow';      
+        // set url
+        $attr_minus['href'] = url($path, array('query' => $query_minus));
+
+        // create link
+        // we're not using l() because of active classes: http://drupal.org/node/41595
+        $filter_list[] =  $filter_split[1]. ' <a' . drupal_attributes($attr_minus) . '>[x]</a> ' ;
+      }
+      
+      // return filter list
+      $output .= '<dt>Limited to:</dt>';
+      $output .= '<dd>';
+     // $output .= '<div class="islandora_solr_search_filter_wrap">';
+      $output .= theme_item_list($filter_list, NULL, "ul", array('class' => 'islandora_solr_search_filter_list filter_list'));
+      $output .= '</dd>'; // 'islandora_solr_search_filter_wrap'
+    }
+     $output .= '</dl></div>';
+    return $output;
+  }
+}
+
 function scholar_recent_items($form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_utils');
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');

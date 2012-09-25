@@ -282,6 +282,23 @@ function scholar_perm() {
   );
 }
 
+/** 
+ * implement our own query block so we can style it
+ * @return type 
+ */
+function scholar_islandora_solr_query_blocks() {
+  return array(
+    'scholar_current_query' => array(
+      'name' => t('Scholar Current Query'),
+      'module' => 'scholar',
+      'file' => 'includes/scholar.blocks.inc',
+      'class' => 'ScholarSearchResults',
+      'function' => 'currentQuery',
+      'form' => NULL,
+    ),
+  );
+}
+
 /**
  * alter the user creation form.
  *
@@ -332,7 +349,7 @@ function scholar_form_user_register_alter(&$form, &$form_state) {
     '#type' => 'select',
     '#title' => t('Position'),
     '#maxlength' => '128',
-      //'#required' => TRUE,
+    //'#required' => TRUE,
     '#options' => array(
       'EmeritusFaculty' => t('Emeritus Faculty'),
       'Emeritis Librarian' => t('Emeritus Librarian'),
@@ -866,14 +883,14 @@ function scholar_cron() {
  */
 function scholar_form_islandora_extended_search_form_alter(&$form, &$form_state) {
   module_load_include('inc', 'scholar', 'includes/scholar.query');
-   $query = 'select $object $title
+  $query = 'select $object $title
     from <#ri>
     where $object <info:fedora/fedora-system:def/model#label> $title
     and $object <fedora-rels-ext:isMemberOfCollection> <info:fedora/ir:scholar>';
   $options = islandora_scholar_query($query, TRUE);
   $options['aaaa'] = 'Any';
-  ksort($options);
-  
+  krsort($options);
+
   $form['collections'] = array(
     '#type' => 'select',
     '#title' => t('Collection'),
@@ -892,15 +909,13 @@ function islandora_scholar_handle_search(&$form, &$form_state) {
   //$_SESSION['islandora_extended_search']['sort'] = $form_state['values']['sort'];
   //$_SESSION['islandora_extended_search']['order'] = $form_state['values']['order'];
   $query = _islandora_extended_search_form_build_query($form_state);
-  $collection = $form_state['values']['collections'] ;
-  
-  if($collection != 'aaaa'){
+  $collection = $form_state['values']['collections'];
+
+  if ($collection != 'aaaa') {
     //$collection = urlencode($collection);
     $query .= " AND collection_title:" . "\"$collection\"";
   }
   $form_state['redirect'] = 'islandora/solr/search/' . urlencode($query) . ''; // Redirect to the search.
-   
-
 }
 
 function scholar_theme() {
