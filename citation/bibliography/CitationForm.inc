@@ -55,10 +55,10 @@ function islandora_bibliography_citation_form_submit(array $form, array &$form_s
   $action = $form_state['clicked_button']['#action'];
   $pid = $form_state['clicked_button']['#pid'];
   if ($action == 'add') {
-          $return = Bibliography::AddCitation($pid);
+    $return = Bibliography::AddCitation($pid);
   }
   else {
-          $return = Bibliography::RemoveCitation($pid);
+    $return = Bibliography::RemoveCitation($pid);
   }
   $redirect = $form_state['clicked_button']['#redirect'];
   drupal_goto($redirect);
@@ -82,9 +82,9 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
   $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
   $redirect = ($base_url . substr($_SESSION['search_url'], strpos($_SESSION['search_url'], '/islandora/')));
-    $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20', '%2522', '%3A', '%2520', '%252C'), array(':', '', '', '', ' ', '"', ':', ' ', ','), $redirect);
+  $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20', '%2522', '%3A', '%2520', '%252C'), array(':', '', '', '', ' ', '"', ':', ' ', ','), $redirect);
   return array(
-    '#action' => 'bibliography/citation/search',
+    '#action' => $base_url . '/bibliography/citation/search',
     'pid' => array(
       '#type' => 'hidden',
       '#value' => $pid
@@ -94,8 +94,8 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
       '#value' => $stored
     ),
     'action' => array(
-      '#type' => 'image_button',
-      '#src' => $stored ? $path . '/images/bookmarks_list_remove2.png' : $path . '/images/bookmarks_list_add.png',
+      '#type' => 'button',
+      //'#src' => $stored ? $path . '/images/bookmarks_list_remove2.png' : $path . '/images/bookmarks_list_add.png',
       '#value' => $stored ? t('Remove from My List') : t('Add to My List'),
       '#action' => $stored ? 'remove' : 'add',
       '#pid' => $pid,

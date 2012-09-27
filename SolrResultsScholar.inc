@@ -229,11 +229,11 @@ class ScholarSolrResults extends IslandoraSolrResults {
         switch ($check) {
           case 'OBJ':
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
             break;
           case 'PDF':
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
             break;
           default:
             $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->journal_title;
@@ -255,9 +255,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
         else {
           $abstract = $data->abstract;
         }
-        $bibliography_text = Bibliography::Exists($doc->PID) ? 'Remove from My List' : 'Add to My List';
+        $scholar_class = Bibliography::Exists($doc->PID) ? 'my-list-remove' : 'my-list-add';
+        $bibliography_text = "";//Bibliography::Exists($doc->PID) ? 'Remove from My List' : 'Add to My List';
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID, array('html' => TRUE)) . '</div>';
-        $bookmark = '<div class="scholar_search_bookmark">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
+        $bookmark = '<div class="scholar_search_bookmark '. $scholar_class .' ">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
         $related = '<div class="scholar_search_related">' . l('<img src="' . $base_url . '/' . $path . '/images/reload.png"/> Related content', 'islandora/solr/search/' . str_replace(' ', ' OR ', $dc_title), array('html' => TRUE)) . '</div>';
         $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $bookmark . $pdf_result . $supp_result;
 

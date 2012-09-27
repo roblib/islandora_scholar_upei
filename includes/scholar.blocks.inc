@@ -4,8 +4,9 @@
  * @file
  */
 
-class ScholarSearchResults{
-    /**
+class ScholarSearchResults {
+
+  /**
    * Function: currentQuery
    *
    * Description: Displays elements of the current solr query (with enabled filters).
@@ -17,73 +18,72 @@ class ScholarSearchResults{
     drupal_add_css(drupal_get_path('module', 'scholar') . '/css/searchresults.css');
     // set path
     $path = SOLR_SEARCH_PATH . '/' . $solrQueryProcessor->solrQuery; // $_GET['q'] didn't seem to work here
-    
     // get date format
     $format = variable_get('islandora_solr_facet_date_format', 'Y');
-    
+
     // set output variable
     $output = '';
-    
+
     // get user provided filter parameters
     $fq = $solrQueryProcessor->internalSolrParams['f'];
-    
+
     // parameters set in url
     $params = $solrQueryProcessor->internalSolrParams;
 
-    
+
     // Get Query values
     if (!in_array($solrQueryProcessor->solrQuery, $solrQueryProcessor->different_kinds_of_nothing)) {
       // get query value
       $query_value = $solrQueryProcessor->solrQuery;
-      
+
       // set list variables
       $query_list = array();
-      
+
       // remove link keeps all parameters (query gets removed instead)
       $query_minus = array();
       $query_minus = $params;
 
       // remove query from path
       $path_minus = implode('/', explode('/', $path, -1)) . '/ ';
-      
+
       // set attributes variable for remove link
       $attr_minus = array();
       // set title
       $attr_minus['title'] = t('Remove') . ' ' . $query_value;
       // set rel
-      $attr_minus['rel'] = 'nofollow';      
+      $attr_minus['rel'] = 'nofollow';
       // set url
       $attr_minus['href'] = url($path_minus, array('query' => $query_minus));
-      
+
       // create link
       // we're not using l() because of active classes: http://drupal.org/node/41595
-      $query_list[] = $query_value . ' <a' . drupal_attributes($attr_minus) . '>[x]</a>';
-      
+      $query_list[] = $query_value . ' <i class="islandora-solr-search-query-x-icon"><a' . drupal_attributes($attr_minus) . '>[x]</a></i>';
+
       // add wrap and list
-      $output .= '<div class="islandora_solr_search_query_inline clear-block">';
+      $output .= '<div class="islandora-solr-search-query-inline clear-block">';
       //TODO make this a template
       $output .= '<dl><dt>Your Search:</dt><dd>';
-      
+
       $output .= theme_item_list($query_list, NULL, "ul", array('class' => 'islandora_solr_search_query_list query_list'));
       $output .= '</dd>';
       // 'islandora_solr_search_query_wrap'
-      
-    } else {
-      $output .= '<div class="islandora_solr_search_query_inline clear-block">';
+    }
+    else {
+      $output .= '<div class="islandora-solr-search-query-inline clear-block">';
       //TODO make this a template
       $output .= '<dl><dt>Your Search:</dt><dd>';
-      
+
       $output .= 'no term entered';
       $output .= '</dd>';
     }
-    
-    
+
+
     // Get Filter values
     if (!empty($fq)) {
-      
+
       // set list variables
       $filter_list = array();
-      
+
       // loop over filters
       foreach ($fq as $key => $filter) {
 
@@ -129,25 +129,66 @@ class ScholarSearchResults{
         // set title
         $attr_minus['title'] = t('Remove') . ' ' . $filter;
         // set rel
-        $attr_minus['rel'] = 'nofollow';      
+        $attr_minus['rel'] = 'nofollow';
         // set url
         $attr_minus['href'] = url($path, array('query' => $query_minus));
 
         // create link
         // we're not using l() because of active classes: http://drupal.org/node/41595
-        $filter_list[] =  $filter_split[1]. ' <a' . drupal_attributes($attr_minus) . '>[x]</a> ' ;
+        $filter_list[] = $filter_split[1] . ' <i class="islandora-solr-search-query-x-icon"><a' . drupal_attributes($attr_minus) . '>[x]</a></i> ';
       }
-      
+
       // return filter list
       $output .= '<dt>Limited to:</dt>';
       $output .= '<dd>';
-     // $output .= '<div class="islandora_solr_search_filter_wrap">';
+      // $output .= '<div class="islandora_solr_search_filter_wrap">';
       $output .= theme_item_list($filter_list, NULL, "ul", array('class' => 'islandora_solr_search_filter_list filter_list'));
       $output .= '</dd>'; // 'islandora_solr_search_filter_wrap'
     }
-     $output .= '</dl></div>';
+    $output .= '</dl></div>';
     return $output;
   }
+
+}
+
+/**
+ *
+ * @param array $form_state 
+ */
+function scholar_extended_search_form_build_query(array &$form_state) {
+  $statements = array();
+  foreach ($form_state['values']['terms'] as $term) {
+    $field = $term['field'];
+    $search = trim($term['search']);
+    if (!empty($search)) {
+      $search = scholar_escape_phrase($search);
+      $statements[] = "$field:($search)";
+    }
+  }
+  $query = !empty($statements) ? implode(' AND ', $statements) : '*:*'; // Empty return all results. 
+  return $query;
+}
+
+function scholar_escape($value)
+	{
+		//list taken from http://lucene.apache.org/java/docs/queryparsersyntax.html#Escaping%20Special%20Characters
+		$pattern = '/(\+|-|&&|\|\||!|\(|\)|\{|}|\[|]|\^|"|~|\*|\?|:|\\\)/';
+		$replace = '\\\$1';
+
+		return preg_replace($pattern, $replace, $value);
+	}
+
+/**
+ * Escape a value meant to be contained in a phrase for special query characters
+ *
+ * @param string $value
+ * @return string
+ */
+function scholar_escape_phrase($value) {
+  $pattern = '/("|\\\)/';
+  $replace = '\\\$1';
+
+  return preg_replace($pattern, $replace, $value);
 }
 
 function scholar_recent_items($form_state) {
