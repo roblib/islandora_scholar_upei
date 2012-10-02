@@ -140,7 +140,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
   }
 
   function printResultsScholar($results) {
-
+    // drupal_add_js(drupal_get_path('module', 'scholar') . '/js/searchresults.js');
     module_load_include('inc', 'fedora_repository', 'CollectionClass');
     module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
     module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
@@ -255,7 +255,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
         else {
           $abstract = $data->abstract;
         }
+       
         $scholar_class = Bibliography::Exists($doc->PID) ? 'my-list-remove' : 'my-list-add';
+        $link_text = Bibliography::Exists($doc->PID) ? t('Remove from My List') : t('Add to My List');
+        //$bookmark = '<div class="scholar_search_bookmark "><a  NAME = "'.$doc->PID.'" id="my-list-link-' .$doc->PID . '" class="'. $scholar_class .' button">'.$link_text.'</a></div>';
         $bibliography_text = "";//Bibliography::Exists($doc->PID) ? 'Remove from My List' : 'Add to My List';
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID, array('html' => TRUE)) . '</div>';
         $bookmark = '<div class="scholar_search_bookmark '. $scholar_class .' ">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';

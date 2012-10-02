@@ -44,7 +44,64 @@ function islandora_bibliography_menu() {
     'file' => 'CitationForm.inc',
     'type' => MENU_CALLBACK,
   );
+  $items['bibliography/citation/search/add'] = array(
+    'page callback' => 'islandora_scholar_mylist_add',
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
   return $items;
+}
+
+/**
+ *  AHAH callback
+ * to add items to my list
+ */
+function islandora_scholar_mylist_add() {
+  module_load_include('inc', 'php_lib', 'Ahah');
+  module_load_include('inc', 'islandora_bibliography', 'Bibliography');
+  module_load_include('inc', 'islandora_bibliography', 'CitationForm');
+  //bootstrap drupal
+  //drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+  /*$post = $_POST;
+  $add = $_POST['add'];
+  $pid = $_POST['pid'];
+  if(!isset($pid)){
+    echo 'false';
+    return;
+  }
+  if(isset($add) && $add == 'true'){
+     Bibliography::AddCitation($pid);
+  } else if(isset($add)){
+     Bibliography::RemoveCitation($pid);
+  }*/
+  
+  list($form_id, $form_build_id, $form, $form_state) = Ahah::getFormInfo();
+  $form = Ahah::processForm($form_id, $form, $form_state);
+
+  $form_state['storage'] = NULL;
+  $form_state['rebuild'] = TRUE;
+  $form_state['submitted'] = FALSE;
+
+  $pid = $form_state['post']['pid'];
+  $stored = $form_state['post']['stored'];
+
+  if ($form_state['post']['stored'] == TRUE) {
+    
+    Bibliography::RemoveCitation($pid);
+    $form_state['values']['stored'] = FALSE;
+  }
+  else {
+    Bibliography::AddCitation($pid);
+    $form_state['values']['stored'] = TRUE;
+  }
+  
+  $form_state['values']['procedure'] = '';
+  $form = Ahah::rebuildForm($form_id, $form_build_id, $form, $form_state);
+  Ahah::respond($form['procedure']);
+   
+   
 }
 
 /**

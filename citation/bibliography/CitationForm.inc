@@ -78,13 +78,14 @@ function islandora_bibliography_citation_form_submit(array $form, array &$form_s
 function islandora_bibliography_citation_search_form(array &$form_state, $pid = NULL) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
   global $base_url;
-  $path = drupal_get_path('module', 'scholar');
+  //drupal_add_js(drupal_get_path('module', 'scholar') . '/js/ahah_helper.js', 'module', 'footer');
+  //drupal_add_js(drupal_get_path('module', 'scholar') . '/js/searchresults.js');
+  //drupal_add_js(drupal_get_path('module', 'scholar') . '/js/Ahah.js');
   $pid = isset($pid) ? $pid : $form_state['post']['pid'];
-  $stored = isset($form_state['post']['stored']) ? $form_state['post']['stored'] : Bibliography::Exists($pid);
-  $redirect = ($base_url . substr($_SESSION['search_url'], strpos($_SESSION['search_url'], '/islandora/')));
-  $redirect = str_replace(array('%253A', '%2529', '%2528', '%252F', '%20', '%2522', '%3A', '%2520', '%252C'), array(':', '', '', '', ' ', '"', ':', ' ', ','), $redirect);
-  return array(
-    '#action' => $base_url . '/bibliography/citation/search',
+  $css_id = str_replace(':', '-', $pid);
+  $stored = isset($form_state['values']['stored']) ? $form_state['values']['stored'] : Bibliography::Exists($pid);
+  $form =  array(
+    '#action' => $base_url . '/bibliography/',
     'pid' => array(
       '#type' => 'hidden',
       '#value' => $pid
@@ -93,15 +94,30 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
       '#type' => 'hidden',
       '#value' => $stored
     ),
-    'action' => array(
+    'procedure' => array(
+      '#tree' => TRUE,
+      '#prefix' => '<div id="my-list-add-from-search-' . $css_id . '">',
+      '#suffix' => '</div>',
+      '#button_type' => $stored ? t('my-list-exists') : t('my-list-add'),
       '#type' => 'button',
       //'#src' => $stored ? $path . '/images/bookmarks_list_remove2.png' : $path . '/images/bookmarks_list_add.png',
-      '#value' => $stored ? t('Remove from My List') : t('Add to My List'),
-      '#action' => $stored ? 'remove' : 'add',
+      '#value' => $stored ? t('Exists in My List') : t('Add to My List'),
+      //'#disabled' => $stored ,
       '#pid' => $pid,
-      '#redirect' => $redirect,
-    )
+      //'#redirect' => $redirect,
+      
+    ),
+     
   );
+  if(!$stored){
+   $form['procedure']['#ahah'] = array(
+        'path' => 'bibliography/citation/search/add' ,
+        'wrapper' => 'my-list-add-from-search-' . $css_id,
+        'method' => 'replace',
+        'effect' => 'fade'
+      );
+  }
+  return $form;
 }
 
 /**
@@ -114,11 +130,11 @@ function islandora_bibliography_citation_search_form(array &$form_state, $pid = 
  */
 function islandora_bibliography_citation_search_form_submit(array $form, array &$form_state) {
   module_load_include('inc', 'islandora_bibliography', 'Bibliography');
-  $action = $form_state['clicked_button']['#action'];
-  $pid = $form_state['clicked_button']['#post']['pid'];
-  ($action == 'add') ?
-          Bibliography::AddCitation($pid) :
-          Bibliography::RemoveCitation($pid);
-  $redirect = $form_state['clicked_button']['#redirect'];
-  drupal_goto($redirect);
+  //$action = $form_state['clicked_button']['#action'];
+  //$pid = $form_state['clicked_button']['#post']['pid'];
+  //($action == 'add') ?
+  //        Bibliography::AddCitation($pid) :
+  //        Bibliography::RemoveCitation($pid);
+  //$redirect = $form_state['clicked_button']['#redirect'];
+  drupal_goto('bibliography');
 }
