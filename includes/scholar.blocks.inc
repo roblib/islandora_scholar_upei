@@ -144,6 +144,8 @@ class ScholarSearchResults {
       // $output .= '<div class="islandora_solr_search_filter_wrap">';
       $output .= theme_item_list($filter_list, NULL, "ul", array('class' => 'islandora_solr_search_filter_list filter_list'));
       $output .= '</dd>'; // 'islandora_solr_search_filter_wrap'
+    } else {
+      $output .= '<dt>Limited to: </dt><dd><ul><li>no limits selected</li></ul></dd>';
     }
     $output .= '</dl></div>';
     return $output;

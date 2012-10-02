@@ -890,7 +890,7 @@ function scholar_form_islandora_extended_search_form_alter(&$form, &$form_state)
     where $object <info:fedora/fedora-system:def/model#label> $title
     and $object <fedora-rels-ext:isMemberOfCollection> <info:fedora/ir:scholarCollection>';
   $options = islandora_scholar_query($query, TRUE);
-  $options['AAAA'] = 'Any';
+  $options['AAAA'] = 'Any';//we want any to show up first
   ksort($options);
   //override the score fields to match our solr index.
   $score_fields = array(
@@ -932,8 +932,9 @@ function islandora_scholar_handle_search(&$form, &$form_state) {
   $sort_field = check_plain($form_state['values']['sort']);
   $sort_dir = check_plain($form_state['values']['order']);
   $query = urlencode($query);
-  //$query .= "?sort=$sort_field%20$sort_dir";
-  $form_state['redirect'] = 'islandora/solr/search/' . $query; // Redirect to the search.
+  $sort = array("sort"=>"$sort_field $sort_dir");//"?sort=$sort_field%20$sort_dir";
+   drupal_goto("islandora/solr/search/$query", $sort);
+  //$form_state['redirect'] = 'islandora/solr/search/' . $query; // Redirect to the search.
 }
 
 function scholar_theme() {

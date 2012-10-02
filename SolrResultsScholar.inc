@@ -52,6 +52,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
       $output .= $node->body;
       $output .= '</div>';
     }
+    $limit_block = module_invoke('islandora_solr_search', 'block', 'view', 'limit_results');
 
     // Check for empty resultset
     if ($total === 0) {
@@ -113,8 +114,12 @@ class ScholarSolrResults extends IslandoraSolrResults {
       $output .= "</div>";
     }
 
-    $output .= '<h2>' . $title . '</h2>';
-    $output .= '<div id="islandora_solr_result_count">(' . ($solrQueryProcessor->solrStart + 1) . ' - ' . $end . ' of ' . $total . ')</div>';
+    //$output .= '<h2>' . $title . '</h2>';
+    $output .= '<div class="islandora-solr-search-controls">';
+    $output .= '<div class="islandora-solr-search-count-limit">' . $limit_block['content'] . '</div>';
+    $output .= '<div class="islandora-solr-result-count"><div id="islandora_solr_result_count">' . ($solrQueryProcessor->solrStart + 1) . ' - ' . $end . ' of ' . $total . '</div></div>';
+    $output .= '<div class="islandora-solr-search-pager-top">' . theme('pager', NULL, $solrQueryProcessor->solrLimit, 0, NULL, 5) . '</div>';
+    $output .= '</div>';
     $output .= '<div class="content">';
 
 //    drupal_set_message(print_r($secondary_display_profiles,1));
@@ -127,7 +132,6 @@ class ScholarSolrResults extends IslandoraSolrResults {
      *
      * Also, perhaps there's no difference between primary and secondary profiles?
      */
-
 
     $output .= $this->printResultsScholar($solrQueryProcessor->solrResult);
 
@@ -221,9 +225,9 @@ class ScholarSolrResults extends IslandoraSolrResults {
         if (array_key_exists('PDF', $ds_array) && $data->status == 'FULL_TEXT_AVAILABLE') {
           $check = 'PDF';
         }
-        $url_frag = 'fedora/repository/' ;
+        $url_frag = 'fedora/repository/';
         if (module_exists('scholar_tracking')) {
-          $url_frag = 'download_ds/' ;
+          $url_frag = 'download_ds/';
         }
 
         switch ($check) {
@@ -255,13 +259,13 @@ class ScholarSolrResults extends IslandoraSolrResults {
         else {
           $abstract = $data->abstract;
         }
-       
+
         $scholar_class = Bibliography::Exists($doc->PID) ? 'my-list-remove' : 'my-list-add';
         $link_text = Bibliography::Exists($doc->PID) ? t('Remove from My List') : t('Add to My List');
         //$bookmark = '<div class="scholar_search_bookmark "><a  NAME = "'.$doc->PID.'" id="my-list-link-' .$doc->PID . '" class="'. $scholar_class .' button">'.$link_text.'</a></div>';
-        $bibliography_text = "";//Bibliography::Exists($doc->PID) ? 'Remove from My List' : 'Add to My List';
+        $bibliography_text = ""; //Bibliography::Exists($doc->PID) ? 'Remove from My List' : 'Add to My List';
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID, array('html' => TRUE)) . '</div>';
-        $bookmark = '<div class="scholar_search_bookmark '. $scholar_class .' ">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
+        $bookmark = '<div class="scholar_search_bookmark ' . $scholar_class . ' ">' . drupal_get_form('islandora_bibliography_citation_search_form', $doc->PID) . '</div><div class="scholar_search_bookmark_text">' . $bibliography_text . '</div>';
         $related = '<div class="scholar_search_related">' . l('<img src="' . $base_url . '/' . $path . '/images/reload.png"/> Related content', 'islandora/solr/search/' . str_replace(' ', ' OR ', $dc_title), array('html' => TRUE)) . '</div>';
         $rows[][] = $object_title . '<div class="scholar_search_citation">' . $bibliography->render() . '</div>' . '<div class="scholar_search_citation">' . $abstract . '</div>' . $bookmark . $pdf_result . $supp_result;
 
