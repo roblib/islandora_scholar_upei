@@ -161,10 +161,13 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
         $citation_query = db_fetch_array(db_query("SELECT citation_count FROM {islandora_scholar_researcher_citation_counts} WHERE pid = '%s'", $username[0]));
         $citations = $citation_query['citation_count'];
       }
-      $users[] = array(l($given[0] . ' ' . $family[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email[0], $phone_number[0], theme('item_list', $field_of_activity), t('@citations citations', array('@citations' => $citations)));
+      $citation_link = l(t('@citations citations', array('@citations' => $citations)),'islandora/solr/search/mods.username:'.$username[0]);
+      $email_link = '<a href="mailto:'.$email[0].'">'.$email[0].'</a>';
+      $users[] = array(l($family[0] . ' ' . $given[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email_link, 
+        $citation_link);
     }
   }
-  $headers = array(t('Name'), t('Department'), t('Email'), t('Phone Number'), t('Research Interests'), t('Citations'));
+  $headers = array(t('Name'), t('Department'), t('Email'), t('Citations'));
 
   $form['search'] = array(
     '#type' => 'textfield',
