@@ -65,10 +65,10 @@ class IrClass {
     $pid = $form_values['pid'];
     $fedora_item = new Fedora_Item($pid);
     $test = NULL;
-      $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
-      if ($test) {
-        $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
-      }
+    $test = $fedora_item->add_datastream_from_file($fileObject->filepath, 'OBJ');
+    if ($test) {
+      $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
+    }
     return true;
   }
 
@@ -150,8 +150,28 @@ class IrClass {
     );
 
     $usage = array(
+     
       'Contact Publisher' => 'Contact Publisher (I do not hold the copyright)',
       'Contact Author' => 'Contact Author (I hold the copyright and wish to retain all rights)',
+      'CC-BY-NC' => '<a rel="license" title="Creative Commons Attribution-NonCommercial 3.0 Unported License" 
+   href="http://creativecommons.org/licenses/by-nc/3.0/">
+  <img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" />
+  </a> This work is licensed under a <a rel="license" 
+   title="Creative Commons Attribution-NonCommercial 3.0 Unported License" 
+   href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons
+   Attribution-NonCommercial 3.0 Unported License</a>',
+      'CC-BY-NC-SA' => '<a rel="license" title="Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License" 
+   href="http://creativecommons.org/licenses/by-nc-sa/3.0/">
+  <img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/80x15.png" />
+  </a> This work is licensed under a <a rel="license" 
+   title="Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License" 
+   href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>',
+      'CC-BY-NC-ND' => '<a rel="license" title="Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Unported License" 
+   href="http://creativecommons.org/licenses/by-nc-nd/3.0/">
+  <img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-nd/3.0/80x15.png" />
+  </a> This work is licensed under a <a rel="license" 
+   title="Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Unported License" 
+   href="http://creativecommons.org/licenses/by-nc-nd/3.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 3.0 Unported License</a>'
     );
 
     $versions = array(

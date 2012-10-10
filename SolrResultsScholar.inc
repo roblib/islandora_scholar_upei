@@ -261,7 +261,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
         }
 
         $scholar_class = Bibliography::Exists($doc->PID) ? 'my-list-remove' : 'my-list-add';
-        $link_text = Bibliography::Exists($doc->PID) ? t('Remove from My List') : t('Add to My List');
+        //$link_text = Bibliography::Exists($doc->PID) ? t('Remove from My List') : t('Add to My List');
         //$bookmark = '<div class="scholar_search_bookmark "><a  NAME = "'.$doc->PID.'" id="my-list-link-' .$doc->PID . '" class="'. $scholar_class .' button">'.$link_text.'</a></div>';
         $bibliography_text = ""; //Bibliography::Exists($doc->PID) ? 'Remove from My List' : 'Add to My List';
         $object_title = '<div class="scholar_search_title">' . l($data->title, 'fedora/repository/' . $doc->PID, array('html' => TRUE)) . '</div>';

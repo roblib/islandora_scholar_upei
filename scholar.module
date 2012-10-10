@@ -147,8 +147,8 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['browse_authors2'] = array(
-    'title' => t('Browse Authors'),
+  $items['browse_scholars'] = array(
+    'title' => t('Scholars'),
     'file' => 'BrowseByUserForm.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('islandora_scholar_browse_by_author_form'),
@@ -157,8 +157,8 @@ function scholar_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['browse_authors2/%'] = array(
-    'title' => t('Browse Authors2'),
+  $items['browse_scholars/%'] = array(
+    'title' => t('Scholars'),
     'file' => 'BrowseByUserForm.inc',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('islandora_scholar_browse_by_author_form', 1),
@@ -297,6 +297,23 @@ function scholar_islandora_solr_query_blocks() {
       'form' => NULL,
     ),
   );
+}
+
+/**
+ * Alter the login block to say UPEI
+ * 
+ * @param type $form
+ * @param type $form_state
+ * @param type $form_id 
+ */
+function scholar_form_alter( &$form, &$form_state, $form_id )
+{
+    if (  $form_id == 'user_login'  )
+    {
+        $form['name']['#attributes']['placeholder'] = t( 'Username' );
+        $form['pass']['#attributes']['placeholder'] = t( 'Password' );
+        $form['name']['#description'] = t('Enter your UPEI username.');
+    }
 }
 
 /**
@@ -896,7 +913,7 @@ function scholar_form_islandora_extended_search_form_alter(&$form, &$form_state)
   $score_fields = array(
     'score' => 'Relevance',
     'mods_title_sv' => 'Title',
-    'mods_date_dt' => 'Date',
+    'mods_date_issued_dt' => 'Date',
   );
   $form['controls']['sort']['#options'] = $score_fields;
 

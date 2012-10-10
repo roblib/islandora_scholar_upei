@@ -134,6 +134,7 @@ function scholar_browse_by_user_dept_form(&$form_state, $dept = 'Robertson Libra
 }
 
 function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
+  drupal_set_title('<none>');
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
   if ($search == NULL) {
@@ -163,7 +164,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
       }
       $citation_link = l(t('@citations citations', array('@citations' => $citations)),'islandora/solr/search/mods.username:'.$username[0]);
       $email_link = '<a href="mailto:'.$email[0].'">'.$email[0].'</a>';
-      $users[] = array(l($family[0] . ' ' . $given[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email_link, 
+      $users[] = array(l($family[0] . ', ' . $given[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email_link, 
         $citation_link);
     }
   }
@@ -171,11 +172,12 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
 
   $form['search'] = array(
     '#type' => 'textfield',
+    '#description' => 'Enter search term (e.g. "Physics" or "Smith")',
   );
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Search'),
+    '#value' => t('Go'),
   );
 
   if ($array) {
@@ -196,5 +198,5 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
 
 function islandora_scholar_browse_by_author_form_submit($form, &$form_state) {
 
-  drupal_goto('browse_authors2/' . $form_state['values']['search']);
+  drupal_goto('browse_scholars/' . $form_state['values']['search']);
 }

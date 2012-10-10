@@ -29,7 +29,11 @@ class ScholarSearchResults {
 
     // parameters set in url
     $params = $solrQueryProcessor->internalSolrParams;
-
+    $raw_field_vals = variable_get("islandora_solr_searchterms", 'dc.subject ~ Subject,dc.type ~ Type');
+    $raw_advanced_field_vals = variable_get("islandora_solr_search_result_fields", 'dc.subject ~ Subject,dc.type ~ Type');
+    
+    $field_array = array_merge(islandora_build_substitution_list($raw_field_vals), islandora_build_substitution_list($raw_advanced_field_vals));
+    
 
     // Get Query values
     if (!in_array($solrQueryProcessor->solrQuery, $solrQueryProcessor->different_kinds_of_nothing)) {
@@ -57,6 +61,9 @@ class ScholarSearchResults {
 
       // create link
       // we're not using l() because of active classes: http://drupal.org/node/41595
+      $field_keys = array_keys($field_array);
+      $field_values = array_values($field_array);
+      $query_value = str_replace($field_keys,$field_values,$query_value);
       $query_list[] = $query_value . ' <i class="islandora-solr-search-query-x-icon"><a' . drupal_attributes($attr_minus) . '>[x]</a></i>';
 
       // add wrap and list
