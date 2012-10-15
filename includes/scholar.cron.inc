@@ -130,20 +130,20 @@ function scholar_cron_embargo_check() {
 
 function scholar_cron_citations_update() {
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
-  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=dc.identifier,mads.given,mads.family,mads.organization&rows=10000');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcherCModel&fl=mads.identifier,mads.given,mads.family,mads.organization&rows=10000');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $array = array_filter($array);
   foreach ($array as $arr) {
-    $username = $arr->xpath('./arr[@name="dc.identifier"]/str');
+    $username = $arr->xpath('./arr[@name="mads.identifier"]/str');
     $given_name = $arr->xpath('./arr[@name="mads.given"]/str');
     $family_name = $arr->xpath('./arr[@name="mads.family"]/str');
     $dept = $arr->xpath('./arr[@name="mads.organization"]/str');
     $dept = $dept[0];
     $fullname = $family_name[0] . ', ' . $given_name[0];
     if ($username[0] != '') {
-      $username_array = explode(':', (string) $username[0]);
-      $username = strtolower($username_array[1]);
+      //$username_array = explode(':', (string) $username[0]);
+      $username = strtolower($username[0]);
       $username_str = 'http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(array(';', '_'), array(' ', '%20'), $username));
       $username_query = file_get_contents($username_str);
       $username_xml = new SimpleXMLElement($username_query);

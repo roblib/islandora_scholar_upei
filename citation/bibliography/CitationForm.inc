@@ -34,6 +34,7 @@ function islandora_bibliography_citation_form(array &$form_state, $pid = NULL) {
     ),
     'action' => array(
       '#type' => 'submit',
+      '#button_type' => $stored ? t('my-list-exists') : t('my-list-add'),
       '#value' => $stored ? t('Remove from My List') : t('Add to My List'),
       '#action' => $stored ? 'remove' : 'add',
       '#pid' => $pid,
