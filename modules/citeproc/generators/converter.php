@@ -120,8 +120,8 @@ function convert_mods_to_citeproc_jsons($mods_in) {
         //adam: 
         //'genre' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:relatedItem[@type="host"]/mods:genre[@authority="marcgt"]'),
         'ISBN' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="isbn"]'),
-        'volume' => (int) convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:part/mods:detail[@type="volume"]/mods:number'),
-        'issue' => (int) convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:part/mods:detail[@type="issue"]/mods:number'),
+        'volume' => (int) convert_mods_to_citeproc_json_query($mods, '//mods:part/mods:detail[@type="volume"]/mods:number'),
+        'issue' => (int) convert_mods_to_citeproc_json_query($mods, '//mods:part/mods:detail[@type="issue"]/mods:number'),
         'note' => convert_mods_to_citeproc_json_note($mods),
         'number' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:relatedItem[@type="series"]/mods:titleInfo/mods:partNumber'),
         'page' => convert_mods_to_citeproc_json_page($mods),
@@ -272,10 +272,10 @@ function convert_mods_to_citeproc_json_note(SimpleXMLElement $mods) {
  */
 function convert_mods_to_citeproc_json_page(SimpleXMLElement $mods) {
   $output = NULL;
-  $pages = $mods->xpath("/mods:mods/mods:part/mods:extent[@unit='pages']");
+  $pages = $mods->xpath("//mods:part/mods:extent[@unit='pages']");
   // Note: "pages" is correct, but Zotero uses "page".
   if (empty($pages)) {
-    $pages = $mods->xpath("/mods:mods/mods:part/mods:extent[@unit='page']");
+    $pages = $mods->xpath("//mods:part/mods:extent[@unit='page']");
   }
   if (isset($pages[0])) {
     if (!empty($pages[0]->total)) {

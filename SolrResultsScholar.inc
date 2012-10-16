@@ -233,11 +233,13 @@ class ScholarSolrResults extends IslandoraSolrResults {
         switch ($check) {
           case 'OBJ':
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE,'attributes' => array('class' => 'button'))) . '</div>';
             break;
           case 'PDF':
             $download_img = $base_url . '/' . $path . '/images/download.png';
-            $pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE,'attributes' => array('class' => 'button'))) . '</div>';
             break;
           default:
             $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->journal_title;

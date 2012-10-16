@@ -81,7 +81,8 @@ class Coins {
         }
       }
       $role = (string) $name->role->roleTerm;
-      if ($role == 'aut') {
+      
+      if ($role == 'aut' || $role == 'Author') {
         $role = 'author';
       }
       if ($role == 'author') {
@@ -99,11 +100,11 @@ class Coins {
     $this->contributors = $contributors;
     $this->family_names = $family_names;
 
-    $form =  $xml->physicalDescription->form;
-    if(!empty($form)){
+    $form = $xml->physicalDescription->form;
+    if (!empty($form)) {
       foreach ($xml->physicalDescription->form as $form) {
         if ($form['authority'] == 'local' && (string) $form != 'NO_OBJ') {
-         $this->status = 'FULL_TEXT_AVAILABLE';
+          $this->status = 'FULL_TEXT_AVAILABLE';
         }
       }
     }
@@ -192,164 +193,499 @@ class Coins {
    * the reference
    */
   function render_view($type = 'citation') {
+    $modsxml = $this->mods;
     global $base_url;
 
     $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
 
     $headers = array('', '');
     $rows = array();
+    $genre = (string) $this->genre[0];
+    if (!empty($genre)) {
+      switch ((string) $genre) {
+        case 'Journal Article':
+          //journal stuff
+          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string)$title[0];
+          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
+          $sub_title = (string)$sub_title[0];
+          if (!empty($sub_title)) {
+            $title = $title . ': ' . $sub_title;
+          }
+          $rows[] = array('Title', $title);
+          $authors = implode(', ', $this->authors);
+          if (!empty($authors)) {
+            $rows[] = array('Author(s)', $authors);
+          }
+          $journal = $modsxml->xpath('/mods:mods/mods:relatedItem/mods:titleInfo/mods:title');
+          $journal = implode(', ', $journal);
+          if (!empty($journal)) {
+            $rows[] = array('Journal', $journal);
+          }
 
-    $full_name = $this->topic;
-    if (!empty($this->names)) {
+          if ((string) $this->date != NULL) {
+            $rows[] = array('Date', $this->date);
+          }
+          
+          if(!empty($this->start_page)){
+            $rows[] = array('Start Page', $this->start_page);
+          }
+          $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
+          $endp = implode(',',$endp);
+          if(!empty($endp)){
+            $rows[] = array('End Page', $endp);
+          }
+          if (!empty($this->abstract)) {
+            $rows[] = array('Abstract', $this->abstract);
+          }
+          $doi = $modsxml->xpath('//mods:identifier[@type="doi"]');
+          $doi = implode(',',$doi);
+          if(!empty($doi)){
+            $rows[] = array('DOI', $doi);
+          }
+          $issn = $modsxml->xpath('//mods:identifier[@type="issn"]');
+          $issn = implode(',',$issn);
+          if(!empty($issn)){
+            $rows[] = array('ISSN', $issn);
+          }
+          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
+          $use = implode(', ', $use);
+          if (!empty($use)) {
+            $rows[] = array('Use/Reproduction', $use);
+          }
+          break;
+        case 'Book, Whole':
+           $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string)$title[0];
+          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
+          $sub_title = (string)$sub_title[0];
+          if (!empty($sub_title)) {
+            $title = $title . ': ' . $sub_title;
+          }
+          $rows[] = array('Title', $title);
+          $authors = implode(', ', $this->authors);
+          if (!empty($authors)) {
+            $rows[] = array('Author(s)', $authors);
+          }
+          if ((string) $this->date != NULL) {
+            $rows[] = array('Date', $this->date);
+          }
+          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
+          $publishers = implode(', ', $publishers);
+          if (!empty($publishers)) {
+            $rows[] = array('Publisher', $publishers);
+          }
+          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
+          $place = implode(', ', $place);
+          if (!empty($place)) {
+            $rows[] = array('Place published', $place);
+          }
+          $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
+          $pages = implode(', ', $pages);
+          if (!empty($pages)) {
+            $rows[] = array('Pages', $pages);
+          }
+          $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
+          $isbn = implode(', ', $isbn);
+          if (!empty($isbn)) {
+            $rows[] = array('ISBN', $isbn);
+          }
+          if (!empty($this->abstract)) {
+            $rows[] = array('Abstract', $this->abstract);
+          }
+          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
+          $use = implode(', ', $use);
+          if (!empty($use)) {
+            $rows[] = array('Use/Reproduction', $use);
+          }
+          break;
+        case 'Book, Section':
+           $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string)$title[0];
+          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
+          $sub_title = (string)$sub_title[0];
+          if (!empty($sub_title)) {
+            $title = $title . ': ' . $sub_title;
+          }
+          $rows[] = array('Section Title', $title);
+          $authors = implode(', ', $this->authors);
+          if (!empty($authors)) {
+            $rows[] = array('Section Author(s)', $authors);
+          }
+           $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
+          $btitle = (string)$btitle[0];
+          $bsub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
+          $bsub_title = (string)$bsub_title[0];
+          if (!empty($sbub_title)) {
+            $btitle = $btitle . ': ' . $bsub_title;
+          }
+          if(!empty($btitle)){
+            $rows[] = array('Book Title', $btitle);
+          }
+          
+          $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name/mods:namePart');
+          $beditors = implode(', ', $beditors);
+          if(!empty($beditors)){
+            $rows[] = array('Book Editors', $beditors);
+          }
+          if(!empty($this->start_page)){
+            $rows[] = array('Start Page', $this->start_page);
+          }
+          $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
+          $endp = implode(',',$endp);
+          if(!empty($endp)){
+            $rows[] = array('End Page', $endp);
+          }
+          
+          if ((string) $this->date != NULL) {
+            $rows[] = array('Date', $this->date);
+          }
+          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
+          $publishers = implode(', ', $publishers);
+          if (!empty($publishers)) {
+            $rows[] = array('Publisher', $publishers);
+          }
+          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
+          $place = implode(', ', $place);
+          if (!empty($place)) {
+            $rows[] = array('Place published', $place);
+          }
+          
+          $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
+          $isbn = implode(', ', $isbn);
+          if (!empty($isbn)) {
+            $rows[] = array('ISBN', $isbn);
+          }
+          if (!empty($this->abstract)) {
+            $rows[] = array('Abstract', $this->abstract);
+          }
+          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
+          $use = implode(', ', $use);
+          if (!empty($use)) {
+            $rows[] = array('Use/Reproduction', $use);
+          }
+          break;
+        case 'Conference proceedings':
+          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string)$title[0];
+          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
+          $sub_title = (string)$subtitle[0];
+          if (!empty($sub_title)) {
+            $title = $title . ': ' . $sub_title;
+          }
+          $rows[] = array('Paper Title', $title);
+          $authors = implode(', ', $this->authors);
+          if (!empty($authors)) {
+            $rows[] = array('Paper Author(s)', $authors);
+          }
+          $pro_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
+          $pro_title = implode(', ', $pro_title);
+          if(!empty($pro_title)){
+            $rows[] = array('Proceedings title', $pro_title);
+          }
+          if ((string) $this->date != NULL) {
+            $rows[] = array('Date', $this->date);
+          }
+          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
+          $publishers = implode(', ', $publishers);
+          if (!empty($publishers)) {
+            $rows[] = array('Publisher', $publishers);
+          }
+          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
+          $place = implode(', ', $place);
+          if (!empty($place)) {
+            $rows[] = array('Place published', $place);
+          }
+          $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
+          $pages = implode(', ', $pages);
+          if (!empty($pages)) {
+            $rows[] = array('Pages', $pages);
+          }
+          $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
+          $isbn = implode(', ', $isbn);
+          if (!empty($isbn)) {
+            $rows[] = array('ISBN', $isbn);
+          }
+          if (!empty($this->abstract)) {
+            $rows[] = array('Abstract', $this->abstract);
+          }
+          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
+          $use = implode(', ', $use);
+          if (!empty($use)) {
+            $rows[] = array('Use/Reproduction', $use);
+          }
+          break;
+        case 'Book, Edited':
+            $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string)$title[0];
+          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
+          $sub_title = (string)$subtitle[0];
+          if (!empty($sub_title)) {
+            $title = $title . ': ' . $sub_title;
+          }
+          $rows[] = array('Title', $title);
+          $authors = implode(', ', $this->authors);
+          if (!empty($authors)) {
+            $rows[] = array('Eidtor(s)', $authors);
+          }
+          if ((string) $this->date != NULL) {
+            $rows[] = array('Date', $this->date);
+          }
+          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
+          $publishers = implode(', ', $publishers);
+          if (!empty($publishers)) {
+            $rows[] = array('Publisher', $publishers);
+          }
+          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
+          $place = implode(', ', $place);
+          if (!empty($place)) {
+            $rows[] = array('Place published', $place);
+          }
+          $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
+          $pages = implode(', ', $pages);
+          if (!empty($pages)) {
+            $rows[] = array('Pages', $pages);
+          }
+          $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
+          $isbn = implode(', ', $isbn);
+          if (!empty($isbn)) {
+            $rows[] = array('ISBN', $isbn);
+          }
+          if (!empty($this->abstract)) {
+            $rows[] = array('Abstract', $this->abstract);
+          }
+          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
+          $use = implode(', ', $use);
+          if (!empty($use)) {
+            $rows[] = array('Use/Reproduction', $use);
+          }
+          break;
+        default:
+           $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string)$title[0];
+          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
+          $sub_title = (string)$sub_title[0];
+          if (!empty($sub_title)) {
+            $title = $title . ': ' . $sub_title;
+          }
+          $rows[] = array('Title', $title);
+          $authors = implode(', ', $this->authors);
+          if (!empty($authors)) {
+            $rows[] = array('Author(s)', $authors);
+          }
+           $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
+          $btitle = (string)$btitle[0];
+          $bsub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
+          $bsub_title = (string)$bsub_title[0];
+          if (!empty($bsub_title)) {
+            $btitle = $btitle . ': ' . $bsub_title;
+          }
+          if(!empty($btitle)){
+            $rows[] = array('Related Item', $btitle);
+          }
+          
+          $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name/mods:namePart');
+          $beditors = implode(', ', $beditors);
+          if(!empty($beditors)){
+            $rows[] = array('Book Editors', $beditors);
+          }
+          if(!empty($this->start_page)){
+            $rows[] = array('Start Page', $this->start_page);
+          }
+          $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
+          $endp = implode(',',$endp);
+          if(!empty($endp)){
+            $rows[] = array('End Page', $endp);
+          }
+          
+          if ((string) $this->date != NULL) {
+            $rows[] = array('Date', $this->date);
+          }
+          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
+          $publishers = implode(', ', $publishers);
+          if (!empty($publishers)) {
+            $rows[] = array('Publisher', $publishers);
+          }
+          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
+          $place = implode(', ', $place);
+          if (!empty($place)) {
+            $rows[] = array('Place published', $place);
+          }
+          
+          $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
+          $isbn = implode(', ', $isbn);
+          if (!empty($isbn)) {
+            $rows[] = array('ISBN', $isbn);
+          }
+          if (!empty($this->abstract)) {
+            $rows[] = array('Abstract', $this->abstract);
+          }
+          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
+          $use = implode(', ', $use);
+          if (!empty($use)) {
+            $rows[] = array('Use/Reproduction', $use);
+          }
+          break;
+      }
+    }
+    /* global $base_url;
+
+      $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
+
+      $headers = array('', '');
+      $rows = array();
+
+      $full_name = $this->topic;
+      if (!empty($this->names)) {
       $names = implode(', ', $this->names);
-    }
-    else {
-      $names = t('');
-    }
-
-    if (!empty($this->authors)) {
-      $authors = implode(', ', $this->authors);
-    }
-    else {
-      $authors = t('');
-    }
-
-    if (!empty($this->contributors)) {
-      $contributors = implode(', ', $this->contributors);
-    }
-    else {
-      $contributors = t('');
-    }
-
-    if (!empty($this->topic)) {
-      $topics = implode($this->topic, ', ');
-    }
-    else {
-      $topics = t('');
-    }
-
-    $genre = $this->genre;
-    if (stripos((string) $genre[0], 'book') !== FALSE) {
-      $type = 'book';
-    }
-
-    if ($this->embargo_date != NULL) {
-      $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-    }
-    else {
-      $embargo_date = NULL;
-    }
-
-    if ((string) $this->title != NULL) {
-      $rows[] = array('Title', $this->title);
-    }
-    elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Title', $this->title);
-    }
-
-    if ($type == 'thesis') {
-      if ($authors != NULL) {
-        $rows[] = array('Authors', rtrim($authors, ', '));
-      }
-      elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Authors', rtrim($authors, ', '));
-      }
-      if ($contributors != NULL) {
-        $rows[] = array('Contributors', rtrim($contributors, ', '));
-      }
-      elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Contributors', rtrim($contributors, ', '));
-      }
-      if (module_exists('scholar_tracking')) {
-        if ($this->status == 'FULL_TEXT_AVAILABLE') { //check to see if the full text is available before we provide a URL
-          $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
-        }
       }
       else {
-        $rows[] = array('URL', l($base_url . '/fedora/repository/' . $this->pid . '/PDF/PDF', $base_url . '/fedora/repository/' . $this->pid . '/PDF/PDF'));
+      $names = t('');
       }
-    }
-    else {
+
+      if (!empty($this->authors)) {
+      $authors = implode(', ', $this->authors);
+      }
+      else {
+      $authors = t('');
+      }
+
+      if (!empty($this->contributors)) {
+      $contributors = implode(', ', $this->contributors);
+      }
+      else {
+      $contributors = t('');
+      }
+
+      if (!empty($this->topic)) {
+      $topics = implode($this->topic, ', ');
+      }
+      else {
+      $topics = t('');
+      }
+
+      $genre = $this->genre;
+      if (stripos((string) $genre[0], 'book') !== FALSE) {
+      $type = 'book';
+      }
+
+      if ($this->embargo_date != NULL) {
+      $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+      }
+      else {
+      $embargo_date = NULL;
+      }
+
+      if ((string) $this->title != NULL) {
+      $rows[] = array('Title', $this->title);
+      }
+      elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Title', $this->title);
+      }
+
+      if ($type == 'thesis') {
+      if ($authors != NULL) {
+      $rows[] = array('Authors', rtrim($authors, ', '));
+      }
+      elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Authors', rtrim($authors, ', '));
+      }
+      if ($contributors != NULL) {
+      $rows[] = array('Contributors', rtrim($contributors, ', '));
+      }
+      elseif (user_access('administer scholarly research')) {
+      $rows[] = array('Contributors', rtrim($contributors, ', '));
+      }
+      if (module_exists('scholar_tracking')) {
+      if ($this->status == 'FULL_TEXT_AVAILABLE') { //check to see if the full text is available before we provide a URL
+      $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
+      }
+      }
+      else {
+      $rows[] = array('URL', l($base_url . '/fedora/repository/' . $this->pid . '/PDF/PDF', $base_url . '/fedora/repository/' . $this->pid . '/PDF/PDF'));
+      }
+      }
+      else {
       if ($names != NULL) {
-        $rows[] = array('Authors', rtrim($names, ', '));
+      $rows[] = array('Authors', rtrim($names, ', '));
       }
       elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Authors', rtrim($names, ', '));
+      $rows[] = array('Authors', rtrim($names, ', '));
       }
-    }
+      }
 
-    if ((string) $this->abstract != NULL) {
+      if ((string) $this->abstract != NULL) {
       $rows[] = array('Abstract', $this->abstract);
-    }
-    elseif (user_access('administer scholarly research')) {
+      }
+      elseif (user_access('administer scholarly research')) {
       $rows[] = array('Abstract', $this->abstract);
-    }
+      }
 
-    if ($type == 'citation') {
+      if ($type == 'citation') {
       if ((string) $this->journal_title != NULL) {
-        $rows[] = array('Journal', $this->journal_title);
+      $rows[] = array('Journal', $this->journal_title);
       }
       elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Journal', $this->journal_title);
+      $rows[] = array('Journal', $this->journal_title);
       }
-    }
+      }
 
-    if ((string) $this->date != NULL) {
+      if ((string) $this->date != NULL) {
       $rows[] = array('Date', $this->date);
-    }
-    elseif (user_access('administer scholarly research')) {
+      }
+      elseif (user_access('administer scholarly research')) {
       $rows[] = array('Date', $this->date);
-    }
+      }
 
-    if ($type == 'citation') {
+      if ($type == 'citation') {
       if ((string) $this->volume != NULL) {
-        $rows[] = array('Volume', $this->volume);
+      $rows[] = array('Volume', $this->volume);
       }
       elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Volume', $this->volume);
+      $rows[] = array('Volume', $this->volume);
       }
 
       if ((string) $this->issue != NULL) {
-        $rows[] = array('Issue', $this->issue);
+      $rows[] = array('Issue', $this->issue);
       }
       elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Issue', $this->issue);
+      $rows[] = array('Issue', $this->issue);
       }
 
       if ((string) $this->start_page != NULL) {
-        $rows[] = array('Start page', $this->start_page);
+      $rows[] = array('Start page', $this->start_page);
       }
       elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Start page', $this->start_page);
+      $rows[] = array('Start page', $this->start_page);
       }
-    }
+      }
 
-    if ($type == 'citation') {
+      if ($type == 'citation') {
       if ((string) $this->issn != NULL) {
-        $rows[] = array('ISSN', $this->issn);
+      $rows[] = array('ISSN', $this->issn);
       }
       elseif (user_access('administer scholarly research')) {
-        $rows[] = array('ISSN', $this->issn);
+      $rows[] = array('ISSN', $this->issn);
       }
 
       if ((string) $topics != NULL) {
-        $rows[] = array('Subjects', rtrim($topics, ', '));
+      $rows[] = array('Subjects', rtrim($topics, ', '));
       }
       elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Subjects', rtrim($topics, ', '));
+      $rows[] = array('Subjects', rtrim($topics, ', '));
       }
 
       if ((string) $this->note != NULL) {
-        $rows[] = array('Note', $this->note);
+      $rows[] = array('Note', $this->note);
       }
       elseif (user_access('administer scholarly research')) {
-        $rows[] = array('Note', $this->note);
+      $rows[] = array('Note', $this->note);
       }
-    }
+      }
 
-    if ($embargo_date != NULL) {
+      if ($embargo_date != NULL) {
       $rows[] = array('Embargo date', $embargo_date);
-    }
+      } */
 
     return array(
       'headers' => $headers,
