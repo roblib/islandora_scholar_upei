@@ -1472,6 +1472,8 @@ function template_preprocess_scholar(&$variables) {
     'base_url' => $base_url,
     'date' => $data->date,
     'issn' => $data->issn,
+    'isbn' => $data->isbn,
+    'genre' => (string)$data->genre[0],
     'volume' => $data->volume,
     'issue' => $data->issue,
     'start_page' => $data->start_page,

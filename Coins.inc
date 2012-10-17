@@ -36,6 +36,7 @@ class Coins {
   public $department = NULL;
   public $type = NULL;
   public $status = NULL;
+  public $isbn = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -128,7 +129,8 @@ class Coins {
 
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
     $this->issn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $issn[0]);
-
+    $isbn = $xml->xpath('//mods:identifier[@type="isbn"]');
+    $this->isbn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $isbn[0]);
     $this->date = $xml->part->date;
     if ($this->date == NULL) {
       $this->date = $xml->originInfo->dateCreated;
@@ -323,10 +325,18 @@ class Coins {
             $rows[] = array('Book Title', $btitle);
           }
           
-          $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name/mods:namePart');
-          $beditors = implode(', ', $beditors);
-          if(!empty($beditors)){
-            $rows[] = array('Book Editors', $beditors);
+          $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name');
+          $i = 0;
+          $editor_name = '';
+          foreach($beditors as $beditor){
+            if($i++ > 0){
+              $editor_name .= ', ';
+            }
+            $editor_name .= (string)$beditor->namePart[0]. ' '. (string)$beditor->namePart[1];
+          }
+          
+          if(!empty($editor_name)){
+            $rows[] = array('Book Editors', $editor_name);
           }
           if(!empty($this->start_page)){
             $rows[] = array('Start Page', $this->start_page);

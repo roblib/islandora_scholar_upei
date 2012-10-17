@@ -153,12 +153,14 @@
                         <xsl:value-of select="normalize-space(text())"/>
                     </note>
                 </xsl:for-each>
-                <originInfo>
-                  
+                <originInfo>                  
                     <dateIssued>
                         <xsl:attribute name="keyDate">yes</xsl:attribute>
                         <xsl:value-of select="//reference/yr"/>
                     </dateIssued>
+                    <dateOther>
+                        <xsl:value-of select="//reference/fd"/>
+                    </dateOther>
                 </originInfo>
                 <part>
                     <date>
