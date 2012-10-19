@@ -234,12 +234,12 @@ class ScholarSolrResults extends IslandoraSolrResults {
           case 'OBJ':
             $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button'))) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
             break;
           case 'PDF':
             $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button'))) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
             break;
           default:
             if (stripos((string) $data->genre[0], 'book') !== FALSE) {

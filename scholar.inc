@@ -1445,12 +1445,12 @@ function template_preprocess_scholar(&$variables) {
     case 'OBJ':
       $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+            $pdf_result = '<div class="islandscholar-fulltext">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
             break;
     case 'PDF':
       $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+            $pdf_result = '<div class="islandscholar-fulltext">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
             break;
   }
 
@@ -1474,7 +1474,7 @@ function template_preprocess_scholar(&$variables) {
   $add_to_list = drupal_get_form('islandora_bibliography_citation_form', $variables['pid']);
   $associate_button = NULL;
   if (user_access('add scholarly research') == TRUE) {
-    $associate_button = '<div class="scholar_associate_button">';
+    $associate_button = '<div class="islandscholar-associate">';
     $associate_button .= drupal_get_form('islandora_scholar_associate_button_form', $variables['pid']);
     $associate_button .= '</div>';
   }
