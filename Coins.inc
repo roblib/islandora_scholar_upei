@@ -37,6 +37,7 @@ class Coins {
   public $type = NULL;
   public $status = NULL;
   public $isbn = NULL;
+  public $object = NULL;
 
   /**
    * Create the object properties from the MODS datastream
@@ -50,6 +51,7 @@ class Coins {
     $this->pid = $pid;
     module_load_include('inc', 'Fedora_Repository', 'api/fedora_item');
     $object = new Fedora_Item($pid);
+    $this->object = $object;
     $xmlstr = $object->get_datastream_dissemination('MODS');
 
     if ($xmlstr == NULL || strlen($xmlstr) < 5) {
@@ -82,7 +84,7 @@ class Coins {
         }
       }
       $role = (string) $name->role->roleTerm;
-      
+
       if ($role == 'aut' || $role == 'Author') {
         $role = 'author';
       }
@@ -208,9 +210,9 @@ class Coins {
         case 'Journal Article':
           //journal stuff
           $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string)$title[0];
+          $title = (string) $title[0];
           $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string)$sub_title[0];
+          $sub_title = (string) $sub_title[0];
           if (!empty($sub_title)) {
             $title = $title . ': ' . $sub_title;
           }
@@ -228,27 +230,32 @@ class Coins {
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
-          
-          if(!empty($this->start_page)){
+
+          if (!empty($this->start_page)) {
             $rows[] = array('Start Page', $this->start_page);
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
-          $endp = implode(',',$endp);
-          if(!empty($endp)){
+          $endp = implode(',', $endp);
+          if (!empty($endp)) {
             $rows[] = array('End Page', $endp);
           }
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
           $doi = $modsxml->xpath('//mods:identifier[@type="doi"]');
-          $doi = implode(',',$doi);
-          if(!empty($doi)){
+          $doi = implode(',', $doi);
+          if (!empty($doi)) {
             $rows[] = array('DOI', $doi);
           }
           $issn = $modsxml->xpath('//mods:identifier[@type="issn"]');
-          $issn = implode(',',$issn);
-          if(!empty($issn)){
+          $issn = implode(',', $issn);
+          if (!empty($issn)) {
             $rows[] = array('ISSN', $issn);
+          }
+          if ($this->embargo_date != NULL) {
+            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
+<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. Available to the public after ' . $embargo_date);
           }
           $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
           $use = implode(', ', $use);
@@ -257,10 +264,10 @@ class Coins {
           }
           break;
         case 'Book, Whole':
-           $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string)$title[0];
+          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string) $title[0];
           $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string)$sub_title[0];
+          $sub_title = (string) $sub_title[0];
           if (!empty($sub_title)) {
             $title = $title . ': ' . $sub_title;
           }
@@ -295,6 +302,11 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
+          if ($this->embargo_date != NULL) {
+            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
+<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
+          }
           $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
           $use = implode(', ', $use);
           if (!empty($use)) {
@@ -302,10 +314,10 @@ class Coins {
           }
           break;
         case 'Book, Section':
-           $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string)$title[0];
+          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string) $title[0];
           $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string)$sub_title[0];
+          $sub_title = (string) $sub_title[0];
           if (!empty($sub_title)) {
             $title = $title . ': ' . $sub_title;
           }
@@ -314,39 +326,39 @@ class Coins {
           if (!empty($authors)) {
             $rows[] = array('Section Author(s)', $authors);
           }
-           $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
-          $btitle = (string)$btitle[0];
+          $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
+          $btitle = (string) $btitle[0];
           $bsub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
-          $bsub_title = (string)$bsub_title[0];
+          $bsub_title = (string) $bsub_title[0];
           if (!empty($sbub_title)) {
             $btitle = $btitle . ': ' . $bsub_title;
           }
-          if(!empty($btitle)){
+          if (!empty($btitle)) {
             $rows[] = array('Book Title', $btitle);
           }
-          
+
           $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name');
           $i = 0;
           $editor_name = '';
-          foreach($beditors as $beditor){
-            if($i++ > 0){
+          foreach ($beditors as $beditor) {
+            if ($i++ > 0) {
               $editor_name .= ', ';
             }
-            $editor_name .= (string)$beditor->namePart[0]. ' '. (string)$beditor->namePart[1];
+            $editor_name .= (string) $beditor->namePart[0] . ' ' . (string) $beditor->namePart[1];
           }
-          
-          if(!empty($editor_name)){
+
+          if (!empty($editor_name)) {
             $rows[] = array('Book Editors', $editor_name);
           }
-          if(!empty($this->start_page)){
+          if (!empty($this->start_page)) {
             $rows[] = array('Start Page', $this->start_page);
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
-          $endp = implode(',',$endp);
-          if(!empty($endp)){
+          $endp = implode(',', $endp);
+          if (!empty($endp)) {
             $rows[] = array('End Page', $endp);
           }
-          
+
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
@@ -360,7 +372,7 @@ class Coins {
           if (!empty($place)) {
             $rows[] = array('Place published', $place);
           }
-          
+
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
           if (!empty($isbn)) {
@@ -369,17 +381,22 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
+          if ($this->embargo_date != NULL) {
+            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
+<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
+          }
           $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
           $use = implode(', ', $use);
           if (!empty($use)) {
             $rows[] = array('Use/Reproduction', $use);
           }
           break;
-        case 'Conference proceedings':
+        case 'Conference Proceedings':
           $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string)$title[0];
+          $title = (string) $title[0];
           $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string)$subtitle[0];
+          $sub_title = (string) $subtitle[0];
           if (!empty($sub_title)) {
             $title = $title . ': ' . $sub_title;
           }
@@ -390,11 +407,16 @@ class Coins {
           }
           $pro_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
           $pro_title = implode(', ', $pro_title);
-          if(!empty($pro_title)){
+          if (!empty($pro_title)) {
             $rows[] = array('Proceedings title', $pro_title);
           }
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
+          }
+          $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name/mods:namePart');
+          $beditors = implode(', ', $beditors);
+          if (!empty($beditors)) {
+            $rows[] = array('Conference', $beditors);
           }
           $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
           $publishers = implode(', ', $publishers);
@@ -418,6 +440,11 @@ class Coins {
           }
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
+          }
+          if ($this->embargo_date != NULL) {
+            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
+<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
           }
           $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
           $use = implode(', ', $use);
@@ -426,17 +453,17 @@ class Coins {
           }
           break;
         case 'Book, Edited':
-            $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string)$title[0];
+          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string) $title[0];
           $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string)$subtitle[0];
+          $sub_title = (string) $subtitle[0];
           if (!empty($sub_title)) {
             $title = $title . ': ' . $sub_title;
           }
           $rows[] = array('Title', $title);
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
-            $rows[] = array('Eidtor(s)', $authors);
+            $rows[] = array('Editor(s)', $authors);
           }
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
@@ -464,6 +491,11 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
+          if ($this->embargo_date != NULL) {
+            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
+<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
+          }
           $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
           $use = implode(', ', $use);
           if (!empty($use)) {
@@ -471,10 +503,10 @@ class Coins {
           }
           break;
         default:
-           $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string)$title[0];
+          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
+          $title = (string) $title[0];
           $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string)$sub_title[0];
+          $sub_title = (string) $sub_title[0];
           if (!empty($sub_title)) {
             $title = $title . ': ' . $sub_title;
           }
@@ -483,31 +515,31 @@ class Coins {
           if (!empty($authors)) {
             $rows[] = array('Author(s)', $authors);
           }
-           $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
-          $btitle = (string)$btitle[0];
+          $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
+          $btitle = (string) $btitle[0];
           $bsub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
-          $bsub_title = (string)$bsub_title[0];
+          $bsub_title = (string) $bsub_title[0];
           if (!empty($bsub_title)) {
             $btitle = $btitle . ': ' . $bsub_title;
           }
-          if(!empty($btitle)){
+          if (!empty($btitle)) {
             $rows[] = array('Related Item', $btitle);
           }
-          
+
           $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name/mods:namePart');
           $beditors = implode(', ', $beditors);
-          if(!empty($beditors)){
-            $rows[] = array('Book Editors', $beditors);
+          if (!empty($beditors)) {
+            $rows[] = array('Editors', $beditors);
           }
-          if(!empty($this->start_page)){
+          if (!empty($this->start_page)) {
             $rows[] = array('Start Page', $this->start_page);
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
-          $endp = implode(',',$endp);
-          if(!empty($endp)){
+          $endp = implode(',', $endp);
+          if (!empty($endp)) {
             $rows[] = array('End Page', $endp);
           }
-          
+
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
@@ -521,7 +553,7 @@ class Coins {
           if (!empty($place)) {
             $rows[] = array('Place published', $place);
           }
-          
+
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
           if (!empty($isbn)) {
@@ -530,12 +562,35 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
+          if ($this->embargo_date != NULL) {
+            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
+<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
+          }
           $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
           $use = implode(', ', $use);
           if (!empty($use)) {
             $rows[] = array('Use/Reproduction', $use);
           }
           break;
+      }
+    }
+
+    $ds_array = $this->object->get_datastreams_list_as_array();
+    $check = NULL;
+    if (array_key_exists('OBJ', $ds_array) ) {//check status in case ds exists but is embargoed
+      $check = 'OBJ';
+    }
+    if (array_key_exists('PDF', $ds_array) ) {
+      $check = 'PDF';
+    }
+    if ($check) {
+      if (module_exists('scholar_tracking')) {
+        //check to see if the full text is available before we provide a URL
+        $rows[] = array('Text', l($base_url . '/download_ds/' . $this->pid . '/' . $check, $base_url . '/download_ds/' . $this->pid . '/' . $check));
+      }
+      else {
+        $rows[] = array('Text', l($base_url . '/fedora/repository/' . $this->pid . '/' . $check . '/' . $this->pid, $base_url . '/fedora/repository/' . $this->pid . '/' . $check . '/PDF'));
       }
     }
     /* global $base_url;

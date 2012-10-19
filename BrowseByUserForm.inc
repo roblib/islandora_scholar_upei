@@ -162,7 +162,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
         $citation_query = db_fetch_array(db_query("SELECT citation_count FROM {islandora_scholar_researcher_citation_counts} WHERE pid = '%s'", $username[0]));
         $citations = $citation_query['citation_count'];
       }
-      $citation_link = l(t('@citations citations', array('@citations' => $citations)),'islandora/solr/search/mods.username:'.$username[0]);
+      $citation_link = l(t('@citations citations', array('@citations' => $citations)),'islandora/solr/search/mods.username:"'.$username[0].'"',array('query'=> array("sort"=>"mods_date_issued_dt desc")));
       $email_link = '<a href="mailto:'.$email[0].'">'.$email[0].'</a>';
       $users[] = array(l($family[0] . ', ' . $given[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email_link, 
         $citation_link);

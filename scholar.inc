@@ -1140,19 +1140,19 @@ function islandora_scholar_build_citation($pid, $type) {
     '#weight' => 1,
   );
 
-  $tabset['first_tab']['tabs']['summary']['citation_button'] = array(
+  /* $tabset['first_tab']['tabs']['summary']['citation_button'] = array(
     '#prefix' => '<div class="scholar_bibliography_add_form">',
     '#suffix' => '</div>',
     '#value' => drupal_get_form('islandora_bibliography_citation_form', $pid),
-  );
-
-  if (user_access('add scholarly research') == TRUE) {
-    $tabset['first_tab']['tabs']['summary']['associate_button'] = array(
-      '#prefix' => '<div class="scholar_associate_button">',
-      '#suffix' => '</div>',
-      '#value' => drupal_get_form('islandora_scholar_associate_button_form', $pid),
     );
-  }
+
+    if (user_access('add scholarly research') == TRUE) {
+    $tabset['first_tab']['tabs']['summary']['associate_button'] = array(
+    '#prefix' => '<div class="scholar_associate_button">',
+    '#suffix' => '</div>',
+    '#value' => drupal_get_form('islandora_scholar_associate_button_form', $pid),
+    );
+    } */
 
   if (array_key_exists('ZIP', $datastream_array)) {
     $datastream_info = $item->get_datastream_info('ZIP');
@@ -1396,6 +1396,7 @@ function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'citeproc', 'CiteProcJSBibliography');
   module_load_include('inc', 'scholar', '/citation/bibliography/BibliographyForm');
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
+  module_load_include('inc', 'scholar', 'Users');
 
   global $base_url;
 
@@ -1435,32 +1436,47 @@ function template_preprocess_scholar(&$variables) {
   if (module_exists('scholar_tracking')) {
     $url_frag = 'download_ds/';
   }
+  $pdf_result = NULL;
+  $url_frag = 'fedora/repository/';
+  if (module_exists('scholar_tracking')) {
+    $url_frag = 'download_ds/';
+  }
   switch ($check) {
     case 'OBJ':
       $download_img = $base_url . '/' . $path . '/images/download.png';
-      $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', $url_frag . $variables['pid'] . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-      break;
+            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+            break;
     case 'PDF':
       $download_img = $base_url . '/' . $path . '/images/download.png';
-      $pdf_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Full text', $url_frag . $variables['pid'] . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-      break;
+            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+            break;
   }
 
-  if (array_key_exists('ZIP', $datastream_array)) {
+  /* if (array_key_exists('ZIP', $datastream_array)) {
     $datastream_info = $item->get_datastream_info('ZIP');
     $description = $datastream_array['ZIP']['label'];
 
     $supp_array = islandora_scholar_zip_mods_to_array($mods);
     if ($supp_array) {
-      $supp_header = array('Filename', 'Date', 'Size (bytes)');
-      $supp_rows = array();
-      for ($i = 0; $i < count($supp_array); $i++) {
-        $supp_rows[] = $supp_array[$i];
-      }
+    $supp_header = array('Filename', 'Date', 'Size (bytes)');
+    $supp_rows = array();
+    for ($i = 0; $i < count($supp_array); $i++) {
+    $supp_rows[] = $supp_array[$i];
+    }
     }
     else {
-      drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
+    drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
     }
+    } */
+
+  $add_to_list = drupal_get_form('islandora_bibliography_citation_form', $variables['pid']);
+  $associate_button = NULL;
+  if (user_access('add scholarly research') == TRUE) {
+    $associate_button = '<div class="scholar_associate_button">';
+    $associate_button .= drupal_get_form('islandora_scholar_associate_button_form', $variables['pid']);
+    $associate_button .= '</div>';
   }
 
   $variables = array(
@@ -1473,7 +1489,7 @@ function template_preprocess_scholar(&$variables) {
     'date' => $data->date,
     'issn' => $data->issn,
     'isbn' => $data->isbn,
-    'genre' => (string)$data->genre[0],
+    'genre' => (string) $data->genre[0],
     'volume' => $data->volume,
     'issue' => $data->issue,
     'start_page' => $data->start_page,
@@ -1482,6 +1498,8 @@ function template_preprocess_scholar(&$variables) {
     'times_read' => $read['count'],
     'time_last_viewed' => $time_last_viewed,
     'datastream_array' => $datastream_array,
+    'add_to_list' => $add_to_list,
+    'associate_button' => $associate_button,
     'csl' => $csl,
     'full_text' => $pdf_result,
   );

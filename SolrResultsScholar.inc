@@ -255,10 +255,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $supp_result = NULL;
 
         if (array_key_exists('ZIP', $ds_array)) {
-          $supp_result = '<div class="scholar_pdf">' . l('<img src="' . $download_img . '"/> Supplemental information', 'fedora/repository/' . $doc->PID . '/ZIP/ZIP', array('html' => TRUE)) . '</div>';
+          $supp_result = '<div class="scholar_pdf">' . l('Supplemental information', 'fedora/repository/' . $doc->PID . '/ZIP/'.$doc->PID.'.zip', array('html' => TRUE, 'attributes' => array('class' => 'button supplement'))) . '</div>';
         }
 
-        $abstract_snippet = 600;
+        $abstract_snippet = 300;
         if (strlen($data->abstract) > $abstract_snippet) {
           $abstract = substr($data->abstract, 0, $abstract_snippet);
           $abstract .= '...';

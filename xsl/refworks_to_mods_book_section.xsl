@@ -176,7 +176,7 @@
                             <roleTerm>
                                 <xsl:attribute name="authority">marcrelator</xsl:attribute>
                                 <xsl:attribute name="type">text</xsl:attribute>
-                                <xsl:text>Contributor</xsl:text>
+                                <xsl:text>Editor</xsl:text>
                             </roleTerm>
                         </role>
                     </name>

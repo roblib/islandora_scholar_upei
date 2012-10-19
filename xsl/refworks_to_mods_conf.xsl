@@ -61,6 +61,15 @@
                     </role>
                 </name>
             </xsl:for-each>
+            <xsl:if test="//reference/t2/text() [normalize-space(.) ]">
+                <name type="conference">
+                    <namePart>
+                        <xsl:for-each select="//reference/t2">
+                            <xsl:value-of select="normalize-space(text())"/>
+                        </xsl:for-each>
+                    </namePart>            
+                </name>
+            </xsl:if>
             <xsl:for-each select="//reference/u1">
                 <xsl:call-template name="links">
                     <xsl:with-param name="str" select="."/>
@@ -157,11 +166,12 @@
                         </title>
                     </titleInfo>
                 </xsl:if>
+               
                 
                 <xsl:if test="//reference/jo/text() [normalize-space(.) ]">
                     <titleInfo>
-                        <title>
-                            <xsl:attribute name="type">abbreviated</xsl:attribute>
+                        <xsl:attribute name="type">abbreviated</xsl:attribute>
+                        <title>                            
                             <xsl:value-of select="//reference/jo"/>
                         </title>
                     </titleInfo>
@@ -193,12 +203,13 @@
                             <roleTerm>
                                 <xsl:attribute name="authority">marcrelator</xsl:attribute>
                                 <xsl:attribute name="type">text</xsl:attribute>
-                                <xsl:text>Contributor</xsl:text>
+                                <xsl:text>Editor</xsl:text>
                             </roleTerm>
                         </role>
                     </name>
                 </xsl:for-each>
                 <originInfo>
+                    
                     <xsl:if test="//reference/ad/text() [normalize-space(.) ]">
                         <place>
                             <placeTerm>
@@ -224,10 +235,18 @@
                         <xsl:attribute name="keyDate">yes</xsl:attribute>
                         <xsl:value-of select="//reference/yr"/>
                     </dateIssued>
+                    <xsl:if test="//reference/fd/text() [normalize-space(.) ]">
+                        <dateOther>
+                            <xsl:value-of select="//reference/fd"/>
+                        </dateOther>
+                    </xsl:if>
                     <xsl:if test="//reference/ed/text() [normalize-space(.) ]">
-                        <edition>
+                        <place>
+                            <placeTerm>
+                                <xsl:attribute name="type">text</xsl:attribute>
                                 <xsl:value-of select="//reference/ed"/>
-                        </edition>
+                            </placeTerm>
+                        </place>
                     </xsl:if>
                 </originInfo>
                 <part>
@@ -263,6 +282,13 @@
                     </xsl:if>
                 </part>
                 <xsl:if test="//reference/sn/text() [normalize-space(.) ]">
+                    <xsl:for-each select="//reference/sn">
+                        <xsl:call-template name="isbn">
+                            <xsl:with-param name="strisbn" select="."/>
+                        </xsl:call-template>
+                    </xsl:for-each>
+                </xsl:if>
+                <!--<xsl:if test="//reference/sn/text() [normalize-space(.) ]">
                     <identifier>
                         <xsl:if test="string-length(//reference/sn) &gt; 10">
                             <xsl:attribute name="type">isbn</xsl:attribute>
@@ -273,7 +299,7 @@
                             <xsl:value-of select="//reference/sn"/>
                         </xsl:if>
                     </identifier>
-                </xsl:if>
+                </xsl:if>-->
             </relatedItem>
             <xsl:if test="//reference/t3/text() [normalize-space(.) ]">
             <relatedItem type="series">
@@ -360,6 +386,37 @@
             <xsl:otherwise>
                 <identifier type="u2">
                     <xsl:value-of select="normalize-space($str)"/>
+                </identifier>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="isbn">
+        <xsl:param name="strisbn"/>
+        <xsl:choose>
+            <xsl:when test="contains($strisbn,';')">
+              <identifier>
+                    <xsl:if test="string-length(substring-before($strisbn,';')) &gt; 9">
+                        <xsl:attribute name="type">isbn</xsl:attribute>
+                    </xsl:if>
+                    <xsl:if test="string-length(substring-before($strisbn,';')) &lt; 10">
+                        <xsl:attribute name="type">issn</xsl:attribute>
+                    </xsl:if>
+                    <xsl:value-of select="normalize-space(substring-before($strisbn,';'))"/>
+                </identifier>
+                <xsl:call-template name="isbn">
+                    <xsl:with-param name="strisbn" select="normalize-space(substring-after($strisbn,';'))"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <identifier>
+                    <xsl:if test="string-length($strisbn) &gt; 10">
+                        <xsl:attribute name="type">isbn</xsl:attribute>
+                    </xsl:if>
+                    <xsl:if test="string-length($strisbn) &lt; 10">
+                        <xsl:attribute name="type">issn</xsl:attribute>
+                    </xsl:if>
+                    <xsl:value-of select="$strisbn"/>
                 </identifier>
             </xsl:otherwise>
         </xsl:choose>

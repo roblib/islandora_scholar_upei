@@ -186,6 +186,15 @@
                     </extent>                
                 </physicalDescription>
             </xsl:if>
+           <xsl:if test="//reference/t2/text() [normalize-space(.) ]">
+               <relatedItem type="series">
+                   <titleInfo>
+                       <title>
+                           <xsl:value-of select="//reference/t2"/>
+                       </title>
+                   </titleInfo>
+               </relatedItem>
+           </xsl:if>
         </mods>
     </xsl:template>
     
