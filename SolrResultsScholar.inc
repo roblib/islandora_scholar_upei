@@ -219,10 +219,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $pdf_check = array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array);
         $check = '';
         $data = new Coins($doc->PID);
-        if (array_key_exists('OBJ', $ds_array) && $data->status == 'FULL_TEXT_AVAILABLE') {//check status in case ds exists but is embargoed
+        if (array_key_exists('OBJ', $ds_array) ) {//check status in case ds exists but is embargoed
           $check = 'OBJ';
         }
-        if (array_key_exists('PDF', $ds_array) && $data->status == 'FULL_TEXT_AVAILABLE') {
+        if (array_key_exists('PDF', $ds_array) ) {
           $check = 'PDF';
         }
         $url_frag = 'fedora/repository/';
@@ -236,7 +236,7 @@ class ScholarSolrResults extends IslandoraSolrResults {
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
             $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
            
-        } elseif ($check =='OBJ' && !$embargoed){
+        } elseif ($check =='PDF' && !$embargoed){
            $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
             $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';

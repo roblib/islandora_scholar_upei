@@ -134,10 +134,19 @@ class Coins {
     $this->issn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $issn[0]);
     $isbn = $xml->xpath('//mods:identifier[@type="isbn"]');
     $this->isbn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $isbn[0]);
-    $this->date = $xml->part->date;
+    //$this->date = $xml->part->date;
+    $date = $xml->xpath('//mods:originInfo/mods:dateIssued');
+    if (isset($date[0])) {
+      $this->date = $date[0];
+    }
+    $date = $xml->xpath('//mods:originInfo/mods:dateCreated');
+    if ($this->date == NULL) {
+      $this->date = $date[0];
+    }
     if ($this->date == NULL) {
       $this->date = $xml->originInfo->dateCreated;
     }
+
 
     $volume = $xml->xpath('//mods:part/mods:detail[@type="volume"]');
     $this->volume = $volume[0]->number;
@@ -233,6 +242,13 @@ class Coins {
 
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
+          }
+          if(isset($this->volume)){
+            $rows[] = array('Volume', $this->volume);
+          }
+          
+          if(isset($this->issue)){
+            $rows[] = array('Issue', $this->issue);
           }
 
           if (!empty($this->start_page)) {
@@ -566,7 +582,7 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
-          if ($this->embargo_date != NULL) {
+          if ($this->embargo_date != NULL && $this->is_embargoed($this->embargo_date)) {
             $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
             $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
 <a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
@@ -589,7 +605,7 @@ class Coins {
       $check = 'PDF';
     }
     $embargoed = $this->is_embargoed($this->embargo_date);
-    if ($check && ! $embargoed) {
+    if ($check && !$embargoed) {
       if (module_exists('scholar_tracking')) {
         //check to see if the full text is available before we provide a URL
         $rows[] = array('Text', l($base_url . '/download_ds/' . $this->pid . '/' . $check, $base_url . '/download_ds/' . $this->pid . '/' . $check));
@@ -764,11 +780,11 @@ class Coins {
   }
 
   function is_embargoed($embargo_date) {
-    if($embargo_date === NULL){
+    if ($embargo_date === NULL) {
       return FALSE;
     }
     $embargo_timestamp = strtotime($embargo_date);
-    if(!$embargo_timestamp){
+    if (!$embargo_timestamp) {
       return FALSE;
     }
     $today = time();

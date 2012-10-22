@@ -1445,12 +1445,12 @@ function template_preprocess_scholar(&$variables) {
     case 'OBJ':
       $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="islandscholar-fulltext">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+            $pdf_result = '<div class="islandscholar-fulltext">' . l('Full text', $url_frag . $variables['pid'] . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
             break;
     case 'PDF':
       $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="islandscholar-fulltext">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+            $pdf_result = '<div class="islandscholar-fulltext">' . l('Full text', $url_frag . $variables['pid'] . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
             break;
   }
 
