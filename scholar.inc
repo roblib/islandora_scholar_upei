@@ -1478,6 +1478,14 @@ function template_preprocess_scholar(&$variables) {
     $associate_button .= drupal_get_form('islandora_scholar_associate_button_form', $variables['pid']);
     $associate_button .= '</div>';
   }
+  
+  $embargo_date = $data->embargo_date;
+  $embargo_timestamp = strtotime($embargo_date);
+  $today = time();
+  $embargoed = FALSE;
+  if($embargo_timestamp > $today){
+    $embargoed = TRUE;
+  }
 
   $variables = array(
     'pid' => $variables['pid'],
@@ -1502,6 +1510,7 @@ function template_preprocess_scholar(&$variables) {
     'associate_button' => $associate_button,
     'csl' => $csl,
     'full_text' => $pdf_result,
+    'embargoed' => $embargoed,
   );
 }
 
