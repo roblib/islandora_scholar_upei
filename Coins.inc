@@ -222,14 +222,7 @@ class Coins {
       switch ((string) $genre) {
         case 'Journal Article':
           //journal stuff
-          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string) $title[0];
-          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string) $sub_title[0];
-          if (!empty($sub_title)) {
-            $title = $title . ': ' . $sub_title;
-          }
-          $rows[] = array('Title', $title);
+          $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
             $rows[] = array('Author(s)', $authors);
@@ -243,11 +236,11 @@ class Coins {
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
-          if(isset($this->volume)){
+          if (isset($this->volume)) {
             $rows[] = array('Volume', $this->volume);
           }
-          
-          if(isset($this->issue)){
+
+          if (isset($this->issue)) {
             $rows[] = array('Issue', $this->issue);
           }
 
@@ -265,33 +258,18 @@ class Coins {
           $doi = $modsxml->xpath('//mods:identifier[@type="doi"]');
           $doi = implode(',', $doi);
           if (!empty($doi)) {
-            $rows[] = array('DOI', $doi);
+            $rows[] = array('DOI', l($doi, 'http://dx.doi.org/' . $doi));
           }
           $issn = $modsxml->xpath('//mods:identifier[@type="issn"]');
           $issn = implode(',', $issn);
           if (!empty($issn)) {
             $rows[] = array('ISSN', $issn);
           }
-          if ($this->embargo_date != NULL) {
-            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
-<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. Available to the public after ' . $embargo_date);
-          }
-          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
-          $use = implode(', ', $use);
-          if (!empty($use)) {
-            $rows[] = array('Use/Reproduction', $use);
-          }
+          $this->get_availability($rows);
+          $this->get_use($rows);
           break;
         case 'Book, Whole':
-          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string) $title[0];
-          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string) $sub_title[0];
-          if (!empty($sub_title)) {
-            $title = $title . ': ' . $sub_title;
-          }
-          $rows[] = array('Title', $title);
+          $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
             $rows[] = array('Author(s)', $authors);
@@ -322,26 +300,11 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
-          if ($this->embargo_date != NULL) {
-            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
-<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
-          }
-          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
-          $use = implode(', ', $use);
-          if (!empty($use)) {
-            $rows[] = array('Use/Reproduction', $use);
-          }
+          $this->get_availability($rows);
+          $this->get_use($rows);
           break;
         case 'Book, Section':
-          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string) $title[0];
-          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string) $sub_title[0];
-          if (!empty($sub_title)) {
-            $title = $title . ': ' . $sub_title;
-          }
-          $rows[] = array('Section Title', $title);
+          $this->get_title($rows, 'Section Title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
             $rows[] = array('Section Author(s)', $authors);
@@ -401,33 +364,23 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
-          if ($this->embargo_date != NULL) {
-            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
-<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
-          }
-          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
-          $use = implode(', ', $use);
-          if (!empty($use)) {
-            $rows[] = array('Use/Reproduction', $use);
-          }
+          $this->get_availability($rows);
+          $this->get_use($rows);
           break;
         case 'Conference Proceedings':
-          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string) $title[0];
-          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string) $subtitle[0];
-          if (!empty($sub_title)) {
-            $title = $title . ': ' . $sub_title;
-          }
-          $rows[] = array('Paper Title', $title);
+          $this->get_title($rows, 'Paper Title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
             $rows[] = array('Paper Author(s)', $authors);
           }
           $pro_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
-          $pro_title = implode(', ', $pro_title);
-          if (!empty($pro_title)) {
+          $pro_sub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
+          $pro_title = (string)$pro_title[0];//implode(', ', $pro_title);
+          $pro_sub_title = (string)$pro_sub_title[0];//implode(',', $pro_sub_title);
+          if (!empty($pro_sub_title[0])) {
+            $pro_title = $pro_title . ': ' . $pro_sub_title;
+          }
+          if(!empty($pro_title)){
             $rows[] = array('Proceedings title', $pro_title);
           }
           if ((string) $this->date != NULL) {
@@ -461,26 +414,11 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
-          if ($this->embargo_date != NULL) {
-            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
-<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
-          }
-          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
-          $use = implode(', ', $use);
-          if (!empty($use)) {
-            $rows[] = array('Use/Reproduction', $use);
-          }
+          $this->get_availability($rows);
+          $this->get_use($rows);
           break;
         case 'Book, Edited':
-          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string) $title[0];
-          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string) $subtitle[0];
-          if (!empty($sub_title)) {
-            $title = $title . ': ' . $sub_title;
-          }
-          $rows[] = array('Title', $title);
+          $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
             $rows[] = array('Editor(s)', $authors);
@@ -511,26 +449,11 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
-          if ($this->embargo_date != NULL) {
-            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
-<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
-          }
-          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
-          $use = implode(', ', $use);
-          if (!empty($use)) {
-            $rows[] = array('Use/Reproduction', $use);
-          }
+          $this->get_availability($rows);
+          $this->get_use($rows);
           break;
         default:
-          $title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:title');
-          $title = (string) $title[0];
-          $sub_title = $modsxml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
-          $sub_title = (string) $sub_title[0];
-          if (!empty($sub_title)) {
-            $title = $title . ': ' . $sub_title;
-          }
-          $rows[] = array('Title', $title);
+          $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
             $rows[] = array('Author(s)', $authors);
@@ -582,16 +505,9 @@ class Coins {
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
           }
-          if ($this->embargo_date != NULL && $this->is_embargoed($this->embargo_date)) {
-            $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-            $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
-<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
-          }
-          $use = $modsxml->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
-          $use = implode(', ', $use);
-          if (!empty($use)) {
-            $rows[] = array('Use/Reproduction', $use);
-          }
+          $this->get_availability($rows);
+          $this->get_use($rows);
+
           break;
       }
     }
@@ -614,169 +530,39 @@ class Coins {
         $rows[] = array('Text', l($base_url . '/fedora/repository/' . $this->pid . '/' . $check . '/' . $this->pid, $base_url . '/fedora/repository/' . $this->pid . '/' . $check . '/PDF'));
       }
     }
-    /* global $base_url;
-
-      $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
-
-      $headers = array('', '');
-      $rows = array();
-
-      $full_name = $this->topic;
-      if (!empty($this->names)) {
-      $names = implode(', ', $this->names);
-      }
-      else {
-      $names = t('');
-      }
-
-      if (!empty($this->authors)) {
-      $authors = implode(', ', $this->authors);
-      }
-      else {
-      $authors = t('');
-      }
-
-      if (!empty($this->contributors)) {
-      $contributors = implode(', ', $this->contributors);
-      }
-      else {
-      $contributors = t('');
-      }
-
-      if (!empty($this->topic)) {
-      $topics = implode($this->topic, ', ');
-      }
-      else {
-      $topics = t('');
-      }
-
-      $genre = $this->genre;
-      if (stripos((string) $genre[0], 'book') !== FALSE) {
-      $type = 'book';
-      }
-
-      if ($this->embargo_date != NULL) {
-      $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-      }
-      else {
-      $embargo_date = NULL;
-      }
-
-      if ((string) $this->title != NULL) {
-      $rows[] = array('Title', $this->title);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Title', $this->title);
-      }
-
-      if ($type == 'thesis') {
-      if ($authors != NULL) {
-      $rows[] = array('Authors', rtrim($authors, ', '));
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Authors', rtrim($authors, ', '));
-      }
-      if ($contributors != NULL) {
-      $rows[] = array('Contributors', rtrim($contributors, ', '));
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Contributors', rtrim($contributors, ', '));
-      }
-      if (module_exists('scholar_tracking')) {
-      if ($this->status == 'FULL_TEXT_AVAILABLE') { //check to see if the full text is available before we provide a URL
-      $rows[] = array('URL', l($base_url . '/download_ds/' . $this->pid . '/PDF', $base_url . '/download_ds/' . $this->pid . '/PDF'));
-      }
-      }
-      else {
-      $rows[] = array('URL', l($base_url . '/fedora/repository/' . $this->pid . '/PDF/PDF', $base_url . '/fedora/repository/' . $this->pid . '/PDF/PDF'));
-      }
-      }
-      else {
-      if ($names != NULL) {
-      $rows[] = array('Authors', rtrim($names, ', '));
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Authors', rtrim($names, ', '));
-      }
-      }
-
-      if ((string) $this->abstract != NULL) {
-      $rows[] = array('Abstract', $this->abstract);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Abstract', $this->abstract);
-      }
-
-      if ($type == 'citation') {
-      if ((string) $this->journal_title != NULL) {
-      $rows[] = array('Journal', $this->journal_title);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Journal', $this->journal_title);
-      }
-      }
-
-      if ((string) $this->date != NULL) {
-      $rows[] = array('Date', $this->date);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Date', $this->date);
-      }
-
-      if ($type == 'citation') {
-      if ((string) $this->volume != NULL) {
-      $rows[] = array('Volume', $this->volume);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Volume', $this->volume);
-      }
-
-      if ((string) $this->issue != NULL) {
-      $rows[] = array('Issue', $this->issue);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Issue', $this->issue);
-      }
-
-      if ((string) $this->start_page != NULL) {
-      $rows[] = array('Start page', $this->start_page);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Start page', $this->start_page);
-      }
-      }
-
-      if ($type == 'citation') {
-      if ((string) $this->issn != NULL) {
-      $rows[] = array('ISSN', $this->issn);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('ISSN', $this->issn);
-      }
-
-      if ((string) $topics != NULL) {
-      $rows[] = array('Subjects', rtrim($topics, ', '));
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Subjects', rtrim($topics, ', '));
-      }
-
-      if ((string) $this->note != NULL) {
-      $rows[] = array('Note', $this->note);
-      }
-      elseif (user_access('administer scholarly research')) {
-      $rows[] = array('Note', $this->note);
-      }
-      }
-
-      if ($embargo_date != NULL) {
-      $rows[] = array('Embargo date', $embargo_date);
-      } */
-
     return array(
       'headers' => $headers,
       'rows' => $rows,
     );
+  }
+
+  function get_title(&$rows, $label) {
+    $title = $this->mods->xpath('/mods:mods/mods:titleInfo/mods:title');
+    $title = (string) $title[0];
+    $sub_title = $this->mods->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
+    $sub_title = (string) $sub_title[0];
+    if (!empty($sub_title)) {
+      $title = $title . ': ' . $sub_title;
+    }
+    if (!empty($title)) {
+      $rows[] = array($label, $title);
+    }
+  }
+
+  function get_use(&$rows) {
+    $use = $this->mods->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
+    $use = implode(', ', $use);
+    if (!empty($use)) {
+      $rows[] = array('Use/Reproduction', $use);
+    }
+  }
+
+  function get_availability(&$rows) {
+    if ($this->embargo_date != NULL && $this->is_embargoed($this->embargo_date)) {
+      $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
+      $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
+<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
+    }
   }
 
   function is_embargoed($embargo_date) {
