@@ -22,14 +22,14 @@
 
   <h3><?php print t('Adding this citation to "My List" will allow you to export this citation in other styles.'); ?></h3>
 
-  <div class="is-fullview-btns">
+  <div class="scholar-fullview-btns">
     <?php if (isset($add_to_list)): ?>
       <?php print $add_to_list; ?>
     <?php endif; ?>
     <?php if (isset($full_text) && !$embargoed): ?>
       <?php print $full_text; ?>
     <?php endif; ?>
-    <div class="islandscholar-refworks"><a href="http://rlproxy.upei.ca/login?url=http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=<?php print $base_url ?>/refworks_entry/<?php print urlencode($pid) ?>" target="RefWorksMain" class="button refworks">Export to RefWorks</A></div>
+    <div class="scholar-refworks"><a href="http://rlproxy.upei.ca/login?url=http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=<?php print $base_url ?>/refworks_entry/<?php print urlencode($pid) ?>" target="RefWorksMain" class="button refworks">Export to RefWorks</A></div>
     <?php if (stripos((string) $genre, 'book') !== FALSE && (!isset($full_text) || $embargoed )): ?>
       <div class="scholar_coins_title">
           <span class="Z3988" title="&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.isbn=<?php print $isbn ?>&amp;rft.date=<?php print $date ?>&amp;rft.title=<?php print $title ?>">

@@ -97,3 +97,8 @@ root {
 .scholar_refworks_link {
     float: left;
 }
+
+.scholar-fullview-btns div,
+.scholar-fullview-btns form {
+    display: inline;
+}
