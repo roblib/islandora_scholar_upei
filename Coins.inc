@@ -588,7 +588,8 @@ class Coins {
     if (array_key_exists('PDF', $ds_array)) {
       $check = 'PDF';
     }
-    if ($check) {
+    $embargoed = $this->is_embargoed($this->embargo_date);
+    if ($check && ! $embargoed) {
       if (module_exists('scholar_tracking')) {
         //check to see if the full text is available before we provide a URL
         $rows[] = array('Text', l($base_url . '/download_ds/' . $this->pid . '/' . $check, $base_url . '/download_ds/' . $this->pid . '/' . $check));

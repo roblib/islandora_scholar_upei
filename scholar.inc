@@ -1153,8 +1153,8 @@ function islandora_scholar_build_citation($pid, $type) {
     '#value' => drupal_get_form('islandora_scholar_associate_button_form', $pid),
     );
     } */
-
-  if (array_key_exists('ZIP', $datastream_array)) {
+  $sup_embargoed = $data->is_embargoed($data->sup_embargo_date);
+  if (array_key_exists('ZIP', $datastream_array) && (!$sup_embargoed || user_access('add scholarly research'))) {
     $datastream_info = $item->get_datastream_info('ZIP');
     $description = $datastream_array['ZIP']['label'];
     $mods = islandora_bibilgraphy_form_get_mods($pid);
