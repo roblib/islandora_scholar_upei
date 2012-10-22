@@ -1480,12 +1480,8 @@ function template_preprocess_scholar(&$variables) {
   }
   
   $embargo_date = $data->embargo_date;
-  $embargo_timestamp = strtotime($embargo_date);
-  $today = time();
-  $embargoed = FALSE;
-  if($embargo_timestamp > $today){
-    $embargoed = TRUE;
-  }
+  $embargoed = $data->is_embargoed($embargo_date);
+  
 
   $variables = array(
     'pid' => $variables['pid'],

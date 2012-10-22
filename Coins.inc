@@ -29,6 +29,7 @@ class Coins {
   public $topic = NULL;
   public $note = NULL;
   public $embargo_date = NULL;
+  public $sup_embargo_date = NULL;
   public $genre = NULL;
   public $family_names = NULL;
   public $full_names = NULL;
@@ -173,6 +174,9 @@ class Coins {
 
     $embargo_date = $xml->xpath('//mods:dateOther[@type="embargo"]');
     $this->embargo_date = $embargo_date[0];
+
+    $sup_embargo_date = $xml->xpath('//mods:dateOther[@type="supp_embargo"]');
+    $this->sup_embargo_date = $embargo_date[0];
 
     $genre = $xml->xpath('//mods:genre');
     $this->genre = $genre;
@@ -578,10 +582,10 @@ class Coins {
 
     $ds_array = $this->object->get_datastreams_list_as_array();
     $check = NULL;
-    if (array_key_exists('OBJ', $ds_array) ) {//check status in case ds exists but is embargoed
+    if (array_key_exists('OBJ', $ds_array)) {//check status in case ds exists but is embargoed
       $check = 'OBJ';
     }
-    if (array_key_exists('PDF', $ds_array) ) {
+    if (array_key_exists('PDF', $ds_array)) {
       $check = 'PDF';
     }
     if ($check) {
@@ -756,6 +760,22 @@ class Coins {
       'headers' => $headers,
       'rows' => $rows,
     );
+  }
+
+  function is_embargoed($embargo_date) {
+    if($embargo_date === NULL){
+      return FALSE;
+    }
+    $embargo_timestamp = strtotime($embargo_date);
+    if(!$embargo_timestamp){
+      return FALSE;
+    }
+    $today = time();
+    $embargoed = FALSE;
+    if ($embargo_timestamp > $today) {
+      $embargoed = TRUE;
+    }
+    return $embargoed;
   }
 
 }
