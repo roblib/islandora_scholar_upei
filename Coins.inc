@@ -367,6 +367,107 @@ class Coins {
           $this->get_availability($rows);
           $this->get_use($rows);
           break;
+        case 'thesis':
+        case 'Signature Project':
+          $this->get_title($rows, 'Title');
+          $authors = implode(', ', $this->authors);
+          if (!empty($authors)) {
+            $rows[] = array('Author(s)', $authors);
+          }
+          $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
+          $btitle = (string) $btitle[0];
+          $bsub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
+          $bsub_title = (string) $bsub_title[0];
+          if (!empty($bsub_title)) {
+            $btitle = $btitle . ': ' . $bsub_title;
+          }
+          if (!empty($btitle)) {
+            $rows[] = array('Related Item', $btitle);
+          }
+
+
+          if (!empty($this->start_page)) {
+            $rows[] = array('Start Page', $this->start_page);
+          }
+          $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
+          $endp = implode(',', $endp);
+          if (!empty($endp)) {
+            $rows[] = array('End Page', $endp);
+          }
+
+          if ((string) $this->date != NULL) {
+            $rows[] = array('Date', $this->date);
+          }
+          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
+          $publishers = implode(', ', $publishers);
+          if (!empty($publishers)) {
+            $rows[] = array('Institution', $publishers);
+          }
+          //advisor
+          $advisors = $modsxml->xpath('/mods:mods/mods:name');
+          $i = 0;
+          $advisor_name = '';
+          foreach ($advisors as $advisor) {
+            if ($advisor->role->roleTerm == "Signature Project Advisor" || $advisor->role->roleTerm == "Thesis advisor") {
+              if ($i > 0) {
+                $advisor_name .= ', ';
+              }
+              $advisor_name .= (string) $advisor->namePart[0] . ' ' . (string) $advisor->namePart[1] . ' ' . (string) $advisor->namePart[2];
+              $i++;
+            }
+          }
+
+          if (!empty($advisor_name)) {
+            $advisor_name = trim($advisor_name);
+            $rows[] = array('Advisor(s)', $advisor_name) ;
+          }
+
+          $i = 0;
+          $member_name = '';
+          foreach ($advisors as $member) {
+            
+            if ($member->role->roleTerm == "Committee member") {
+              if ($i > 0) {
+              $member_name .= ', ';
+            }
+              $member_name .= (string) $member->namePart[0] . ' ' . (string) $member->namePart[1] . ' ' . (string) $member->namePart[2];
+              $member_name = trim($member_name);
+              if (!empty($member_name)) {
+                $i++;
+              }
+            }
+          }
+
+          if (!empty($member_name)) {
+            $member_name = trim($member_name);
+            $rows[] = array('Committee member(s)',$member_name) ;
+          }
+          $modsxml->registerXPathNamespace('etd', 'http://www.ndltd.org/standards/metadata/etdms/1.0');
+          $degree_name = $modsxml->xpath('//etd:name');
+          $degree_name = (string) $degree_name[0];
+          $degree_level = $modsxml->xpath('//etd:level');
+          $degree_level = (string) $degree_level[0];
+          if (!empty($degree_name) && !empty($degree_level)) {
+            $rows[] = array('Degree earned', $degree_name);
+          }
+
+          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
+          $place = implode(', ', $place);
+          if (!empty($place)) {
+            $rows[] = array('Place published', $place);
+          }
+
+          $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
+          $isbn = implode(', ', $isbn);
+          if (!empty($isbn)) {
+            $rows[] = array('ISBN', $isbn);
+          }
+          if (!empty($this->abstract)) {
+            $rows[] = array('Abstract', $this->abstract);
+          }
+          $this->get_availability($rows);
+          $this->get_use($rows);
+          break;
         case 'Conference Proceedings':
           $this->get_title($rows, 'Paper Title');
           $authors = implode(', ', $this->authors);
@@ -375,12 +476,12 @@ class Coins {
           }
           $pro_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
           $pro_sub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
-          $pro_title = (string)$pro_title[0];//implode(', ', $pro_title);
-          $pro_sub_title = (string)$pro_sub_title[0];//implode(',', $pro_sub_title);
+          $pro_title = (string) $pro_title[0]; //implode(', ', $pro_title);
+          $pro_sub_title = (string) $pro_sub_title[0]; //implode(',', $pro_sub_title);
           if (!empty($pro_sub_title[0])) {
             $pro_title = $pro_title . ': ' . $pro_sub_title;
           }
-          if(!empty($pro_title)){
+          if (!empty($pro_title)) {
             $rows[] = array('Proceedings title', $pro_title);
           }
           if ((string) $this->date != NULL) {
