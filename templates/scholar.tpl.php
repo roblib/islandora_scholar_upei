@@ -36,7 +36,7 @@
           </span>
       </div>
       <div class="scholar_coins_url">
-        <a href="&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;isbn=<?php print $isbn ?>&date=<?php print $date ?>&title=<?php print $title ?>" target="_blank">Check for Full Text</a>
+        <a href="&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;isbn=<?php print $isbn ?>&date=<?php print $date ?>&title=<?php print $title ?>" target="_blank" class="button check-for-text">Check for Full Text</a>
       </div>
     <?php endif; ?>
     <?php if (stripos((string) $genre, 'book') === FALSE && (!isset($full_text) || $embargoed )): ?>
@@ -45,7 +45,7 @@
         </span>
       </div>
       <div class="scholar_coins_url">
-        <a href="&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=<?php print $issn ?>&date=<?php print $date ?>&volume=<?php print $volume ?>&issue=<?php print $issue ?>&spage=<?php print $start_page ?>&atitle=<?php print $title ?>&stitle=<?php print $journal_title ?>" target="_blank">Check for Full Text</a>
+        <a href="&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=<?php print $issn ?>&date=<?php print $date ?>&volume=<?php print $volume ?>&issue=<?php print $issue ?>&spage=<?php print $start_page ?>&atitle=<?php print $title ?>&stitle=<?php print $journal_title ?>" target="_blank" class="button check-for-text">Check for Full Text</a>
       </div>
     <?php endif; ?>
     <?php if (isset($associate_button)): ?>

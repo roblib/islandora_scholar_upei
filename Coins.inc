@@ -176,7 +176,7 @@ class Coins {
     $this->embargo_date = $embargo_date[0];
 
     $sup_embargo_date = $xml->xpath('//mods:dateOther[@type="supp_embargo"]');
-    $this->sup_embargo_date = $embargo_date[0];
+    $this->sup_embargo_date = $sup_embargo_date[0];
 
     $genre = $xml->xpath('//mods:genre');
     $this->genre = $genre;
