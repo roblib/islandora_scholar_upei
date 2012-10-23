@@ -245,12 +245,12 @@ class Coins {
           }
 
           if (!empty($this->start_page)) {
-            $rows[] = array('Start Page', $this->start_page);
+            $rows[] = array('Start page', $this->start_page);
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
           $endp = implode(',', $endp);
           if (!empty($endp)) {
-            $rows[] = array('End Page', $endp);
+            $rows[] = array('End page', $endp);
           }
           if (!empty($this->abstract)) {
             $rows[] = array('Abstract', $this->abstract);
@@ -304,10 +304,10 @@ class Coins {
           $this->get_use($rows);
           break;
         case 'Book, Section':
-          $this->get_title($rows, 'Section Title');
+          $this->get_title($rows, 'Section title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
-            $rows[] = array('Section Author(s)', $authors);
+            $rows[] = array('Section author(s)', $authors);
           }
           $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
           $btitle = (string) $btitle[0];
@@ -317,7 +317,7 @@ class Coins {
             $btitle = $btitle . ': ' . $bsub_title;
           }
           if (!empty($btitle)) {
-            $rows[] = array('Book Title', $btitle);
+            $rows[] = array('Book title', $btitle);
           }
 
           $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name');
@@ -331,15 +331,15 @@ class Coins {
           }
 
           if (!empty($editor_name)) {
-            $rows[] = array('Book Editors', $editor_name);
+            $rows[] = array('Book editor(s)', $editor_name);
           }
           if (!empty($this->start_page)) {
-            $rows[] = array('Start Page', $this->start_page);
+            $rows[] = array('Start page', $this->start_page);
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
           $endp = implode(',', $endp);
           if (!empty($endp)) {
-            $rows[] = array('End Page', $endp);
+            $rows[] = array('End page', $endp);
           }
 
           if ((string) $this->date != NULL) {
@@ -382,17 +382,17 @@ class Coins {
             $btitle = $btitle . ': ' . $bsub_title;
           }
           if (!empty($btitle)) {
-            $rows[] = array('Related Item', $btitle);
+            $rows[] = array('Related item', $btitle);
           }
 
 
           if (!empty($this->start_page)) {
-            $rows[] = array('Start Page', $this->start_page);
+            $rows[] = array('Start page', $this->start_page);
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
           $endp = implode(',', $endp);
           if (!empty($endp)) {
-            $rows[] = array('End Page', $endp);
+            $rows[] = array('End page', $endp);
           }
 
           if ((string) $this->date != NULL) {
@@ -469,10 +469,10 @@ class Coins {
           $this->get_use($rows);
           break;
         case 'Conference Proceedings':
-          $this->get_title($rows, 'Paper Title');
+          $this->get_title($rows, 'Paper title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors)) {
-            $rows[] = array('Paper Author(s)', $authors);
+            $rows[] = array('Paper author(s)', $authors);
           }
           $pro_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
           $pro_sub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
@@ -567,7 +567,7 @@ class Coins {
             $btitle = $btitle . ': ' . $bsub_title;
           }
           if (!empty($btitle)) {
-            $rows[] = array('Related Item', $btitle);
+            $rows[] = array('Related item', $btitle);
           }
 
           $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name/mods:namePart');
@@ -576,12 +576,12 @@ class Coins {
             $rows[] = array('Editors', $beditors);
           }
           if (!empty($this->start_page)) {
-            $rows[] = array('Start Page', $this->start_page);
+            $rows[] = array('Start page', $this->start_page);
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
           $endp = implode(',', $endp);
           if (!empty($endp)) {
-            $rows[] = array('End Page', $endp);
+            $rows[] = array('End page', $endp);
           }
 
           if ((string) $this->date != NULL) {
