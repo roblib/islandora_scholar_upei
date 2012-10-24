@@ -652,7 +652,10 @@ class Coins {
 
   function get_use(&$rows) {
     $use = $this->mods->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
-    $use = implode(', ', $use);
+    $use = implode('<br /><br /> ', $use);
+    $search_arr = array('Contact Author','Contact Publisher');
+    $replace_arr = array('<a href="mailto:publications@upei.ca?subject=Scholar Contact request for object '.$this->pid.'">Contact Author</a>','<a href="mailto:publications@upei.ca?subject='.$pid.'">Contact Publisher</a>');
+    $use = str_replace($search_arr, $replace_arr,trim($use));
     if (!empty($use)) {
       $rows[] = array('Use/Reproduction', $use);
     }
