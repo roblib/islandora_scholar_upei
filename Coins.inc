@@ -76,11 +76,13 @@ class Coins {
           if ($name_part['type'] == 'given') {
             $names[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
             $full_names[$i] .= (string) $name_part;
-          }
+          } else 
           if ($name_part['type'] == 'family') {
             $names[$i] .= (string) rtrim($name_part, '.');
             $family_names[$i] = (string) rtrim($name_part, '.');
             $full_names[$i] .= ' ' . (string) rtrim($name_part, '.');
+          } else {
+            $names[$i] = trim($name_part);
           }
         }
       }

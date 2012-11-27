@@ -488,7 +488,10 @@ function convert_mods_to_citeproc_json_names(SimpleXMLElement $mods) {
         add_mods_namespace($name);
         $role = convert_mods_to_citeproc_json_name_role($name, $valid_roles, $default_role);
         if ($role !== FALSE) {
-          $output[$role][] = convert_mods_to_citeproc_json_name($name);
+          $arr = convert_mods_to_citeproc_json_name($name);
+          if(!empty($arr)){
+            $output[$role][] = $arr;
+          }
         }
       }
     }
@@ -528,12 +531,17 @@ function convert_mods_to_citeproc_json_name_personal(SimpleXMLElement $name) {
   foreach ($nameParts as $namePart) {
     $type = (string) $namePart->attributes()->type;
     $content = (string) $namePart;
+    if(empty($content)){
+      continue;
+    }
     $content .= (strlen($content) == 1) ? '. ' : ' '; // Not sure why this is here...
     $output[$type] = isset($output[$type]) ?
         $output[$type] . $content :
         $content;
   }
-  $output['parse-names'] = "true"; // add the citeproc-js "parse-names" flag.
+  if(!empty($output)){
+    $output['parse-names'] = "true"; // add the citeproc-js "parse-names" flag.
+  }
   return $output;
 }
 
@@ -550,7 +558,11 @@ function convert_mods_to_citeproc_json_name_corporate(SimpleXMLElement $name) {
   $output = array();
   $nameParts = $name->xpath("mods:namePart");
   foreach ($nameParts as $namePart) {
-    $content = (string) $namePart . ' ';
+    $val = (string)$namePart;
+    if(empty($val)){
+      continue;
+    }
+    $content = (string) $val . ' ';
     $output['literal'] = isset($output['literal']) ? $output['literal'] . $content : $content;
   }
   return $output;
