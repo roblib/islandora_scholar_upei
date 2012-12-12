@@ -454,7 +454,7 @@ function islandora_bibilgraphy_solr_form_table($names, $type) {
       $pid = (string) $arr->str;
       $pids[] = $pid;
       foreach ($arr as $line) {
-        if ($line['name'] == 'author') {
+        if ($line['name'] == 'mods.author') {
           foreach ($line as $author) {
             $author_array[] = str_replace(',', ', ', (string) $author[0]);
           }
