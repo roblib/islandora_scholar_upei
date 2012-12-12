@@ -5,7 +5,6 @@
  * 
  * Collection of functions related to Batch ingests.
  */
-
 /**
  * Performs a bulk ingestion.
  * 
@@ -178,6 +177,8 @@ function scholar_batch_ingest_endnote_document($filename, $collection_pid, $cont
     $context['sandbox']['total'] = bibutils_batch_get_number_endnote_records($filename);
   }
   $temp_file_dir = file_directory_path(); // Changed the temp dir so that the files can be accessed
+  //these filenames should be generated somehow as right now if multiple users
+  //tried to do a batch ingest they would be stepping on each other.
   $mods_filename = file_create_filename('mods.xml', $temp_file_dir);
   $endnote_filename = file_create_filename('endnote.xml', $temp_file_dir);
   $record = bibutils_batch_get_endnote_record($filename); // Get Single EndNote XML Record
@@ -195,6 +196,145 @@ function scholar_batch_ingest_endnote_document($filename, $collection_pid, $cont
 }
 
 /**
+ * takes a refworks xml file with multiple reference elements and creates 
+ * a new fedora object for each reference.
+ * 
+ * @param string $filename
+ * @param string $collection_pid
+ * @param string $content_model_pid
+ * @param array $context 
+ */
+function scholar_batch_ingest_refworks_document($filename, $collection_pid, $content_model_pid, array &$context) {
+  $doc = new DOMDocument();
+  $xml = file_get_contents($filename);
+  static $file_list = array();
+  $xml = trim($xml); //refworks has a nasty habit of outputing an xml file with 
+  // the xml declartion being the second line, the first line being blank
+  $success = $doc->loadXML($xml);
+  $root = $doc->documentElement;
+  $nodeName = $root->nodeName;
+  if (!$success || !$nodeName == 'refworks') {
+    drupal_set_message(t('error doing refworks batch ingest'));
+    return;
+  }
+  $references = $doc->getElementsByTagName('reference');
+  $count = $references->length;
+
+  if (empty($context['sandbox'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['total'] = $count;
+  }
+
+  $reference = $references->item($context['sandbox']['progress']);
+  $title = $reference->getElementsByTagName('t1');
+  $title_text = $title->item(0)->nodeValue;
+  $context['message'] = t('Added %title', array('%title' => $title_text));
+  $rxml = $doc->saveXML($reference);
+  $mods = scholar_batch_ingest_mods_from_refworks($reference, $rxml);
+  $refworks_filename = file_create_filename(scholar_batch_create_filename('Refworks_','.xml')
+      ,file_directory_path());
+  $mods_filename = file_create_filename(scholar_batch_create_filename('sm_','.xml')
+      ,file_directory_path());
+  $policy_filename = file_create_filename(scholar_batch_create_filename('POLICY_','.xml')
+      ,file_directory_path());
+  module_load_include('inc', 'islandora_xacml_api', 'Xacml');
+  $xacml = new Xacml();
+  scholar_batch_add_xacml_users_and_roles($reference, $xacml);
+  $xacml_string = $xacml->getXmlString();
+  file_put_contents($policy_filename, $xacml_string);
+  file_put_contents($mods_filename, $mods);
+  file_put_contents($refworks_filename, $rxml);
+  scholar_batch_ingest_mods($mods_filename, $collection_pid, $content_model_pid
+      , array('refworks' => $refworks_filename,
+    'POLICY' => $policy_filename));
+  $context['sandbox']['progress']++;
+  if ($context['sandbox']['progress'] != $context['sandbox']['total']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];
+  }
+  else {
+    unlink($filename);
+  }
+}
+
+/**
+ * adds the appropriate users and roles to an xacml policy
+ * 
+ * @param DOMElement $reference
+ * @param XACML object $xacml 
+ */
+function scholar_batch_add_xacml_users_and_roles($reference, &$xacml) {
+  $users = $reference->getElementsByTagName('u1');
+  $roles = $reference->getElementsByTagName('u2');
+  foreach ($users as $user) {
+    $us = explode(';', $user->nodeValue);
+    foreach ($us as $u) {
+      $xacml->managementRule->addUser($u);
+    }
+  }
+  foreach ($roles as $role) {
+    $rs = explode(';', $role->nodeValue);
+    foreach ($rs as $r) {
+      $xacml->managementRule->addRole($r);
+    }
+  }
+}
+
+/**
+ *
+ * @global object $user
+ *  drupal user object
+ * @param string $prefix
+ *   filename prefix
+ * @param string $suffix
+ *   filename suffix
+ * @return string 
+ *   a unique filename
+ */
+function scholar_batch_create_filename($prefix="",$suffix="") {
+  global $user;
+  return $prefix . md5(uniqid($user->uid. rand(), TRUE)).$suffix;
+}
+
+/**
+ *
+ * @param DOMElement $reference
+ * @param string $rxml
+ *   refworks xml
+ * @return xml
+ *   a mods xml file 
+ */
+function scholar_batch_ingest_mods_from_refworks($reference, $rxml) {
+  $genre = $reference->getElementsByTagName('rt');
+  $genre_text = $genre->item(0)->nodeValue;
+  $path = drupal_get_path('module', 'scholar');
+  $xslt_path = NULL;
+  switch ($genre_text) {
+    case 'Book, Section':
+      $xslt_path = $path . '/xsl/refworks_to_mods_book_section.xsl';
+      break;
+    case 'Book, Whole':
+    case 'Sound Recording':
+    case 'Dissertation/Thesis':
+    case 'Dissertation/Thesis, Unpublished':
+      $xslt_path = $path . '/xsl/refworks_to_mods_book.xsl';
+      break;
+    case 'Conference Proceedings':
+      $xslt_path = $path . '/xsl/refworks_to_mods_conf.xsl';
+      break;
+    default:
+      $xslt_path = $path . '/xsl/refworks_to_mods_journal.xsl';
+  }
+  $rdoc = new DOMDocument();
+  $xslt = new XSLTProcessor();
+  $rdoc->loadXML($rxml);
+  $xslt_doc = new DOMDocument();
+  $xslt_doc->load($xslt_path);
+  $xslt->importStylesheet($xslt_doc);
+  $mods = $xslt->transformToXml($rdoc);
+  return $mods;
+}
+
+/**
  * Batch ingest the RIS document.
  * 
  * @param string $filename
@@ -209,19 +349,19 @@ function scholar_batch_ingest_endnote_document($filename, $collection_pid, $cont
 function scholar_batch_ingest_ris_document($filename, $collection_pid, $content_model_pid, array &$context) {
   module_load_include('inc', 'bibutils', 'Batch');
   module_load_include('inc', 'bibutils', 'Bibutils');
-  // This code removes ^M characters that are present in exported Refworks files
-  // which don't show up as new lines in linux.
+// This code removes ^M characters that are present in exported Refworks files
+// which don't show up as new lines in linux.
   $initial_ris = file_get_contents($filename);
   $cleaned_ris = str_replace("\x0D", "\n", trim($initial_ris));
   $initial_file = fopen($filename, 'w');
   fwrite($initial_file, $cleaned_ris);
   fclose($initial_file);
-  
+
   if (empty($context['sandbox'])) {
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['total'] = bibutils_batch_get_number_ris_records($filename);
   }
-  
+
   $temp_file_dir = file_directory_path(); // Changed the temp dir so that the files can be accessed
   $mods_filename = file_create_filename('mods.xml', $temp_file_dir);
   $ris_filename = file_create_filename('ris.txt', $temp_file_dir);
@@ -229,14 +369,14 @@ function scholar_batch_ingest_ris_document($filename, $collection_pid, $content_
   $file = fopen($ris_filename, 'w');
   fwrite($file, $record);
   fclose($file);
-  
+
   if (Bibutils::Convert($ris_filename, 'RIS', $mods_filename, 'MODS')) {
     $ris_url = file_directory_path() . '/ris.txt';
     scholar_batch_ingest_mods($mods_filename, $collection_pid, $content_model_pid, array('RIS' => $ris_url));
   }
-  // Remove the files.
-//  unlink($ris_filename);
-//  unlink($mods_filename);
+// Remove the files.
+  unlink($ris_filename);
+  unlink($mods_filename);
   $context['sandbox']['progress']++;
   if ($context['sandbox']['progress'] != $context['sandbox']['total'] && $context['sandbox']['total'] != 0) {
     $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['total'];
@@ -267,6 +407,7 @@ function scholar_batch_ingest_mods($filename, $collection_pid, $content_model_pi
     $state = 'A';
     $foxml = new FOXML($label, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $ingest_file_location, $document, $transform, $state);
     $foxml->ingest();
+    unlink($filename);//the batch ingest functions removes the policy and refworks files but not the mods
   }
 }
 
