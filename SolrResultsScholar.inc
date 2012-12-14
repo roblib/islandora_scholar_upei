@@ -219,10 +219,10 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $pdf_check = array_key_exists('PDF', $ds_array) || array_key_exists('OBJ', $ds_array);
         $check = '';
         $data = new Coins($doc->PID);
-        if (array_key_exists('OBJ', $ds_array) ) {//check status in case ds exists but is embargoed
+        if (array_key_exists('OBJ', $ds_array)) {//check status in case ds exists but is embargoed
           $check = 'OBJ';
         }
-        if (array_key_exists('PDF', $ds_array) ) {
+        if (array_key_exists('PDF', $ds_array)) {
           $check = 'PDF';
         }
         $url_frag = 'fedora/repository/';
@@ -230,56 +230,65 @@ class ScholarSolrResults extends IslandoraSolrResults {
           $url_frag = 'download_ds/';
         }
         $embargoed = $data->is_embargoed($data->embargo_date);
-        
-        if($check =='OBJ' && !$embargoed){
-          $download_img = $base_url . '/' . $path . '/images/download.png';
-            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
-           
-        } elseif ($check =='PDF' && !$embargoed){
-           $download_img = $base_url . '/' . $path . '/images/download.png';
-            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
-        } else {
-            if (stripos((string) $data->genre[0], 'book') !== FALSE) {
-              $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;isbn=' . $data->isbn . '&date=' . $data->date . '&title=' . $data->title;
-            }
-            else {
-              $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->journal_title;
-            }
-            $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
-           
+        $full_text = 'Full Text';
+        if (isset($data->type)) {
+          if ($data->type == 'PRE-PRINT') {
+            $full_text .= ': Pre-print';
+          }
+          else if ($data->type == 'POST-PRINT') {
+            $full_text .= ': Post-print';
+          }
         }
-        
-        
-        /*switch ($check) {
+
+        if ($check == 'OBJ' && !$embargoed) {
+          $download_img = $base_url . '/' . $path . '/images/download.png';
+          //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+          $pdf_result = '<div class="scholar_pdf">' . l($full_text, $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+        }
+        elseif ($check == 'PDF' && !$embargoed) {
+          $download_img = $base_url . '/' . $path . '/images/download.png';
+          //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+          $pdf_result = '<div class="scholar_pdf">' . l($full_text, $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+        }
+        else {
+          if (stripos((string) $data->genre[0], 'book') !== FALSE) {
+            $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;isbn=' . $data->isbn . '&date=' . $data->date . '&title=' . $data->title;
+          }
+          else {
+            $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->journal_title;
+          }
+          $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
+        }
+
+
+        /* switch ($check) {
           case 'OBJ':
-            $download_img = $base_url . '/' . $path . '/images/download.png';
-            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
-            break;
+          $download_img = $base_url . '/' . $path . '/images/download.png';
+          //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+          $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+          break;
           case 'PDF':
-            $download_img = $base_url . '/' . $path . '/images/download.png';
-            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
-            break;
+          $download_img = $base_url . '/' . $path . '/images/download.png';
+          //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+          $pdf_result = '<div class="scholar_pdf">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+          break;
           default:
-            if (stripos((string) $data->genre[0], 'book') !== FALSE) {
-              $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;isbn=' . $data->isbn . '&date=' . $data->date . '&title=' . $data->title;
-            }
-            else {
-              $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->journal_title;
-            }
-            $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
-            break;
-        }*/
+          if (stripos((string) $data->genre[0], 'book') !== FALSE) {
+          $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;isbn=' . $data->isbn . '&date=' . $data->date . '&title=' . $data->title;
+          }
+          else {
+          $coins_url = '&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;issn=' . $data->issn . '&date=' . $data->date . '&volume=' . $data->volume . '&issue=' . $data->issue . '&spage=' . $data->start_page . '&atitle=' . $data->title . '&stitle=' . $data->journal_title;
+          }
+          $pdf_result = '<div class="scholar_pdf"><A HREF="' . $coins_url . '"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif" /> </A></div>';
+          break;
+          } */
 
         $supp_result = NULL;
-        
+
         $sup_embargoed = $data->is_embargoed($data->sup_embargo_date);
 
         if (array_key_exists('ZIP', $ds_array) && !$sup_embargoed) {
-          $supp_result = '<div class="scholar_pdf">' . l('Supplemental information', 'fedora/repository/' . $doc->PID . '/ZIP/'.$doc->PID.'.zip', array('html' => TRUE, 'attributes' => array('class' => 'button supplement'))) . '</div>';
+          $supp_result = '<div class="scholar_pdf">' . l('Supplemental information', 'fedora/repository/' . $doc->PID . '/ZIP/' . $doc->PID . '.zip', array('html' => TRUE, 'attributes' => array('class' => 'button supplement'))) . '</div>';
         }
 
         $abstract_snippet = 300;

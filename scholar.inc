@@ -1441,16 +1441,25 @@ function template_preprocess_scholar(&$variables) {
   if (module_exists('scholar_tracking')) {
     $url_frag = 'download_ds/';
   }
+  $full_text = 'Full Text';
+        if (isset($data->type)) {
+          if ($data->type == 'PRE-PRINT') {
+            $full_text .= ': Pre-print';
+          }
+          else if ($data->type == 'POST-PRINT') {
+            $full_text .= ': Post-print';
+          }
+        }
   switch ($check) {
     case 'OBJ':
       $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="islandscholar-fulltext">' . l('Full text', $url_frag . $variables['pid'] . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+            $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
             break;
     case 'PDF':
       $download_img = $base_url . '/' . $path . '/images/download.png';
             //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="islandscholar-fulltext">' . l('Full text', $url_frag . $variables['pid'] . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+            $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
             break;
   }
 

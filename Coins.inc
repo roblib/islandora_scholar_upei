@@ -39,6 +39,7 @@ class Coins {
   public $status = NULL;
   public $isbn = NULL;
   public $object = NULL;
+  
 
   /**
    * Create the object properties from the MODS datastream
@@ -111,6 +112,7 @@ class Coins {
       foreach ($xml->physicalDescription->form as $form) {
         if ($form['authority'] == 'local' && (string) $form != 'NO_OBJ') {
           $this->status = 'FULL_TEXT_AVAILABLE';
+          $this->type = (string)$form;
         }
       }
     }

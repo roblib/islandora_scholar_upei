@@ -194,7 +194,7 @@ function scholar_escape($value)
  * @return string
  */
 function scholar_escape_phrase($value) {
-  $pattern = '/("|\\\)/';
+  $pattern = '/(\\\)/';
   $replace = '\\\$1';
 
   return preg_replace($pattern, $replace, $value);
