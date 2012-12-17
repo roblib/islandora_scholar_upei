@@ -228,12 +228,12 @@ class Coins {
           //journal stuff
           $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
-          if (!empty($authors)) {
+          if (!empty($authors) && strlen(trim($authors)) > 1) {
             $rows[] = array('Author(s)', $authors);
           }
-          $journal = $modsxml->xpath('/mods:mods/mods:relatedItem/mods:titleInfo/mods:title');
+          $journal = $modsxml->xpath('/mods:mods/mods:relatedItem/mods:titleInfo[not(@type="abbreviated")]/mods:title');
           $journal = implode(', ', $journal);
-          if (!empty($journal)) {
+          if (!empty($journal) && strlen(trim($journal)) > 1) {
             $rows[] = array('Journal', $journal);
           }
 
@@ -253,7 +253,7 @@ class Coins {
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
           $endp = implode(',', $endp);
-          if (!empty($endp)) {
+          if (!empty($endp) && strlen(trim($endp)) > 1) {
             $rows[] = array('End page', $endp);
           }
           if (!empty($this->abstract)) {
@@ -261,12 +261,12 @@ class Coins {
           }
           $doi = $modsxml->xpath('//mods:identifier[@type="doi"]');
           $doi = implode(',', $doi);
-          if (!empty($doi)) {
+          if (!empty($doi) && strlen(trim($doi)) > 1) {
             $rows[] = array('DOI', l($doi, 'http://dx.doi.org/' . $doi));
           }
           $issn = $modsxml->xpath('//mods:identifier[@type="issn"]');
           $issn = implode(',', $issn);
-          if (!empty($issn)) {
+          if (!empty($issn) && strlen(trim($issn)) > 1) {
             $rows[] = array('ISSN', $issn);
           }
           $this->get_availability($rows);
@@ -275,7 +275,7 @@ class Coins {
         case 'Book, Whole':
           $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
-          if (!empty($authors)) {
+          if (!empty($authors) && strlen(trim($authors)) > 1) {
             $rows[] = array('Author(s)', $authors);
           }
           if ((string) $this->date != NULL) {
@@ -283,22 +283,22 @@ class Coins {
           }
           $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
           $publishers = implode(', ', $publishers);
-          if (!empty($publishers)) {
+          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
             $rows[] = array('Publisher', $publishers);
           }
           $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
           $place = implode(', ', $place);
-          if (!empty($place)) {
+          if (!empty($place) && strlen(trim($place)) > 1) {
             $rows[] = array('Place published', $place);
           }
           $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
           $pages = implode(', ', $pages);
-          if (!empty($pages)) {
+          if (!empty($pages) && strlen(trim($pages)) > 1) {
             $rows[] = array('Pages', $pages);
           }
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
-          if (!empty($isbn)) {
+          if (!empty($isbn) && strlen(trim($isbn)) > 1) {
             $rows[] = array('ISBN', $isbn);
           }
           if (!empty($this->abstract)) {
@@ -342,7 +342,7 @@ class Coins {
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
           $endp = implode(',', $endp);
-          if (!empty($endp)) {
+          if (!empty($endp) && strlen(trim($endp)) > 1) {
             $rows[] = array('End page', $endp);
           }
 
@@ -351,18 +351,18 @@ class Coins {
           }
           $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
           $publishers = implode(', ', $publishers);
-          if (!empty($publishers)) {
+          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
             $rows[] = array('Publisher', $publishers);
           }
           $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
           $place = implode(', ', $place);
-          if (!empty($place)) {
+          if (!empty($place) && strlen(trim($place)) > 1) {
             $rows[] = array('Place published', $place);
           }
 
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
-          if (!empty($isbn)) {
+          if (!empty($isbn) && strlen(trim($isbn)) > 1) {
             $rows[] = array('ISBN', $isbn);
           }
           if (!empty($this->abstract)) {
@@ -375,7 +375,7 @@ class Coins {
         case 'Signature Project':
           $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
-          if (!empty($authors)) {
+          if (!empty($authors) && strlen(trim($authors)) > 1) {
             $rows[] = array('Author(s)', $authors);
           }
           $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
@@ -395,7 +395,7 @@ class Coins {
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
           $endp = implode(',', $endp);
-          if (!empty($endp)) {
+          if (!empty($endp) && strlen(trim($endp)) > 1) {
             $rows[] = array('End page', $endp);
           }
 
@@ -404,7 +404,7 @@ class Coins {
           }
           $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
           $publishers = implode(', ', $publishers);
-          if (!empty($publishers)) {
+          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
             $rows[] = array('Institution', $publishers);
           }
           //advisor
@@ -417,7 +417,10 @@ class Coins {
                 $advisor_name .= ', ';
               }
               $advisor_name .= (string) $advisor->namePart[0] . ' ' . (string) $advisor->namePart[1] . ' ' . (string) $advisor->namePart[2];
-              $i++;
+              $advisor_name = trim($advisor_name);
+              if (!empty($advisor_name)) {
+                $i++;
+              }
             }
           }
 
@@ -457,13 +460,13 @@ class Coins {
 
           $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
           $place = implode(', ', $place);
-          if (!empty($place)) {
+          if (!empty($place) && strlen(trim($place)) > 1) {
             $rows[] = array('Place published', $place);
           }
 
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
-          if (!empty($isbn)) {
+          if (!empty($isbn) && strlen(trim($isbn)) > 1) {
             $rows[] = array('ISBN', $isbn);
           }
           if (!empty($this->abstract)) {
@@ -475,7 +478,7 @@ class Coins {
         case 'Conference Proceedings':
           $this->get_title($rows, 'Paper title');
           $authors = implode(', ', $this->authors);
-          if (!empty($authors)) {
+          if (!empty($authors) && strlen(trim($authors)) > 1) {
             $rows[] = array('Paper author(s)', $authors);
           }
           $pro_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
@@ -493,27 +496,27 @@ class Coins {
           }
           $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name/mods:namePart');
           $beditors = implode(', ', $beditors);
-          if (!empty($beditors)) {
+          if (!empty($beditors) && strlen(trim($beditors)) > 1) {
             $rows[] = array('Conference', $beditors);
           }
           $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
           $publishers = implode(', ', $publishers);
-          if (!empty($publishers)) {
+          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
             $rows[] = array('Publisher', $publishers);
           }
           $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
           $place = implode(', ', $place);
-          if (!empty($place)) {
+          if (!empty($place) && strlen(trim($place)) > 1) {
             $rows[] = array('Place published', $place);
           }
           $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
           $pages = implode(', ', $pages);
-          if (!empty($pages)) {
+          if (!empty($pages) && strlen(trim($pages)) > 1) {
             $rows[] = array('Pages', $pages);
           }
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
-          if (!empty($isbn)) {
+          if (!empty($isbn) && strlen(trim($isbn)) > 1) {
             $rows[] = array('ISBN', $isbn);
           }
           if (!empty($this->abstract)) {
@@ -525,7 +528,7 @@ class Coins {
         case 'Book, Edited':
           $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
-          if (!empty($authors)) {
+          if (!empty($authors) && strlen(trim($authors)) > 1) {
             $rows[] = array('Editor(s)', $authors);
           }
           if ((string) $this->date != NULL) {
@@ -533,22 +536,22 @@ class Coins {
           }
           $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
           $publishers = implode(', ', $publishers);
-          if (!empty($publishers)) {
+          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
             $rows[] = array('Publisher', $publishers);
           }
           $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
           $place = implode(', ', $place);
-          if (!empty($place)) {
+          if (!empty($place) && strlen(trim($place)) > 1) {
             $rows[] = array('Place published', $place);
           }
           $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
           $pages = implode(', ', $pages);
-          if (!empty($pages)) {
+          if (!empty($pages) && strlen(trim($pages)) > 1) {
             $rows[] = array('Pages', $pages);
           }
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
-          if (!empty($isbn)) {
+          if (!empty($isbn) && strlen(trim($isbn)) > 1) {
             $rows[] = array('ISBN', $isbn);
           }
           if (!empty($this->abstract)) {
@@ -560,7 +563,7 @@ class Coins {
         default:
           $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
-          if (!empty($authors)) {
+          if (!empty($authors) && strlen(trim($authors)) > 1) {
             $rows[] = array('Author(s)', $authors);
           }
           $btitle = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
@@ -576,7 +579,7 @@ class Coins {
 
           $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name/mods:namePart');
           $beditors = implode(', ', $beditors);
-          if (!empty($beditors)) {
+          if (!empty($beditors) && strlen(trim($beditors)) > 1) {
             $rows[] = array('Editors', $beditors);
           }
           if (!empty($this->start_page)) {
@@ -584,7 +587,7 @@ class Coins {
           }
           $endp = $modsxml->xpath('//mods:extent[@unit="page"]/mods:end');
           $endp = implode(',', $endp);
-          if (!empty($endp)) {
+          if (!empty($endp) && strlen(trim($endp)) > 1) {
             $rows[] = array('End page', $endp);
           }
 
@@ -593,18 +596,18 @@ class Coins {
           }
           $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
           $publishers = implode(', ', $publishers);
-          if (!empty($publishers)) {
+          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
             $rows[] = array('Publisher', $publishers);
           }
           $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
           $place = implode(', ', $place);
-          if (!empty($place)) {
+          if (!empty($place) && strlen(trim($place)) > 1) {
             $rows[] = array('Place published', $place);
           }
 
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
-          if (!empty($isbn)) {
+          if (!empty($isbn) && strlen(trim($isbn)) > 1) {
             $rows[] = array('ISBN', $isbn);
           }
           if (!empty($this->abstract)) {
