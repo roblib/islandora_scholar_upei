@@ -176,10 +176,10 @@ class IrClass {
     );
 
     $versions = array(
-      'PRE-PRINT' => 'PRE-PRINT',
-      'POST-PRINT' => 'POST-PRINT',
-      'PUBLISHED' => 'PUBLISHED PDF',
-      'OTHER' => 'OTHER/UNPUBLISHED',
+      'PRE-PRINT' => '<span title="The version of the document you submitted to the publisher prior to peer-review" style="border-bottom: dotted grey 1px;">PRE-PRINT</span>',
+      'POST-PRINT' => '<span title="The version of the document after it has been peer-reviewed, but before it has gone to typesetting" style="border-bottom: dotted grey 1px;">POST-PRINT</span>',
+      'PUBLISHED' => '<span title="The published version of the document." style="border-bottom: dotted grey 1px;">PUBLISHED PDF</span>',
+      'OTHER' => '<span title="A document that has not been published or is otherwise considered unpublished." style="border-bottom: dotted grey 1px;">OTHER/UNPUBLISHED</span>',
     );
 
     $form['#attributes'] = array('enctype' => "multipart/form-data");
