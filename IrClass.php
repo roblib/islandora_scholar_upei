@@ -69,6 +69,7 @@ class IrClass {
     if ($test) {
       $this->updateMODSStream($form_values['pid'], $form_values['version'], $form_values['usage']);
     }
+    file_delete($fileObject->filepath);
     return true;
   }
 
@@ -100,7 +101,7 @@ class IrClass {
     if (isset($version)) {
       //check if the physicalDescription element exists
       if ($doc->getElementsByTagName('physicalDescription')->length != 0) {
-        drupal_set_message(t('physicalDescription element already exists!'));
+        //drupal_set_message(t('physicalDescription element already exists!'));
         $statusNode = $doc->getElementsByTagName('physicalDescription');
         $form_node = $doc->createElement('form', $version);
         $form_node->setAttribute('authority', 'local');
@@ -112,7 +113,7 @@ class IrClass {
       }
       else {
         //create the useage element as it does not exist
-        drupal_set_message(t('physicalDescription element does not exist, creating...'));
+        //drupal_set_message(t('physicalDescription element does not exist, creating...'));
         $statusNode = $doc->createElement('physicalDescription');
         $form_node = $doc->createElement('form', $version);
         $form_node->setAttribute('authority', 'local');
