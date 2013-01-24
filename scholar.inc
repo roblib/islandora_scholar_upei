@@ -90,24 +90,84 @@ class Scholar {
       $names = $xml->authority->name->namePart;
       $fullname = $names[0] . ' ' . $names[1];
 
+      $research_block = "";
+      foreach ($xml->xpath('//mads:fieldOfActivity') as $ri) {
+        if (!empty($ri)) {
+          $research_block .="<li>$ri</li>";
+        }
+      }
+
       foreach ($xml->affiliation->organization as $dept) {
         $depts[] = str_replace('_', ' ', (string) $dept);
       }
 
+      $phone = $xml->affiliation->phone;
+      $phone = trim($phone);
+      $building = $xml->xpath('//mads:note[@type="address"]');
+      $building = (string) $building[0];
+      $website = l($xml->url, $xml->url);
+      $department_array = $depts;
       if (is_array($depts)) {
         $dept = implode(', ', array_unique($depts));
       }
       else {
         $dept = $depts;
       }
+      $position = $xml->affiliation->position;
 
       $username = $xml->identifier;
       $email = $xml->affiliation->email;
+      $notes = $xml->xpath('//mads:note[@type="history"]');
+      $biography = "";
+      foreach ($notes as $note) {
+        $tmp_biography .= "<br />$note";
+      }
+      global $user;
+      //suppress blank conntent for anonymous users but leave
+      //the blank region for logged in users so they can see they are missing
+      //content
+      if (empty($tmp_biography) && $user->uid == 0) {
+        $biography = '';
+      }
+      else {
+        $biography = 'Biography<br />' . $tmp_biography;
+      }
     }
     else {
       drupal_set_message(t('No MADS datastream found!'), 'warning');
     }
-//    drupal_set_title(t('@fullname', array('@fullname' => $fullname)));
+    //RECENT CITATIONS
+    $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:citation%20AND%20mods.username:"' . $username . '"&sort=mods_date_issued_dt+desc&fl=PID,mods.title&rows=5';
+    $query = file_get_contents($solr_url);
+    $recent_citations = '';
+    $solr_xml = new SimpleXMLElement($query);
+    $solr_array = $solr_xml->xpath('//doc');
+    //$solr_array = array_filter($solr_array);
+    foreach ($solr_array as $arr) {
+      $pid = (string) $arr->str;
+      $title = (string) $arr->arr->str[0];
+      $title_link = l($title, "$base_url/fedora/repository/$pid");
+      $recent_citations .= '<li>' . $title_link . '</li>';
+    }
+
+    //FIND SCHOLARS in DEPARTMENT
+    $department_list = array();
+    foreach ($department_array as $dpt) {
+      $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:info\:fedora/islandora\:researcherCModel%20AND%20mads.organization:"' . urlencode($dpt) . '"&fl=PID,mads.fullname&rows=1000';
+      $query = file_get_contents($solr_url);
+      $solr_xml = new SimpleXMLElement($query);
+      $solr_array = $solr_xml->xpath('//doc');
+      $name_list = "";
+      foreach ($solr_array as $arr) {
+        $pid = (string) $arr->str;
+        $name = (string) $arr->arr->str[0];
+        if ($fullname != $name) {
+          $name_link = l($name, "$base_url/fedora/repository/$pid");
+          $name_list .= '<li>' . $name_link . '</li>';
+        }
+      }
+      $department_list[$dpt] = $name_list;
+    }
 
     $tabset['first_tab'] = array(
       '#type' => 'tabpage',
@@ -124,24 +184,55 @@ class Scholar {
       '#weight' => 0,
     );
 
-    $tabset['first_tab']['tabs']['details']['tn'] = array(
-      '#value' => '<img src="' . $base_url . '/' . $path . '/images/gnome_stock_person.png"/>',
+
+    $rss_feed = '<div class="scholar-rss-feed-label">' . l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-28x28.png">', 'rss/' . $username, array('html' => TRUE)) .
+        ' Subscribe to ' . $fullname . ' citation feed</div>';
+
+
+    $profile_header = array();
+    
+    $profile_rows = array();
+    if (!empty($fullname) || $user->uid > 0) {
+      $profile_rows[] = array('data' => array('Name', array('data' => $fullname)), 'class' => 'profile-row');
+    }
+    if (!empty($position) || $user->uid > 0) {
+      $profile_rows[] = array('data' => array('Position', array('data' => $position)), 'class' => 'profile-row');
+    }
+    if (!empty($email) || $user->uid > 0) {
+      $profile_rows[] = array('data' => array('Email', array('data' => $email)), 'class' => 'profile-row');
+    }
+    if (!empty($dept) || $user->uid > 0) {
+      $profile_rows[] = array('data' => array('Department(s)', array('data' => $dept)), 'class' => 'profile-row');
+    }
+    if (!empty($phone) || $user->uid > 0) {
+      $profile_rows[] = array('data' => array('Phone', array('data' => $phone)), 'class' => 'profile-row');
+    }
+    if (!empty($building) || $user->uid > 0) {
+      $profile_rows[] = array('data' => array('Building', array('data' => $building)), 'class' => 'profile-row');
+    }
+    if (!empty($website) || $user->uid > 0) {
+      $profile_rows[] = array('data' => array('Website', array('data' => $website)), 'class' => 'profile-row');
+    }
+
+
+    $middle_content = "<h3>$fullname</h3>$biography";
+    $variables['department_list'] = $department_list;
+    $variables['middle_content'] = $middle_content;
+    $variables['profile_rows'] = $profile_rows;
+    $variables['profile_header'] = $profile_header;
+    $variables['pid'] = $this->pid;
+    $variables['research_block'] = $research_block;
+    $variables['rss_feed'] = $rss_feed;
+    $variables['recent_citations'] = $recent_citations;
+    $variables['tn_src'] = '<img src="' . $base_url . '/fedora/repository/' . $this->pid . '/TN"/>';
+    $content = theme('scholar_profile', $variables);
+
+
+
+    $tabset['first_tab']['tabs']['details']['content'] = array(
+      '#value' => $content,
     );
 
-    $header = array();
-
-    $rows = array(
-      array('Name', $fullname),
-      array('User name', $username),
-      array('Email', $email),
-      array('Department(s)', $dept),
-    );
-
-    $rss_feed = l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-28x28.png">', 'rss/' . $username, array('html' => TRUE));
-
-    $tabset['first_tab']['tabs']['details']['table'] = array(
-      '#value' => theme('table', $header, $rows) . $rss_feed,
-    );
 
     $tabset['first_tab']['tabs']['citations'] = array(
       '#type' => 'tabpage',
@@ -150,51 +241,6 @@ class Scholar {
     );
 
     $pids = array();
-//    if ($citations_cache = cache_get('islandora_scholar_citation_cache')) {
-//      $rows = unserialize($citations_cache->data);
-//    }
-//    else {
-    if ($username) {
-      $username_query = file_get_contents('http://' . $solr_location . '/select/?q=mods.username:' . (str_replace(';', ' ', (strtolower($username)))) . '&fl=PID&rows=10000');
-      if ($xml != NULL) {
-        $xml = new SimpleXMLElement($username_query);
-        $array = $xml->xpath('//doc');
-        $array = array_filter($array);
-
-        $rows = array();
-        if (!empty($array)) {
-          if (module_exists('scholar_tracking')) {
-            $header = array(t('Title'), t('Times viewed'), t('Last viewed'));
-          }
-          else {
-            $header = array(t('Title'));
-          }
-          foreach ($array as $arr) {
-            $pid = (string) $arr->str;
-            $pids[] = $pid;
-          }
-        }
-        else {
-          $rows = NULL;
-        }
-      }
-      else {
-        $rows = NULL;
-      }
-    }
-    else {
-      $rows = NULL;
-    }
-//      $cache_time = variable_get('scholar_researcher_citations_cache_time', '2');
-//      cache_set('islandora_scholar_citation_cache', serialize($rows), 'cache', time() + ($cache_time * 86400));
-//    }
-
-    if ($rows == NULL) {
-      $content = t('No citations found!');
-    }
-    else {
-      $content = theme('table', $header, $rows);
-    }
 
     $tabset['first_tab']['tabs']['citations']['table'] = array(
       '#value' => drupal_get_form('scholar_author_bibliography_form', $username, $username, 'author-citations', $this->pid),
@@ -1442,25 +1488,25 @@ function template_preprocess_scholar(&$variables) {
     $url_frag = 'download_ds/';
   }
   $full_text = 'Full Text';
-        if (isset($data->type)) {
-          if ($data->type == 'PRE-PRINT') {
-            $full_text .= ': Pre-print';
-          }
-          else if ($data->type == 'POST-PRINT') {
-            $full_text .= ': Post-print';
-          }
-        }
+  if (isset($data->type)) {
+    if ($data->type == 'PRE-PRINT') {
+      $full_text .= ': Pre-print';
+    }
+    else if ($data->type == 'POST-PRINT') {
+      $full_text .= ': Post-print';
+    }
+  }
   switch ($check) {
     case 'OBJ':
       $download_img = $base_url . '/' . $path . '/images/download.png';
-            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
-            break;
+      //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
+      $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+      break;
     case 'PDF':
       $download_img = $base_url . '/' . $path . '/images/download.png';
-            //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-            $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
-            break;
+      //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
+      $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+      break;
   }
 
   /* if (array_key_exists('ZIP', $datastream_array)) {
@@ -1487,10 +1533,10 @@ function template_preprocess_scholar(&$variables) {
     $associate_button .= drupal_get_form('islandora_scholar_associate_button_form', $variables['pid']);
     $associate_button .= '</div>';
   }
-  
+
   $embargo_date = $data->embargo_date;
   $embargoed = $data->is_embargoed($embargo_date);
-  
+
 
   $variables = array(
     'pid' => $variables['pid'],
@@ -1578,4 +1624,8 @@ function template_preprocess_tracking(&$variables) {
     'tracking_count' => $ds_count['count'],
     'tracking_date' => $tracking_date,
   );
+}
+
+function template_preprocess_scholar_profile(&$variables) {
+  $variables = array_merge($variables, $variables['vars']);
 }

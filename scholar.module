@@ -991,5 +991,12 @@ function scholar_theme() {
         'dsid' => NULL,
       ),
     ),
+    'scholar_profile' => array(
+      'template' => 'templates/profile',
+      'file' => 'scholar.inc',
+      'arguments' => array(
+        'vars' => NULL,
+      ),
+    ),
   );
 }

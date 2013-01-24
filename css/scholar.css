@@ -98,6 +98,40 @@ root {
     float: left;
 }
 
+.scholar-profile-table {
+    font-size: small; 
+}
+
+.scholar-rss-feed-label {
+    font-size: small; 
+}
+
+#scholar-profile-content{
+    width: 100%;
+    display: block;
+}
+
+.scholar-profile-left {
+    float: left;
+    width: 25%; 
+    padding: 5px;
+    overflow: auto;
+}
+
+.scholar-profile-middle {
+    padding: 5px;
+    width: 50%; 
+    font-size: smaller;
+    float: left;
+}
+
+.scholar-profile-right {
+    padding: 5px;
+    float: right;
+    width: 20%; 
+    font-size: smaller;
+}
+
 .scholar-fullview-btns div,
 .scholar-fullview-btns form {
     display: inline;
