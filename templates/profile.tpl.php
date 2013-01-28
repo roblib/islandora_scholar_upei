@@ -18,8 +18,11 @@
       <?php if (!empty($research_block) || $user->uid > 0) { ?>
       <h4>Research Interests</h4>
       <ul><?php print($research_block); ?></ul>
-      <br />
       <?php } ?>
+      <?php if (!empty($grant_info) || $user->uid > 0) { ?>
+      <h4>Grants</h4>
+      <?php print($grant_info); 
+      } ?>
       <?php foreach ($department_list as $key => $value) { ?>
         <h4>Other Scholars in <?php print($key); ?></h4>
         <ul><?php print($value); ?></ul>        

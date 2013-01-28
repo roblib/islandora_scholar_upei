@@ -153,7 +153,7 @@ class Scholar {
     //FIND SCHOLARS in DEPARTMENT
     $department_list = array();
     foreach ($department_array as $dpt) {
-      $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:info\:fedora/islandora\:researcherCModel%20AND%20mads.organization:"' . urlencode($dpt) . '"&fl=PID,mads.fullname&rows=1000';
+      $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:info\:fedora/islandora\:researcherCModel%20AND%20mads.organization:"' . urlencode($dpt) . '"&fl=PID,title&rows=1000';
       $query = file_get_contents($solr_url);
       $solr_xml = new SimpleXMLElement($query);
       $solr_array = $solr_xml->xpath('//doc');
@@ -167,6 +167,27 @@ class Scholar {
         }
       }
       $department_list[$dpt] = $name_list;
+    }
+    
+    //GRANT INOFORMATION
+    //bit of a mismash of field names using existing fields where possible
+    //so we don't have to reindex yet
+    $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:info\:fedora/islandora\:grantCModel%20AND%20mods_grantUser:"' . $username . '"&fl=PID,mods.title,mods.topic,mods.username';
+    $query = file_get_contents($solr_url);
+    $grant_info = '';
+    $solr_xml = new SimpleXMLElement($query);
+    $solr_array = $solr_xml->xpath('//doc');
+    //$solr_array = array_filter($solr_array);
+    foreach ($solr_array as $arr) {
+      $pid = (string) $arr->str;
+      $title = (string) $arr->arr[0]->str;
+      $agency = (string) $arr->arr[1]->str;
+      $type = (string) $arr->arr[2]->str;    
+      $grant_info .= $title;
+      $grant_info .= '<ul>';
+      $grant_info .= '<li>' . $agency . '</li>';
+      $grant_info .= '<li>' . $type .'</li>';
+      $grant_info .= '</ul>';
     }
 
     $tabset['first_tab'] = array(
@@ -190,7 +211,7 @@ class Scholar {
 
 
     $profile_header = array();
-    
+
     $profile_rows = array();
     if (!empty($fullname) || $user->uid > 0) {
       $profile_rows[] = array('data' => array('Name', array('data' => $fullname)), 'class' => 'profile-row');
@@ -224,7 +245,13 @@ class Scholar {
     $variables['research_block'] = $research_block;
     $variables['rss_feed'] = $rss_feed;
     $variables['recent_citations'] = $recent_citations;
-    $variables['tn_src'] = '<img src="' . $base_url . '/fedora/repository/' . $this->pid . '/TN"/>';
+    $variables['grant_info'] = $grant_info;
+    if (isset($this->item->datastreams['TN'])) {
+      $variables['tn_src'] = '<img src="' . $base_url . '/fedora/repository/' . $this->pid . '/TN"/>';
+    } else {
+      $variables['tn_src'] = "";
+    }
+    
     $content = theme('scholar_profile', $variables);
 
 
