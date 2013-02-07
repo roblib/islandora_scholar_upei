@@ -110,8 +110,9 @@ function convert_mods_to_citeproc_jsons($mods_in) {
         ),
       // nigel:
       //'container-title' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo[not(@type)]/mods:title'),
-        'container-title' => convert_mods_to_citeproc_json_query($mods, "/mods:mods[$parented]/mods:relatedItem[@type='host']/mods:titleInfo/mods:title"),
-        'DOI' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="doi"]'),
+        //'container-title' => convert_mods_to_citeproc_json_query($mods, "/mods:mods[$parented]/mods:relatedItem[@type='host']/mods:titleInfo/mods:title"),
+       'container-title' => convert_mods_to_citeproc_json_title($mods, "/mods:mods[$parented]/mods:relatedItem[@type='host']/mods:titleInfo/mods:title"),
+      'DOI' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="doi"]'),
         'edition' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:originInfo/mods:edition'),
         'event' => convert_mods_to_citeproc_json_event($mods),
         'event-place' => convert_mods_to_citeproc_json_event_place($mods),
@@ -174,6 +175,8 @@ function convert_mods_to_citeproc_json_genre($mods) {
 /**
  * Gets the title property for the Citation.
  * 
+ * by passing in the xpath we can use this for container titles as well.
+ * 
  * There may be multiple titles, and relying on the title[@type] is not a wholly 
  * relable method of determining the best title.  MOST OFTEN THERE WILL ONLY BE ONE.
  * My answer is to take the *longest*. 
@@ -184,10 +187,10 @@ function convert_mods_to_citeproc_json_genre($mods) {
  * @return string
  *   The title property for the Citation.
  */
-function convert_mods_to_citeproc_json_title(SimpleXMLElement $mods) {
+function convert_mods_to_citeproc_json_title(SimpleXMLElement $mods, $xpath = "/mods:mods/mods:titleInfo/mods:title") {
   $output = '';
   add_mods_namespace($mods);
-  $titles = $mods->xpath("/mods:mods/mods:titleInfo/mods:title");
+  $titles = $mods->xpath($xpath);
 
   if (!empty($titles)) {
     while (list($num, $node) = each($titles)) {

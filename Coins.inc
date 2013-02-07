@@ -317,7 +317,7 @@ class Coins {
           $btitle = (string) $btitle[0];
           $bsub_title = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:subTitle');
           $bsub_title = (string) $bsub_title[0];
-          if (!empty($sbub_title)) {
+          if (!empty($bsub_title)) {
             $btitle = $btitle . ': ' . $bsub_title;
           }
           if (!empty($btitle)) {

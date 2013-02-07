@@ -19,7 +19,8 @@ function scholar_create_user_object($form, $form_state) {
   }
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pid = 'ir:'.$form_state['values']['name'];
-  $object = Fedora_Item::ingest_new_item($pid, 'A', $edit['name'] . ' Projects');
+  
+  $object = Fedora_Item::ingest_new_item($pid, 'A', $form_state['values']['display_name']);
   //@TODO the values in the below should be pulled into an admin interface so this can be generalized and reused
   $object->add_relationship('isMemberOfCollection', 'ir:people', RELS_EXT_URI);
   $object->add_relationship('hasModel', 'islandora:researcherCModel', FEDORA_MODEL_URI);

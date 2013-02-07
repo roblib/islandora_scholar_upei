@@ -115,6 +115,14 @@ class Scholar {
       }
       $position = $xml->affiliation->position;
 
+      $positions = array('EmeritusFaculty' => 'Emeritus Faculty', 'EmeritusLibrarian' => 'Emeritus Librarian'
+        , 'EmeritusProfessor' => 'Emeritus Professor', 'FacultyMember' => 'Faculty Member'
+        , 'NonAcademic' => 'Non-Academic', 'GraduateStudent' => 'Graduate Student'
+        , 'UndergraduateStudent' => 'Undergraduate Student');
+      $from = array_keys($positions);
+      $to = array_values($positions);
+      $position = str_replace($from, $to, $position) ;
+      
       $username = $xml->identifier;
       $email = $xml->affiliation->email;
       $notes = $xml->xpath('//mads:note[@type="history"]');
@@ -168,7 +176,7 @@ class Scholar {
       }
       $department_list[$dpt] = $name_list;
     }
-    
+
     //GRANT INOFORMATION
     //bit of a mismash of field names using existing fields where possible
     //so we don't have to reindex yet
@@ -182,11 +190,11 @@ class Scholar {
       $pid = (string) $arr->str;
       $title = (string) $arr->arr[0]->str;
       $agency = (string) $arr->arr[1]->str;
-      $type = (string) $arr->arr[2]->str;    
+      $type = (string) $arr->arr[2]->str;
       $grant_info .= $title;
       $grant_info .= '<ul>';
       $grant_info .= '<li>' . $agency . '</li>';
-      $grant_info .= '<li>' . $type .'</li>';
+      $grant_info .= '<li>' . $type . '</li>';
       $grant_info .= '</ul>';
     }
 
@@ -207,7 +215,7 @@ class Scholar {
 
 
     $rss_feed = '<div class="scholar-rss-feed-label">' . l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-28x28.png">', 'rss/' . $username, array('html' => TRUE)) .
-        ' Subscribe to ' . $fullname . ' citation feed</div>';
+        ' Subscribe to ' . $fullname . '\'s citation feed</div>';
 
 
     $profile_header = array();
@@ -248,10 +256,11 @@ class Scholar {
     $variables['grant_info'] = $grant_info;
     if (isset($this->item->datastreams['TN'])) {
       $variables['tn_src'] = '<img src="' . $base_url . '/fedora/repository/' . $this->pid . '/TN"/>';
-    } else {
+    }
+    else {
       $variables['tn_src'] = "";
     }
-    
+
     $content = theme('scholar_profile', $variables);
 
 
