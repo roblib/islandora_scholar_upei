@@ -39,7 +39,6 @@ class Coins {
   public $status = NULL;
   public $isbn = NULL;
   public $object = NULL;
-  
 
   /**
    * Create the object properties from the MODS datastream
@@ -77,12 +76,14 @@ class Coins {
           if ($name_part['type'] == 'given') {
             $names[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
             $full_names[$i] .= (string) $name_part;
-          } else 
+          }
+          else
           if ($name_part['type'] == 'family') {
             $names[$i] .= (string) rtrim($name_part, '.');
             $family_names[$i] = (string) rtrim($name_part, '.');
             $full_names[$i] .= ' ' . (string) rtrim($name_part, '.');
-          } else {
+          }
+          else {
             $names[$i] = trim($name_part);
           }
         }
@@ -112,7 +113,7 @@ class Coins {
       foreach ($xml->physicalDescription->form as $form) {
         if ($form['authority'] == 'local' && (string) $form != 'NO_OBJ') {
           $this->status = 'FULL_TEXT_AVAILABLE';
-          $this->type = (string)$form;
+          $this->type = (string) $form;
         }
       }
     }
@@ -325,15 +326,14 @@ class Coins {
           }
 
           $beditors = $modsxml->xpath('/mods:mods/mods:relatedItem[@type="host"]/mods:name');
-          $i = 0;
-          $editor_name = '';
+          $beditors_arr = array();
           foreach ($beditors as $beditor) {
-            if ($i++ > 0) {
-              $editor_name .= ', ';
+            $value = trim((string) $beditor->namePart[0] . ' ' . (string) $beditor->namePart[1]);
+            if (!empty($value)) {
+              $beditors_arr[] = $value;
             }
-            $editor_name .= (string) $beditor->namePart[0] . ' ' . (string) $beditor->namePart[1];
           }
-
+          $editor_name = implode(', ', $beditors_arr);
           if (!empty($editor_name)) {
             $rows[] = array('Book editor(s)', $editor_name);
           }
@@ -426,17 +426,17 @@ class Coins {
 
           if (!empty($advisor_name)) {
             $advisor_name = trim($advisor_name);
-            $rows[] = array('Advisor(s)', $advisor_name) ;
+            $rows[] = array('Advisor(s)', $advisor_name);
           }
 
           $i = 0;
           $member_name = '';
           foreach ($advisors as $member) {
-            
+
             if ($member->role->roleTerm == "Committee member") {
               if ($i > 0) {
-              $member_name .= ', ';
-            }
+                $member_name .= ', ';
+              }
               $member_name .= (string) $member->namePart[0] . ' ' . (string) $member->namePart[1] . ' ' . (string) $member->namePart[2];
               $member_name = trim($member_name);
               if (!empty($member_name)) {
@@ -447,7 +447,7 @@ class Coins {
 
           if (!empty($member_name)) {
             $member_name = trim($member_name);
-            $rows[] = array('Committee member(s)',$member_name) ;
+            $rows[] = array('Committee member(s)', $member_name);
           }
           $modsxml->registerXPathNamespace('etd', 'http://www.ndltd.org/standards/metadata/etdms/1.0');
           $degree_name = $modsxml->xpath('//etd:name');
@@ -660,9 +660,9 @@ class Coins {
   function get_use(&$rows) {
     $use = $this->mods->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
     $use = implode('<br /><br /> ', $use);
-    $search_arr = array('Contact Author','Contact Publisher');
-    $replace_arr = array('<a href="mailto:publications@upei.ca?subject=Scholar Contact request for object '.$this->pid.'">Contact Author</a>','<a href="mailto:publications@upei.ca?subject='.$pid.'">Contact Publisher</a>');
-    $use = str_replace($search_arr, $replace_arr,trim($use));
+    $search_arr = array('Contact Author', 'Contact Publisher');
+    $replace_arr = array('<a href="mailto:publications@upei.ca?subject=Scholar Contact request for object ' . $this->pid . '">Contact Author</a>', '<a href="mailto:publications@upei.ca?subject=' . $pid . '">Contact Publisher</a>');
+    $use = str_replace($search_arr, $replace_arr, trim($use));
     if (!empty($use)) {
       $rows[] = array('Use/Reproduction', $use);
     }
