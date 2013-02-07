@@ -657,6 +657,21 @@ class Coins {
     }
   }
 
+  /**
+   *  gets the title we want to send to godot (UPEI resolver)
+   * we send the host title if it is a book chapter or section
+   * otherwise its the normal title
+   * @return string
+   */
+  function get_godot_title() {
+    $title = $this->title;
+    if ($this->genre[0] == 'Book, Section' || $this->genre[0] == 'Book, Chapter') {
+      module_load_include('php', 'citeproc', 'generators/converter.php');
+      $title = convert_mods_to_citeproc_json_title($this->mods, '/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title') ;
+    }
+    return $title;
+  }
+
   function get_use(&$rows) {
     $use = $this->mods->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
     $use = implode('<br /><br /> ', $use);

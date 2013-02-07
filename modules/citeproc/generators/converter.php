@@ -112,7 +112,7 @@ function convert_mods_to_citeproc_jsons($mods_in) {
       //'container-title' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo[not(@type)]/mods:title'),
         //'container-title' => convert_mods_to_citeproc_json_query($mods, "/mods:mods[$parented]/mods:relatedItem[@type='host']/mods:titleInfo/mods:title"),
        'container-title' => convert_mods_to_citeproc_json_title($mods, "/mods:mods[$parented]/mods:relatedItem[@type='host']/mods:titleInfo/mods:title"),
-      'DOI' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="doi"]'),
+        'DOI' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:identifier[@type="doi"]'),
         'edition' => convert_mods_to_citeproc_json_query($mods, '/mods:mods/mods:originInfo/mods:edition'),
         'event' => convert_mods_to_citeproc_json_event($mods),
         'event-place' => convert_mods_to_citeproc_json_event_place($mods),
