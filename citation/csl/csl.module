@@ -77,10 +77,12 @@ function csl_manage(array &$form_state) {
     '#tree' => FALSE,
     'name' => array(
       '#type' => 'textfield',
+      '#size' => NULL,
       '#title' => 'Name',
     ),
     'file' => array(
       '#type' => 'file',
+      '#size' => NULL,
       '#title' => t('Upload A CSL Style'),
     ),
     'add' => array(
