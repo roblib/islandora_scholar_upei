@@ -147,13 +147,20 @@ class IrClass {
   function build_add_datastream_form($pid) {
     $form = array();
     $certifyBox = array(
-      '1' => 'I Certify That I have the right to upload this version.'
+      '1' => 'I certify that I have the right to upload this version.'
     );
 
     $usage = array(
      
       'Contact Publisher' => 'Contact Publisher (I do not hold the copyright)',
       'Contact Author' => 'Contact Author (I hold the copyright and wish to retain all rights)',
+        'CC-BY' => '<a rel="license" title="Creative Commons Attribution 3.0 Unported License" 
+   href="http://creativecommons.org/licenses/by/3.0/">
+  <img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/80x15.png" />
+  </a> This work is licensed under a <a rel="license" 
+   title="Creative Commons Attribution 3.0 Unported License" 
+   href="http://creativecommons.org/licenses/by/3.0/">Creative Commons
+   Attribution 3.0 Unported License</a>',
       'CC-BY-NC' => '<a rel="license" title="Creative Commons Attribution-NonCommercial 3.0 Unported License" 
    href="http://creativecommons.org/licenses/by-nc/3.0/">
   <img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" />
@@ -176,10 +183,10 @@ class IrClass {
     );
 
     $versions = array(
-      'PRE-PRINT' => '<span title="The version of the document you submitted to the publisher prior to peer-review" style="border-bottom: dotted grey 1px;">PRE-PRINT</span>',
-      'POST-PRINT' => '<span title="The version of the document after it has been peer-reviewed, but before it has gone to typesetting" style="border-bottom: dotted grey 1px;">POST-PRINT</span>',
-      'PUBLISHED' => '<span title="The published version of the document." style="border-bottom: dotted grey 1px;">PUBLISHED PDF</span>',
-      'OTHER' => '<span title="A document that has not been published or is otherwise considered unpublished." style="border-bottom: dotted grey 1px;">OTHER/UNPUBLISHED</span>',
+      'PRE-PRINT' => 'PRE-PRINT - The version of the document you submitted to the publisher prior to peer-review.',
+      'POST-PRINT' => 'POST-PRINT - The version of the document after it has been peer-reviewed, but before it has gone to typesetting.',
+      'PUBLISHED' => 'PUBLISHED PDF - The published version of the document.',
+      'OTHER' => 'OTHER/UNPUBLISHED - A document that has not been published or is otherwise considered unpublished.',
     );
 
     $form['#attributes'] = array('enctype' => "multipart/form-data");
