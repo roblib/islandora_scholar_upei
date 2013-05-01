@@ -152,6 +152,9 @@ function islandora_bibilgraphy_form_get_title_authors($pid) {
     if ($authors == '') {
       $authors = implode(', ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "aut"]/../mods:namePart[@type="family"]'));
     }
+    if($authors == ''){
+      $authors = implode(', ', $mods->xpath('/mods:mods/mods:name/mods:role[mods:roleTerm = "Author"]/../mods:namePart[@type="family"]'));
+    }
   }
   return array($title, $authors);
 }
