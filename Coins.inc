@@ -265,6 +265,24 @@ class Coins {
           if (!empty($doi) && strlen(trim($doi)) > 1) {
             $rows[] = array('DOI', l($doi, 'http://dx.doi.org/' . $doi));
           }
+          // arXiv identifier
+          $arxiv = $modsxml->xpath('//mods:identifier[@type="arxiv"]');
+          $arxiv = implode(',', $arxiv);
+          if (!empty($arxiv) && strlen(trim($arxiv)) > 1) {
+            $rows[] = array('arXiv', l($arxiv, 'http://arxiv.org/abs/' . $arxiv));
+          }
+          // PubMed Identifier
+          $pmid = $modsxml->xpath('//mods:identifier[@type="pmid"]');
+          $pmid = implode(',', $pmid);
+          if (!empty($pmid) && strlen(trim($pmid)) > 1) {
+            $rows[] = array('PubMed ID', l($pmid, 'http://www.ncbi.nlm.nih.gov/pubmed/' . $pmid));
+          }
+          // PubMed Central Identifier
+          $pmcid = $modsxml->xpath('//mods:identifier[@type="pmcid"]');
+          $pmcid = implode(',', $pmcid);
+          if (!empty($pmcid) && strlen(trim($pmcid)) > 1) {
+            $rows[] = array('PubMed Central ID', l($pmcid, 'http://www.ncbi.nlm.nih.gov/pmc/articles/' . $pmcid));
+          }
           $issn = $modsxml->xpath('//mods:identifier[@type="issn"]');
           $issn = implode(',', $issn);
           if (!empty($issn) && strlen(trim($issn)) > 1) {
@@ -667,7 +685,7 @@ class Coins {
     $title = $this->title;
     if ($this->genre[0] == 'Book, Section' || $this->genre[0] == 'Book, Chapter') {
       module_load_include('php', 'citeproc', 'generators/converter.php');
-      $title = convert_mods_to_citeproc_json_title($this->mods, '/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title') ;
+      $title = convert_mods_to_citeproc_json_title($this->mods, '/mods:mods/mods:relatedItem[@type="host"]/mods:titleInfo/mods:title');
     }
     return $title;
   }
