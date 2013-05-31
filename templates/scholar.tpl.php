@@ -1,4 +1,14 @@
-<div id="clear-block">
+<?php if (!empty($doi) && $genre == 'Journal Article'): ?>
+      <div class="altmetrics clear-block">
+        <script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>
+        <script type='text/javascript'>
+          _altmetric_embed_init();
+        </script>
+        <div class="altmetric-embed" data-badge-popover='right' data-doi="<?php print $doi; ?>">
+        </div>
+      </div>
+    <?php endif; ?>
+<div class="clear-block">
   <table>
     <?php foreach ($rows as $row): ?>
       <tr class="odd">  
@@ -32,8 +42,8 @@
     <div class="scholar-refworks"><a href="http://rlproxy.upei.ca/login?url=http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=<?php print $base_url ?>/refworks_entry/<?php print urlencode($pid) ?>" target="RefWorksMain" class="button refworks">Export to RefWorks</A></div>
     <?php if (stripos((string) $genre, 'book') !== FALSE && (!isset($full_text) || $embargoed )): ?>
       <div class="scholar_coins_title">
-          <span class="Z3988" title="&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.isbn=<?php print $isbn ?>&amp;rft.date=<?php print $date ?>&amp;rft.title=<?php print $title ?>">
-          </span>
+        <span class="Z3988" title="&#10;&#9;&#9;&#9;&#9;ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rfr_id=info:sid/library.upei.ca:Robertson&amp;rft.isbn=<?php print $isbn ?>&amp;rft.date=<?php print $date ?>&amp;rft.title=<?php print $title ?>">
+        </span>
       </div>
       <div class="scholar_coins_url">
         <a href="&#10;&#9;&#9;&#9;&#9;http://articles.library.upei.ca:7888/godot/hold_tab.cgi?hold_tab_branch=PCU&amp;isbn=<?php print $isbn ?>&date=<?php print $date ?>&title=<?php print $title ?>" target="_blank" class="check-for-text"><img src="http://library.upei.ca/sites/all/files/sharedfolder/files/getit_upei.gif"></a>
@@ -51,6 +61,7 @@
     <?php if (isset($associate_button)): ?>
       <?php print $associate_button; ?>
     <?php endif; ?>
+    
   </div>
 
 </div>

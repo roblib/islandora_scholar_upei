@@ -1441,7 +1441,7 @@ function scholar_get_romeo($issn) {
     $romeo = unserialize($romeo_cache->data);
   }
   else {
-    $romeo_url = file_get_contents($base_url . $issn . $api_key);
+    $romeo_url = @file_get_contents($base_url . $issn . $api_key);
     try {
       $processor = new XsltProcessor();
     } catch (Exception $e) {
@@ -1569,6 +1569,9 @@ function template_preprocess_scholar(&$variables) {
     $associate_button .= drupal_get_form('islandora_scholar_associate_button_form', $variables['pid']);
     $associate_button .= '</div>';
   }
+  
+  $doi = $data->mods->xpath('//mods:identifier[@type="doi"]');
+  $doi = $doi[0];
 
   $embargo_date = $data->embargo_date;
   $embargoed = $data->is_embargoed($embargo_date);
@@ -1599,6 +1602,7 @@ function template_preprocess_scholar(&$variables) {
     'csl' => $csl,
     'full_text' => $pdf_result,
     'embargoed' => $embargoed,
+    'doi' => $doi,
   );
 }
 

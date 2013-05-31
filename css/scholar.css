@@ -140,3 +140,7 @@ root {
 .scholar-fullview-btns form {
     display: inline;
 }
+
+.altmetric-embed {
+    float: right;
+}

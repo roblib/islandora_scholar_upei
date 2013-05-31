@@ -661,6 +661,18 @@ class Coins {
       'rows' => $rows,
     );
   }
+  
+  function get_altmetrics_text($doi){
+    if(empty($doi)){
+      return '';
+    }
+    $text =  '<span class="altmetrics">
+        <span class="altmetric-embed" data-badge-popover="right" data-doi="'.
+        $doi.'">
+        </span>
+      </span>';
+    return $text;
+  }
 
   function get_title(&$rows, $label) {
     $title = $this->mods->xpath('/mods:mods/mods:titleInfo/mods:title');
