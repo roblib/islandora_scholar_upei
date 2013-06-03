@@ -136,7 +136,7 @@ class Coins {
     $this->reverse_names = $reverse;
 
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
-    $this->issn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $issn[0]);
+    $this->issn = $this->check_issn((string)$issn[0]);
     $isbn = $xml->xpath('//mods:identifier[@type="isbn"]');
     $this->isbn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $isbn[0]);
     //$this->date = $xml->part->date;
@@ -200,6 +200,40 @@ class Coins {
 
     $department = $xml->xpath('//mods:identifier[@type="u2"]');
     $this->department = $department;
+  }
+
+  /**
+   * validates an issn.  If the issn does not have a - (dash) this funciton inserts
+   * one
+   * @param mixed $issn
+   * @return mixed
+   *   returns FALSE if issn is not valid otherwise returns the parsed issn.
+   */
+  function check_issn($issn) {
+    if (is_array($issn)) {
+      $issns = $issn[0];
+    }
+    else {
+      $issns = $issn;
+    }
+    $tmp = explode(',', $issns);
+    $tmp = $tmp[0];
+    $tmp = preg_replace('{[^0-9X]}', '', $tmp);
+    // get length
+    $length = strlen($tmp);
+    // get checksum
+    $checksum = ( $tmp[( $length - 1 )] === 'X' ) ? 10 : intval($tmp[( $length - 1 )]);
+    // calculate checksum
+    if ($length === 8) {
+      $sum = NULL;
+      for ($i = 1; $i < $length; $i++)
+        $sum+= ( 8 - ( $i - 1 ) ) * $tmp[( $i - 1 )];
+      $sum = 11 - $sum % 11;
+      $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
+      $tmp = (substr($tmp, 0, 4) . '-' . substr($tmp, 4, 7));//put the dash back
+      return $sum === $checksum ? $tmp : FALSE;
+    }
+    return FALSE;
   }
 
   /**
@@ -283,11 +317,7 @@ class Coins {
           if (!empty($pmcid) && strlen(trim($pmcid)) > 1) {
             $rows[] = array('PubMed Central ID', l($pmcid, 'http://www.ncbi.nlm.nih.gov/pmc/articles/' . $pmcid));
           }
-          $issn = $modsxml->xpath('//mods:identifier[@type="issn"]');
-          $issn = implode(',', $issn);
-          if (!empty($issn) && strlen(trim($issn)) > 1) {
-            $rows[] = array('ISSN', $issn);
-          }
+          $issn = $this->issn;
           $this->get_availability($rows);
           $this->get_use($rows);
           break;
@@ -661,14 +691,14 @@ class Coins {
       'rows' => $rows,
     );
   }
-  
-  function get_altmetrics_text($doi){
-    if(empty($doi)){
+
+  function get_altmetrics_text($doi) {
+    if (empty($doi)) {
       return '';
     }
-    $text =  '<span class="altmetrics">
-        <span class="altmetric-embed" data-badge-popover="right" data-doi="'.
-        $doi.'">
+    $text = '<span class="altmetrics">
+        <span class="altmetric-embed" data-badge-popover="right" data-doi="' .
+        $doi . '">
         </span>
       </span>';
     return $text;
