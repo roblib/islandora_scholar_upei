@@ -144,3 +144,12 @@ root {
 .altmetric-embed {
     float: right;
 }
+
+.scholar_button{
+  width: 20%; 
+}
+
+#scholar_choice_buttons{
+  padding-top: 2%;
+  text-align: center;
+}
