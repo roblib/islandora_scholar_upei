@@ -211,7 +211,7 @@ function scholar_search_form_store_sort_in_session(array &$form_state) {
 }
 
 function scholar_search_advanced_add_field() {
-  module_load_include('inc', 'xml_form_elements', 'Ahah');
+  module_load_include('inc', 'php_lib', 'Ahah');
   list($form_id, $form_build_id, $form, $form_state) = Ahah::getFormInfo();
   $form = Ahah::processForm($form_id, $form, $form_state);
   $form_state['num_terms'] = count(element_children($form['terms'])) + 1;

@@ -45,7 +45,7 @@ function scholar_by_name($type, $query) {
 function scholar_role($type, $query) {
   $role = $query; //
   $irClass = new IrClass();
-  //real bad hack to change home economics and ohters to something different (ldap groups are incorrect in ldap server so they say)
+//real bad hack to change home economics and ohters to something different (ldap groups are incorrect in ldap server so they say)
   $department = $query;
 
   if ('Home Economics' == $department) {
@@ -282,7 +282,7 @@ function scholar_perm() {
   );
 }
 
-/** 
+/**
  * implement our own query block so we can style it
  * @return type 
  */
@@ -306,14 +306,12 @@ function scholar_islandora_solr_query_blocks() {
  * @param type $form_state
  * @param type $form_id 
  */
-function scholar_form_alter( &$form, &$form_state, $form_id )
-{
-    if (  $form_id == 'user_login'  )
-    {
-        $form['name']['#attributes']['placeholder'] = t( 'Username' );
-        $form['pass']['#attributes']['placeholder'] = t( 'Password' );
-        $form['name']['#description'] = t('Enter your UPEI username.');
-    }
+function scholar_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'user_login') {
+    $form['name']['#attributes']['placeholder'] = t('Username');
+    $form['pass']['#attributes']['placeholder'] = t('Password');
+    $form['name']['#description'] = t('Enter your UPEI username.');
+  }
 }
 
 /**
@@ -415,7 +413,7 @@ function scholar_form_user_register_alter(&$form, &$form_state) {
     '#maxlength' => '255',
       //'#required' => TRUE,
   );
-  //$form['#validate'][] = 'scholar_add_user_to_fedora_validate';
+//$form['#validate'][] = 'scholar_add_user_to_fedora_validate';
   $form['#submit'][] = 'scholar_add_user_to_fedora';
 }
 
@@ -446,7 +444,7 @@ function scholar_required_fedora_objects() {
 
   $module_path = drupal_get_path('module', 'scholar');
 
-  // Put the form in the database
+// Put the form in the database
   module_load_include('inc', 'xml_form_builder', 'XMLFormDatabase');
   if (!XMLFormDatabase::Exists(ISLANDORA_SCHOLAR_JOURNAL_FORM_NAME)) {
     $definition = new DOMDocument();
@@ -458,7 +456,7 @@ function scholar_required_fedora_objects() {
     $definition->load($module_path . '/forms/thesis_form.xml');
     XMLFormDatabase::Create(ISLANDORA_SCHOLAR_THESIS_FORM_NAME, $definition);
   }
-  // Associates the form with the content model
+// Associates the form with the content model
   $result = db_result(db_query('Select content_model from {islandora_content_model_forms} where  content_model = "%s" and form_name = "%s"', 'islandora:citationCModel', 'Islandora Scholar Journal Form'));
   if (!$result) {
     $object = new stdClass();
@@ -606,7 +604,7 @@ function scholar_form_fedora_repository_ingest_form_alter(array &$form, array &$
     }
     if ($show_bulk_ingest) {
       $bulk_ingest = scholar_bulk_ingest_form($form_state, $form['collection_pid']['#value']);
-      // Move the next button within the field set to make it clearer.
+// Move the next button within the field set to make it clearer.
       $form['indicator']['submit'] = $form['submit'];
       unset($form['submit']);
       array_unshift($form, $bulk_ingest);
@@ -614,7 +612,7 @@ function scholar_form_fedora_repository_ingest_form_alter(array &$form, array &$
       $form['#validate'] = array('scholar_bulk_ingest_form_validate');
     }
   }
-  //add a handler so we can update the rels-ext
+//add a handler so we can update the rels-ext
   $form['#submit'][] = 'scholar_auto_associate';
 }
 
@@ -623,14 +621,14 @@ function scholar_auto_associate(&$form, &$form_state) {
   $item = new Fedora_Item($form_state['values']['pid']);
   if (!empty($form_state['values']['identifier_u1_tags'])) {
     foreach ($form_state['values']['identifier_u1_tags'] as $user) {
-      // add a rels relationship
-      //add_relationship($relationship, $object, $namespaceURI = RELS_EXT_URI, $literal_value = RELS_TYPE_URI) {
+// add a rels relationship
+//add_relationship($relationship, $object, $namespaceURI = RELS_EXT_URI, $literal_value = RELS_TYPE_URI) {
       $item->add_relationship('hasResearcher', $user['identifier_u1'], 'info:fedora/fedora-system:def/relations-external#');
     }
   }
   if (!empty($form_state['values']['identifier_u2_tags'])) {
     foreach ($form_state['values']['identifier_u2_tags'] as $department) {
-      // add a rels relationship
+// add a rels relationship
       $value = str_replace(' ', '_', $department['identifier_u2']);
       $item->add_relationship('hasDepartment', $value, 'info:fedora/fedora-system:def/relations-external#');
     }
@@ -652,36 +650,109 @@ function scholar_auto_associate(&$form, &$form_state) {
  *   The Drupal form.
  */
 function scholar_bulk_ingest_form(array &$form_state, $collection_pid) {
+  $path = drupal_get_path('module', 'scholar');
+  drupal_add_js("$path/js/islandora_scholar.js");
+  drupal_add_css("$path/css/scholar.css");
   $potential_models = scholar_bulk_ingest_get_potential_models($collection_pid);
   reset($potential_models);
   $identifier = key($potential_models);
-  $name = current($potential_models);
   $selected_model = isset($form_state['values']['models']) ? $form_state['values']['models'] : $identifier;
-  $form = array(
-    'bulk_ingest' => array(
-      '#type' => 'fieldset',
-      '#title' => t('Ingest digital objects generated by RIS, EndNote or RefWorks into collection_pid Step #1', array('collection_pid' => $collection_pid)),
-      'file' => array(
-        '#type' => 'file',
-        '#title' => t('Upload "RIS", "EndNote XML" or "RefWorks XML" Document'),
-        '#description' => t('A RIS, EndNote XML, or RefWorks XML document that will generate multiple digital objects on ingest. One for each record within the RIS, EndNote XML, or RefWorks document.'),
-        '#element_validate' => array('scholar_bulk_ingest_file_upload_validate'),
-      ),
-      'content_model_pid' => array(
-        '#type' => 'select',
-        '#title' => t('Content models available'),
-        '#options' => $potential_models,
-        '#default_value' => $selected_model,
-        '#description' => t('Content models define datastream composition, relationships between this and other content models, and the mandatory behaviors associated with each digital object.<br /> Additional information may be found <a href="https://wiki.duraspace.org/display/FEDORACREATE/Content+Models+Overview">here.</a> '),
-      ),
-      'submit' => array(
-        '#type' => 'submit',
-        '#executes_submit_callback' => TRUE,
-        '#submit' => array('scholar_bulk_ingest_form_submit'),
-        '#value' => t('Ingest')
-      ),
-    )
+  $markup = '<div id = "scholar_choice_buttons">';
+  $markup .= '<button id = "single" class = "scholar_button">Create Single Citation</button><br />';
+  $markup .= '<button id = "RIS" class = "scholar_button">RIS, Endnote or RefWorks</button><br />';
+  $markup .= '<button id = "PUBMD" class = "scholar_button">Create PUBMED Records</button><br />';
+  $markup .= '<button id = "DOI" class = "scholar_button">Create DOI Records</button>';
+
+  $form['buttons'] = array(
+    '#type' => 'markup',
+    '#value' => $markup,
+    '#attributes' => array('class' => 'myclass')
   );
+  $form['bulk_ingest'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Ingest digital objects generated by RIS, EndNote or RefWorks into collection_pid Step #1', array('collection_pid' => $collection_pid)),
+    '#attributes' => array('id' => 'bulk_ingest', 'class' => 'scholar_choice'),
+    'file' => array(
+      '#type' => 'file',
+      '#title' => t('Upload "RIS", "EndNote XML" or "RefWorks XML" Document'),
+      '#description' => t('A RIS, EndNote XML, or RefWorks XML document that will generate multiple digital objects on ingest. One for each record within the RIS, EndNote XML, or RefWorks document.'),
+      '#element_validate' => array('scholar_bulk_ingest_file_upload_validate'),
+    ),
+    'content_model_pid' => array(
+      '#type' => 'select',
+      '#title' => t('Content models available'),
+      '#options' => $potential_models,
+      '#default_value' => $selected_model,
+      '#description' => t('Content models define datastream composition, relationships between this and other content models, and the mandatory behaviors associated with each digital object.<br /> Additional information may be found <a href="https://wiki.duraspace.org/display/FEDORACREATE/Content+Models+Overview">here.</a> '),
+    ),
+    'submit' => array(
+      '#type' => 'submit',
+      '#executes_submit_callback' => TRUE,
+      '#submit' => array('scholar_bulk_ingest_form_submit'),
+      '#value' => t('Create objects from document.'),
+      '#attributes' => array('class' => 'file_submit', 'source' => 'ris'),
+    ),
+  );
+
+  // Harvest records from pubmed.
+  $form['pubmed'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Pubmed IDs'),
+    '#description' => t('A list Pubmed IDs.'),
+    '#attributes' => array('id' => 'pubmed', 'class' => 'scholar_choice'),
+  );
+
+  $form['pubmed']['pubmed_file'] = array(
+    '#type' => 'file',
+    '#title' => t('Pubmed Batch Importer'),
+    '#description' => t("Give either a list of Pubmed IDs in a file, or enter the list in the textarea. In either case, the items in the list should be separated by either whitespace or commas (or some combination thereof)."),
+    '#element_validate' => array('scholar_bulk_ingest_file_upload_validate'),
+  );
+
+  $form['pubmed']['pubmed_list'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Pubmed IDs'),
+    '#description' => t('A list Pubmed IDs.'),
+    '#element_validate' => array('scholar_bulk_ingest_file_upload_validate'),
+  );
+  $form['pubmed']['submit'] = array(
+    '#type' => 'submit',
+    '#executes_submit_callback' => TRUE,
+    '#submit' => array('scholar_bulk_ingest_form_submit'),
+    '#value' => t('Create Pubmed Objects'),
+    '#attributes' => array('class' => 'file_submit', 'source' => 'pubmed'),
+  );
+
+  // Harvest records from DOI
+  $form['doi'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('DOI IDs'),
+    '#description' => t('A list DOI IDs.'),
+    '#attributes' => array('id' => 'doi', 'class' => 'scholar_choice'),
+  );
+
+  $form['doi']['doi_file'] = array(
+    '#type' => 'file',
+    '#title' => t('DOI Batch Importer'),
+    '#description' => t('Provide either a list of Digital Object Identifiers in a file, or enter DOIs in the textarea below. In either case, the DOIs in the list should be separated by either whitespace or commas (or some combination thereof). NOTE: Presently, only journal (articles) are supported.'),
+    '#element_validate' => array('scholar_bulk_ingest_file_upload_validate'),
+  );
+
+  $form['doi']['doi_list'] = array(
+    '#type' => 'textarea',
+    '#title' => t('DOI IDs'),
+    '#description' => t('Provide a list Digital Object Identifiers (DOI) - eg. 10.1016/j.jorganchem.2011.11.018, 10.1016/j.tiv.2011.10.017, 10.1111/j.1540-4560.2012.01733.x '),
+    '#element_validate' => array('scholar_bulk_ingest_file_upload_validate'),
+  );
+  $form['doi']['submit'] = array(
+    '#type' => 'submit',
+    '#executes_submit_callback' => TRUE,
+    '#submit' => array('scholar_bulk_ingest_form_submit'),
+    '#value' => t('Create DOI Objects'),
+    '#attributes' => array('class' => 'file_submit', 'source' => 'doi'),
+  );
+
+
   return $form;
 }
 
@@ -721,7 +792,8 @@ function scholar_bulk_ingest_get_potential_models($collection_pid) {
  *   The Drupal form state.
  */
 function scholar_bulk_ingest_form_validate(array &$form, array &$form_state) {
-  $bulk_ingest_clicked = $form_state['clicked_button']['#value'] == t('Ingest');
+
+  $bulk_ingest_clicked = $form_state['clicked_button']['#attributes']['class'] == 'file_submit';
   if (!$bulk_ingest_clicked) {
     if ($form_state['storage']['step'] == 1) {
       $form_state['storage']['step']++;
@@ -744,8 +816,25 @@ function scholar_bulk_ingest_form_validate(array &$form, array &$form_state) {
  *   The Drupal form state.
  */
 function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_state) {
+  if ($form_state['clicked_button']['#attributes']['source'] == 'pubmed') {
+    if (!isset($_FILES['files']['name']['pubmed_file']) && $form_state['values']['pubmed_list'] == '' && $element['#title'] == "DOI Batch Importer") {
+      form_error($element, t("You must either add a file or input one or more pubmed id's."));
+      $path = drupal_get_path('module', 'scholar');
+      drupal_add_js("$path/js/islandora_scholar.js");
+    }
+    return;
+  }
+  if ($form_state['clicked_button']['#attributes']['source'] == 'doi') {
+    if (!isset($_FILES['files']['name']['doi_file']) && $form_state['values']['doi_list'] == '' && $element['#title'] == "Pubmed Batch Importer") {
+      form_error($element, t("You must either add a file or input one or more pubmed id's."));
+      $path = drupal_get_path('module', 'scholar');
+      drupal_add_js("$path/js/islandora_scholar.js");
+    }
+    return;
+  }
+
   module_load_include('inc', 'fedora_repository', 'MimeClass');
-  $bulk_ingest_clicked = $form_state['clicked_button']['#value'] == t('Ingest');
+  $bulk_ingest_clicked = $form_state['clicked_button']['#attributes']['class'] == 'file_submit';
   $file_uploaded = isset($_FILES['files']['error']['file']) && $_FILES['files']['error']['file'] == 0;
   if ($bulk_ingest_clicked) {
     if (!$file_uploaded) {
@@ -774,27 +863,78 @@ function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_s
  *   The Drupal form state.
  */
 function scholar_bulk_ingest_form_submit(array &$form, array &$form_state) {
+  module_load_include('inc', 'fedora_repository', 'MimeClass');
   $collection_pid = $form_state['values']['collection_pid'];
-  $content_model_pid = ContentModel::getPidFromIdentifier($form_state['values']['content_model_pid']);
-//  $mime_type = $_FILES['files']['type']['file'];
+// Build full pubmed list from textfield and/or file.
+  $contents_as_string = '';
+  if ($form_state['clicked_button']['#attributes']['source'] == 'pubmed') {
+// From the textarea
+    if ($form_state['values']['pubmed_list'] != '') {
+      $contents_as_string .= $form_state['values']['pubmed_list'] . ' ';
+    }
+    if (isset($_FILES['files']['name']['pubmed_file'])) {
+      $file = file_save_upload('pubmed_file');
+      $contents_as_string .= file_get_contents($file->filepath);
+    }
+    $pubmed_list_ids = preg_split('/[\ \n\,]+/', str_replace("\n", ' ', $contents_as_string));
+    foreach ($pubmed_list_ids as $id) {
+      $operations[] = array(islandora_scholar_build_pubmed_object, array($id));
+    }
+    $batch = array(
+      'title' => t('Ingesting PUBMED Files'),
+      'operations' => $operations,
+      'file' => drupal_get_path('module', 'scholar') . '/Batch.inc',
+    );
+
+    batch_set($batch);
+    unset($form_state['storage']);
+    return;
+  }
+
+  // Build full DOI list from textfield and/or file.
+    if ($form_state['clicked_button']['#attributes']['source'] == 'doi') {
+// From the textarea
+    if ($form_state['values']['doi_list'] != '') {
+      $contents_as_string .= $form_state['values']['doi_list'] . ' ';
+    }
+    if (isset($_FILES['files']['name']['doi_file'])) {
+      $file = file_save_upload('doi_file');
+      $contents_as_string .= file_get_contents($file->filepath);
+    }
+    $doi_list_ids = preg_split('/[\ \n\,]+/', str_replace("\n", ' ', $contents_as_string));
+    foreach ($doi_list_ids as $id) {
+      $operations[] = array(islandora_scholar_build_doi_object, array($id));
+    }
+    $batch = array(
+      'title' => t('Ingesting DOI Files'),
+      'operations' => $operations,
+      'file' => drupal_get_path('module', 'scholar') . '/Batch.inc',
+    );
+
+    batch_set($batch);
+    unset($form_state['storage']);
+    return;
+  }
+  
   $file = file_save_upload('file');
   $filename = $file->filepath;
   $mime = new MimeClass();
   $mime_type = $mime->get_mimetype($filename);
-  //need to inspect this to see if it is refworks or end note
+//need to inspect this to see if it is refworks or end note
   $doc = new DOMDocument();
-  $xml = file_get_contents($filename);
-  $xml = trim($xml);//refworks has a nasty habit of outputing an xml file with 
-  // the xml declartion being the second line, the first line being blank
+  $raw_xml = file_get_contents($filename);
+  $xml = trim($raw_xml); //refworks has a nasty habit of outputing an xml file with 
+// the xml declartion being the second line, the first line being blank
   $success = $doc->loadXML($xml);
   $root = $doc->documentElement;
   $nodeName = $root->nodeName;
-  if($success && $root->nodeName == 'refworks'){
+  if ($success && $root->nodeName == 'refworks') {
     $function = 'scholar_batch_ingest_refworks_document';
-  } else {  
+  }
+  else {
     $function = ($mime_type == 'text/xml') ? 'scholar_batch_ingest_endnote_document' : 'scholar_batch_ingest_ris_document';
   }
-    $operations = array(
+  $operations = array(
     array($function, array($filename, $collection_pid, $content_model_pid))
   );
   $batch = array(
@@ -847,8 +987,8 @@ function scholar_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[5]['info'] = t('Random citation');
       $blocks[5]['cache'] = BLOCK_NO_CACHE;
 
-      //$blocks[6]['info'] = t('Scholar Scrape');
-      //$blocks[6]['cache'] = BLOCK_NO_CACHE;
+//$blocks[6]['info'] = t('Scholar Scrape');
+//$blocks[6]['cache'] = BLOCK_NO_CACHE;
 
       return $blocks;
 
@@ -912,16 +1052,16 @@ function scholar_cron() {
  */
 function scholar_form_islandora_extended_search_form_alter(&$form, &$form_state) {
   module_load_include('inc', 'scholar', 'includes/scholar.query');
-  $form['terms']['#prefix'] ='<div id="islandora-extended-search-terms">';
-  //unset($form['terms']['#suffix']);
+  $form['terms']['#prefix'] = '<div id="islandora-extended-search-terms">';
+//unset($form['terms']['#suffix']);
   $query = 'select $object $title
     from <#ri>
     where $object <info:fedora/fedora-system:def/model#label> $title
     and $object <fedora-rels-ext:isMemberOfCollection> <info:fedora/ir:scholarCollection>';
   $options = islandora_scholar_query($query, TRUE);
-  $options['AAAA'] = 'Any';//we want any to show up first
+  $options['AAAA'] = 'Any'; //we want any to show up first
   ksort($options);
-  //override the score fields to match our solr index.
+//override the score fields to match our solr index.
   $score_fields = array(
     'score' => 'Relevance',
     'mods_title_sv' => 'Title',
@@ -935,7 +1075,7 @@ function scholar_form_islandora_extended_search_form_alter(&$form, &$form_state)
     '#options' => $options,
     '#weight' => 0,
   );
-  //we are overriding the orginal handler so we can append to the query
+//we are overriding the orginal handler so we can append to the query
   $form['#submit'][0] = 'islandora_scholar_handle_search';
 }
 
@@ -943,27 +1083,27 @@ function scholar_form_islandora_extended_search_form_alter(&$form, &$form_state)
  * get a list of collections to display in a dropdown. 
  */
 function islandora_scholar_handle_search(&$form, &$form_state) {
-  module_load_include('inc','scholar','includes/scholar.blocks');
+  module_load_include('inc', 'scholar', 'includes/scholar.blocks');
   $_SESSION['islandora_extended_search']['values'] = $form_state['values'];
-  //$_SESSION['islandora_extended_search']['sort'] = $form_state['values']['sort'];
-  //$_SESSION['islandora_extended_search']['order'] = $form_state['values']['order'];
+//$_SESSION['islandora_extended_search']['sort'] = $form_state['values']['sort'];
+//$_SESSION['islandora_extended_search']['order'] = $form_state['values']['order'];
   $query = scholar_extended_search_form_build_query($form_state);
   $collection = $form_state['values']['collections'];
 
   if ($collection != 'AAAA') {
-    //TODO fix temporary hack here
-    if($collection == "Faculty/Staff Works"){
+//TODO fix temporary hack here
+    if ($collection == "Faculty/Staff Works") {
       $collection = "Institutional Repository Collection";
     }
-    $query .= " AND collection_title:" . "(\"$collection\")";    
+    $query .= " AND collection_title:" . "(\"$collection\")";
   }
   $collection = scholar_escape_phrase($collection);
   $sort_field = check_plain($form_state['values']['sort']);
   $sort_dir = check_plain($form_state['values']['order']);
   $query = urlencode($query);
-  $sort = array("sort"=>"$sort_field $sort_dir");//"?sort=$sort_field%20$sort_dir";
-   drupal_goto("islandora/solr/search/$query", $sort);
-  //$form_state['redirect'] = 'islandora/solr/search/' . $query; // Redirect to the search.
+  $sort = array("sort" => "$sort_field $sort_dir"); //"?sort=$sort_field%20$sort_dir";
+  drupal_goto("islandora/solr/search/$query", $sort);
+//$form_state['redirect'] = 'islandora/solr/search/' . $query; // Redirect to the search.
 }
 
 function scholar_theme() {
@@ -1000,3 +1140,4 @@ function scholar_theme() {
     ),
   );
 }
+
