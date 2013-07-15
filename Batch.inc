@@ -294,7 +294,7 @@ function islandora_scholar_get_pmid_data($id) {
       'db' => 'pubmed',
       'retmode' => 'xml',
       'id' => $id,
-  )));
+      )));
   $response = drupal_http_request($url);
   if ($response->data) {
     $pubmed_xml = simplexml_load_string($response->data);
@@ -311,14 +311,30 @@ function getPMID(SimpleXMLElement $xml) {
   return (string) array_shift($xml->xpath('//PubmedArticle/MedlineCitation/PMID'));
 }
 
-function islandora_scholar_build_pubmed_object($id) {
+function islandora_scholar_build_pubmed_object($id, &$context) {
   global $user;
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+  }
+  $context['sandbox']['progress'] = $context['sandbox']['progress'] + 1;
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $pmed_data = islandora_scholar_get_pmid_data($id);
+   if ($pmed_data === FALSE) {
+    $context['results']['failed'][] = t('failed creating object for %id ', array('%id' => $id));
+    return FALSE;
+  }
   $mods = islandora_scholar_get_mods($pmed_data);
+   if ($mods == FALSE) {
+    $context['results']['failed'][] = t('failed creating object for %id ', array('%id' => $id));
+    return FALSE;
+  }
   $dc = islandora_scholar_get_dc($mods);
   $xml = simplexml_load_string($dc);
-  $dcData = $xml->children('dc', TRUE);
+  if ($xml === FALSE) {
+    $context['results']['failed'][] = t('failed creating object for %id ', array('%id' => $id));
+    return FALSE;
+  }
+  $dcData = $xml->children();
   if (is_array($dcData->title)) {
     $label = $dcData->title[0];
   }
@@ -335,6 +351,22 @@ function islandora_scholar_build_pubmed_object($id) {
   //$item->add_datastream_from_string($pmed_data, 'PMED');
   $item->add_datastream_from_string($mods, 'MODS');
   $item->modify_datastream_by_value($dc, 'DC', "Dublin Core", 'text/xml', 'X');
+  $context['results']['success'][] = t('successfully created %id = %pid', array('%id' => $id, '%pid' => $pid));
+}
+
+function islandora_scholar_build_pubmed_object_finished($success, $results, $operations) {
+  if (isset($results['failed'])) {
+    $error_message .= theme('item_list', $results['failed']);
+    drupal_set_message($error_message, 'error');
+  }
+  if (isset($results['success'])) {
+    $message .= theme('item_list', $results['success']);
+    drupal_set_message($message);
+  }
+}
+
+function islandora_scholar_build_doi_object_finished($success, $results, $operations) {
+  islandora_scholar_build_pubmed_object_finished($success, $results, $operations);
 }
 
 function islandora_scholar_get_mods($pmed_data) {
@@ -356,7 +388,6 @@ function islandora_scholar_get_dc($mods) {
   $xslt = new XSLTProcessor();
   $xslt->importStylesheet($xsl);
   $dc_xml = $xslt->transformToDoc($mods_xml->documentElement);
-
   $dc = $dc_xml->saveXML();
   return $dc;
 }
@@ -459,7 +490,6 @@ function normalizeDate(DOMElement $date, DOMXPath $xpath) {
 }
 
 function islandora_scholar_get_doi_data($id) {
-
   $openurl = variable_get('doi_importer_openurl', 'http://www.crossref.org/openurl');
   $openurl_pid = variable_get('doi_importer_openurl_pid', 'zac@yesguy.biz');
   $url = url($openurl, array(
@@ -468,7 +498,7 @@ function islandora_scholar_get_doi_data($id) {
       'pid' => $openurl_pid,
       'format' => 'unixref',
       'id' => ((strpos($id, 'doi:') === 0) ? $id : 'doi:' . $id),
-  )));
+      )));
   $response = drupal_http_request($url);
   $headers = array_change_key_case($response->headers);
   if ($response->data &&
@@ -488,13 +518,30 @@ function islandora_scholar_get_doi_data($id) {
   }
 }
 
-function islandora_scholar_build_doi_object($id) {
+function islandora_scholar_build_doi_object($id, &$context) {
   global $user;
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+  }
+  $context['sandbox']['progress'] = $context['sandbox']['progress'] + 1;
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $doi_data = islandora_scholar_get_doi_data($id);
+  if ($doi_data === FALSE) {
+    $context['results']['failed'][] = t('failed creating object for %id ', array('%id' => $id));
+    return FALSE;
+  }
   $mods = islandora_repository_get_MODS_from_doi($doi_data);
   $dc = islandora_scholar_get_dc($mods);
+  if ($dc === FALSE) {
+    $context['results']['failed'][] = t('failed creating object for %id ', array('%id' => $id));
+    return FALSE;
+  }
   $xml = simplexml_load_string($dc);
+  $xml = simplexml_load_string($dc);
+  if ($xml === FALSE) {
+    $context['results']['failed'][] = t('failed creating object for %id ', array('%id' => $id));
+    return FALSE;
+  }
   $dcData = $xml->children('dc', TRUE);
   if (is_array($dcData->title)) {
     $label = $dcData->title[0];
@@ -510,6 +557,7 @@ function islandora_scholar_build_doi_object($id) {
   $item->add_relationship('isMemberOfCollection', $collection_pid);
   $item->add_datastream_from_string($mods, 'MODS');
   $item->modify_datastream_by_value($dc, 'DC', "Dublin Core", 'text/xml', 'X');
+  $context['results']['success'][] = t('successfully created %id = %pid', array('%id' => $id, '%pid' => $pid));
 }
 
 function islandora_repository_get_MODS_from_doi($incoming_doi) {
@@ -583,6 +631,8 @@ function islandora_repository_get_MODS_from_doi($incoming_doi) {
           }
         }
         foreach ($journal->journal_article as $article) {
+          //we know it's a journal article
+          $mods->addChild('genre', 'Journal Article');
           foreach ($article->attributes() as $name => $item) {
             switch ((string) $name) {
               case 'publication_type':

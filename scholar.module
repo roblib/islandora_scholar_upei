@@ -865,25 +865,27 @@ function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_s
 function scholar_bulk_ingest_form_submit(array &$form, array &$form_state) {
   module_load_include('inc', 'fedora_repository', 'MimeClass');
   $collection_pid = $form_state['values']['collection_pid'];
-// Build full pubmed list from textfield and/or file.
+  // Build full pubmed list from textfield and/or file.
   $contents_as_string = '';
   if ($form_state['clicked_button']['#attributes']['source'] == 'pubmed') {
 // From the textarea
     if ($form_state['values']['pubmed_list'] != '') {
       $contents_as_string .= $form_state['values']['pubmed_list'] . ' ';
     }
-    if (isset($_FILES['files']['name']['pubmed_file'])) {
+    if (!empty($_FILES['files']['name']['pubmed_file'])) {
       $file = file_save_upload('pubmed_file');
       $contents_as_string .= file_get_contents($file->filepath);
     }
-    $pubmed_list_ids = preg_split('/[\ \n\,]+/', str_replace("\n", ' ', $contents_as_string));
+    $pubmed_list_ids = preg_split('/[\s,]+/', $contents_as_string, NULL, PREG_SPLIT_NO_EMPTY);
+    $context = array();
     foreach ($pubmed_list_ids as $id) {
-      $operations[] = array(islandora_scholar_build_pubmed_object, array($id));
+      $operations[] = array(islandora_scholar_build_pubmed_object, array(trim($id)), $context);
     }
     $batch = array(
       'title' => t('Ingesting PUBMED Files'),
       'operations' => $operations,
       'file' => drupal_get_path('module', 'scholar') . '/Batch.inc',
+      'finished' => 'islandora_scholar_build_pubmed_object_finished',
     );
 
     batch_set($batch);
@@ -892,30 +894,32 @@ function scholar_bulk_ingest_form_submit(array &$form, array &$form_state) {
   }
 
   // Build full DOI list from textfield and/or file.
-    if ($form_state['clicked_button']['#attributes']['source'] == 'doi') {
+  if ($form_state['clicked_button']['#attributes']['source'] == 'doi') {
 // From the textarea
     if ($form_state['values']['doi_list'] != '') {
       $contents_as_string .= $form_state['values']['doi_list'] . ' ';
     }
-    if (isset($_FILES['files']['name']['doi_file'])) {
+    if (!empty($_FILES['files']['name']['doi_file'])) {
       $file = file_save_upload('doi_file');
       $contents_as_string .= file_get_contents($file->filepath);
     }
-    $doi_list_ids = preg_split('/[\ \n\,]+/', str_replace("\n", ' ', $contents_as_string));
+    $doi_list_ids = preg_split('/[\s,]+/',  $contents_as_string, NULL, PREG_SPLIT_NO_EMPTY);
+    $context = array();
     foreach ($doi_list_ids as $id) {
-      $operations[] = array(islandora_scholar_build_doi_object, array($id));
+      $operations[] = array(islandora_scholar_build_doi_object, array(trim($id)), $context);
     }
     $batch = array(
       'title' => t('Ingesting DOI Files'),
       'operations' => $operations,
       'file' => drupal_get_path('module', 'scholar') . '/Batch.inc',
+      'finished' => 'islandora_scholar_build_doi_object_finished',
     );
 
     batch_set($batch);
     unset($form_state['storage']);
     return;
   }
-  
+
   $file = file_save_upload('file');
   $filename = $file->filepath;
   $mime = new MimeClass();
