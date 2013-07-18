@@ -4,7 +4,7 @@
         <script type='text/javascript'>
           _altmetric_embed_init();
         </script>
-        <div class="altmetric-embed" data-badge-popover='right' data-doi="<?php print $doi; ?>">
+        <div class="altmetric-embed" data-badge-popover='left' data-doi="<?php print $doi; ?>">
         </div>
       </div>
     <?php endif; ?>
