@@ -90,16 +90,10 @@ function scholar_migrate_refworks_form_submit($form, &$form_state) {
     $object = new Fedora_Item($pid);
     $datastreams = $object->get_datastreams_list_as_array();
     if (!array_key_exists('MODS', $datastreams)) {
-      $refworks = $object->get_datastream_dissemination('refworks');
-      $input = new DOMDocument();
-      $input->loadXML($refworks);
-      $xslt = new XSLTProcessor();
-      $xsl = new DOMDocument();
-      $xslt_file = drupal_get_path('module', 'scholar') . '/xsl/refworks_to_mods.xsl';
-      $xsl->load($xslt_file);
-      $xslt->importStylesheet($xsl);
-      $output = $xslt->transformToDoc($input);
-      $xml = (string) $output->saveXML();
+      $rxml = $object->get_datastream_dissemination('refworks');
+      $input = new DomDocument($rxml);
+      module_load_include('inc','scholar', 'Batch');     
+      $xml = scholar_batch_ingest_mods_from_refworks($input, $rxml);
       $xml = str_replace(array('&#39;', '&#039;', '&apos;', '&amp;#39;', '&amp;#039;', '&amp;apos;'), "'", $xml);
       $u1 = $input->getElementsByTagName('u1');
       $u1_array = array();
