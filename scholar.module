@@ -776,8 +776,9 @@ function scholar_bulk_ingest_get_potential_models($collection_pid) {
   $potential_models = array();
   foreach ($content_models as $content_model) {
     $identifier = $content_model->getIdentifier();
+    $pid = $content_model->getPidFromIdentifier($identifier);
     $name = $content_model->name;
-    $potential_models["$identifier"] = "$name";
+    $potential_models["$pid"] = "$name";
   }
   unset($potential_models['islandora:contentCModel']);
   return $potential_models;
@@ -865,6 +866,7 @@ function scholar_bulk_ingest_file_upload_validate(array $element, array &$form_s
 function scholar_bulk_ingest_form_submit(array &$form, array &$form_state) {
   module_load_include('inc', 'fedora_repository', 'MimeClass');
   $collection_pid = $form_state['values']['collection_pid'];
+  $content_model_pid = $form_state['values']['content_model_pid'];
   // Build full pubmed list from textfield and/or file.
   $contents_as_string = '';
   if ($form_state['clicked_button']['#attributes']['source'] == 'pubmed') {
