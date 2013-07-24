@@ -660,8 +660,8 @@ function scholar_bulk_ingest_form(array &$form_state, $collection_pid) {
   $markup = '<div id = "scholar_choice_buttons">';
   $markup .= '<button id = "single" class = "scholar_button">Create Single Citation</button><br />';
   $markup .= '<button id = "RIS" class = "scholar_button">RIS, Endnote or RefWorks</button><br />';
-  $markup .= '<button id = "PUBMD" class = "scholar_button">Create PUBMED Records</button><br />';
-  $markup .= '<button id = "DOI" class = "scholar_button">Create DOI Records</button>';
+  $markup .= '<button id = "PUBMD" class = "scholar_button">Import using PMIDs</button><br />';
+  $markup .= '<button id = "DOI" class = "scholar_button">Import using DOIs</button>';
 
   $form['buttons'] = array(
     '#type' => 'markup',
