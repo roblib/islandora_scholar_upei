@@ -292,7 +292,7 @@
 				</relatedItem>
 			</xsl:for-each>
 			<!-- Publication Type / Type of Work -->
-			<genre>journal article</genre>
+			<genre>Journal Article</genre>
 			<xsl:for-each select="$Article/PublicationTypeList/PublicationType[normalize-space(text())]">
 				<note type="type of work">
 					<xsl:value-of select="translate(text(), $upper, $lower)"/>
