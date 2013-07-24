@@ -90,7 +90,7 @@ class Coins {
       }
       $role = (string) $name->role->roleTerm;
 
-      if ($role == 'aut' || $role == 'Author') {
+      if ($role == 'aut' || $role == 'Author' || $role == 'Creator') {
         $role = 'author';
       }
       if ($role == 'author') {
@@ -136,7 +136,7 @@ class Coins {
     $this->reverse_names = $reverse;
 
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
-    $this->issn = $this->check_issn((string)$issn[0]);
+    $this->issn = $this->check_issn((string) $issn[0]);
     $isbn = $xml->xpath('//mods:identifier[@type="isbn"]');
     $this->isbn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $isbn[0]);
     //$this->date = $xml->part->date;
@@ -230,7 +230,7 @@ class Coins {
         $sum+= ( 8 - ( $i - 1 ) ) * $tmp[( $i - 1 )];
       $sum = 11 - $sum % 11;
       $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
-      $tmp = (substr($tmp, 0, 4) . '-' . substr($tmp, 4, 7));//put the dash back
+      $tmp = (substr($tmp, 0, 4) . '-' . substr($tmp, 4, 7)); //put the dash back
       return $sum === $checksum ? $tmp : FALSE;
     }
     return FALSE;
@@ -421,6 +421,7 @@ class Coins {
           break;
         case 'thesis':
         case 'Signature Project':
+        case 'Thesis':
           $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
           if (!empty($authors) && strlen(trim($authors)) > 1) {
@@ -456,47 +457,12 @@ class Coins {
             $rows[] = array('Institution', $publishers);
           }
           //advisor
-          $advisors = $modsxml->xpath('/mods:mods/mods:name');
-          $i = 0;
-          $advisor_name = '';
-          foreach ($advisors as $advisor) {
-            if ($advisor->role->roleTerm == "Signature Project Advisor" || $advisor->role->roleTerm == "Thesis advisor") {
-              if ($i > 0) {
-                $advisor_name .= ', ';
-              }
-              $advisor_name .= (string) $advisor->namePart[0] . ' ' . (string) $advisor->namePart[1] . ' ' . (string) $advisor->namePart[2];
-              $advisor_name = trim($advisor_name);
-              if (!empty($advisor_name)) {
-                $i++;
-              }
-            }
-          }
-
-          if (!empty($advisor_name)) {
-            $advisor_name = trim($advisor_name);
-            $rows[] = array('Advisor(s)', $advisor_name);
-          }
-
-          $i = 0;
-          $member_name = '';
-          foreach ($advisors as $member) {
-
-            if ($member->role->roleTerm == "Committee member") {
-              if ($i > 0) {
-                $member_name .= ', ';
-              }
-              $member_name .= (string) $member->namePart[0] . ' ' . (string) $member->namePart[1] . ' ' . (string) $member->namePart[2];
-              $member_name = trim($member_name);
-              if (!empty($member_name)) {
-                $i++;
-              }
-            }
-          }
-
-          if (!empty($member_name)) {
-            $member_name = trim($member_name);
-            $rows[] = array('Committee member(s)', $member_name);
-          }
+          $advisors = $modsxml->xpath('/mods:mods/mods:name[@type="personal"]');
+          $this->get_advisors_by_type($rows, 'Supervisor(s)', array("Signature Project Advisor","Thesis advisor" ), $advisors);
+          $this->get_advisors_by_type($rows, 'Committee member(s)', array("Committee member" ), $advisors);
+          $this->get_advisors_by_type($rows, 'Supervisory Committee Member(s)', array("Supervisory Committee Member" ), $advisors);
+          $this->get_advisors_by_type($rows, 'Examination Committee Member(s)', array("Examination Committee Member" ), $advisors);
+          
           $modsxml->registerXPathNamespace('etd', 'http://www.ndltd.org/standards/metadata/etdms/1.0');
           $degree_name = $modsxml->xpath('//etd:name');
           $degree_name = (string) $degree_name[0];
@@ -690,6 +656,28 @@ class Coins {
       'headers' => $headers,
       'rows' => $rows,
     );
+  }
+
+  function get_advisors_by_type(&$rows, $label, $roles, $advisors) {
+    $i = 0;
+    $advisor_name = '';
+    foreach ($advisors as $advisor) {
+      if(in_array($advisor->role->roleTerm, $roles)){
+      //if ($advisor->role->roleTerm == "Signature Project Advisor" || $advisor->role->roleTerm == "Thesis advisor") {
+        if ($i > 0) {
+          $advisor_name .= ', ';
+        }
+        $advisor_name .= (string) $advisor->namePart[0] . ' ' . (string) $advisor->namePart[1] . ' ' . (string) $advisor->namePart[2];
+        $advisor_name = trim($advisor_name);
+        if (!empty($advisor_name)) {
+          $i++;
+        }
+      }
+    }
+    if (!empty($advisor_name)) {
+      $advisor_name = trim($advisor_name);
+      $rows[] = array($label, $advisor_name);
+    }
   }
 
   function get_altmetrics_text($doi) {
