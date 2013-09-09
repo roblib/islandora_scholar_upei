@@ -1441,7 +1441,7 @@ function scholar_get_romeo($issn) {
     $romeo = unserialize($romeo_cache->data);
   }
   else {
-    $romeo_url = @file_get_contents($base_url . $issn . $api_key);
+    $romeo_url = @file_get_contents($base_url . $issn . $api_key. '&versions=all');
     try {
       $processor = new XsltProcessor();
     } catch (Exception $e) {
