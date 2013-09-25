@@ -6,7 +6,7 @@
  */
 
 /**
- * Class to parse relevant data from MODS, initially used to 
+ * Class to parse relevant data from MODS, initially used to
  * construct the COINS url but has found use elsewhere.
  */
 class Coins {
@@ -42,11 +42,11 @@ class Coins {
 
   /**
    * Create the object properties from the MODS datastream
-   * 
-   * @param type $pid 
+   *
+   * @param type $pid
    * The PID of the object that you want to extract the MODS data from
-   * 
-   * @return type 
+   *
+   * @return type
    */
   function __construct($pid) {
     $this->pid = $pid;
@@ -75,17 +75,18 @@ class Coins {
         if ((string) $name_part != '') {
           if ($name_part['type'] == 'given') {
             //$names[$i] .= (string) substr(rtrim($name_part, '.'), 0, 1) . '. ';
-            $names[$i] .= (string) $name_part .' ';
+            $names[$i] .= (string) $name_part . ' ';
             $full_names[$i] .= (string) $name_part;
           }
-          else
-          if ($name_part['type'] == 'family') {
-            $names[$i] .= (string) rtrim($name_part, '.');
-            $family_names[$i] = (string) rtrim($name_part, '.');
-            $full_names[$i] .= ' ' . (string) rtrim($name_part, '.');
-          }
           else {
-            $names[$i] = trim($name_part);
+            if ($name_part['type'] == 'family') {
+              $names[$i] .= (string) rtrim($name_part, '.');
+              $family_names[$i] = (string) rtrim($name_part, '.');
+              $full_names[$i] .= ' ' . (string) rtrim($name_part, '.');
+            }
+            else {
+              $names[$i] = trim($name_part);
+            }
           }
         }
       }
@@ -139,7 +140,17 @@ class Coins {
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
     $this->issn = $this->check_issn((string) $issn[0]);
     $isbn = $xml->xpath('//mods:identifier[@type="isbn"]');
-    $this->isbn = str_replace(array("&", "=", ",", ";"), array('', '', '', ''), (string) $isbn[0]);
+    $this->isbn = str_replace(array(
+      "&",
+      "=",
+      ",",
+      ";"
+    ), array(
+      '',
+      '',
+      '',
+      ''
+    ), (string) $isbn[0]);
     //$this->date = $xml->part->date;
     $date = $xml->xpath('//mods:originInfo/mods:dateIssued');
     if (isset($date[0])) {
@@ -223,12 +234,13 @@ class Coins {
     // get length
     $length = strlen($tmp);
     // get checksum
-    $checksum = ( $tmp[( $length - 1 )] === 'X' ) ? 10 : intval($tmp[( $length - 1 )]);
+    $checksum = ($tmp[($length - 1)] === 'X') ? 10 : intval($tmp[($length - 1)]);
     // calculate checksum
     if ($length === 8) {
       $sum = NULL;
-      for ($i = 1; $i < $length; $i++)
-        $sum+= ( 8 - ( $i - 1 ) ) * $tmp[( $i - 1 )];
+      for ($i = 1; $i < $length; $i++) {
+        $sum += (8 - ($i - 1)) * $tmp[($i - 1)];
+      }
       $sum = 11 - $sum % 11;
       $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
       $tmp = (substr($tmp, 0, 4) . '-' . substr($tmp, 4, 7)); //put the dash back
@@ -239,13 +251,13 @@ class Coins {
 
   /**
    * Function to return citation details in a table-ready form
-   * 
+   *
    * @param string $type
-   * Type of reference that is being used. Default value is citation but 
+   * Type of reference that is being used. Default value is citation but
    * thesis and book are also valid. This parameter will change the values
    * that are returned when the render_view function is called
-   * 
-   * @return type 
+   *
+   * @return type
    * An array containing the headers and rows ready to put into a table describing
    * the reference
    */
@@ -304,19 +316,28 @@ class Coins {
           $arxiv = $modsxml->xpath('//mods:identifier[@type="arxiv"]');
           $arxiv = implode(',', $arxiv);
           if (!empty($arxiv) && strlen(trim($arxiv)) > 1) {
-            $rows[] = array('arXiv', l($arxiv, 'http://arxiv.org/abs/' . $arxiv));
+            $rows[] = array(
+              'arXiv',
+              l($arxiv, 'http://arxiv.org/abs/' . $arxiv)
+            );
           }
           // PubMed Identifier
           $pmid = $modsxml->xpath('//mods:identifier[@type="pmid"]');
           $pmid = implode(',', $pmid);
           if (!empty($pmid) && strlen(trim($pmid)) > 1) {
-            $rows[] = array('PubMed ID', l($pmid, 'http://www.ncbi.nlm.nih.gov/pubmed/' . $pmid));
+            $rows[] = array(
+              'PubMed ID',
+              l($pmid, 'http://www.ncbi.nlm.nih.gov/pubmed/' . $pmid)
+            );
           }
           // PubMed Central Identifier
           $pmcid = $modsxml->xpath('//mods:identifier[@type="pmcid"]');
           $pmcid = implode(',', $pmcid);
           if (!empty($pmcid) && strlen(trim($pmcid)) > 1) {
-            $rows[] = array('PubMed Central ID', l($pmcid, 'http://www.ncbi.nlm.nih.gov/pmc/articles/' . $pmcid));
+            $rows[] = array(
+              'PubMed Central ID',
+              l($pmcid, 'http://www.ncbi.nlm.nih.gov/pmc/articles/' . $pmcid)
+            );
           }
           $issn = $this->issn;
           $this->get_availability($rows);
@@ -459,11 +480,14 @@ class Coins {
           }
           //advisor
           $advisors = $modsxml->xpath('/mods:mods/mods:name[@type="personal"]');
-          $this->get_advisors_by_type($rows, 'Supervisor(s)', array("Signature Project Advisor","Thesis advisor" ), $advisors);
-          $this->get_advisors_by_type($rows, 'Committee member(s)', array("Committee member" ), $advisors);
-          $this->get_advisors_by_type($rows, 'Supervisory Committee Member(s)', array("Supervisory Committee Member" ), $advisors);
-          $this->get_advisors_by_type($rows, 'Examination Committee Member(s)', array("Examination Committee Member" ), $advisors);
-          
+          $this->get_advisors_by_type($rows, 'Supervisor(s)', array(
+            "Signature Project Advisor",
+            "Thesis advisor"
+          ), $advisors);
+          $this->get_advisors_by_type($rows, 'Committee member(s)', array("Committee member"), $advisors);
+          $this->get_advisors_by_type($rows, 'Supervisory Committee Member(s)', array("Supervisory Committee Member"), $advisors);
+          $this->get_advisors_by_type($rows, 'Examination Committee Member(s)', array("Examination Committee Member"), $advisors);
+
           $modsxml->registerXPathNamespace('etd', 'http://www.ndltd.org/standards/metadata/etdms/1.0');
           $degree_name = $modsxml->xpath('//etd:name');
           $degree_name = (string) $degree_name[0];
@@ -636,35 +660,45 @@ class Coins {
     }
 
     $ds_array = $this->object->get_datastreams_list_as_array();
-    $check = NULL;
-    if (array_key_exists('OBJ', $ds_array)) {//check status in case ds exists but is embargoed
-      $check = 'OBJ';
+    $download_url = $this->get_download_url($ds_array);
+    if(!empty($download_url)){
+      $rows[] = array(
+        'Text', l($download_url,$download_url));
     }
-    if (array_key_exists('PDF', $ds_array)) {
-      $check = 'PDF';
-    }
-    $embargoed = $this->is_embargoed($this->embargo_date);
-    if ($check && !$embargoed) {
-      if (module_exists('scholar_tracking')) {
-        //check to see if the full text is available before we provide a URL
-        $rows[] = array('Text', l($base_url . '/download_ds/' . $this->pid . '/' . $check, $base_url . '/download_ds/' . $this->pid . '/' . $check));
-      }
-      else {
-        $rows[] = array('Text', l($base_url . '/fedora/repository/' . $this->pid . '/' . $check . '/' . $this->pid, $base_url . '/fedora/repository/' . $this->pid . '/' . $check . '/PDF'));
-      }
-    }
+
+
     return array(
       'headers' => $headers,
       'rows' => $rows,
     );
   }
 
+  function get_download_url($ds_array){
+    $check = NULL;
+    if (array_key_exists('OBJ', $ds_array)) { //check status in case ds exists but is embargoed
+      $check = 'OBJ';
+    }
+    if (array_key_exists('PDF', $ds_array)) {
+      $check = 'PDF';
+    }
+    $embargoed = $this->is_embargoed($this->embargo_date);
+    $url_path = '/fedora/repository/';
+    if ($check && !$embargoed) {
+      if (module_exists('scholar_tracking')) {
+        $url_path = '/download_ds/';
+      }
+      return url($base_url . $url_path . $this->pid . '/' . $check . '/download.pdf',
+      array('absolute' => TRUE));
+    }
+    return NULL;
+  }
+
   function get_advisors_by_type(&$rows, $label, $roles, $advisors) {
     $i = 0;
     $advisor_name = '';
     foreach ($advisors as $advisor) {
-      if(in_array($advisor->role->roleTerm, $roles)){
-      //if ($advisor->role->roleTerm == "Signature Project Advisor" || $advisor->role->roleTerm == "Thesis advisor") {
+      if (in_array($advisor->role->roleTerm, $roles)) {
+        //if ($advisor->role->roleTerm == "Signature Project Advisor" || $advisor->role->roleTerm == "Thesis advisor") {
         if ($i > 0) {
           $advisor_name .= ', ';
         }
@@ -687,7 +721,7 @@ class Coins {
     }
     $text = '<span class="altmetrics">
         <span class="altmetric-embed" data-badge-popover="right" data-doi="' .
-        $doi . '">
+      $doi . '">
         </span>
       </span>';
     return $text;
@@ -725,7 +759,10 @@ class Coins {
     $use = $this->mods->xpath('/mods:mods/mods:accessCondition[@type="use and reproduction"]');
     $use = implode('<br /><br /> ', $use);
     $search_arr = array('Contact Author', 'Contact Publisher');
-    $replace_arr = array('<a href="mailto:publications@upei.ca?subject=Scholar Contact request for object ' . $this->pid . '">Contact Author</a>', '<a href="mailto:publications@upei.ca?subject=' . $pid . '">Contact Publisher</a>');
+    $replace_arr = array(
+      '<a href="mailto:publications@upei.ca?subject=Scholar Contact request for object ' . $this->pid . '">Contact Author</a>',
+      '<a href="mailto:publications@upei.ca?subject=' . $pid . '">Contact Publisher</a>'
+    );
     $use = str_replace($search_arr, $replace_arr, trim($use));
     if (!empty($use)) {
       $rows[] = array('Use/Reproduction', $use);
@@ -735,8 +772,11 @@ class Coins {
   function get_availability(&$rows) {
     if ($this->embargo_date != NULL && $this->is_embargoed($this->embargo_date)) {
       $embargo_date = date('r', tstamptotime((string) $this->embargo_date));
-      $rows[] = array('Availability', 'This item is not yet available online, but may be available on request. Please contact the
-<a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date);
+      $rows[] = array(
+        'Availability',
+        'This item is not yet available online, but may be available on request. Please contact the
+       <a href="mailto:publications@upei.ca?subject=IslandScholar Request">Robertson Library</a> if you wish to access this document. ' . $embargo_date
+      );
     }
   }
 

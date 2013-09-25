@@ -2,7 +2,7 @@
 
 /**
  * Provides the functions to process and view scholarly citations.
- * 
+ *
  * @file
  * @author Richard Wincewicz
  */
@@ -19,8 +19,8 @@ class Scholar {
   /**
    * Build up the elements to show a basic citation. This currently
    * calls another function but customisation can be added in
-   * 
-   * @return array 
+   *
+   * @return array
    */
   function showCitation() {
     $pid = $this->pid;
@@ -31,7 +31,7 @@ class Scholar {
   /**
    * Build up the elements to show a thesis. This uses the citation build function
    * as well as adding in some extra customisation such as the signature datastream
-   * 
+   *
    * @return array
    */
   function showThesis() {
@@ -67,7 +67,7 @@ class Scholar {
    * @global type $base_url
    * @global type $base_path
    * @global type $user
-   * @return type 
+   * @return type
    */
   function show_researcher() {
     global $base_url;
@@ -93,7 +93,7 @@ class Scholar {
       $research_block = "";
       foreach ($xml->xpath('//mads:fieldOfActivity') as $ri) {
         if (!empty($ri)) {
-          $research_block .="<li>$ri</li>";
+          $research_block .= "<li>$ri</li>";
         }
       }
 
@@ -115,14 +115,22 @@ class Scholar {
       }
       $position = $xml->affiliation->position;
 
-      $positions = array('EmeritusFaculty' => 'Emeritus Faculty', 'EmeritusLibrarian' => 'Emeritus Librarian'
-        , 'EmeritusProfessor' => 'Emeritus Professor', 'FacultyMember' => 'Faculty Member'
-        , 'NonAcademic' => 'Non-Academic', 'GraduateStudent' => 'Graduate Student'
-        , 'UndergraduateStudent' => 'Undergraduate Student');
+      $positions = array(
+        'EmeritusFaculty' => 'Emeritus Faculty',
+        'EmeritusLibrarian' => 'Emeritus Librarian'
+      ,
+        'EmeritusProfessor' => 'Emeritus Professor',
+        'FacultyMember' => 'Faculty Member'
+      ,
+        'NonAcademic' => 'Non-Academic',
+        'GraduateStudent' => 'Graduate Student'
+      ,
+        'UndergraduateStudent' => 'Undergraduate Student'
+      );
       $from = array_keys($positions);
       $to = array_values($positions);
-      $position = str_replace($from, $to, $position) ;
-      
+      $position = str_replace($from, $to, $position);
+
       $username = $xml->identifier;
       $email = $xml->affiliation->email;
       $notes = $xml->xpath('//mads:note[@type="history"]');
@@ -215,32 +223,68 @@ class Scholar {
 
 
     $rss_feed = '<div class="scholar-rss-feed-label">' . l('<img src="' . $base_url . '/' . $path . '/images/feed-icon-28x28.png">', 'rss/' . $username, array('html' => TRUE)) .
-        ' Subscribe to ' . $fullname . '\'s citation feed</div>';
+      ' Subscribe to ' . $fullname . '\'s citation feed</div>';
 
 
     $profile_header = array();
 
     $profile_rows = array();
     if (!empty($fullname) || $user->uid > 0) {
-      $profile_rows[] = array('data' => array('Name', array('data' => $fullname)), 'class' => 'profile-row');
+      $profile_rows[] = array(
+        'data' => array(
+          'Name',
+          array('data' => $fullname)
+        ),
+        'class' => 'profile-row'
+      );
     }
     if (!empty($position) || $user->uid > 0) {
-      $profile_rows[] = array('data' => array('Position', array('data' => $position)), 'class' => 'profile-row');
+      $profile_rows[] = array(
+        'data' => array(
+          'Position',
+          array('data' => $position)
+        ),
+        'class' => 'profile-row'
+      );
     }
     if (!empty($email) || $user->uid > 0) {
-      $profile_rows[] = array('data' => array('Email', array('data' => $email)), 'class' => 'profile-row');
+      $profile_rows[] = array(
+        'data' => array('Email', array('data' => $email)),
+        'class' => 'profile-row'
+      );
     }
     if (!empty($dept) || $user->uid > 0) {
-      $profile_rows[] = array('data' => array('Department(s)', array('data' => $dept)), 'class' => 'profile-row');
+      $profile_rows[] = array(
+        'data' => array(
+          'Department(s)',
+          array('data' => $dept)
+        ),
+        'class' => 'profile-row'
+      );
     }
     if (!empty($phone) || $user->uid > 0) {
-      $profile_rows[] = array('data' => array('Phone', array('data' => $phone)), 'class' => 'profile-row');
+      $profile_rows[] = array(
+        'data' => array('Phone', array('data' => $phone)),
+        'class' => 'profile-row'
+      );
     }
     if (!empty($building) || $user->uid > 0) {
-      $profile_rows[] = array('data' => array('Building', array('data' => $building)), 'class' => 'profile-row');
+      $profile_rows[] = array(
+        'data' => array(
+          'Building',
+          array('data' => $building)
+        ),
+        'class' => 'profile-row'
+      );
     }
     if (!empty($website) || $user->uid > 0) {
-      $profile_rows[] = array('data' => array('Website', array('data' => $website)), 'class' => 'profile-row');
+      $profile_rows[] = array(
+        'data' => array(
+          'Website',
+          array('data' => $website)
+        ),
+        'class' => 'profile-row'
+      );
     }
 
 
@@ -262,7 +306,6 @@ class Scholar {
     }
 
     $content = theme('scholar_profile', $variables);
-
 
 
     $tabset['first_tab']['tabs']['details']['content'] = array(
@@ -312,7 +355,7 @@ class Scholar {
    * @global type $base_url
    * @global type $base_path
    * @global type $user
-   * @return type 
+   * @return type
    */
   function show_department() {
     global $base_url;
@@ -411,11 +454,11 @@ class Scholar {
 }
 
 /**
- * Construct the form to upload a new document and attach rights 
+ * Construct the form to upload a new document and attach rights
  * and usage information
  * @param type $form_state
  * @param type $pid
- * @return type 
+ * @return type
  */
 function build_add_datastream_form(&$form_state, $pid) {
   $form = array();
@@ -490,7 +533,7 @@ function build_add_datastream_form(&$form_state, $pid) {
  * the object
  * @param type $form_state
  * @param type $pid
- * @return string 
+ * @return string
  */
 function islandora_scholar_supp_info_form(&$form_state, $pid) {
   $form = array();
@@ -519,7 +562,7 @@ function islandora_scholar_supp_info_form(&$form_state, $pid) {
  * Validate the upload form
  * @param type $form
  * @param type $form_state
- * @return type 
+ * @return type
  */
 function islandora_scholar_supp_info_form_validate($form, &$form_state) {
 
@@ -549,7 +592,7 @@ function islandora_scholar_supp_info_form_validate($form, &$form_state) {
 /**
  * Submit the upload form and push the file into the ZIP datastream
  * @param type $form
- * @param type $form_state 
+ * @param type $form_state
  */
 function islandora_scholar_supp_info_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
@@ -588,7 +631,7 @@ function islandora_scholar_supp_info_form_submit($form, &$form_state) {
  * the MODS record is updated at the same time
  * @param type $form_state
  * @param type $pid
- * @return string 
+ * @return string
  */
 function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
   module_load_include('inc', 'fedora_repository', 'fedora_item');
@@ -651,7 +694,7 @@ function islandora_scholar_supp_info_delete_form(&$form_state, $pid) {
 /**
  * Submit the supplementary information delete form
  * @param type $form
- * @param type $form_state 
+ * @param type $form_state
  */
 function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
@@ -767,7 +810,7 @@ function islandora_scholar_supp_info_delete_form_submit($form, &$form_state) {
  * in the MODS record
  * @param type $form_state
  * @param type $pid
- * @return type 
+ * @return type
  */
 function islandora_scholar_document_delete_form(&$form_state, $pid) {
 
@@ -884,7 +927,7 @@ function islandora_scholar_document_delete_form(&$form_state, $pid) {
 /**
  * Submit the document delete form
  * @param type $form
- * @param type $form_state 
+ * @param type $form_state
  */
 function islandora_scholar_document_delete_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
@@ -1033,7 +1076,7 @@ function islandora_scholar_document_delete_form_submit($form, &$form_state) {
 /**
  * Get a list of files from a zip file
  * @param type $zip_file
- * @return type 
+ * @return type
  */
 function islandora_scholar_zip_list($zip_file) {
   exec('unzip -l "' . $zip_file . '"', $info);
@@ -1044,7 +1087,7 @@ function islandora_scholar_zip_list($zip_file) {
  * Form to upload a signature file
  * @param type $form_state
  * @param type $pid
- * @return type 
+ * @return type
  */
 function islandora_scholar_signature_form(&$form_state, $pid) {
   $form = array();
@@ -1073,7 +1116,7 @@ function islandora_scholar_signature_form(&$form_state, $pid) {
  * Validate the signature upload
  * @param type $form
  * @param type $form_state
- * @return type 
+ * @return type
  */
 function islandora_scholar_signature_form_validate($form, &$form_state) {
 
@@ -1099,7 +1142,7 @@ function islandora_scholar_signature_form_validate($form, &$form_state) {
 /**
  * Submit the signature upload form
  * @param type $form
- * @param type $form_state 
+ * @param type $form_state
  */
 function islandora_scholar_signature_form_submit($form, &$form_state) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
@@ -1155,6 +1198,60 @@ function islandora_scholar_signature_delete_form_submit($form, &$form_state) {
   }
 }
 
+function islandora_scholar_set_header($data, $datastream_array) {
+  $output = "";
+  $output_dc = "";
+  $output_dcterms = "";
+  $output .= '<link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />' . PHP_EOL;
+  $output .= '<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />' . PHP_EOL;
+  $output .= '<meta name="citation_title" content="' . $data->title . '" />' . PHP_EOL;
+  foreach ($data->reverse_names as $name) {
+    if (strlen($name) > 4) {
+      $output .= '<meta name="citation_author" content="' . $name . '" />' . PHP_EOL;
+      $output_dc .= '<meta name="DC.creator" content="' . $name . '" />' . PHP_EOL;
+    }
+  }
+  if (!empty($issn)) {
+    $output .= '<meta name="citation_issn" content="' . $issn . '" />' . PHP_EOL;
+  }
+  if (!empty($journal_title)) {
+    $output_dcterms .= '<meta name="DCTERMS.isPartOf" content="' . $journal_title . '" />' . PHP_EOL;
+  }
+  foreach ($data->mods->subject as $subject) {
+    if (!empty($subject->titleInfo->title)) {
+      $output_dc .= '<meta name="DC.subject" content="' . $subject->titleInfo->title . '" />' . PHP_EOL;
+      $output .= '<meta name="citation_keywords" content="' . $subject->titleInfo->title . '" />' . PHP_EOL;
+    }
+  }
+  foreach ($data->mods->identifier as $identifier) {
+    if (!empty($identifier)  && strlen($identifier > 2)) {
+      $output_dc .= '<meta name="DC.identifier" content="' . $identifier . '" />' . PHP_EOL;
+    }
+  }
+  $output .= '<meta name="citation_publication_date" content="' . $data->date . '" />' . PHP_EOL;
+  $output .= '<meta name="citation_date" content="' . $data->date . '" />' . PHP_EOL;
+  $output_dcterms .= '<meta name="DCTERMS.issued" content="' . $data->date . '" />' . PHP_EOL;
+  if (!empty($data->journal_title)) {
+    $output .= '<meta name="citation_journal_title" content="' . $data->journal_title . '" />' . PHP_EOL;
+  }
+  if (!empty($data->volume)) {
+    $output .= '<meta name="citation_volume" content="' . $data->volume . '" />' . PHP_EOL;
+  }
+  if (!empty($data->issue)) {
+    $output .= '<meta name="citation_issue" content="' . $data->issue . '" />' . PHP_EOL;
+  }
+  if (!empty($data->start_page)) {
+    $output .= '<meta name="citation_firstpage" content="' . $data->start_page . '" />' . PHP_EOL;
+  }
+  $download_url = $data->get_download_url($datastream_array);
+  if (!empty($download_url)) {
+    $output .= '<meta name="citation_pdf_url" content="' . $download_url . '" />' . PHP_EOL;
+  }
+  $url = (!empty($_SERVER['HTTPS'])) ? "https://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] : "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+  $output .= '<meta name="citation_abstract_html_url" content="' . $url . '" />' . PHP_EOL;
+  drupal_set_html_head($output . $output_dc . $output_dcterms);
+}
+
 /**
  * Function to build the content required for viewing a citation
  * @todo Should split this out into smaller functions
@@ -1163,7 +1260,7 @@ function islandora_scholar_signature_delete_form_submit($form, &$form_state) {
  * @global type $user
  * @param type $pid PID of the object that contains the citation data
  * @param type $type The type of object, currently limited to citation or thesis
- * @return int 
+ * @return int
  */
 function islandora_scholar_build_citation($pid, $type) {
 
@@ -1186,20 +1283,7 @@ function islandora_scholar_build_citation($pid, $type) {
   $data = new Coins($pid, $type);
   $item = new Fedora_Item($pid);
   $datastream_array = $item->get_datastreams_list_as_array();
-
-  drupal_set_html_head('<meta name="citation_title" content="' . $data->title . '" />');
-  foreach ($data->reverse_names as $name) {
-    drupal_set_html_head('<meta name="citation_author" content="' . $name . '" />');
-  }
-  drupal_set_html_head('<meta name="citation_publication_date" content="' . $data->date . '" />');
-  drupal_set_html_head('<meta name="citation_journal_title" content="' . $data->journal_title . '" />');
-  drupal_set_html_head('<meta name="citation_volume" content="' . $data->volume . '" />');
-  drupal_set_html_head('<meta name="citation_issue" content="' . $data->issue . '" />');
-  drupal_set_html_head('<meta name="citation_firstpage" content="' . $data->start_page . '" />');
-  if (array_key_exists('PDF', $datastream_array)) {
-    drupal_set_html_head('<meta name="citation_pdf_url" content="' . $base_url . '/download_ds/' . $pid . '/PDF" />');
-  }
-
+  islandora_scholar_set_header($data, $datastream_array);
   $fedora_url = variable_get('fedora_base_url', 'http://localhost:8080/fedora');
 
   $object_details = islandora_scholar_get_object_profile($pid);
@@ -1296,23 +1380,23 @@ function islandora_scholar_build_citation($pid, $type) {
   }
   /** else {
 
-    if (array_key_exists('OBJ', $datastream_array) == FALSE && array_key_exists('PDF', $datastream_array) == FALSE) {
-    $tabset['first_tab']['tabs']['pdf'] = array(
-    '#type' => 'tabpage',
-    '#title' => t('Document'),
-    '#content' => t('No documents have been uploaded yet.'),
-    '#weight' => 3,
-    );
-    }
-    else {
-    $tabset['first_tab']['tabs']['pdf'] = array(
-    '#type' => 'tabpage',
-    '#title' => t('Document'),
-    '#content' => drupal_get_form('islandora_scholar_document_delete_form', $pid),
-    '#weight' => 3,
-    );
-    }
-    } */
+  if (array_key_exists('OBJ', $datastream_array) == FALSE && array_key_exists('PDF', $datastream_array) == FALSE) {
+  $tabset['first_tab']['tabs']['pdf'] = array(
+  '#type' => 'tabpage',
+  '#title' => t('Document'),
+  '#content' => t('No documents have been uploaded yet.'),
+  '#weight' => 3,
+  );
+  }
+  else {
+  $tabset['first_tab']['tabs']['pdf'] = array(
+  '#type' => 'tabpage',
+  '#title' => t('Document'),
+  '#content' => drupal_get_form('islandora_scholar_document_delete_form', $pid),
+  '#weight' => 3,
+  );
+  }
+  } */
   if (user_access('administer scholarly research')) {
 
     if (array_key_exists('ZIP', $datastream_array)) {
@@ -1344,19 +1428,20 @@ function islandora_scholar_build_citation($pid, $type) {
 }
 
 /**
- * Function to process the information about the supplemental information contained 
+ * Function to process the information about the supplemental information contained
  * within the ZIP file so it can be added to the citation view
- * 
+ *
  * @param type $mods
  * MODS record from the Fedora object
- * 
+ *
  * @return type
  * Array of values that can be easily displayed in a table
  */
 function islandora_scholar_zip_mods_to_array($mods) {
 
   $xpath = new DOMXPath($mods);
-  $supplemental_note = $xpath->query("//*[@type='supplement']")->item(0)->nodeValue;
+  $supplemental_note = $xpath->query("//*[@type='supplement']")
+    ->item(0)->nodeValue;
   if ($supplemental_note == NULL) {
     return FALSE;
   }
@@ -1384,12 +1469,12 @@ function islandora_scholar_zip_mods_to_array($mods) {
 /**
  * Function that returns an array with details about a specific object
  * This isn't possible with the current Islandora API
- * 
+ *
  * @todo Work this into the Fedora API
- * 
+ *
  * @param string $pid
  * PID of the object
- * 
+ *
  * @return array
  * Array containing details about the Fedora object
  */
@@ -1424,11 +1509,11 @@ function tstamptotime($tstamp) {
 
 /**
  * Provides the HTML for displaying RoMEO information about a citation.
- * 
+ *
  * @param string $issn
  *   ISSN of the citation. Usually pulled from the Refworks or MODS record
- * 
- * @return string 
+ *
+ * @return string
  *   HTML which can be displayed in a drupal form
  */
 function scholar_get_romeo($issn) {
@@ -1441,10 +1526,11 @@ function scholar_get_romeo($issn) {
     $romeo = unserialize($romeo_cache->data);
   }
   else {
-    $romeo_url = @file_get_contents($base_url . $issn . $api_key. '&versions=all');
+    $romeo_url = @file_get_contents($base_url . $issn . $api_key . '&versions=all');
     try {
       $processor = new XsltProcessor();
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
       drupal_set_message(t('@error', array('@error' => $e->getMessage())), 'error');
       return;
     }
@@ -1469,8 +1555,8 @@ function scholar_get_romeo($issn) {
 
 /**
  * Preprocess function for displaying the citations
- * 
- * @param array $variables 
+ *
+ * @param array $variables
  */
 function template_preprocess_scholar(&$variables) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
@@ -1508,7 +1594,7 @@ function template_preprocess_scholar(&$variables) {
   $path = $path = drupal_get_path('module', 'scholar');
   $item = new Fedora_Item($variables['pid']);
   $datastream_array = $item->get_datastreams_list_as_array();
-  if (array_key_exists('OBJ', $datastream_array) && $data->status == 'FULL_TEXT_AVAILABLE') {//check status in case ds exists but is embargoed
+  if (array_key_exists('OBJ', $datastream_array) && $data->status == 'FULL_TEXT_AVAILABLE') { //check status in case ds exists but is embargoed
     $check = 'OBJ';
   }
   if (array_key_exists('PDF', $datastream_array) && $data->status == 'FULL_TEXT_AVAILABLE') {
@@ -1528,20 +1614,28 @@ function template_preprocess_scholar(&$variables) {
     if ($data->type == 'PRE-PRINT') {
       $full_text .= ': Pre-print';
     }
-    else if ($data->type == 'POST-PRINT') {
-      $full_text .= ': Post-print';
+    else {
+      if ($data->type == 'POST-PRINT') {
+        $full_text .= ': Post-print';
+      }
     }
   }
   switch ($check) {
     case 'OBJ':
       $download_img = $base_url . '/' . $path . '/images/download.png';
       //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/OBJ/OBJ', array('html' => TRUE)) . '</div>';
-      $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/OBJ/OBJ', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+      $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/OBJ/download.pdf', array(
+          'html' => TRUE,
+          'attributes' => array('class' => 'button fulltext')
+        )) . '</div>';
       break;
     case 'PDF':
       $download_img = $base_url . '/' . $path . '/images/download.png';
       //$pdf_result = '<div class="scholar_pdf button">' . l('Full text', $url_frag . $doc->PID . '/PDF/PDF', array('html' => TRUE)) . '</div>';
-      $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/PDF/PDF', array('html' => TRUE, 'attributes' => array('class' => 'button fulltext'))) . '</div>';
+      $pdf_result = '<div class="islandscholar-fulltext">' . l($full_text, $url_frag . $variables['pid'] . '/PDF/download.pdf', array(
+          'html' => TRUE,
+          'attributes' => array('class' => 'button fulltext')
+        )) . '</div>';
       break;
   }
 
@@ -1569,7 +1663,7 @@ function template_preprocess_scholar(&$variables) {
     $associate_button .= drupal_get_form('islandora_scholar_associate_button_form', $variables['pid']);
     $associate_button .= '</div>';
   }
-  
+
   $doi = $data->mods->xpath('//mods:identifier[@type="doi"]');
   $doi = $doi[0];
 
@@ -1608,8 +1702,8 @@ function template_preprocess_scholar(&$variables) {
 
 /**
  * Preprocess function for displaying information about the stored supplemental info
- * 
- * @param type $variables 
+ *
+ * @param type $variables
  */
 function template_preprocess_supplemental(&$variables) {
   module_load_include('inc', 'fedora_repository', 'api/fedora_item');
@@ -1649,8 +1743,8 @@ function template_preprocess_supplemental(&$variables) {
 
 /**
  * Preprocessor function for displaying the scholar tracking details
- * 
- * @param type $variables 
+ *
+ * @param type $variables
  */
 function template_preprocess_tracking(&$variables) {
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
