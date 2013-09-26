@@ -682,10 +682,10 @@ class Coins {
       $check = 'PDF';
     }
     $embargoed = $this->is_embargoed($this->embargo_date);
-    $url_path = '/fedora/repository/';
+    $url_path = 'fedora/repository/';
     if ($check && !$embargoed) {
       if (module_exists('scholar_tracking')) {
-        $url_path = '/download_ds/';
+        $url_path = 'download_ds/';
       }
       return url($base_url . $url_path . $this->pid . '/' . $check . '/download.pdf',
       array('absolute' => TRUE));

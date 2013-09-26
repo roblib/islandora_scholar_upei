@@ -1230,7 +1230,10 @@ function islandora_scholar_set_header($data, $datastream_array) {
   }
   foreach ($data->mods->identifier as $identifier) {
     if (!empty($identifier) && strlen($identifier) > 0) {
-      $output_dc .= '<meta name="DC.identifier" content="' . $identifier . '" />' . PHP_EOL;
+      $type = (string)$identifier['type'];
+      if($type != 'u1' && $type != 'u2'){
+        $output_dc .= '<meta name="DC.identifier" content="' . $identifier . '" />' . PHP_EOL;
+      }
     }
   }
   $output .= '<meta name="citation_publication_date" content="' . $data->date . '" />' . PHP_EOL;
@@ -1252,6 +1255,7 @@ function islandora_scholar_set_header($data, $datastream_array) {
   $download_url = $data->get_download_url($datastream_array);
   if (!empty($download_url)) {
     $output .= '<meta name="citation_pdf_url" content="' . $download_url . '" />' . PHP_EOL;
+    $output_dc .= '<meta name="DC.identifier" content="' .$download_url . '" />' .PHP_EOL;
   }
   $url = (!empty($_SERVER['HTTPS'])) ? "https://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] : "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
   $output .= '<meta name="citation_abstract_html_url" content="' . $url . '" />' . PHP_EOL;
