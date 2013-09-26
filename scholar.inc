@@ -1205,6 +1205,12 @@ function islandora_scholar_set_header($data, $datastream_array) {
   $output .= '<link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />' . PHP_EOL;
   $output .= '<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />' . PHP_EOL;
   $output .= '<meta name="citation_title" content="' . $data->title . '" />' . PHP_EOL;
+  $output_dc .= '<meta name="DC.title"  content="' . $data->title . '" />' . PHP_EOL;
+  foreach ($data->genre as $genre) {
+    if (!empty($genre) && strlen($genre) > 0) {
+      $output_dc .= '<meta name="DC.type" content="' . $genre . '" />' . PHP_EOL;
+    }
+  }
   foreach ($data->reverse_names as $name) {
     if (strlen($name) > 4) {
       $output .= '<meta name="citation_author" content="' . $name . '" />' . PHP_EOL;
@@ -1214,30 +1220,30 @@ function islandora_scholar_set_header($data, $datastream_array) {
   if (!empty($issn)) {
     $output .= '<meta name="citation_issn" content="' . $issn . '" />' . PHP_EOL;
   }
-  if (!empty($journal_title)) {
-    $output_dcterms .= '<meta name="DCTERMS.isPartOf" content="' . $journal_title . '" />' . PHP_EOL;
-  }
-  foreach ($data->mods->subject as $subject) {
-    if (!empty($subject->titleInfo->title)) {
-      $output_dc .= '<meta name="DC.subject" content="' . $subject->titleInfo->title . '" />' . PHP_EOL;
-      $output .= '<meta name="citation_keywords" content="' . $subject->titleInfo->title . '" />' . PHP_EOL;
+
+  foreach ($data->mods->subject as $titleInfo) {
+    $subject = $titleInfo->titleInfo->title;
+    if (!empty($subject) && strlen($subject) > 0) {
+      $output_dc .= '<meta name="DC.subject" content="' . $subject . '" />' . PHP_EOL;
+      $output .= '<meta name="citation_keywords" content="' . $subject . '" />' . PHP_EOL;
     }
   }
   foreach ($data->mods->identifier as $identifier) {
-    if (!empty($identifier)  && strlen($identifier > 2)) {
+    if (!empty($identifier) && strlen($identifier) > 0) {
       $output_dc .= '<meta name="DC.identifier" content="' . $identifier . '" />' . PHP_EOL;
     }
   }
   $output .= '<meta name="citation_publication_date" content="' . $data->date . '" />' . PHP_EOL;
   $output .= '<meta name="citation_date" content="' . $data->date . '" />' . PHP_EOL;
   $output_dcterms .= '<meta name="DCTERMS.issued" content="' . $data->date . '" />' . PHP_EOL;
-  if (!empty($data->journal_title)) {
+  if (!empty($data->journal_title) && strlen($data->journal_title) > 0) {
     $output .= '<meta name="citation_journal_title" content="' . $data->journal_title . '" />' . PHP_EOL;
+    $output_dcterms .= '<meta name="DCTERMS.isPartOf" content="' . $data->journal_title . '" />' . PHP_EOL;
   }
-  if (!empty($data->volume)) {
+  if (!empty($data->volume) && strlen($data->volume) > 0) {
     $output .= '<meta name="citation_volume" content="' . $data->volume . '" />' . PHP_EOL;
   }
-  if (!empty($data->issue)) {
+  if (!empty($data->issue) && strlen($data->issue) > 0) {
     $output .= '<meta name="citation_issue" content="' . $data->issue . '" />' . PHP_EOL;
   }
   if (!empty($data->start_page)) {
