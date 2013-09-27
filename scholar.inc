@@ -1202,23 +1202,63 @@ function islandora_scholar_set_header($data, $datastream_array) {
   $output = "";
   $output_dc = "";
   $output_dcterms = "";
+  $c_type = "";
   $output .= '<link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />' . PHP_EOL;
   $output .= '<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />' . PHP_EOL;
   $output .= '<meta name="citation_title" content="' . $data->title . '" />' . PHP_EOL;
   $output_dc .= '<meta name="DC.title"  content="' . $data->title . '" />' . PHP_EOL;
   foreach ($data->genre as $genre) {
     if (!empty($genre) && strlen($genre) > 0) {
+      $c_type = strtolower($genre);
       $output_dc .= '<meta name="DC.type" content="' . $genre . '" />' . PHP_EOL;
     }
   }
-  foreach ($data->reverse_names as $name) {
-    if (strlen($name) > 4) {
-      $output .= '<meta name="citation_author" content="' . $name . '" />' . PHP_EOL;
-      $output_dc .= '<meta name="DC.creator" content="' . $name . '" />' . PHP_EOL;
+
+  if (!empty($data->publishers)) {
+    $publishers = explode (',', $data->publishers);
+    foreach ($publishers as $publisher) {
+      $output_dc .= '<meta name="DC.publisher" content="' . $publisher . '" />' . PHP_EOL;
+      if ($c_type == 'thesis' || $c_type == 'signature project') {
+        $output .= '<meta name="citation_dissertation_institution" content="' . $publisher . '" />' . PHP_EOL;
+      }
     }
   }
-  if (!empty($issn)) {
-    $output .= '<meta name="citation_issn" content="' . $issn . '" />' . PHP_EOL;
+
+  foreach ($data->mods->name as $name_xml) {
+    $name_parts = array();
+    $role = (string) @$name_xml->role->roleTerm;
+    if ($role) {
+      //if ($role == 'author') {
+      foreach ($name_xml->namePart as $name_part) {
+        if ((string) $name_part != '') {
+          // Strip periods off the end.
+          $np = (string) rtrim($name_part, '.');
+          if ($name_part['type'] == 'given') {
+            $name_parts['first_name'] = (string) $name_part;
+          }
+          if ($name_part['type'] == 'family') {
+            $name_parts['last_name'] = $np;
+          }
+        }
+
+      }
+
+      if (isset($name_parts['last_name']) && isset($name_parts['first_name'])) {
+        if (strtolower($role) == 'author') {
+          $output .= '<meta name="citation_author" content="' . $name_parts['last_name'] .
+            ', ' . $name_parts['first_name'] . '" />' . PHP_EOL;
+          $output_dc .= '<meta name="DC.creator" content="' . $name_parts['last_name'] .
+            ', ' . $name_parts['first_name'] . '" />' . PHP_EOL;
+        }
+        else {
+          $output_dc .= '<meta name="DC.contributor" content="' . $name_parts['last_name'] .
+            ', ' . $name_parts['first_name'] . '" />' . PHP_EOL;
+        }
+      }
+    }
+  }
+  if (!empty($data->issn)) {
+    $output .= '<meta name="citation_issn" content="' . $data->issn . '" />' . PHP_EOL;
   }
 
   foreach ($data->mods->subject as $titleInfo) {
@@ -1230,9 +1270,14 @@ function islandora_scholar_set_header($data, $datastream_array) {
   }
   foreach ($data->mods->identifier as $identifier) {
     if (!empty($identifier) && strlen($identifier) > 0) {
-      $type = (string)$identifier['type'];
-      if($type != 'u1' && $type != 'u2'){
-        $output_dc .= '<meta name="DC.identifier" content="' . $identifier . '" />' . PHP_EOL;
+      $type = (string) $identifier['type'];
+      if ($type == 'doi') {
+        $output .= '<meta name="citation_doi" content="' . $identifier . '" />' . PHP_EOL;
+      }
+      else {
+        if ($type != 'u1' && $type != 'u2') {
+          $output_dc .= '<meta name="DC.identifier" content="' . $identifier . '" />' . PHP_EOL;
+        }
       }
     }
   }
@@ -1255,7 +1300,7 @@ function islandora_scholar_set_header($data, $datastream_array) {
   $download_url = $data->get_download_url($datastream_array);
   if (!empty($download_url)) {
     $output .= '<meta name="citation_pdf_url" content="' . $download_url . '" />' . PHP_EOL;
-    $output_dc .= '<meta name="DC.identifier" content="' .$download_url . '" />' .PHP_EOL;
+    $output_dc .= '<meta name="DC.identifier" content="' . $download_url . '" />' . PHP_EOL;
   }
   $url = (!empty($_SERVER['HTTPS'])) ? "https://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] : "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
   $output .= '<meta name="citation_abstract_html_url" content="' . $url . '" />' . PHP_EOL;

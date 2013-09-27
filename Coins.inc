@@ -38,6 +38,7 @@ class Coins {
   public $type = NULL;
   public $status = NULL;
   public $isbn = NULL;
+  public $publishers = NULL;
   public $object = NULL;
 
   /**
@@ -109,7 +110,6 @@ class Coins {
     $this->authors = $authors;
     $this->contributors = $contributors;
     $this->family_names = $family_names;
-
     $form = $xml->physicalDescription->form;
     if (!empty($form)) {
       foreach ($xml->physicalDescription->form as $form) {
@@ -136,7 +136,8 @@ class Coins {
       $i++;
     }
     $this->reverse_names = $reverse;
-
+    $publishers = $xml->xpath('/mods:mods/mods:originInfo/mods:publisher');
+    $this->publishers = implode(', ', $publishers);
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
     $this->issn = $this->check_issn((string) $issn[0]);
     $isbn = $xml->xpath('//mods:identifier[@type="isbn"]');
@@ -352,16 +353,8 @@ class Coins {
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
-          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
-          $publishers = implode(', ', $publishers);
-          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
-            $rows[] = array('Publisher', $publishers);
-          }
-          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
-          $place = implode(', ', $place);
-          if (!empty($place) && strlen(trim($place)) > 1) {
-            $rows[] = array('Place published', $place);
-          }
+          $this->populate_publishers_row($rows);
+          $this->populate_place_row($rows, "Place published");
           $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
           $pages = implode(', ', $pages);
           if (!empty($pages) && strlen(trim($pages)) > 1) {
@@ -419,17 +412,8 @@ class Coins {
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
-          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
-          $publishers = implode(', ', $publishers);
-          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
-            $rows[] = array('Publisher', $publishers);
-          }
-          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
-          $place = implode(', ', $place);
-          if (!empty($place) && strlen(trim($place)) > 1) {
-            $rows[] = array('Place published', $place);
-          }
-
+          $this->populate_publishers_row($rows);
+          $this->populate_place_row($rows, "Place published");
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
           if (!empty($isbn) && strlen(trim($isbn)) > 1) {
@@ -473,10 +457,8 @@ class Coins {
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
-          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
-          $publishers = implode(', ', $publishers);
-          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
-            $rows[] = array('Institution', $publishers);
+          if (!empty($publishers) && strlen(trim($this->publishers)) > 1) {
+            $rows[] = array('Institution', $this->publishers);
           }
           //advisor
           $advisors = $modsxml->xpath('/mods:mods/mods:name[@type="personal"]');
@@ -496,14 +478,8 @@ class Coins {
           if (!empty($degree_name) && !empty($degree_level)) {
             $rows[] = array('Degree earned', $degree_name);
           }
-
-          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
-          $place = implode(', ', $place);
-          if (!empty($place) && strlen(trim($place)) > 1) {
-            $rows[] = array('Place published', $place);
-          }
-
-          $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
+        $this->populate_place_row($rows, "Place published");
+        $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
           if (!empty($isbn) && strlen(trim($isbn)) > 1) {
             $rows[] = array('ISBN', $isbn);
@@ -538,16 +514,8 @@ class Coins {
           if (!empty($beditors) && strlen(trim($beditors)) > 1) {
             $rows[] = array('Conference', $beditors);
           }
-          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
-          $publishers = implode(', ', $publishers);
-          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
-            $rows[] = array('Publisher', $publishers);
-          }
-          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
-          $place = implode(', ', $place);
-          if (!empty($place) && strlen(trim($place)) > 1) {
-            $rows[] = array('Place published', $place);
-          }
+          $this->populate_publishers_row($rows);
+          $this->populate_place_row($rows, "Place published");
           $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
           $pages = implode(', ', $pages);
           if (!empty($pages) && strlen(trim($pages)) > 1) {
@@ -573,16 +541,8 @@ class Coins {
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
-          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
-          $publishers = implode(', ', $publishers);
-          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
-            $rows[] = array('Publisher', $publishers);
-          }
-          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
-          $place = implode(', ', $place);
-          if (!empty($place) && strlen(trim($place)) > 1) {
-            $rows[] = array('Place published', $place);
-          }
+          $this->populate_publishers_row($rows);
+          $this->populate_place_row($rows, "Place published");
           $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
           $pages = implode(', ', $pages);
           if (!empty($pages) && strlen(trim($pages)) > 1) {
@@ -633,17 +593,8 @@ class Coins {
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
-          $publishers = $modsxml->xpath('/mods:mods/mods:originInfo/mods:publisher');
-          $publishers = implode(', ', $publishers);
-          if (!empty($publishers) && strlen(trim($publishers)) > 1) {
-            $rows[] = array('Publisher', $publishers);
-          }
-          $place = $modsxml->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
-          $place = implode(', ', $place);
-          if (!empty($place) && strlen(trim($place)) > 1) {
-            $rows[] = array('Place published', $place);
-          }
-
+          $this->populate_publishers_row($rows);
+          $this->populate_place_row($rows, "Place published");
           $isbn = $modsxml->xpath('/mods:identifier[@type="isbn"]');
           $isbn = implode(', ', $isbn);
           if (!empty($isbn) && strlen(trim($isbn)) > 1) {
@@ -661,9 +612,11 @@ class Coins {
 
     $ds_array = $this->object->get_datastreams_list_as_array();
     $download_url = $this->get_download_url($ds_array);
-    if(!empty($download_url)){
+    if (!empty($download_url)) {
       $rows[] = array(
-        'Text', l($download_url,$download_url));
+        'Text',
+        l($download_url, $download_url)
+      );
     }
 
 
@@ -673,7 +626,13 @@ class Coins {
     );
   }
 
-  function get_download_url($ds_array){
+  function populate_publishers_row(&$rows) {
+    if (!empty($this->publishers) && strlen(trim($this->publishers)) > 1) {
+      $rows[] = array('Publisher', $this->publishers);
+    }
+  }
+
+  function get_download_url($ds_array) {
     $check = NULL;
     if (array_key_exists('OBJ', $ds_array)) { //check status in case ds exists but is embargoed
       $check = 'OBJ';
@@ -688,7 +647,7 @@ class Coins {
         $url_path = 'download_ds/';
       }
       return url($base_url . $url_path . $this->pid . '/' . $check . '/download.pdf',
-      array('absolute' => TRUE));
+        array('absolute' => TRUE));
     }
     return NULL;
   }
@@ -737,6 +696,14 @@ class Coins {
     }
     if (!empty($title)) {
       $rows[] = array($label, $title);
+    }
+  }
+
+  function populate_place_row(&$rows, $label = "Place published") {
+    $place = $this->mods->xpath('/mods:mods/mods:originInfo/mods:place/mods:placeTerm');
+    $place = implode(', ', $place);
+    if (!empty($place) && strlen(trim($place)) > 1) {
+      $rows[] = array($label, $place);
     }
   }
 
