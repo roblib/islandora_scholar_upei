@@ -457,9 +457,7 @@ class Coins {
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
           }
-          if (!empty($publishers) && strlen(trim($this->publishers)) > 1) {
-            $rows[] = array('Institution', $this->publishers);
-          }
+          $this->populate_publishers_row($rows, 'Institution');
           //advisor
           $advisors = $modsxml->xpath('/mods:mods/mods:name[@type="personal"]');
           $this->get_advisors_by_type($rows, 'Supervisor(s)', array(
@@ -626,9 +624,9 @@ class Coins {
     );
   }
 
-  function populate_publishers_row(&$rows) {
+  function populate_publishers_row(&$rows, $label = "Publisher") {
     if (!empty($this->publishers) && strlen(trim($this->publishers)) > 1) {
-      $rows[] = array('Publisher', $this->publishers);
+      $rows[] = array($label, $this->publishers);
     }
   }
 
