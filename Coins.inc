@@ -630,9 +630,10 @@ class Coins {
     }
   }
 
-  function get_download_url($ds_array) {
+  function get_download_url($ds_array, $absolute = TRUE) {
     $check = NULL;
-    if (array_key_exists('OBJ', $ds_array)) { //check status in case ds exists but is embargoed
+    if (array_key_exists('OBJ', $ds_array) &&
+      strstr($ds_array['OBJ']['MIMEType'],'pdf') ) { //check status in case ds exists but is embargoed
       $check = 'OBJ';
     }
     if (array_key_exists('PDF', $ds_array)) {
@@ -644,8 +645,12 @@ class Coins {
       if (module_exists('scholar_tracking')) {
         $url_path = 'download_ds/';
       }
-      return url($base_url . $url_path . $this->pid . '/' . $check . '/download.pdf',
-        array('absolute' => TRUE));
+      $url = $url_path . $this->pid . '/' . $check . '/'. str_replace(':', '_', $this->pid) . '.pdf';
+      if($absolute){
+      return url($url, array('absolute' => $absolute));
+      } else {
+        return $url;
+      }
     }
     return NULL;
   }
