@@ -139,7 +139,7 @@ class Coins {
     $publishers = $xml->xpath('/mods:mods/mods:originInfo/mods:publisher');
     $this->publishers = implode(', ', $publishers);
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
-    $this->issn = $this->check_issn((string) $issn[0]);
+    $this->issn = $this->check_issn($issn);
     $isbn = $xml->xpath('//mods:identifier[@type="isbn"]');
     $this->isbn = str_replace(array(
       "&",
@@ -231,6 +231,8 @@ class Coins {
     }
     $tmp = explode(',', $issns);
     $tmp = $tmp[0];
+    //RETURNING here as the validation below failed in some cases and needs investigation
+    return $tmp;
     $tmp = preg_replace('{[^0-9X]}', '', $tmp);
     // get length
     $length = strlen($tmp);
@@ -243,12 +245,13 @@ class Coins {
         $sum += (8 - ($i - 1)) * $tmp[($i - 1)];
       }
       $sum = 11 - $sum % 11;
-      $action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
+      //$action = (empty($_POST['action'])) ? 'default' : $_POST['action'];
       $tmp = (substr($tmp, 0, 4) . '-' . substr($tmp, 4, 7)); //put the dash back
       return $sum === $checksum ? $tmp : FALSE;
     }
     return FALSE;
   }
+
 
   /**
    * Function to return citation details in a table-ready form
