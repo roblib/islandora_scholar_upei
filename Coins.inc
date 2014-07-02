@@ -430,6 +430,8 @@ class Coins {
           break;
         case 'thesis':
         case 'Signature Project':
+        case 'MEd Project':
+        case 'MN Project':
         case 'Thesis':
           $this->get_title($rows, 'Title');
           $authors = implode(', ', $this->authors);
@@ -465,7 +467,9 @@ class Coins {
           $advisors = $modsxml->xpath('/mods:mods/mods:name[@type="personal"]');
           $this->get_advisors_by_type($rows, 'Supervisor(s)', array(
             "Signature Project Advisor",
-            "Thesis advisor"
+            "Thesis advisor",
+            "MEd Project Advisor", 
+            "MN Project Advisor"
           ), $advisors);
           $this->get_advisors_by_type($rows, 'Committee member(s)', array("Committee member"), $advisors);
           $this->get_advisors_by_type($rows, 'Supervisory Committee Member(s)', array("Supervisory Committee Member"), $advisors);
