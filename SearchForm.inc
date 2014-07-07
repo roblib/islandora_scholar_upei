@@ -294,7 +294,7 @@ function scholar_rss_feed($researcher) {
   
   $solr_location = variable_get('islandora_solr_search_block_url', 'localhost:8080/solr');
 
-  $query_url = 'http://' . $solr_location . '/select?q=mods.username:' . $researcher . '&wt=xslt&tr=example_rss.xsl';
+  $query_url = 'http://' . $solr_location . '/select?q=mods.username:' . $researcher . '&sort=mods.dateIssued desc&wt=xslt&tr=example_rss.xsl&wt=xslt&tr=example_rss.xsl';
   $result = file_get_contents($query_url);
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
   print $result;
