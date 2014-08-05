@@ -39,6 +39,7 @@ class Coins {
   public $status = NULL;
   public $isbn = NULL;
   public $publishers = NULL;
+  public $edition = NULL;
   public $object = NULL;
 
   /**
@@ -138,6 +139,8 @@ class Coins {
     $this->reverse_names = $reverse;
     $publishers = $xml->xpath('/mods:mods/mods:originInfo/mods:publisher');
     $this->publishers = implode(', ', $publishers);
+    $edition = $xml->xpath('//mods:originInfo/mods:edition');
+    $this->edition = $edition[0];
     $issn = $xml->xpath('//mods:identifier[@type="issn"]');
     $this->issn = $this->check_issn($issn);
     $isbn = $xml->xpath('//mods:identifier[@type="isbn"]');
@@ -353,9 +356,12 @@ class Coins {
           if (!empty($authors) && strlen(trim($authors)) > 1) {
             $rows[] = array('Author(s)', $authors);
           }
+          if (!empty($this->edition)) {
+            $rows[] = array('Edition', $this->edition);
+          }             
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
-          }
+          }       
           $this->populate_publishers_row($rows);
           $this->populate_place_row($rows, "Place published");
           $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
@@ -403,6 +409,9 @@ class Coins {
           if (!empty($editor_name)) {
             $rows[] = array('Book editor(s)', $editor_name);
           }
+          if (!empty($this->edition)) {
+            $rows[] = array('Edition', $this->edition);
+          }                    
           if (!empty($this->start_page)) {
             $rows[] = array('Start page', $this->start_page);
           }
