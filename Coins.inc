@@ -175,10 +175,10 @@ class Coins {
     $start_page = $xml->xpath('//mods:extent[@unit="page"]/mods:start');
     $this->start_page = $start_page[0];
 
-    $title = $xml->xpath('//mods:title');
+    $title = $xml->xpath('/mods:mods/mods:titleInfo/mods:title');
     $this->title = $title[0];
 
-    $sub_title = $xml->xpath('//mods:title');
+    $sub_title = $xml->xpath('/mods:mods/mods:titleInfo/mods:subTitle');
     $this->sub_title = $sub_title[0];
 
     $journal_title = $xml->xpath('//mods:relatedItem[@type="host"]//mods:title');
