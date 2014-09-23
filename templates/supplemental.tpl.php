@@ -18,7 +18,7 @@
     <?php endforeach; ?>
   </table>
   
-  <p>Name: <?php print l($zip_description, 'download_ds/' . $pid . '/ZIP') ?></br>
+  <p>Name: <?php print l($zip_description, 'download_ds/' . $variables['pid'] . '/ZIP/' . $dl_pid . '.zip') ?></br>
     <?php print t('Size: @size bytes', array('@size' => $zip_size))?></br>
 
 

@@ -1692,7 +1692,18 @@ function template_preprocess_scholar(&$variables) {
           'attributes' => array('class' => 'button fulltext')
         )) . '</div>';
       break;
-  }
+    case 'ZIP':
+    if (array_key_exists('ZIP', $ds_array) && !$sup_embargoed) {
+      $dl_pid = str_replace(":","_",$variables['pid']);
+      $download_img = $base_url . '/' . $path . '/images/download.png';
+      $supp_result = '<div class="scholar_pdf">' . l('Supplemental information', $url_frag . $variables['pid'] . '/ZIP/' . $dl_pid . '.zip', array(
+          'html' => TRUE,
+          'attributes' => array('class' => 'button supplement')
+        )) . '</div>';
+      break;
+      }
+    }
+
 
   /* if (array_key_exists('ZIP', $datastream_array)) {
     $datastream_info = $item->get_datastream_info('ZIP');
