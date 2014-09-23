@@ -1702,6 +1702,7 @@ function template_preprocess_scholar(&$variables) {
         )) . '</div>';
       break;
       }
+    }
 
 
   /* if (array_key_exists('ZIP', $datastream_array)) {
