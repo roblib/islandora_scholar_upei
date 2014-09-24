@@ -1694,22 +1694,12 @@ function template_preprocess_scholar(&$variables) {
       break;
   }
 
-  /* if (array_key_exists('ZIP', $datastream_array)) {
-    $datastream_info = $item->get_datastream_info('ZIP');
-    $description = $datastream_array['ZIP']['label'];
-
-    $supp_array = islandora_scholar_zip_mods_to_array($mods);
-    if ($supp_array) {
-    $supp_header = array('Filename', 'Date', 'Size (bytes)');
-    $supp_rows = array();
-    for ($i = 0; $i < count($supp_array); $i++) {
-    $supp_rows[] = $supp_array[$i];
-    }
-    }
-    else {
-    drupal_set_message(t('A supplemental information file is present but there is no record of its details, maybe something went wrong during upload'), 'warning');
-    }
-    } */
+  if (array_key_exists('ZIP', $datastream_array)) {
+    $zip_link = '<div class="islandscholar-fulltext">' . l('Supplemental information', $url_frag . $variables['pid'] . '/ZIP/download.zip', array(
+        'html' => TRUE,
+        'attributes' => array('class' => 'button supplement')
+      )) . '</div>';
+  }
 
   $add_to_list = drupal_get_form('islandora_bibliography_citation_form', $variables['pid']);
   $associate_button = NULL;
@@ -1750,6 +1740,7 @@ function template_preprocess_scholar(&$variables) {
     'associate_button' => $associate_button,
     'csl' => $csl,
     'full_text' => $pdf_result,
+    'zip_link' => $zip_link,
     'embargoed' => $embargoed,
     'doi' => $doi,
   );
@@ -1786,14 +1777,13 @@ function template_preprocess_supplemental(&$variables) {
     }
   }
 
-  $variables = array(
-    'datastream_array' => $datastream_array,
-    'zip_description' => $description,
-    'zip_size' => $datastream_info->datastream->size,
-    'zip_array' => $supp_array,
-    'supp_header' => $supp_header,
-    'supp_rows' => $supp_rows,
-  );
+  $variables['datastream_array'] = $datastream_array;
+  $variables['zip_description'] = $description;
+  $variables['zip_size'] = $datastream_info->datastream->size;
+  $variables['zip_array'] = $supp_array;
+  $variables['supp_header'] = $supp_header;
+  $variables['supp_rows'] = $supp_rows;
+
 }
 
 /**

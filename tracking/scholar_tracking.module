@@ -37,25 +37,9 @@ function scholar_tracking_perm() {
 function islandora_scholar_download_ds_form(array &$form_state, $pid, $dsid) {
   global $base_url;
   module_load_include('inc', 'scholar_tracking', 'scholar_tracking');
-  module_load_include('inc', 'fedora_repository', 'api/fedora_item');
   $track = new islandora_scholar_tracking($pid);
   $result = $track->add_ds_count($dsid);
-  $url = $base_url . '/fedora/repository/' . $pid . '/' . $dsid . '/content';
-  $object = new Fedora_Item($pid);
-  $info = $object->get_datastream_info($dsid);
-  $mime_type = $info->datastream->MIMEType;
-  $extension = system_mime_type_extension($mime_type);
-  $file = $object->get_datastream_dissemination($dsid);
-  $ds_name = $info->datastream->ID;
-  if ($file != NULL) {
-    drupal_set_header("Content-type: application/x-unknown; utf-8");
-    drupal_set_header("Content-Disposition: attachment; filename=" . $pid . '-' . $ds_name . '.' . $extension);
-    echo $file;
-    exit;
-  }
-  else {
-    drupal_set_message(t('Specified file does not exist!'));
-  }
+  fedora_object_as_attachment($pid, $dsid);
 }
 
 function system_mime_type_extensions() {

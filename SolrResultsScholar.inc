@@ -290,7 +290,8 @@ class ScholarSolrResults extends IslandoraSolrResults {
         $sup_embargoed = $data->is_embargoed($data->sup_embargo_date);
 
         if (array_key_exists('ZIP', $ds_array) && !$sup_embargoed) {
-          $supp_result = '<div class="scholar_pdf">' . l('Supplemental information', 'fedora/repository/' . $doc->PID . '/ZIP/' . $doc->PID . '.zip', array('html' => TRUE, 'attributes' => array('class' => 'button supplement'))) . '</div>';
+          //$supp_result = '<div class="scholar_pdf">' . l('Supplemental information', 'fedora/repository/' . $doc->PID . '/ZIP/' . $doc->PID . '.zip', array('html' => TRUE, 'attributes' => array('class' => 'button supplement'))) . '</div>';
+          $supp_result = '<div class="scholar_pdf">' . l('Supplemental information', $url_frag . $doc->PID . '/ZIP/ZIP', array('html' => TRUE, 'attributes' => array('class' => 'button supplement'))) . '</div>';
         }
 
         $abstract_snippet = 300;

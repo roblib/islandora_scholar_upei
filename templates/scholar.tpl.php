@@ -39,6 +39,9 @@
     <?php if (isset($full_text) && !$embargoed): ?>
       <?php print $full_text; ?>
     <?php endif; ?>
+    <?php if (isset($zip_link) && !$embargoed): ?>
+      <?php print $zip_link; ?>
+    <?php endif; ?>
     <div class="scholar-refworks"><a href="http://rlproxy.upei.ca/login?url=http://www.refworks.com/express/ExpressImport.asp?vendor=Robertson+Library&filter=RIS%20Format&url=<?php print $base_url ?>/refworks_entry/<?php print urlencode($pid) ?>" target="RefWorksMain" class="button refworks">Export to RefWorks</A></div>
     <?php if (stripos((string) $genre, 'book') !== FALSE && (!isset($full_text) || $embargoed )): ?>
       <div class="scholar_coins_title">
