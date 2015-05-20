@@ -153,15 +153,15 @@ class Scholar {
       drupal_set_message(t('No MADS datastream found!'), 'warning');
     }
     //RECENT CITATIONS
-    $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:citation%20AND%20mods.username:"' . $username . '"&sort=mods_date_issued_dt+desc&fl=PID,mods.title&rows=5';
+    $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:citation%20AND%20mods.username:"' . $username . '"&sort=mods_date_issued_dt+desc&fl=PID,mods_title_sv&rows=5';
     $query = file_get_contents($solr_url);
     $recent_citations = '';
     $solr_xml = new SimpleXMLElement($query);
     $solr_array = $solr_xml->xpath('//doc');
     //$solr_array = array_filter($solr_array);
     foreach ($solr_array as $arr) {
-      $pid = (string) $arr->str;
-      $title = (string) $arr->arr->str[0];
+      $pid = (string) $arr->str[0];
+      $title = (string) $arr->str[1];
       $title_link = l($title, "$base_url/fedora/repository/$pid");
       $recent_citations .= '<li>' . $title_link . '</li>';
     }
