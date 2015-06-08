@@ -346,7 +346,7 @@ class Scholar {
       '#prefix' => '<div class="scholar_metrics_table">',
       '#suffix' => '</div>',
     );
-
+    drupal_set_title($fullname);
     return $tabset;
   }
 
