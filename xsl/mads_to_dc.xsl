@@ -8,18 +8,23 @@
     <xsl:template match="/">
 
         <oai_dc:dc xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
+            xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
+            http://www.openarchives.org/OAI/2.0/oai_dc.xsd"
             xmlns:dc="http://purl.org/dc/elements/1.1/"
             xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
             <dc:title>
-<xsl:value-of select="/mads:mads/mads:authority/mads:name/mads:namePart[@type='given']"/> <xsl:value-of
-                    select="/mads:mads/mads:authority/mads:name/mads:namePart[@type='family']"/>
+                <xsl:value-of select="/mads:mads/mads:authority/mads:titleInfo/mads:title"/>
             </dc:title>
             <xsl:if test="/mads:mads/mads:fieldOfActivity/text() [normalize-space(.) ]">
                 <dc:description>
                     <xsl:value-of select="/mads:mads/mads:fieldOfActivity"/>
                 </dc:description>
-           </xsl:if>
+            </xsl:if>
+            <xsl:if test="/mads:mads/mads:note[@type='history']/text() [normalize-space(.) ]">
+                <dc:description>
+                    <xsl:value-of select="/mads:mads/mads:note[@type='history']"/>
+                </dc:description>
+            </xsl:if>
         </oai_dc:dc>
 
     </xsl:template>
