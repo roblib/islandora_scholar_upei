@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" 
   xmlns:mads="http://www.loc.gov/mads/v2"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" media-type="text/xml"/>
+  <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
   
   <!-- Remove leading / trailing / repeating white space from all elements -->
@@ -142,7 +142,7 @@
   </xsl:template>
   
   <!-- Reorder <mads:language> child elements -->
-  <xsl:template match="mads:langauge">
+  <xsl:template match="mads:language">
     <xsl:copy>
       <xsl:apply-templates select="mads:languageTerm"/>
       <xsl:apply-templates select="mads:scriptTerm"/>
