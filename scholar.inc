@@ -169,7 +169,7 @@ class Scholar {
     //FIND SCHOLARS in DEPARTMENT
     $department_list = array();
     foreach ($department_array as $dpt) {
-      $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:info\:fedora/islandora\:researcherCModel%20AND%20mads.organization:"' . urlencode($dpt) . '"&fl=PID,title&rows=1000';
+      $solr_url = 'http://' . $solr_location . '/select?q=rels.hasModel:info\:fedora/islandora\:researcherCModel%20AND%20mads.organization:"' . urlencode($dpt) . '"&fl=PID,mads.title,title&rows=1000';
       $query = file_get_contents($solr_url);
       $solr_xml = new SimpleXMLElement($query);
       $solr_array = $solr_xml->xpath('//doc');
