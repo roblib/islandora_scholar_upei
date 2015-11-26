@@ -141,6 +141,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
     $result = file_get_contents('http://' . $solr_location . '/select/?q=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.organization,mads.email,mads.phone,mads.fieldOfActivity&rows=10000&sort=mads.family_sort+asc');
   }
   else {
+    $search = urlencode($search);
     $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.given:' . $search . '%20OR%20mads.family:' . $search . '%20OR%20mads.organization:' . $search . '&fq=rels.hasModel:researcher&fl=mads.family,mads.given,mads.username,mads.organization,mads.email,mads.phone,mads.fieldOfActivity&rows=10000&sort=mads.family_sort+asc');
   }
 
