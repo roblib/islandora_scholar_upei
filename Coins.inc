@@ -358,10 +358,10 @@ class Coins {
           }
           if (!empty($this->edition)) {
             $rows[] = array('Edition', $this->edition);
-          }             
+          }
           if ((string) $this->date != NULL) {
             $rows[] = array('Date', $this->date);
-          }       
+          }
           $this->populate_publishers_row($rows);
           $this->populate_place_row($rows, "Place published");
           $pages = $modsxml->xpath('/mods:mods/mods:physicalDescription/mods:extent');
@@ -411,7 +411,7 @@ class Coins {
           }
           if (!empty($this->edition)) {
             $rows[] = array('Edition', $this->edition);
-          }                    
+          }
           if (!empty($this->start_page)) {
             $rows[] = array('Start page', $this->start_page);
           }
@@ -477,8 +477,9 @@ class Coins {
           $this->get_advisors_by_type($rows, 'Supervisor(s)', array(
             "Signature Project Advisor",
             "Thesis advisor",
-            "MEd Project Advisor", 
-            "MN Project Advisor"
+            "MEd Project Advisor",
+            "MN Project Advisor",
+            "Honours Supervisor"
           ), $advisors);
           $this->get_advisors_by_type($rows, 'Committee member(s)', array("Committee member"), $advisors);
           $this->get_advisors_by_type($rows, 'Supervisory Committee Member(s)', array("Supervisory Committee Member"), $advisors);

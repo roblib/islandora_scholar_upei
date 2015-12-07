@@ -8,9 +8,9 @@
 
 /**
  * Builds a drupal form for launching a browse by user search.
- * 
- * @param array $form_state 
- * 
+ *
+ * @param array $form_state
+ *
  * @return array
  */
 function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
@@ -37,7 +37,7 @@ function scholar_browse_by_user_form(array &$form_state, $initial = 'A') {
   $form['list'] = array(
     '#value' => $list,
   );
-  $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.family:' . strtolower($initial) . '*&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family_sort+asc');
+  $result = file_get_contents('http://' . $solr_location . '/select/?q=mads.family:' . strtolower($initial) . '*&fl=mads.family,mads.given,mads.username&rows=10000&sort=mads.family+asc');
   $xml = new SimpleXMLElement($result);
   $array = $xml->xpath('//doc');
   $output = '<ul>';
@@ -165,7 +165,7 @@ function islandora_scholar_browse_by_author_form(&$form_state, $search = NULL) {
       }
       //$citation_link = l(t('@citations citations', array('@citations' => $citations)), 'islandora/solr/search/mods.username:"' . $username[0] . '"', array('query' => array("sort" => "mods_date_issued_dt desc")));
       $citation_link = l(t('show citations', array('@citations' => $citations)), 'islandora/solr/search/mods.username:"' . $username[0] . '"', array('query' => array("sort" => "mods_date_issued_dt desc")));
-     
+
       $email_link = '<a href="mailto:' . $email[0] . '">' . $email[0] . '</a>';
       if ($citations > 0) {
         $users[] = array(l($family[0] . ', ' . $given[0], 'fedora/repository/ir:' . strtolower($username[0])), l($department[0], 'fedora/repository/ir:' . $department_link), $email_link,
